@@ -98,12 +98,18 @@ export const BROKERS: Broker[] = [
     logo: { initials: '8C', bg: '#0F5FA6', fg: '#FFFFFF' },
   },
   {
-    slug: 'fxtm', name: 'FXTM', founded: 2011, headquarters: 'CY',
-    website: 'https://www.forextime.com/',
+    // Corrected against the company's own regulatory disclosure at
+    // https://www.fxtm.com/ (footer), after the register watcher found the
+    // CySEC licence this record used to claim was not on the CySEC register.
+    // FXTM does not claim a CySEC licence either: its disclosure names
+    // Mauritius, South Africa, the UAE and Kenya, and no EU entity at all.
+    // Two independent sources saying a licence is absent is enough to stop
+    // publishing it; the rest of this record is still unverified seed data.
+    slug: 'fxtm', name: 'FXTM', founded: 2011, headquarters: 'MU',
+    website: 'https://www.fxtm.com/',
     entities: [
-      { legalName: 'ForexTime Ltd', country: 'CY', licence: { regulator: 'CySEC', number: '185/12', status: 'authorised' }, serves: ['CY', 'DE', 'FR', 'IT', 'ES'] },
-      { legalName: 'FT Global Services Ltd', country: 'ZA', licence: { regulator: 'FSCA', number: '46614', status: 'authorised' }, serves: ['ZA'] },
       { legalName: 'Exinity Limited', country: 'MU', licence: { regulator: 'FSC-MU', number: 'C113012295', status: 'registered' }, serves: ['*'] },
+      { legalName: 'Exinity Limited', country: 'ZA', licence: { regulator: 'FSCA', number: '50320', status: 'authorised' }, serves: ['ZA'] },
     ],
     cost: { eurusdSpread: 0.9, commissionPerLot: 0, swapFreeAvailable: true, verifiedAt: null },
     payments: { methods: ['bank', 'card', 'ewallet'], statedWithdrawalHours: 24, minDepositUsd: 10, verifiedAt: null },
@@ -115,7 +121,7 @@ export const BROKERS: Broker[] = [
   },
   {
     slug: 'octafx', name: 'OctaFX', founded: 2011, headquarters: 'CY',
-    website: 'https://octa.com/',
+    website: 'https://www.octafx.com/',
     entities: [
       { legalName: 'Octa Markets Cyprus Ltd', country: 'CY', licence: { regulator: 'CySEC', number: '372/18', status: 'authorised' }, serves: ['CY', 'DE', 'FR', 'IT', 'ES'] },
       { legalName: 'Octa Markets Incorporated', country: 'VC', licence: { regulator: 'FSA-SVG', number: '19776 IBC 2011', status: 'registered' }, serves: ['*'] },

@@ -30,7 +30,7 @@ console.log(`${checks.length} company sites checked: ${checks.filter((c) => c.st
 if (moved.length > 0) {
   console.log('');
   for (const c of moved) {
-    console.log(`- **${c.name}** (\`${c.slug}\`) — ${c.website} ${c.detail}. Usually a rebrand; the record is probably stale too.`);
+    console.log(`- **${c.name}** (\`${c.slug}\`) — ${c.website} ${c.detail}. Either the company renamed, or it routes this region to a different legal entity; both mean the record needs a look.`);
   }
 }
 

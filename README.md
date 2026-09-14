@@ -150,9 +150,18 @@ that field is that a person opened the page.
 register readers do: a site that is **gone** is a fact about the company, a site
 that merely **refuses us** is a fact about our IP address. Trading venues answer
 datacentres with 403 all day while serving every real visitor, so only 404, 410
-and a name that does not resolve count as broken. On its first run it found
-octafx.com answering 410 Gone -- the company rebranded to Octa -- and two records
-whose stored address redirects to a different company name.
+and a name that does not resolve count as broken -- **and only when the response
+carries no page**. That last clause was learned the hard way: octafx.com answers
+410 Gone and then serves its full homepage, titled "Octa: the leading broker for
+online trading". Reading the status line alone said the broker had vanished, and
+acting on it put an unrelated company's address on a broker's record. The check
+now reads the body before believing a dead status, and a test pins that case.
+
+A redirect to another hostname is reported but never failed. It is not always a
+rename: icmarkets.com sends this region to ic.com, whose own footer says it is
+Raw Trading Ltd of the Seychelles -- the broker routing a visitor to a different
+licence, which is precisely the thing the entity map on each broker page exists
+to show.
 
 The admin that records these **fails closed**: with no `ADMIN_TOKEN` configured,
 every `/admin` route 404s, so an accidental deploy exposes nothing. The token is
