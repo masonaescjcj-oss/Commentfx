@@ -107,13 +107,35 @@ export function bestList(c: BestCriterion): RankedBroker[] {
     .map((r, i) => ({ ...r, rank: i + 1 }));
 }
 
-/* ── Compare pairs: generated from the top brokers, both directions ────── */
+/* ── Compare pairs ─────────────────────────────────────────────────────── */
 
-export function comparePairs(limit = 6): Array<[string, string]> {
-  const top = rankedBrokers().slice(0, limit).map((r) => r.broker.slug);
+/** How many alternatives a broker page offers. One number, used by both sides. */
+export const ALTERNATIVES = 3;
+
+/** The brokers a page suggests instead: the highest-ranked ones that are not it. */
+export function alternativesFor(slug: string): RankedBroker[] {
+  return rankedBrokers().filter((r) => r.broker.slug !== slug).slice(0, ALTERNATIVES);
+}
+
+/**
+ * Every comparison page the site links to, and no others.
+ *
+ * Derived from the same function the broker pages use to pick their
+ * alternatives, because these were allowed to drift once: the pages linked
+ * three alternatives each while only the top six brokers got a built page, so
+ * most "X vs Y" links on the site were 404s. Anything linked is built.
+ */
+export function comparePairs(): Array<[string, string]> {
+  const seen = new Set<string>();
   const pairs: Array<[string, string]> = [];
-  for (let i = 0; i < top.length; i++)
-    for (let j = i + 1; j < top.length; j++) pairs.push([top[i]!, top[j]!]);
+  for (const r of rankedBrokers()) {
+    for (const alt of alternativesFor(r.broker.slug)) {
+      const key = pairSlug(r.broker.slug, alt.broker.slug);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      pairs.push([r.broker.slug, alt.broker.slug]);
+    }
+  }
   return pairs;
 }
 

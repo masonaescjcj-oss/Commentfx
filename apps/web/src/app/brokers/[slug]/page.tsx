@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { REGULATORS, effectiveCostPips, hours, leverage } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, financialServiceLd, faqLd } from '@/lib/seo';
-import { rankedBrokers, getRanked } from '@/lib/repo';
+import { rankedBrokers, getRanked, alternativesFor } from '@/lib/repo';
 import { coverage } from '@/lib/verify';
 import { brokerStatus } from '@/lib/status';
 import { registerChecksFor } from '@/lib/registers';
@@ -50,7 +50,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
     brokerStatus(b.slug),
     registerChecksFor(b.slug),
   ]);
-  const alternatives = all.filter((x) => x.broker.slug !== b.slug).slice(0, 3);
+  const alternatives = alternativesFor(b.slug);
   const trail = [
     { name: 'Home', path: '/' },
     { name: 'Brokers', path: '/brokers' },

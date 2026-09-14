@@ -11,3 +11,4 @@ export * from './data/exchanges.ts';
 export * from './memecoins.ts';
 export * from './name-safety.ts';
 export * from './incidents.ts';
+export * from './calendar.ts';

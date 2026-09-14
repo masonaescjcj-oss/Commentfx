@@ -4,6 +4,7 @@ import {
   PROP_WEIGHTS, PROP_LABELS, type PropKey,
   EXCHANGE_WEIGHTS, EXCHANGE_LABELS, type ExchangeKey,
   MEME_WEIGHTS, MEME_LABELS, type MemeKey,
+  IMPACT_RULE, IMPACT_LABEL,
 } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd } from '@/lib/seo';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
@@ -144,6 +145,35 @@ export default function MethodologyPage() {
             Free tiers go quiet. When one does, the affected page says so plainly rather
             than serving figures we could not confirm, and every live page carries the
             timestamp of the fetch behind it.
+          </p>
+        </Card>
+
+        <Card className="p-4" as="section">
+          <CardHead title="How the economic calendar is graded" />
+          <p className="text-[12.5px] text-ink-2 leading-[1.85] mb-3">
+            Dates come from the institution that sets them — the BLS release schedule, the
+            Fed’s FOMC calendar, the ECB’s Governing Council calendar. Nothing is copied
+            from another calendar site and nothing is inferred from a pattern. A release
+            time is shown only where the source states one: the BLS publishes exact times
+            and the zone they are in, the Fed and the ECB publish dates without them, and
+            a guessed time on a rate decision would be the most quietly harmful number on
+            the site.
+          </p>
+          <dl className="mb-3">
+            {(['high', 'medium', 'low'] as const).map((level) => (
+              <div key={level} className="py-[7px] border-b border-line-2 last:border-b-0">
+                <dt className="text-[12.5px] font-bold">{IMPACT_LABEL[level]} impact</dt>
+                <dd className="text-[11.5px] text-ink-3 mt-[3px] leading-[1.7] capitalize">
+                  {IMPACT_RULE[level].join(' · ')}
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <p className="text-[12.5px] text-ink-2 leading-[1.85]">
+            The institutions do not rank their own releases, so that grading is ours. It is
+            a list of names rather than a model, deliberately: a list can be argued with,
+            and if you think a release is in the wrong band you can see exactly what to
+            argue about.
           </p>
         </Card>
 

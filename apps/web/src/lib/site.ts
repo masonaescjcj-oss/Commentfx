@@ -14,7 +14,7 @@ export const SITE = {
     { href: '/exchanges', label: 'Exchanges' },
     { href: '/memecoins', label: 'Memecoins' },
     { href: '/coins', label: 'Coins' },
-    { href: '/news', label: 'News' },
+    { href: '/calendar', label: 'Calendar' },
   ],
 } as const;
 
