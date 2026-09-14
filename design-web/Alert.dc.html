@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap">
+  <style>
+:root{
+--bg:#F1F2F4;--card:#FFFFFF;--card2:#F8F9FB;--card3:#EFF2F6;--line:#EAEDF2;--line2:#F2F4F7;
+--ink:#0D1421;--ink2:#58667E;--ink3:#9AA3B5;
+--br:#A87528;--br2:#835A18;--brbg:#FBF4E4;
+--up:#14B87C;--upbg:#E4F7EF;--dn:#E0393F;--dnbg:#FDEBEB;--wn:#BE7A09;--wnbg:#FDF3DC;
+--r:16px;--sh:0 1px 2px rgba(13,20,33,.04),0 6px 18px -10px rgba(13,20,33,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif;direction:ltr;
+font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:var(--br);text-decoration:none}
+a:hover{color:var(--br2)}
+.n{font-variant-numeric:tabular-nums;letter-spacing:-.005em}
+.dp{font-family:'Bricolage Grotesque',Manrope,system-ui,sans-serif;letter-spacing:-.025em}
+.pg{width:390px;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+
+/* header */
+.hdr{position:relative;background:var(--card);border-bottom:1px solid var(--line);flex:none}
+.hbar{display:flex;align-items:center;gap:10px;padding:13px 16px}
+.lg{display:flex;align-items:center;gap:7px;font-family:Manrope;font-weight:800;font-size:16px;letter-spacing:-.03em}
+.lgm{width:26px;height:26px;border-radius:9px 9px 9px 3px;background:var(--ink);display:grid;place-items:center;color:#fff;font-size:9.5px;font-weight:800;flex:none;font-family:Manrope}
+.sp{flex:1}
+.ib{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;color:var(--ink2);flex:none}
+.navs{display:flex;gap:7px;padding:0 16px 11px;overflow:hidden}
+.navs span{font-size:12.5px;padding:5px 12px;border-radius:9px;background:var(--card2);color:var(--ink2);white-space:nowrap;flex:none;border:1px solid var(--line)}
+.navs span.on{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:600}
+
+/* body + cards */
+.bd{padding:14px 16px 22px;display:flex;flex-direction:column;gap:13px}
+.cd{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:15px 16px}
+.cd.p0{padding:0}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.ch b{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.ch a{font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:3px}
+.lv{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--ink3)}
+.lv i{width:6px;height:6px;border-radius:50%;background:var(--up);display:block}
+.sec{font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.05em;margin:4px 2px -2px}
+
+/* rows */
+.rw{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line2)}
+.rw:first-child{padding-top:0}
+.rw:last-child{border-bottom:0;padding-bottom:0}
+.av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12px;flex:none;color:#fff}
+.sq{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-weight:800;font-size:12.5px;flex:none}
+.t1{font-size:14px;font-weight:600;line-height:1.35;letter-spacing:-.01em}
+.t2{font-size:11.5px;color:var(--ink3);line-height:1.45}
+.t3{font-size:12.5px;color:var(--ink2);line-height:1.7}
+.up{color:var(--up)}.dn{color:var(--dn)}
+.pl{font-size:12px;font-weight:700;padding:3px 9px;border-radius:8px;display:inline-flex;align-items:center;gap:3px;line-height:1.45}
+.pl.u{background:var(--up);color:#fff}.pl.d{background:var(--dn);color:#fff}
+.pls{font-size:11.5px;font-weight:700}
+.tg{font-size:10.5px;padding:2px 7px;border-radius:6px;background:var(--card2);border:1px solid var(--line);color:var(--ink2);font-family:Manrope;display:inline-block;line-height:1.55}
+.tg.g{background:var(--upbg);border-color:transparent;color:var(--up)}
+.tg.r{background:var(--dnbg);border-color:transparent;color:var(--dn)}
+.tg.w{background:var(--wnbg);border-color:transparent;color:var(--wn)}
+.tg.b{background:var(--brbg);border-color:transparent;color:var(--br)}
+
+/* rank */
+.rk{width:22px;text-align:center;font-size:13px;font-weight:800;color:var(--ink3);flex:none}
+.rk.top{color:var(--br)}
+.sc{font-family:Manrope;font-weight:800;font-size:16px;color:var(--ink);letter-spacing:-.02em}
+
+/* buttons */
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;background:var(--ink);color:#fff;font-weight:700;font-size:14.5px;padding:14px;border-radius:13px}
+.btn.g{background:var(--br)}
+.btn2{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--card);border:1px solid var(--line);color:var(--ink);font-weight:600;font-size:13.5px;padding:13px;border-radius:13px}
+.seg{display:flex;gap:3px;background:var(--card3);border-radius:11px;padding:3px}
+.seg div{flex:1;text-align:center;font-size:12px;padding:6px 4px;border-radius:8px;color:var(--ink2)}
+.seg div.on{background:var(--card);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(13,20,33,.09)}
+.kv{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line2);font-size:13px}
+.kv:last-child{border-bottom:0}
+.kv>span{color:var(--ink3);font-size:12.5px}
+.kv>b{font-weight:600}
+.mtr{display:flex;flex-direction:column;gap:7px;background:var(--card2);border-radius:12px;padding:11px 12px}
+.mtr .bar{height:4px;border-radius:99px;background:var(--card3);overflow:hidden}
+.mtr .bar i{display:block;height:100%;border-radius:99px}
+  </style>
+</helmet>
+<div class="pg" style="width:390px;height:880px;background:var(--card)">
+  <div style="display:flex;align-items:center;padding:16px;flex:none;position:relative">
+    <div style="display:flex;align-items:center;gap:9px;margin:0 auto">
+      <div class="av" style="background:#C8A24A;width:26px;height:26px;font-size:11px">Au</div>
+      <span style="font-size:15.5px;font-weight:700">Gold · XAU/USD</span></div>
+    <div class="ib" style="position:absolute;right:16px;background:var(--card2)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M6 6l12 12M18 6 6 18"/></svg></div></div>
+  <div style="padding:28px 20px 0;text-align:center;flex:none">
+    <div class="t3">When price is above</div>
+    <div class="n dp" style="font-size:52px;font-weight:700;margin:10px 0 18px;line-height:1">2,431.00</div>
+    <div class="seg" style="display:inline-flex;width:180px"><div class="on">USD</div><div>EUR</div></div>
+    <div class="t2" style="margin-top:20px">Current price <b class="n" style="color:var(--ink2)">2,412.30</b> · distance <b class="n up">+0.77%</b></div>
+  </div>
+  <div style="padding:26px 20px 0;flex:none">
+    <div class="t2" style="margin-bottom:9px">Alert type</div>
+    <div class="seg"><div class="on">Price</div><div>Broker spread</div><div>News</div></div></div>
+  <div style="padding:20px 20px 0;flex:none"><div class="btn">Set price alert</div></div>
+  <div style="flex:1"></div>
+  <div style="display:flex;flex-wrap:wrap;padding:8px 10px 20px;flex:none;border-top:1px solid var(--line)"><div style="flex:0 0 33.333%;text-align:center;padding:16px 0;font-size:23px;font-weight:600;color:var(--ink)">1</div><div style="flex:0 0 33.333%;text-align:center;padding:16px 0;font-size:23px;font-weight:600;color:var(--ink)">2</div><div style="flex:0 0 33.333%;text-align:center;padding:16px 0;font-size:23px;font-weight:600;color:var(--ink)">3</div><div style="flex:0 0 33.333%;text-align:center;padding:16px 0;font-size:23px;font-weight:600;color:var(--ink)">4</div><div style="flex:0 0 33.333%;text-align:center;padding:16px 0;font-size:23px;font-weight:600;color:var(--ink)">5</div><div style="flex:0 0 33.333%;text-align:center;padding:16px 0;font-size:23px;font-weight:600;color:var(--ink)">6</div><div style="flex:0 0 33.333%;text-align:center;padding:16px 0;font-size:23px;font-weight:600;color:var(--ink)">7</div><div style="flex:0 0 33.333%;text-align:center;padding:16px 0;font-size:23px;font-weight:600;color:var(--ink)">8</div><div style="flex:0 0 33.333%;text-align:center;padding:16px 0;font-size:23px;font-weight:600;color:var(--ink)">9</div><div style="flex:0 0 33.333%;text-align:center;padding:16px 0;font-size:23px;font-weight:600;color:var(--ink)">.</div><div style="flex:0 0 33.333%;text-align:center;padding:16px 0;font-size:23px;font-weight:600;color:var(--ink)">0</div><div style="flex:0 0 33.333%;text-align:center;padding:16px 0;font-size:23px;font-weight:600;color:var(--ink3)">⌫</div></div>
+</div>
+</x-dc>
+</body>
+</html>

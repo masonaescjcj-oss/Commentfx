@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap">
+  <style>
+:root{
+--bg:#F1F2F4;--card:#FFFFFF;--card2:#F8F9FB;--card3:#EFF2F6;--line:#EAEDF2;--line2:#F2F4F7;
+--ink:#0D1421;--ink2:#58667E;--ink3:#9AA3B5;
+--br:#A87528;--br2:#835A18;--brbg:#FBF4E4;
+--up:#14B87C;--upbg:#E4F7EF;--dn:#E0393F;--dnbg:#FDEBEB;--wn:#BE7A09;--wnbg:#FDF3DC;
+--r:16px;--sh:0 1px 2px rgba(13,20,33,.04),0 6px 18px -10px rgba(13,20,33,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif;direction:ltr;
+font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:var(--br);text-decoration:none}
+a:hover{color:var(--br2)}
+.n{font-variant-numeric:tabular-nums;letter-spacing:-.005em}
+.dp{font-family:'Bricolage Grotesque',Manrope,system-ui,sans-serif;letter-spacing:-.025em}
+.pg{width:390px;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+
+/* header */
+.hdr{position:relative;background:var(--card);border-bottom:1px solid var(--line);flex:none}
+.hbar{display:flex;align-items:center;gap:10px;padding:13px 16px}
+.lg{display:flex;align-items:center;gap:7px;font-family:Manrope;font-weight:800;font-size:16px;letter-spacing:-.03em}
+.lgm{width:26px;height:26px;border-radius:9px 9px 9px 3px;background:var(--ink);display:grid;place-items:center;color:#fff;font-size:9.5px;font-weight:800;flex:none;font-family:Manrope}
+.sp{flex:1}
+.ib{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;color:var(--ink2);flex:none}
+.navs{display:flex;gap:7px;padding:0 16px 11px;overflow:hidden}
+.navs span{font-size:12.5px;padding:5px 12px;border-radius:9px;background:var(--card2);color:var(--ink2);white-space:nowrap;flex:none;border:1px solid var(--line)}
+.navs span.on{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:600}
+
+/* body + cards */
+.bd{padding:14px 16px 22px;display:flex;flex-direction:column;gap:13px}
+.cd{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:15px 16px}
+.cd.p0{padding:0}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.ch b{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.ch a{font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:3px}
+.lv{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--ink3)}
+.lv i{width:6px;height:6px;border-radius:50%;background:var(--up);display:block}
+.sec{font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.05em;margin:4px 2px -2px}
+
+/* rows */
+.rw{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line2)}
+.rw:first-child{padding-top:0}
+.rw:last-child{border-bottom:0;padding-bottom:0}
+.av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12px;flex:none;color:#fff}
+.sq{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-weight:800;font-size:12.5px;flex:none}
+.t1{font-size:14px;font-weight:600;line-height:1.35;letter-spacing:-.01em}
+.t2{font-size:11.5px;color:var(--ink3);line-height:1.45}
+.t3{font-size:12.5px;color:var(--ink2);line-height:1.7}
+.up{color:var(--up)}.dn{color:var(--dn)}
+.pl{font-size:12px;font-weight:700;padding:3px 9px;border-radius:8px;display:inline-flex;align-items:center;gap:3px;line-height:1.45}
+.pl.u{background:var(--up);color:#fff}.pl.d{background:var(--dn);color:#fff}
+.pls{font-size:11.5px;font-weight:700}
+.tg{font-size:10.5px;padding:2px 7px;border-radius:6px;background:var(--card2);border:1px solid var(--line);color:var(--ink2);font-family:Manrope;display:inline-block;line-height:1.55}
+.tg.g{background:var(--upbg);border-color:transparent;color:var(--up)}
+.tg.r{background:var(--dnbg);border-color:transparent;color:var(--dn)}
+.tg.w{background:var(--wnbg);border-color:transparent;color:var(--wn)}
+.tg.b{background:var(--brbg);border-color:transparent;color:var(--br)}
+
+/* rank */
+.rk{width:22px;text-align:center;font-size:13px;font-weight:800;color:var(--ink3);flex:none}
+.rk.top{color:var(--br)}
+.sc{font-family:Manrope;font-weight:800;font-size:16px;color:var(--ink);letter-spacing:-.02em}
+
+/* buttons */
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;background:var(--ink);color:#fff;font-weight:700;font-size:14.5px;padding:14px;border-radius:13px}
+.btn.g{background:var(--br)}
+.btn2{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--card);border:1px solid var(--line);color:var(--ink);font-weight:600;font-size:13.5px;padding:13px;border-radius:13px}
+.seg{display:flex;gap:3px;background:var(--card3);border-radius:11px;padding:3px}
+.seg div{flex:1;text-align:center;font-size:12px;padding:6px 4px;border-radius:8px;color:var(--ink2)}
+.seg div.on{background:var(--card);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(13,20,33,.09)}
+.kv{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line2);font-size:13px}
+.kv:last-child{border-bottom:0}
+.kv>span{color:var(--ink3);font-size:12.5px}
+.kv>b{font-weight:600}
+.mtr{display:flex;flex-direction:column;gap:7px;background:var(--card2);border-radius:12px;padding:11px 12px}
+.mtr .bar{height:4px;border-radius:99px;background:var(--card3);overflow:hidden}
+.mtr .bar i{display:block;height:100%;border-radius:99px}
+  </style>
+</helmet>
+<div class="pg" style="width:390px;height:1785px">
+  <div class="hdr"><div class="hbar">
+    <div class="ib" style="margin-left:-6px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M9 5l7 7-7 7"/></svg></div>
+    <div class="lg" style="font-size:14px"><span class="lgm" style="width:22px;height:22px;font-size:8px">FX</span>CommentFX</div>
+    <div class="sp"></div><div class="ib"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 20s-7-4.4-7-9.3A4.2 4.2 0 0 1 12 8a4.2 4.2 0 0 1 7 2.7C19 15.6 12 20 12 20Z"/></svg></div><div class="ib"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4 12v7a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 20 19v-7"/><path d="M12 15V3.5"/><path d="m8 7 4-3.5L16 7"/></svg></div></div></div>
+<div class="bd">
+  <div style="padding:2px 2px 0">
+    <span class="tg b">REGULATION</span>
+    <h1 class="dp" style="font-size:27px;font-weight:700;line-height:1.25;margin:13px 0 0;text-wrap:balance">
+      CySEC suspended a major broker's licence — what it actually means for your account</h1>
+    <div style="display:flex;align-items:center;gap:11px;margin-top:17px">
+      <div class="av" style="background:#3E6FD9;width:34px;height:34px;font-size:13px">R</div>
+      <div style="flex:1"><div class="t1" style="font-size:13.5px">Reza Mousavi</div>
+      <div class="t2">Regulation analyst · 13 Sep 2026</div></div>
+      <span class="t2">6 min read</span></div></div>
+  <div style="height:200px;border-radius:var(--r);background:linear-gradient(150deg,#22304A,#0F1A2B);
+       position:relative;overflow:hidden;box-shadow:var(--sh)">
+    <div style="position:absolute;inset:0;background:radial-gradient(120% 80% at 80% 0%,rgba(168,117,40,.25),transparent 60%)"></div>
+    <div style="position:absolute;inset:auto 0 0 0;padding:12px 15px;background:linear-gradient(to top,rgba(6,10,18,.85),transparent)">
+      <span style="font-size:10.5px;color:rgba(255,255,255,.7)">Image: the Cyprus Securities and Exchange Commission building</span></div></div>
+  <div style="font-size:15px;line-height:1.95;color:#28303D;padding:0 2px">
+    <p style="margin:0 0 18px">The Cyprus Securities and Exchange Commission suspended the licence of a well-known retail broker on Tuesday. According to the official notice, the decision followed a review of how the firm segregated client funds.</p>
+    <div style="border-left:3px solid var(--br);padding:4px 0 4px 15px;margin:0 0 18px">
+      <div class="dp" style="font-size:18px;font-weight:600;color:var(--ink);line-height:1.5">A suspension means the broker cannot take on new clients — not that existing client money has disappeared.</div></div>
+    <p style="margin:0 0 18px">There is one detail that matters more than the headline: if your account was never opened under the Cypriot entity, this suspension does not touch you directly. It is still a signal worth reading about the group's finances.</p>
+    <h2 class="dp" style="font-size:19px;font-weight:700;margin:26px 0 13px;line-height:1.4">How do I find out which entity I'm under?</h2>
+    <p style="margin:0 0 18px">The counterparty is named in your Client Agreement. Faster than that: open the broker's page here, find "Which entity will you be under?", and pick your country of residence.</p></div>
+
+  <div class="cd" style="border:1.5px solid var(--br);box-shadow:none">
+    <div class="t2" style="margin-bottom:11px">Mentioned in this article</div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="sq" style="background:#FFD84D;color:#0D1421;width:42px;height:42px;border-radius:13px;font-size:14px">E</div>
+      <div style="flex:1"><div class="t1" style="font-size:15px;font-weight:700">Exness</div>
+      <div class="t2">4 licences · status normal · score 8.9</div></div></div>
+    <div class="btn2" style="margin-top:12px">Check this broker's entity map</div></div>
+
+  <div class="cd">
+    <div class="ch"><b>24 comments</b><a>See all <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M15 5l-7 7 7 7"/></svg></a></div>
+    <div class="rw" style="align-items:flex-start">
+      <div class="av" style="background:#7C5CD6;width:30px;height:30px">H</div>
+      <div><div class="t1" style="font-size:13px">Hossein T.</div>
+      <div class="t3" style="margin-top:2px">My account is under the Seychelles entity — should I be worried right now?</div></div></div>
+    <div class="rw" style="align-items:flex-start">
+      <div class="av" style="background:#1F6B5A;width:30px;height:30px">R</div>
+      <div><div style="display:flex;align-items:center;gap:6px"><span class="t1" style="font-size:13px">Reza Mousavi</span>
+      <span class="tg b">AUTHOR</span></div>
+      <div class="t3" style="margin-top:2px">Not yet. But don't postpone any large withdrawal until this is resolved.</div></div></div>
+    <div style="display:flex;align-items:center;gap:10px;background:var(--card2);border:1px solid var(--line);
+         border-radius:12px;padding:11px 13px;margin-top:12px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="m5 19 .8-3.4L16 5.4a2 2 0 0 1 2.8 0l.8.8a2 2 0 0 1 0 2.8L9.4 19.2 6 20Z"/></svg><span class="t2" style="flex:1">Write a comment…</span></div>
+  </div>
+</div></div>
+</x-dc>
+</body>
+</html>

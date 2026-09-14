@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap">
+  <style>
+:root{
+--bg:#F1F2F4;--card:#FFFFFF;--card2:#F8F9FB;--card3:#EFF2F6;--line:#EAEDF2;--line2:#F2F4F7;
+--ink:#0D1421;--ink2:#58667E;--ink3:#9AA3B5;
+--br:#A87528;--br2:#835A18;--brbg:#FBF4E4;
+--up:#14B87C;--upbg:#E4F7EF;--dn:#E0393F;--dnbg:#FDEBEB;--wn:#BE7A09;--wnbg:#FDF3DC;
+--r:16px;--sh:0 1px 2px rgba(13,20,33,.04),0 6px 18px -10px rgba(13,20,33,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif;direction:ltr;
+font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:var(--br);text-decoration:none}
+a:hover{color:var(--br2)}
+.n{font-variant-numeric:tabular-nums;letter-spacing:-.005em}
+.dp{font-family:'Bricolage Grotesque',Manrope,system-ui,sans-serif;letter-spacing:-.025em}
+.pg{width:390px;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+
+/* header */
+.hdr{position:relative;background:var(--card);border-bottom:1px solid var(--line);flex:none}
+.hbar{display:flex;align-items:center;gap:10px;padding:13px 16px}
+.lg{display:flex;align-items:center;gap:7px;font-family:Manrope;font-weight:800;font-size:16px;letter-spacing:-.03em}
+.lgm{width:26px;height:26px;border-radius:9px 9px 9px 3px;background:var(--ink);display:grid;place-items:center;color:#fff;font-size:9.5px;font-weight:800;flex:none;font-family:Manrope}
+.sp{flex:1}
+.ib{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;color:var(--ink2);flex:none}
+.navs{display:flex;gap:7px;padding:0 16px 11px;overflow:hidden}
+.navs span{font-size:12.5px;padding:5px 12px;border-radius:9px;background:var(--card2);color:var(--ink2);white-space:nowrap;flex:none;border:1px solid var(--line)}
+.navs span.on{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:600}
+
+/* body + cards */
+.bd{padding:14px 16px 22px;display:flex;flex-direction:column;gap:13px}
+.cd{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:15px 16px}
+.cd.p0{padding:0}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.ch b{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.ch a{font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:3px}
+.lv{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--ink3)}
+.lv i{width:6px;height:6px;border-radius:50%;background:var(--up);display:block}
+.sec{font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.05em;margin:4px 2px -2px}
+
+/* rows */
+.rw{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line2)}
+.rw:first-child{padding-top:0}
+.rw:last-child{border-bottom:0;padding-bottom:0}
+.av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12px;flex:none;color:#fff}
+.sq{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-weight:800;font-size:12.5px;flex:none}
+.t1{font-size:14px;font-weight:600;line-height:1.35;letter-spacing:-.01em}
+.t2{font-size:11.5px;color:var(--ink3);line-height:1.45}
+.t3{font-size:12.5px;color:var(--ink2);line-height:1.7}
+.up{color:var(--up)}.dn{color:var(--dn)}
+.pl{font-size:12px;font-weight:700;padding:3px 9px;border-radius:8px;display:inline-flex;align-items:center;gap:3px;line-height:1.45}
+.pl.u{background:var(--up);color:#fff}.pl.d{background:var(--dn);color:#fff}
+.pls{font-size:11.5px;font-weight:700}
+.tg{font-size:10.5px;padding:2px 7px;border-radius:6px;background:var(--card2);border:1px solid var(--line);color:var(--ink2);font-family:Manrope;display:inline-block;line-height:1.55}
+.tg.g{background:var(--upbg);border-color:transparent;color:var(--up)}
+.tg.r{background:var(--dnbg);border-color:transparent;color:var(--dn)}
+.tg.w{background:var(--wnbg);border-color:transparent;color:var(--wn)}
+.tg.b{background:var(--brbg);border-color:transparent;color:var(--br)}
+
+/* rank */
+.rk{width:22px;text-align:center;font-size:13px;font-weight:800;color:var(--ink3);flex:none}
+.rk.top{color:var(--br)}
+.sc{font-family:Manrope;font-weight:800;font-size:16px;color:var(--ink);letter-spacing:-.02em}
+
+/* buttons */
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;background:var(--ink);color:#fff;font-weight:700;font-size:14.5px;padding:14px;border-radius:13px}
+.btn.g{background:var(--br)}
+.btn2{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--card);border:1px solid var(--line);color:var(--ink);font-weight:600;font-size:13.5px;padding:13px;border-radius:13px}
+.seg{display:flex;gap:3px;background:var(--card3);border-radius:11px;padding:3px}
+.seg div{flex:1;text-align:center;font-size:12px;padding:6px 4px;border-radius:8px;color:var(--ink2)}
+.seg div.on{background:var(--card);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(13,20,33,.09)}
+.kv{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line2);font-size:13px}
+.kv:last-child{border-bottom:0}
+.kv>span{color:var(--ink3);font-size:12.5px}
+.kv>b{font-weight:600}
+.mtr{display:flex;flex-direction:column;gap:7px;background:var(--card2);border-radius:12px;padding:11px 12px}
+.mtr .bar{height:4px;border-radius:99px;background:var(--card3);overflow:hidden}
+.mtr .bar i{display:block;height:100%;border-radius:99px}
+  </style>
+</helmet>
+<div class="pg" style="width:390px;height:1930px">
+<div class="hdr"><div class="hbar"><div class="lg"><span class="lgm">FX</span>CommentFX</div><div class="sp"></div><div class="ib"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-3.5-3.5"/></svg></div><div class="ib"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div></div><div class="navs"><span class="">Brokers</span><span class="on">Prop Firms</span><span class="">Exchanges</span><span class="">Memecoins</span><span class="">Coins</span><span class="">Calendar</span><span class="">News</span></div></div>
+<div class="bd">
+  <div style="padding:2px 2px 0"><h1 class="dp" style="font-size:26px;font-weight:700;margin:0 0 8px;line-height:1.22;text-wrap:balance">Prop firm rankings</h1><p class="t3" style="margin:0 0 12px;max-width:48ch">Forex, futures and crypto funding challenges — ranked with verified payout proof and an automatic rule-change log.</p><div style="display:flex;align-items:center;gap:8px"><span class="t2"><b class="n" style="color:var(--ink);font-size:13px">17</b> firms</span><span style="color:var(--line)">·</span><span class="t2">updated 3 min ago</span><div class="sp"></div><span class="t2" style="display:inline-flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4 6h16M7 12h10M10 18h4"/></svg> Sort: <b style="color:var(--ink2)">Score</b></span></div></div>
+  <div class="navs" style="padding:0"><span class="on">Forex</span><span class="">Crypto</span><span class="">Futures</span><span class="">1-step</span><span class="">No time limit</span></div>
+  <div class="cd p0" style="padding:2px 16px"><div class="rw" style="align-items:flex-start;gap:10px;padding:14px 0"><span class="rk top" style="padding-top:8px">1</span><div class="sq" style="background:#1F6B5A;color:#fff;width:40px;height:40px;border-radius:12px;font-size:12.5px">FT</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:7px"><span class="t1" style="font-size:15.5px;font-weight:700">FTMO</span><span class="tg">Forex</span><span class="tg">2-step</span><div class="sp"></div><span class="sc" style="font-size:17px">9.0</span></div><div style="display:flex;gap:7px;margin:10px 0 9px"><div style="flex:1;background:var(--card2);border-radius:10px;padding:8px 9px"><div class="t2" style="font-size:9.5px">Challenge fee</div><div class="n" style="font-size:14px;font-weight:800;color:var(--br)">$155</div></div><div style="flex:1;background:var(--card2);border-radius:10px;padding:8px 9px"><div class="t2" style="font-size:9.5px">Profit split</div><div class="n" style="font-size:14px;font-weight:700">90%</div></div><div style="flex:1.1;background:var(--card2);border-radius:10px;padding:8px 9px"><div class="t2" style="font-size:9.5px">Payout time</div><div class="n" style="font-size:14px;font-weight:700">1–2 days</div></div></div><div class="kv" style="padding:5px 0;border-bottom:0"><span>Target / daily DD / max DD</span><b class="n">10% / 5% / 10%</b></div><div style="display:flex;align-items:center;gap:7px;margin-top:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5"/></svg><span class="tg g">No rule changes since June</span></div></div></div><div class="rw" style="align-items:flex-start;gap:10px;padding:14px 0"><span class="rk top" style="padding-top:8px">2</span><div class="sq" style="background:#3E5AD4;color:#fff;width:40px;height:40px;border-radius:12px;font-size:12.5px">FN</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:7px"><span class="t1" style="font-size:15.5px;font-weight:700">FundedNext</span><span class="tg">Forex</span><span class="tg">2-step</span><div class="sp"></div><span class="sc" style="font-size:17px">8.6</span></div><div style="display:flex;gap:7px;margin:10px 0 9px"><div style="flex:1;background:var(--card2);border-radius:10px;padding:8px 9px"><div class="t2" style="font-size:9.5px">Challenge fee</div><div class="n" style="font-size:14px;font-weight:800;color:var(--br)">$99</div></div><div style="flex:1;background:var(--card2);border-radius:10px;padding:8px 9px"><div class="t2" style="font-size:9.5px">Profit split</div><div class="n" style="font-size:14px;font-weight:700">95%</div></div><div style="flex:1.1;background:var(--card2);border-radius:10px;padding:8px 9px"><div class="t2" style="font-size:9.5px">Payout time</div><div class="n" style="font-size:14px;font-weight:700">2–4 days</div></div></div><div class="kv" style="padding:5px 0;border-bottom:0"><span>Target / daily DD / max DD</span><b class="n">8% / 5% / 10%</b></div><div style="display:flex;align-items:center;gap:7px;margin-top:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5"/></svg><span class="tg w">Consistency rule added to phase 2</span></div></div></div><div class="rw" style="align-items:flex-start;gap:10px;padding:14px 0"><span class="rk top" style="padding-top:8px">3</span><div class="sq" style="background:#7C5CD6;color:#fff;width:40px;height:40px;border-radius:12px;font-size:12.5px">TS</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:7px"><span class="t1" style="font-size:15.5px;font-weight:700">Topstep</span><span class="tg">Futures</span><span class="tg">1-step</span><div class="sp"></div><span class="sc" style="font-size:17px">8.3</span></div><div style="display:flex;gap:7px;margin:10px 0 9px"><div style="flex:1;background:var(--card2);border-radius:10px;padding:8px 9px"><div class="t2" style="font-size:9.5px">Challenge fee</div><div class="n" style="font-size:14px;font-weight:800;color:var(--br)">$165</div></div><div style="flex:1;background:var(--card2);border-radius:10px;padding:8px 9px"><div class="t2" style="font-size:9.5px">Profit split</div><div class="n" style="font-size:14px;font-weight:700">90%</div></div><div style="flex:1.1;background:var(--card2);border-radius:10px;padding:8px 9px"><div class="t2" style="font-size:9.5px">Payout time</div><div class="n" style="font-size:14px;font-weight:700">1–3 days</div></div></div><div class="kv" style="padding:5px 0;border-bottom:0"><span>Target / daily DD / max DD</span><b class="n">—</b></div><div style="display:flex;align-items:center;gap:7px;margin-top:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5"/></svg><span class="tg g">No rule changes</span></div></div></div><div class="rw" style="align-items:flex-start;gap:10px;padding:14px 0"><span class="rk" style="padding-top:8px">4</span><div class="sq" style="background:#C4762C;color:#fff;width:40px;height:40px;border-radius:12px;font-size:12.5px">T5</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:7px"><span class="t1" style="font-size:15.5px;font-weight:700">The5%ers</span><span class="tg">Forex</span><span class="tg">Scaling</span><div class="sp"></div><span class="sc" style="font-size:17px">7.8</span></div><div style="display:flex;gap:7px;margin:10px 0 9px"><div style="flex:1;background:var(--card2);border-radius:10px;padding:8px 9px"><div class="t2" style="font-size:9.5px">Challenge fee</div><div class="n" style="font-size:14px;font-weight:800;color:var(--br)">$260</div></div><div style="flex:1;background:var(--card2);border-radius:10px;padding:8px 9px"><div class="t2" style="font-size:9.5px">Profit split</div><div class="n" style="font-size:14px;font-weight:700">100%</div></div><div style="flex:1.1;background:var(--card2);border-radius:10px;padding:8px 9px"><div class="t2" style="font-size:9.5px">Payout time</div><div class="n" style="font-size:14px;font-weight:700">3–5 days</div></div></div><div class="kv" style="padding:5px 0;border-bottom:0"><span>Target / daily DD / max DD</span><b class="n">6% / 4% / 8%</b></div><div style="display:flex;align-items:center;gap:7px;margin-top:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5"/></svg><span class="tg w">2 late-payout reports</span></div></div></div><div class="rw" style="align-items:flex-start;gap:10px;padding:14px 0"><span class="rk" style="padding-top:8px">5</span><div class="sq" style="background:#2FA97C;color:#fff;width:40px;height:40px;border-radius:12px;font-size:12.5px">BR</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:7px"><span class="t1" style="font-size:15.5px;font-weight:700">Breakout</span><span class="tg">Crypto</span><span class="tg">1-step</span><div class="sp"></div><span class="sc" style="font-size:17px">7.1</span></div><div style="display:flex;gap:7px;margin:10px 0 9px"><div style="flex:1;background:var(--card2);border-radius:10px;padding:8px 9px"><div class="t2" style="font-size:9.5px">Challenge fee</div><div class="n" style="font-size:14px;font-weight:800;color:var(--br)">$95</div></div><div style="flex:1;background:var(--card2);border-radius:10px;padding:8px 9px"><div class="t2" style="font-size:9.5px">Profit split</div><div class="n" style="font-size:14px;font-weight:700">80%</div></div><div style="flex:1.1;background:var(--card2);border-radius:10px;padding:8px 9px"><div class="t2" style="font-size:9.5px">Payout time</div><div class="n" style="font-size:14px;font-weight:700">2–5 days</div></div></div><div class="kv" style="padding:5px 0;border-bottom:0"><span>Target / daily DD / max DD</span><b class="n">10% / 6% / 12%</b></div><div style="display:flex;align-items:center;gap:7px;margin-top:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5"/></svg><span class="tg g">No rule changes</span></div></div></div></div>
+  <div class="btn2">Show 12 more firms</div>
+  <div class="cd">
+    <div class="ch"><b>Rule change log</b><span class="lv"><i></i>90 days</span></div>
+    <div class="rw" style="align-items:flex-start"><div class="t2 n" style="width:56px;flex:none">10 Sep</div>
+      <div><div style="font-size:12.5px;font-weight:600">FundedNext</div>
+      <div class="t2" style="margin-top:1px">Consistency rule added to phase 2</div></div></div>
+    <div class="rw" style="align-items:flex-start"><div class="t2 n" style="width:56px;flex:none">24 Aug</div>
+      <div><div style="font-size:12.5px;font-weight:600">The5%ers</div>
+      <div class="t2" style="margin-top:1px">Max drawdown cut from 5% to 4%</div></div></div>
+    <div class="rw" style="align-items:flex-start"><div class="t2 n" style="width:56px;flex:none">15 Aug</div>
+      <div><div style="font-size:12.5px;font-weight:600">FTMO</div>
+      <div class="t2" style="margin-top:1px">Weekend holding allowed on swing accounts</div></div></div>
+    <div class="t2" style="margin-top:11px;line-height:1.75">Prop rules change monthly and are rarely announced. This log is generated automatically by diffing each firm's own rules page.</div>
+  </div>
+</div></div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap">
+  <style>
+:root{
+--bg:#F1F2F4;--card:#FFFFFF;--card2:#F8F9FB;--card3:#EFF2F6;--line:#EAEDF2;--line2:#F2F4F7;
+--ink:#0D1421;--ink2:#58667E;--ink3:#9AA3B5;
+--br:#A87528;--br2:#835A18;--brbg:#FBF4E4;
+--up:#14B87C;--upbg:#E4F7EF;--dn:#E0393F;--dnbg:#FDEBEB;--wn:#BE7A09;--wnbg:#FDF3DC;
+--r:16px;--sh:0 1px 2px rgba(13,20,33,.04),0 6px 18px -10px rgba(13,20,33,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif;direction:ltr;
+font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:var(--br);text-decoration:none}
+a:hover{color:var(--br2)}
+.n{font-variant-numeric:tabular-nums;letter-spacing:-.005em}
+.dp{font-family:'Bricolage Grotesque',Manrope,system-ui,sans-serif;letter-spacing:-.025em}
+.pg{width:390px;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+
+/* header */
+.hdr{position:relative;background:var(--card);border-bottom:1px solid var(--line);flex:none}
+.hbar{display:flex;align-items:center;gap:10px;padding:13px 16px}
+.lg{display:flex;align-items:center;gap:7px;font-family:Manrope;font-weight:800;font-size:16px;letter-spacing:-.03em}
+.lgm{width:26px;height:26px;border-radius:9px 9px 9px 3px;background:var(--ink);display:grid;place-items:center;color:#fff;font-size:9.5px;font-weight:800;flex:none;font-family:Manrope}
+.sp{flex:1}
+.ib{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;color:var(--ink2);flex:none}
+.navs{display:flex;gap:7px;padding:0 16px 11px;overflow:hidden}
+.navs span{font-size:12.5px;padding:5px 12px;border-radius:9px;background:var(--card2);color:var(--ink2);white-space:nowrap;flex:none;border:1px solid var(--line)}
+.navs span.on{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:600}
+
+/* body + cards */
+.bd{padding:14px 16px 22px;display:flex;flex-direction:column;gap:13px}
+.cd{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:15px 16px}
+.cd.p0{padding:0}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.ch b{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.ch a{font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:3px}
+.lv{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--ink3)}
+.lv i{width:6px;height:6px;border-radius:50%;background:var(--up);display:block}
+.sec{font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.05em;margin:4px 2px -2px}
+
+/* rows */
+.rw{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line2)}
+.rw:first-child{padding-top:0}
+.rw:last-child{border-bottom:0;padding-bottom:0}
+.av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12px;flex:none;color:#fff}
+.sq{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-weight:800;font-size:12.5px;flex:none}
+.t1{font-size:14px;font-weight:600;line-height:1.35;letter-spacing:-.01em}
+.t2{font-size:11.5px;color:var(--ink3);line-height:1.45}
+.t3{font-size:12.5px;color:var(--ink2);line-height:1.7}
+.up{color:var(--up)}.dn{color:var(--dn)}
+.pl{font-size:12px;font-weight:700;padding:3px 9px;border-radius:8px;display:inline-flex;align-items:center;gap:3px;line-height:1.45}
+.pl.u{background:var(--up);color:#fff}.pl.d{background:var(--dn);color:#fff}
+.pls{font-size:11.5px;font-weight:700}
+.tg{font-size:10.5px;padding:2px 7px;border-radius:6px;background:var(--card2);border:1px solid var(--line);color:var(--ink2);font-family:Manrope;display:inline-block;line-height:1.55}
+.tg.g{background:var(--upbg);border-color:transparent;color:var(--up)}
+.tg.r{background:var(--dnbg);border-color:transparent;color:var(--dn)}
+.tg.w{background:var(--wnbg);border-color:transparent;color:var(--wn)}
+.tg.b{background:var(--brbg);border-color:transparent;color:var(--br)}
+
+/* rank */
+.rk{width:22px;text-align:center;font-size:13px;font-weight:800;color:var(--ink3);flex:none}
+.rk.top{color:var(--br)}
+.sc{font-family:Manrope;font-weight:800;font-size:16px;color:var(--ink);letter-spacing:-.02em}
+
+/* buttons */
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;background:var(--ink);color:#fff;font-weight:700;font-size:14.5px;padding:14px;border-radius:13px}
+.btn.g{background:var(--br)}
+.btn2{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--card);border:1px solid var(--line);color:var(--ink);font-weight:600;font-size:13.5px;padding:13px;border-radius:13px}
+.seg{display:flex;gap:3px;background:var(--card3);border-radius:11px;padding:3px}
+.seg div{flex:1;text-align:center;font-size:12px;padding:6px 4px;border-radius:8px;color:var(--ink2)}
+.seg div.on{background:var(--card);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(13,20,33,.09)}
+.kv{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line2);font-size:13px}
+.kv:last-child{border-bottom:0}
+.kv>span{color:var(--ink3);font-size:12.5px}
+.kv>b{font-weight:600}
+.mtr{display:flex;flex-direction:column;gap:7px;background:var(--card2);border-radius:12px;padding:11px 12px}
+.mtr .bar{height:4px;border-radius:99px;background:var(--card3);overflow:hidden}
+.mtr .bar i{display:block;height:100%;border-radius:99px}
+  </style>
+</helmet>
+<div class="pg" style="width:390px;height:1640px">
+<div class="hdr"><div class="hbar"><div class="lg"><span class="lgm">FX</span>CommentFX</div><div class="sp"></div><div class="ib"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-3.5-3.5"/></svg></div><div class="ib"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div></div><div class="navs"><span class="">Brokers</span><span class="">Prop Firms</span><span class="">Exchanges</span><span class="on">Memecoins</span><span class="">Coins</span><span class="">Calendar</span><span class="">News</span></div></div>
+<div class="bd">
+  <div style="padding:2px 2px 0"><h1 class="dp" style="font-size:26px;font-weight:700;margin:0 0 8px;line-height:1.22;text-wrap:balance">Memecoin radar</h1><p class="t3" style="margin:0 0 12px;max-width:48ch">Fresh tokens on Solana, Base and BSC with an automatic contract audit — sorted by safety, not by hype.</p><div style="display:flex;align-items:center;gap:8px"><span class="t2"><b class="n" style="color:var(--ink);font-size:13px">314</b> tokens</span><span style="color:var(--line)">·</span><span class="t2">updated 3 min ago</span><div class="sp"></div><span class="t2" style="display:inline-flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4 6h16M7 12h10M10 18h4"/></svg> Sort: <b style="color:var(--ink2)">Score</b></span></div></div>
+  <div class="seg"><div class="on">Safest</div><div>Top gainers</div><div>Newest</div><div>Volume</div></div>
+  <div class="navs" style="padding:0"><span class="on">Solana</span><span class="">Base</span><span class="">BSC</span><span class="">Liquidity over $100K</span><span class="">LP locked</span></div>
+  <div class="cd p0" style="padding:2px 16px"><div class="rw" style="align-items:flex-start;gap:10px;padding:14px 0"><span class="rk" style="padding-top:8px">1</span><div class="av" style="background:#7C5CD6;width:40px;height:40px;font-size:14px">W</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:7px"><span class="t1" style="font-size:15.5px;font-weight:700">WIFHAT</span><span class="tg">Solana</span><div class="sp"></div><span class="n pls up" style="font-size:13.5px">+86%</span></div><div style="display:flex;align-items:center;gap:11px;margin:7px 0 9px"><span class="t2">Age <b style="color:var(--ink2)">1 day</b></span><span class="t2">Liquidity <b class="n" style="color:var(--ink2)">$1.2M</b></span><span class="t2">Holders <b class="n" style="color:var(--ink2)">4,120</b></span></div><div style="display:flex;align-items:center;gap:9px;background:var(--card2);border-radius:10px;padding:8px 11px;margin-bottom:8px"><span class="t2" style="flex:none">Safety</span><div style="flex:1;height:5px;border-radius:99px;background:var(--card3);overflow:hidden"><i style="display:block;height:100%;width:82%;border-radius:99px;background:var(--up)"></i></div><span class="n" style="font-size:13px;font-weight:800;color:var(--up);flex:none">82</span></div><div style="display:flex;gap:4px;flex-wrap:wrap"><span class="tg g">LP locked 12mo</span><span class="tg g">Mint revoked</span><span class="tg g">Top10 18%</span><span class="tg g">0% tax</span></div></div></div><div class="rw" style="align-items:flex-start;gap:10px;padding:14px 0"><span class="rk" style="padding-top:8px">2</span><div class="av" style="background:#2FA97C;width:40px;height:40px;font-size:14px">P</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:7px"><span class="t1" style="font-size:15.5px;font-weight:700">PEPE2</span><span class="tg">Solana</span><div class="sp"></div><span class="n pls up" style="font-size:13.5px">+412%</span></div><div style="display:flex;align-items:center;gap:11px;margin:7px 0 9px"><span class="t2">Age <b style="color:var(--ink2)">3 hours</b></span><span class="t2">Liquidity <b class="n" style="color:var(--ink2)">$840K</b></span><span class="t2">Holders <b class="n" style="color:var(--ink2)">1,930</b></span></div><div style="display:flex;align-items:center;gap:9px;background:var(--card2);border-radius:10px;padding:8px 11px;margin-bottom:8px"><span class="t2" style="flex:none">Safety</span><div style="flex:1;height:5px;border-radius:99px;background:var(--card3);overflow:hidden"><i style="display:block;height:100%;width:68%;border-radius:99px;background:var(--wn)"></i></div><span class="n" style="font-size:13px;font-weight:800;color:var(--wn);flex:none">68</span></div><div style="display:flex;gap:4px;flex-wrap:wrap"><span class="tg g">LP locked 3mo</span><span class="tg g">Mint revoked</span><span class="tg w">Top10 41%</span><span class="tg w">2% tax</span></div></div></div><div class="rw" style="align-items:flex-start;gap:10px;padding:14px 0"><span class="rk" style="padding-top:8px">3</span><div class="av" style="background:#D98324;width:40px;height:40px;font-size:14px">B</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:7px"><span class="t1" style="font-size:15.5px;font-weight:700">BONKAI</span><span class="tg">Base</span><div class="sp"></div><span class="n pls up" style="font-size:13.5px">+128%</span></div><div style="display:flex;align-items:center;gap:11px;margin:7px 0 9px"><span class="t2">Age <b style="color:var(--ink2)">6 hours</b></span><span class="t2">Liquidity <b class="n" style="color:var(--ink2)">$310K</b></span><span class="t2">Holders <b class="n" style="color:var(--ink2)">870</b></span></div><div style="display:flex;align-items:center;gap:9px;background:var(--card2);border-radius:10px;padding:8px 11px;margin-bottom:8px"><span class="t2" style="flex:none">Safety</span><div style="flex:1;height:5px;border-radius:99px;background:var(--card3);overflow:hidden"><i style="display:block;height:100%;width:54%;border-radius:99px;background:var(--wn)"></i></div><span class="n" style="font-size:13px;font-weight:800;color:var(--wn);flex:none">54</span></div><div style="display:flex;gap:4px;flex-wrap:wrap"><span class="tg w">LP locked 1mo</span><span class="tg r">Mint active</span><span class="tg w">Top10 52%</span></div></div></div><div class="rw" style="align-items:flex-start;gap:10px;padding:14px 0"><span class="rk" style="padding-top:8px">4</span><div class="av" style="background:#C0392B;width:40px;height:40px;font-size:14px">D</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:7px"><span class="t1" style="font-size:15.5px;font-weight:700">DOGEKING</span><span class="tg">BSC</span><div class="sp"></div><span class="n pls dn" style="font-size:13.5px">−31%</span></div><div style="display:flex;align-items:center;gap:11px;margin:7px 0 9px"><span class="t2">Age <b style="color:var(--ink2)">40 min</b></span><span class="t2">Liquidity <b class="n" style="color:var(--ink2)">$42K</b></span><span class="t2">Holders <b class="n" style="color:var(--ink2)">190</b></span></div><div style="display:flex;align-items:center;gap:9px;background:var(--card2);border-radius:10px;padding:8px 11px;margin-bottom:8px"><span class="t2" style="flex:none">Safety</span><div style="flex:1;height:5px;border-radius:99px;background:var(--card3);overflow:hidden"><i style="display:block;height:100%;width:14%;border-radius:99px;background:var(--dn)"></i></div><span class="n" style="font-size:13px;font-weight:800;color:var(--dn);flex:none">14</span></div><div style="display:flex;gap:4px;flex-wrap:wrap"><span class="tg r">Honeypot risk</span><span class="tg r">LP unlocked</span><span class="tg r">Top10 88%</span></div></div></div></div>
+  <div class="cd" style="background:#FFF9EC;box-shadow:none;border:1px solid #F3E3C2">
+    <div style="display:flex;gap:11px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--wn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 8.5v4.5M12 16.5h.01"/><circle cx="12" cy="12" r="8.5"/></svg>
+      <div><div style="font-size:14px;font-weight:700;color:var(--wn);margin-bottom:6px">A safety score is not a buy signal</div>
+      <div class="t2" style="color:#8A6420;line-height:1.8">The number comes from the contract alone: liquidity lock, mint authority, holder concentration and swap tax. A token scoring 82 can still go to zero. Anything under $10K liquidity is never indexed.</div></div></div>
+  </div>
+  <div class="cd">
+    <div class="ch"><b>What gets checked</b></div>
+    <div class="kv"><span>Honeypot</span><b class="t2">Simulated sell transaction</b></div>
+    <div class="kv"><span>Liquidity lock</span><b class="t2">Lock contract and duration</b></div>
+    <div class="kv"><span>Mint authority</span><b class="t2">Can new supply be printed</b></div>
+    <div class="kv"><span>Holder concentration</span><b class="t2">Share held by the top 10 wallets</b></div>
+    <div class="kv"><span>Buy / sell tax</span><b class="t2">Percentage taken on each swap</b></div>
+  </div>
+</div></div>
+</x-dc>
+</body>
+</html>

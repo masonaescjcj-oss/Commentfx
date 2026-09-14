@@ -1,0 +1,34 @@
+{
+  "pages": [
+    { "id": "page-1", "name": "Rankings" },
+    { "id": "page-2", "name": "Content & tools" }
+  ],
+  "artboards": [
+    { "file": "Main.dc.html",         "page": "page-1", "x": 0,    "y": 0,    "w": 390, "h": 3060, "title": "Home" },
+    { "file": "Brokers.dc.html",      "page": "page-1", "x": 470,  "y": 0,    "w": 390, "h": 2220, "title": "Broker rankings ★" },
+    { "file": "BrokerDetail.dc.html", "page": "page-1", "x": 940,  "y": 0,    "w": 390, "h": 3240, "title": "Broker page ★" },
+    { "file": "Exchanges.dc.html",    "page": "page-1", "x": 0,    "y": 3360, "w": 390, "h": 1620, "title": "Exchange rankings" },
+    { "file": "Props.dc.html",        "page": "page-1", "x": 470,  "y": 3360, "w": 390, "h": 1930, "title": "Prop firm rankings" },
+    { "file": "Memecoins.dc.html",    "page": "page-1", "x": 940,  "y": 3360, "w": 390, "h": 1640, "title": "Memecoin radar" },
+    { "file": "Coin.dc.html",         "page": "page-2", "x": 0,    "y": 0,    "w": 390, "h": 1170, "title": "Coin page" },
+    { "file": "Compare.dc.html",      "page": "page-2", "x": 470,  "y": 0,    "w": 390, "h": 935,  "title": "Compare brokers" },
+    { "file": "WhereToBuy.dc.html",   "page": "page-2", "x": 940,  "y": 0,    "w": 390, "h": 920,  "title": "Where to buy" },
+    { "file": "Article.dc.html",      "page": "page-2", "x": 1410, "y": 0,    "w": 390, "h": 1785, "title": "Article" },
+    { "file": "Alert.dc.html",        "page": "page-2", "x": 1880, "y": 0,    "w": 390, "h": 880,  "title": "Price alert" }
+  ],
+  "annotations": [
+    { "id": "palette", "page": "page-1", "x": 0, "y": -330, "w": 430,
+      "text": "PALETTE\n\nGround #F1F2F4 · Card #FFFFFF · Line #EAEDF2\nText #0D1421 / #58667E / #9AA3B5\nUp #14B87C · Down #E0393F\n\nThe primary button is near-black #0D1421, not blue. Brass #A87528 is the only accent — reserved for scores, ranks 1–3 and links.\n\nWhy no blue: CoinMarketCap, Coinbase, TradingView and every competitor is blue. Black + brass on white is both more distinctive and reads more expensive." },
+    { "id": "type", "page": "page-1", "x": 460, "y": -330, "w": 400,
+      "text": "TYPE\n\nBricolage Grotesque — page titles and display numbers only, used sparingly.\nManrope — all UI, labels and data, with tabular numerals so price columns never shift.\n\nCard system taken straight from the reference: 16px radius, near-invisible shadow, 15/16 padding, 1px row dividers." },
+    { "id": "rank", "page": "page-1", "x": 930, "y": -330, "w": 420,
+      "text": "★ THE RANKING IDENTITY\n\nEvery row leads with its rank number; the top three are brass. Under each name sits one \"why\" line that says where the rank came from.\n\nThat line is what separates a ranking site from a directory — and it is the thing competitors cannot copy without building the data behind it." },
+    { "id": "entity", "page": "page-1", "x": 930, "y": 3300, "w": 420,
+      "text": "★ ENTITY MAP — on the broker page\n\nNot on BrokersView, not on WikiFX: pick your country and it shows which legal entity you are actually onboarded to and what compensation scheme, if any, sits behind your balance.\n\nThe rest of the page structure (stars + score, four metric boxes, regulation rows with flags and licence numbers, sticky Compare / Write a review bar) follows the BrokersView reference — executed cleaner." },
+    { "id": "seo", "page": "page-1", "x": 0, "y": 3300, "w": 430,
+      "text": "Every ranking page opens with a real h1 and a lead paragraph — needed for SEO, and it tells the reader what the list is actually sorted on.\n\nThe \"How the score is built\" card at the bottom of each list is the trust mechanism WikiFX has no answer to: published weights, and an explicit line saying rank is not for sale." },
+    { "id": "content", "page": "page-2", "x": 0, "y": -250, "w": 560,
+      "text": "\"Where to buy\" is the highest-earning page of any coin: service cards with connection state, real fees, and an access warning where it applies.\n\nCompare is deliberately two columns with the winner in brass per row, closing with a plain-language verdict rather than leaving the reader to add up the table.\n\nPrice alert carries a full numpad and an alert-type switch — price, broker spread, or news." }
+  ],
+  "launch": { "view": "canvas", "page": "page-1" }
+}

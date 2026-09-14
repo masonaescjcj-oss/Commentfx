@@ -1,0 +1,4 @@
+# Seeded canvas build output — ~2.6MB of vendored editor payload.
+# Rebuild from the .dc.html sources with the design skill's seed-canvas.mjs.
+commentfx-mobile-web.html
+__pycache__/

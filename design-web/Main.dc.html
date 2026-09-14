@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap">
+  <style>
+:root{
+--bg:#F1F2F4;--card:#FFFFFF;--card2:#F8F9FB;--card3:#EFF2F6;--line:#EAEDF2;--line2:#F2F4F7;
+--ink:#0D1421;--ink2:#58667E;--ink3:#9AA3B5;
+--br:#A87528;--br2:#835A18;--brbg:#FBF4E4;
+--up:#14B87C;--upbg:#E4F7EF;--dn:#E0393F;--dnbg:#FDEBEB;--wn:#BE7A09;--wnbg:#FDF3DC;
+--r:16px;--sh:0 1px 2px rgba(13,20,33,.04),0 6px 18px -10px rgba(13,20,33,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif;direction:ltr;
+font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:var(--br);text-decoration:none}
+a:hover{color:var(--br2)}
+.n{font-variant-numeric:tabular-nums;letter-spacing:-.005em}
+.dp{font-family:'Bricolage Grotesque',Manrope,system-ui,sans-serif;letter-spacing:-.025em}
+.pg{width:390px;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+
+/* header */
+.hdr{position:relative;background:var(--card);border-bottom:1px solid var(--line);flex:none}
+.hbar{display:flex;align-items:center;gap:10px;padding:13px 16px}
+.lg{display:flex;align-items:center;gap:7px;font-family:Manrope;font-weight:800;font-size:16px;letter-spacing:-.03em}
+.lgm{width:26px;height:26px;border-radius:9px 9px 9px 3px;background:var(--ink);display:grid;place-items:center;color:#fff;font-size:9.5px;font-weight:800;flex:none;font-family:Manrope}
+.sp{flex:1}
+.ib{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;color:var(--ink2);flex:none}
+.navs{display:flex;gap:7px;padding:0 16px 11px;overflow:hidden}
+.navs span{font-size:12.5px;padding:5px 12px;border-radius:9px;background:var(--card2);color:var(--ink2);white-space:nowrap;flex:none;border:1px solid var(--line)}
+.navs span.on{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:600}
+
+/* body + cards */
+.bd{padding:14px 16px 22px;display:flex;flex-direction:column;gap:13px}
+.cd{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:15px 16px}
+.cd.p0{padding:0}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.ch b{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.ch a{font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:3px}
+.lv{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--ink3)}
+.lv i{width:6px;height:6px;border-radius:50%;background:var(--up);display:block}
+.sec{font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.05em;margin:4px 2px -2px}
+
+/* rows */
+.rw{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line2)}
+.rw:first-child{padding-top:0}
+.rw:last-child{border-bottom:0;padding-bottom:0}
+.av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12px;flex:none;color:#fff}
+.sq{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-weight:800;font-size:12.5px;flex:none}
+.t1{font-size:14px;font-weight:600;line-height:1.35;letter-spacing:-.01em}
+.t2{font-size:11.5px;color:var(--ink3);line-height:1.45}
+.t3{font-size:12.5px;color:var(--ink2);line-height:1.7}
+.up{color:var(--up)}.dn{color:var(--dn)}
+.pl{font-size:12px;font-weight:700;padding:3px 9px;border-radius:8px;display:inline-flex;align-items:center;gap:3px;line-height:1.45}
+.pl.u{background:var(--up);color:#fff}.pl.d{background:var(--dn);color:#fff}
+.pls{font-size:11.5px;font-weight:700}
+.tg{font-size:10.5px;padding:2px 7px;border-radius:6px;background:var(--card2);border:1px solid var(--line);color:var(--ink2);font-family:Manrope;display:inline-block;line-height:1.55}
+.tg.g{background:var(--upbg);border-color:transparent;color:var(--up)}
+.tg.r{background:var(--dnbg);border-color:transparent;color:var(--dn)}
+.tg.w{background:var(--wnbg);border-color:transparent;color:var(--wn)}
+.tg.b{background:var(--brbg);border-color:transparent;color:var(--br)}
+
+/* rank */
+.rk{width:22px;text-align:center;font-size:13px;font-weight:800;color:var(--ink3);flex:none}
+.rk.top{color:var(--br)}
+.sc{font-family:Manrope;font-weight:800;font-size:16px;color:var(--ink);letter-spacing:-.02em}
+
+/* buttons */
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;background:var(--ink);color:#fff;font-weight:700;font-size:14.5px;padding:14px;border-radius:13px}
+.btn.g{background:var(--br)}
+.btn2{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--card);border:1px solid var(--line);color:var(--ink);font-weight:600;font-size:13.5px;padding:13px;border-radius:13px}
+.seg{display:flex;gap:3px;background:var(--card3);border-radius:11px;padding:3px}
+.seg div{flex:1;text-align:center;font-size:12px;padding:6px 4px;border-radius:8px;color:var(--ink2)}
+.seg div.on{background:var(--card);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(13,20,33,.09)}
+.kv{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line2);font-size:13px}
+.kv:last-child{border-bottom:0}
+.kv>span{color:var(--ink3);font-size:12.5px}
+.kv>b{font-weight:600}
+.mtr{display:flex;flex-direction:column;gap:7px;background:var(--card2);border-radius:12px;padding:11px 12px}
+.mtr .bar{height:4px;border-radius:99px;background:var(--card3);overflow:hidden}
+.mtr .bar i{display:block;height:100%;border-radius:99px}
+  </style>
+</helmet>
+<div class="pg" style="width:390px;height:3060px">
+<div class="hdr"><div class="hbar"><div class="lg"><span class="lgm">FX</span>CommentFX</div><div class="sp"></div><div class="ib"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-3.5-3.5"/></svg></div><div class="ib"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div></div><div class="navs"><span class="">Brokers</span><span class="">Prop Firms</span><span class="">Exchanges</span><span class="">Memecoins</span><span class="">Coins</span><span class="">Calendar</span><span class="">News</span></div></div>
+<div class="bd">
+  <div style="border-radius:var(--r);overflow:hidden;position:relative;height:210px;box-shadow:var(--sh);
+       background:linear-gradient(150deg,#22304A 0%,#121B2C 55%,#0B1220 100%)">
+    <div style="position:absolute;inset:0;background:radial-gradient(120% 80% at 20% 0%,rgba(168,117,40,.28),transparent 60%)"></div>
+    <div style="position:absolute;inset:auto 0 0 0;padding:16px 17px 17px;background:linear-gradient(to top,rgba(6,10,18,.94),rgba(6,10,18,.5) 55%,transparent)">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
+        <span style="font-size:10.5px;font-weight:700;color:#0D1421;background:#fff;padding:2px 8px;border-radius:6px">INVESTIGATION</span>
+        <span style="font-size:11px;color:rgba(255,255,255,.7)">12 min ago</span></div>
+      <div class="dp" style="font-size:20px;font-weight:700;color:#fff;line-height:1.32;text-wrap:balance">
+        Which brokers advertise an FCA licence but register you offshore?</div></div></div>
+
+  <div style="display:flex;gap:11px">
+    <div class="cd" style="flex:1;padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px">
+        <div class="av" style="background:#F7931A;width:30px;height:30px">₿</div><span class="t2 n">BTC</span></div>
+      <div class="t2">Bitcoin</div>
+      <div class="n dp" style="font-size:24px;font-weight:700;margin:1px 0 9px">$67,412</div>
+      <span class="pl u">▲ 1.82%</span></div>
+    <div class="cd" style="flex:1;padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px">
+        <div class="av" style="background:#C8A24A;width:30px;height:30px;font-size:11px">Au</div><span class="t2 n">XAU</span></div>
+      <div class="t2">Gold</div>
+      <div class="n dp" style="font-size:24px;font-weight:700;margin:1px 0 9px">2,412.30</div>
+      <span class="pl u">▲ 0.41%</span></div>
+  </div>
+
+  <div class="cd">
+    <div class="ch"><b>Top brokers</b><a>Full ranking <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M15 5l-7 7 7 7"/></svg></a></div><div class="rw" style="align-items:flex-start"><span class="rk top">1</span><div class="sq" style="background:#FFD84D;color:#0D1421">E</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:7px"><span class="t1" style="font-weight:700">Exness</span><span style="display:inline-flex;gap:3px"><svg width="15" height="11" viewBox="0 0 20 14" style="flex:none;border-radius:3px;overflow:hidden;box-shadow:0 0 0 1px rgba(13,20,33,.08) inset"><g><rect width="20" height="14" fill="#0B2C6B"/><path d="M0 0l20 14M20 0 0 14" stroke="#fff" stroke-width="2.6"/><path d="M0 0l20 14M20 0 0 14" stroke="#CE1124" stroke-width="1.3"/><path d="M10 0v14M0 7h20" stroke="#fff" stroke-width="3.6"/><path d="M10 0v14M0 7h20" stroke="#CE1124" stroke-width="2"/></g></svg><svg width="15" height="11" viewBox="0 0 20 14" style="flex:none;border-radius:3px;overflow:hidden;box-shadow:0 0 0 1px rgba(13,20,33,.08) inset"><g><rect width="20" height="14" fill="#fff"/><path d="M7 5.5c1.6-1 4-1.2 6 .2 1 .7.6 2-.8 2.3-2 .4-4-.4-5.2-1.4Z" fill="#D57800"/><path d="M7.5 9.6q1.2.9 2.4 0M10.5 9.6q1.2.9 2.4 0" stroke="#4E5B31" stroke-width=".8" fill="none"/></g></svg><svg width="15" height="11" viewBox="0 0 20 14" style="flex:none;border-radius:3px;overflow:hidden;box-shadow:0 0 0 1px rgba(13,20,33,.08) inset"><g><rect width="20" height="14" fill="#fff"/><path d="M0 14 0 0h5Z" fill="#003F87"/><path d="M0 14 5 0h5.5Z" fill="#FCD856"/><path d="M0 14 10.5 0H20Z" fill="#D62828"/><path d="M0 14 20 0v6.5Z" fill="#fff"/><path d="M0 14 20 6.5V14Z" fill="#007A3D"/></g></svg></span><div class="sp"></div><span class="sc">8.9</span></div><div class="t2" style="margin:3px 0 5px">Fastest verified withdrawals — 18 min median</div><div style="display:flex;align-items:center;gap:9px"><span class="tg">Spread <b class="n" style="color:var(--ink)">0.7</b></span><span style="display:inline-flex;align-items:center;gap:4px"><i style="width:6px;height:6px;border-radius:50%;background:var(--up);display:block"></i><span class="t2" style="color:var(--ink3)">Normal</span></span></div></div></div><div class="rw" style="align-items:flex-start"><span class="rk top">2</span><div class="sq" style="background:#14304F;color:#fff">IC</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:7px"><span class="t1" style="font-weight:700">IC Markets</span><span style="display:inline-flex;gap:3px"><svg width="15" height="11" viewBox="0 0 20 14" style="flex:none;border-radius:3px;overflow:hidden;box-shadow:0 0 0 1px rgba(13,20,33,.08) inset"><g><rect width="20" height="14" fill="#0B2C6B"/><rect width="9" height="6.5" fill="#0B2C6B"/><path d="M0 0l9 6.5M9 0 0 6.5" stroke="#fff" stroke-width="1.2"/><circle cx="14.5" cy="9.5" r="1.5" fill="#fff"/><circle cx="16.8" cy="4" r="1" fill="#fff"/></g></svg><svg width="15" height="11" viewBox="0 0 20 14" style="flex:none;border-radius:3px;overflow:hidden;box-shadow:0 0 0 1px rgba(13,20,33,.08) inset"><g><rect width="20" height="14" fill="#fff"/><path d="M7 5.5c1.6-1 4-1.2 6 .2 1 .7.6 2-.8 2.3-2 .4-4-.4-5.2-1.4Z" fill="#D57800"/><path d="M7.5 9.6q1.2.9 2.4 0M10.5 9.6q1.2.9 2.4 0" stroke="#4E5B31" stroke-width=".8" fill="none"/></g></svg><svg width="15" height="11" viewBox="0 0 20 14" style="flex:none;border-radius:3px;overflow:hidden;box-shadow:0 0 0 1px rgba(13,20,33,.08) inset"><g><rect width="20" height="14" fill="#fff"/><path d="M0 14 0 0h5Z" fill="#003F87"/><path d="M0 14 5 0h5.5Z" fill="#FCD856"/><path d="M0 14 10.5 0H20Z" fill="#D62828"/><path d="M0 14 20 0v6.5Z" fill="#fff"/><path d="M0 14 20 6.5V14Z" fill="#007A3D"/></g></svg></span><div class="sp"></div><span class="sc">8.7</span></div><div class="t2" style="margin:3px 0 5px">Lowest EUR/USD spread of all 42 brokers</div><div style="display:flex;align-items:center;gap:9px"><span class="tg">Spread <b class="n" style="color:var(--ink)">0.1</b></span><span style="display:inline-flex;align-items:center;gap:4px"><i style="width:6px;height:6px;border-radius:50%;background:var(--up);display:block"></i><span class="t2" style="color:var(--ink3)">Normal</span></span></div></div></div><div class="rw" style="align-items:flex-start"><span class="rk top">3</span><div class="sq" style="background:#3E6FD9;color:#fff">PP</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:7px"><span class="t1" style="font-weight:700">Pepperstone</span><span style="display:inline-flex;gap:3px"><svg width="15" height="11" viewBox="0 0 20 14" style="flex:none;border-radius:3px;overflow:hidden;box-shadow:0 0 0 1px rgba(13,20,33,.08) inset"><g><rect width="20" height="14" fill="#0B2C6B"/><rect width="9" height="6.5" fill="#0B2C6B"/><path d="M0 0l9 6.5M9 0 0 6.5" stroke="#fff" stroke-width="1.2"/><circle cx="14.5" cy="9.5" r="1.5" fill="#fff"/><circle cx="16.8" cy="4" r="1" fill="#fff"/></g></svg><svg width="15" height="11" viewBox="0 0 20 14" style="flex:none;border-radius:3px;overflow:hidden;box-shadow:0 0 0 1px rgba(13,20,33,.08) inset"><g><rect width="20" height="14" fill="#0B2C6B"/><path d="M0 0l20 14M20 0 0 14" stroke="#fff" stroke-width="2.6"/><path d="M0 0l20 14M20 0 0 14" stroke="#CE1124" stroke-width="1.3"/><path d="M10 0v14M0 7h20" stroke="#fff" stroke-width="3.6"/><path d="M10 0v14M0 7h20" stroke="#CE1124" stroke-width="2"/></g></svg><svg width="15" height="11" viewBox="0 0 20 14" style="flex:none;border-radius:3px;overflow:hidden;box-shadow:0 0 0 1px rgba(13,20,33,.08) inset"><g><rect width="20" height="14" fill="#fff"/><path d="M7 5.5c1.6-1 4-1.2 6 .2 1 .7.6 2-.8 2.3-2 .4-4-.4-5.2-1.4Z" fill="#D57800"/><path d="M7.5 9.6q1.2.9 2.4 0M10.5 9.6q1.2.9 2.4 0" stroke="#4E5B31" stroke-width=".8" fill="none"/></g></svg></span><div class="sp"></div><span class="sc">8.4</span></div><div class="t2" style="margin:3px 0 5px">Best execution record under news volatility</div><div style="display:flex;align-items:center;gap:9px"><span class="tg">Spread <b class="n" style="color:var(--ink)">0.6</b></span><span style="display:inline-flex;align-items:center;gap:4px"><i style="width:6px;height:6px;border-radius:50%;background:var(--up);display:block"></i><span class="t2" style="color:var(--ink3)">Normal</span></span></div></div></div><div class="rw" style="align-items:flex-start"><span class="rk">4</span><div class="sq" style="background:#D4404F;color:#fff">AL</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:7px"><span class="t1" style="font-weight:700">Alpari</span><span style="display:inline-flex;gap:3px"><svg width="15" height="11" viewBox="0 0 20 14" style="flex:none;border-radius:3px;overflow:hidden;box-shadow:0 0 0 1px rgba(13,20,33,.08) inset"><g><rect width="20" height="3.5" fill="#EA2839"/><rect y="3.5" width="20" height="3.5" fill="#1A206D"/><rect y="7" width="20" height="3.5" fill="#FFD500"/><rect y="10.5" width="20" height="3.5" fill="#00A551"/></g></svg></span><div class="sp"></div><span class="sc">7.4</span></div><div class="t2" style="margin:3px 0 5px">Offshore licence only — no compensation fund</div><div style="display:flex;align-items:center;gap:9px"><span class="tg">Spread <b class="n" style="color:var(--ink)">1.2</b></span><span style="display:inline-flex;align-items:center;gap:4px"><i style="width:6px;height:6px;border-radius:50%;background:var(--wn);display:block"></i><span class="t2" style="color:var(--wn)">12 slow-withdrawal reports</span></span></div></div></div>
+    <div style="margin-top:12px;padding-top:11px;border-top:1px solid var(--line2);display:flex;align-items:center;gap:8px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3 5 6v6c0 4.4 3 7.7 7 9 4-1.3 7-4.6 7-9V6l-7-3Z"/><path d="m9.2 12 2 2 3.6-3.8"/></svg><span class="t2" style="line-height:1.6">Scores come from six public components and never change for money.</span></div>
+  </div>
+
+  <div class="cd p0" style="overflow:hidden">
+    <div style="padding:15px 16px 12px;display:flex;align-items:center;gap:10px">
+      <div class="av" style="background:#F7931A;width:34px;height:34px;font-size:14px">₿</div>
+      <div><div style="display:flex;align-items:baseline;gap:6px">
+        <span class="t1" style="font-size:15px;font-weight:700">Bitcoin</span><span class="t2 n">BTC</span></div>
+        <div style="display:flex;align-items:center;gap:9px;margin-top:2px">
+          <span class="n dp" style="font-size:25px;font-weight:700">$67,412</span>
+          <span class="pl u">▲ 1.82%</span></div></div></div>
+    <div style="padding:0 0 2px"><svg width="390" height="96" viewBox="0 0 390 96" fill="none" style="flex:none"><defs><linearGradient id="g27666" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14B87C" stop-opacity=".22"/><stop offset="1" stop-color="#14B87C" stop-opacity="0"/></linearGradient></defs><path d="M0.0,86.5 L20.5,93.5 L41.1,83.0 L61.6,90.0 L82.1,76.0 L102.6,69.0 L123.2,79.5 L143.7,62.0 L164.2,72.5 L184.7,55.0 L205.3,62.0 L225.8,44.5 L246.3,51.5 L266.8,34.0 L287.4,41.0 L307.9,23.5 L328.4,30.5 L348.9,13.0 L369.5,20.0 L390.0,2.5 L390,96 L0,96 Z" fill="url(#g27666)"/><path d="M0.0,86.5 L20.5,93.5 L41.1,83.0 L61.6,90.0 L82.1,76.0 L102.6,69.0 L123.2,79.5 L143.7,62.0 L164.2,72.5 L184.7,55.0 L205.3,62.0 L225.8,44.5 L246.3,51.5 L266.8,34.0 L287.4,41.0 L307.9,23.5 L328.4,30.5 L348.9,13.0 L369.5,20.0 L390.0,2.5" stroke="#14B87C" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/></svg></div>
+    <div style="display:flex;border-top:1px solid var(--line2)">
+      <div style="flex:1;padding:13px 16px"><div class="t2">Market cap</div>
+        <div class="n" style="font-size:14px;font-weight:700;margin-top:1px">$1,331,042,806</div></div>
+      <div style="flex:1;padding:13px 16px;border-left:1px solid var(--line2)"><div class="t2">24h volume</div>
+        <div class="n" style="font-size:14px;font-weight:700;margin-top:1px">$41,392,793,845</div></div></div>
+  </div>
+
+  <div class="cd"><div class="ch"><b>Markets</b><a>All <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M15 5l-7 7 7 7"/></svg></a></div><div class="rw"><div class="av" style="background:#F7931A">₿</div><div style="min-width:0"><div class="t1">Bitcoin</div><div class="t2 n">BTC</div></div><div class="sp"></div><svg width="58" height="26" viewBox="0 0 58 26" fill="none" style="flex:none"><defs><linearGradient id="g96548" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14B87C" stop-opacity=".22"/><stop offset="1" stop-color="#14B87C" stop-opacity="0"/></linearGradient></defs><path d="M0.0,19.7 L6.4,23.5 L12.9,17.8 L19.3,21.6 L25.8,14.0 L32.2,10.1 L38.7,12.0 L45.1,6.3 L51.6,8.2 L58.0,2.5 L58,26 L0,26 Z" fill="url(#g96548)"/><path d="M0.0,19.7 L6.4,23.5 L12.9,17.8 L19.3,21.6 L25.8,14.0 L32.2,10.1 L38.7,12.0 L45.1,6.3 L51.6,8.2 L58.0,2.5" stroke="#14B87C" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg><div style="text-align:right;min-width:78px"><div class="n t1" style="font-weight:700">$67,412</div><div class="n pls up">+1.82%</div></div></div><div class="rw"><div class="av" style="background:#627EEA">Ξ</div><div style="min-width:0"><div class="t1">Ethereum</div><div class="t2 n">ETH</div></div><div class="sp"></div><svg width="58" height="26" viewBox="0 0 58 26" fill="none" style="flex:none"><defs><linearGradient id="g76704" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E0393F" stop-opacity=".22"/><stop offset="1" stop-color="#E0393F" stop-opacity="0"/></linearGradient></defs><path d="M0.0,5.5 L6.4,8.5 L12.9,2.5 L19.3,11.5 L25.8,14.5 L32.2,11.5 L38.7,17.5 L45.1,20.5 L51.6,17.5 L58.0,23.5 L58,26 L0,26 Z" fill="url(#g76704)"/><path d="M0.0,5.5 L6.4,8.5 L12.9,2.5 L19.3,11.5 L25.8,14.5 L32.2,11.5 L38.7,17.5 L45.1,20.5 L51.6,17.5 L58.0,23.5" stroke="#E0393F" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg><div style="text-align:right;min-width:78px"><div class="n t1" style="font-weight:700">$3,204</div><div class="n pls dn">−0.61%</div></div></div><div class="rw"><div class="av" style="background:#C8A24A">Au</div><div style="min-width:0"><div class="t1">Gold</div><div class="t2 n">XAUUSD</div></div><div class="sp"></div><svg width="58" height="26" viewBox="0 0 58 26" fill="none" style="flex:none"><defs><linearGradient id="g94233" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14B87C" stop-opacity=".22"/><stop offset="1" stop-color="#14B87C" stop-opacity="0"/></linearGradient></defs><path d="M0.0,23.5 L6.4,20.0 L12.9,23.5 L19.3,16.5 L25.8,13.0 L32.2,16.5 L38.7,9.5 L45.1,13.0 L51.6,6.0 L58.0,2.5 L58,26 L0,26 Z" fill="url(#g94233)"/><path d="M0.0,23.5 L6.4,20.0 L12.9,23.5 L19.3,16.5 L25.8,13.0 L32.2,16.5 L38.7,9.5 L45.1,13.0 L51.6,6.0 L58.0,2.5" stroke="#14B87C" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg><div style="text-align:right;min-width:78px"><div class="n t1" style="font-weight:700">2,412.30</div><div class="n pls up">+0.41%</div></div></div><div class="rw"><div class="av" style="background:#9945FF">S</div><div style="min-width:0"><div class="t1">Solana</div><div class="t2 n">SOL</div></div><div class="sp"></div><svg width="58" height="26" viewBox="0 0 58 26" fill="none" style="flex:none"><defs><linearGradient id="g26884" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14B87C" stop-opacity=".22"/><stop offset="1" stop-color="#14B87C" stop-opacity="0"/></linearGradient></defs><path d="M0.0,23.5 L6.4,20.9 L12.9,22.2 L19.3,16.9 L25.8,14.3 L32.2,15.6 L38.7,10.4 L45.1,6.4 L51.6,7.8 L58.0,2.5 L58,26 L0,26 Z" fill="url(#g26884)"/><path d="M0.0,23.5 L6.4,20.9 L12.9,22.2 L19.3,16.9 L25.8,14.3 L32.2,15.6 L38.7,10.4 L45.1,6.4 L51.6,7.8 L58.0,2.5" stroke="#14B87C" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg><div style="text-align:right;min-width:78px"><div class="n t1" style="font-weight:700">$158.90</div><div class="n pls up">+4.10%</div></div></div><div class="rw"><div class="av" style="background:#2C6FD1">€</div><div style="min-width:0"><div class="t1">Euro / Dollar</div><div class="t2 n">EURUSD</div></div><div class="sp"></div><svg width="58" height="26" viewBox="0 0 58 26" fill="none" style="flex:none"><defs><linearGradient id="g94021" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E0393F" stop-opacity=".22"/><stop offset="1" stop-color="#E0393F" stop-opacity="0"/></linearGradient></defs><path d="M0.0,5.5 L6.4,8.5 L12.9,2.5 L19.3,11.5 L25.8,14.5 L32.2,11.5 L38.7,17.5 L45.1,20.5 L51.6,17.5 L58.0,23.5 L58,26 L0,26 Z" fill="url(#g94021)"/><path d="M0.0,5.5 L6.4,8.5 L12.9,2.5 L19.3,11.5 L25.8,14.5 L32.2,11.5 L38.7,17.5 L45.1,20.5 L51.6,17.5 L58.0,23.5" stroke="#E0393F" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg><div style="text-align:right;min-width:78px"><div class="n t1" style="font-weight:700">1.0842</div><div class="n pls dn">−0.12%</div></div></div></div>
+  <div class="cd"><div class="ch"><b>Top exchanges</b><a>Full ranking <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M15 5l-7 7 7 7"/></svg></a></div><div class="rw"><span class="rk top">1</span><div class="sq" style="background:#F0B90B;color:#0D1421">B</div><div style="min-width:0"><div class="t1" style="font-weight:700">Binance</div><div class="t2">Taker fee 0.10%</div></div><div class="sp"></div><span class="tg g">Proof of reserves</span><span class="sc">8.9</span></div><div class="rw"><span class="rk top">2</span><div class="sq" style="background:#1652F0;color:#fff">CB</div><div style="min-width:0"><div class="t1" style="font-weight:700">Coinbase</div><div class="t2">Taker fee 0.60%</div></div><div class="sp"></div><span class="tg g">Public company</span><span class="sc">8.7</span></div><div class="rw"><span class="rk top">3</span><div class="sq" style="background:#5741D9;color:#fff">KR</div><div style="min-width:0"><div class="t1" style="font-weight:700">Kraken</div><div class="t2">Taker fee 0.26%</div></div><div class="sp"></div><span class="tg g">Proof of reserves</span><span class="sc">8.5</span></div><div class="rw"><span class="rk">4</span><div class="sq" style="background:#F7A600;color:#0D1421">BY</div><div style="min-width:0"><div class="t1" style="font-weight:700">Bybit</div><div class="t2">Taker fee 0.10%</div></div><div class="sp"></div><span class="tg g">Proof of reserves</span><span class="sc">8.2</span></div></div>
+
+  <div class="cd">
+    <div class="ch"><b>Memecoin radar</b><span class="lv"><i></i>last 24h</span></div><div class="rw" style="align-items:flex-start"><div class="av" style="background:#7C5CD6">W</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:7px"><span class="t1" style="font-weight:700">WIFHAT</span><span class="t2">Solana · 1d old</span><div class="sp"></div><span class="n pls up">+86%</span></div><div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap"><span class="tg g">LP locked</span><span class="tg g">Mint revoked</span><span class="tg g">Top10 18%</span><span class="tg b">Safety 82</span></div></div></div><div class="rw" style="align-items:flex-start"><div class="av" style="background:#2FA97C">P</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:7px"><span class="t1" style="font-weight:700">PEPE2</span><span class="t2">Solana · 3h old</span><div class="sp"></div><span class="n pls up">+412%</span></div><div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap"><span class="tg g">LP locked</span><span class="tg g">Mint revoked</span><span class="tg w">Top10 41%</span><span class="tg b">Safety 68</span></div></div></div><div class="rw" style="align-items:flex-start"><div class="av" style="background:#C0392B">D</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:7px"><span class="t1" style="font-weight:700">DOGEKING</span><span class="t2">BSC · 40m old</span><div class="sp"></div><span class="n pls dn">−31%</span></div><div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap"><span class="tg r">Honeypot risk</span><span class="tg r">Top10 88%</span><span class="tg b">Safety 14</span></div></div></div>
+    <div style="margin-top:12px;padding:10px 12px;background:var(--wnbg);border-radius:11px;display:flex;gap:8px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--wn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 8.5v4.5M12 16.5h.01"/><circle cx="12" cy="12" r="8.5"/></svg><span class="t2" style="color:#8A6420;line-height:1.65">Safety is a contract audit, not a price call. A high score can still go to zero.</span></div>
+  </div>
+
+  <div class="cd"><div class="ch"><b>News</b><a>All <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M15 5l-7 7 7 7"/></svg></a></div><div class="rw" style="align-items:flex-start"><div style="flex:1;min-width:0"><div class="t2" style="margin-bottom:4px">Decrypt</div><div style="font-size:13.5px;font-weight:600;line-height:1.55;letter-spacing:-.01em">CySEC suspends a major broker licence; withdrawals frozen</div><div class="t2" style="margin-top:5px">12 min ago</div></div><div style="width:74px;height:60px;border-radius:11px;background:linear-gradient(135deg,#1E3A5F,#0F1E33);flex:none"></div></div><div class="rw" style="align-items:flex-start"><div style="flex:1;min-width:0"><div class="t2" style="margin-bottom:4px">Bloomberg</div><div style="font-size:13.5px;font-weight:600;line-height:1.55;letter-spacing:-.01em">Bitcoin ETF sees a third straight day of net inflows</div><div class="t2" style="margin-top:5px">1 hr ago</div></div><div style="width:74px;height:60px;border-radius:11px;background:linear-gradient(135deg,#14533C,#0B2A20);flex:none"></div></div><div class="rw" style="align-items:flex-start"><div style="flex:1;min-width:0"><div class="t2" style="margin-bottom:4px">Reuters</div><div style="font-size:13.5px;font-weight:600;line-height:1.55;letter-spacing:-.01em">FTMO changes its consistency rule — who it affects</div><div class="t2" style="margin-top:5px">3 hrs ago</div></div><div style="width:74px;height:60px;border-radius:11px;background:linear-gradient(135deg,#5A3A14,#2E1E0B);flex:none"></div></div></div>
+
+  <div class="cd">
+    <div class="ch"><b>Today's calendar</b><a>This week <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M15 5l-7 7 7 7"/></svg></a></div>
+    <div style="background:var(--dnbg);border-radius:12px;padding:11px 12px;display:flex;align-items:center;gap:11px;margin-bottom:10px">
+      <div style="text-align:center;flex:none"><div class="n" style="font-size:13px;font-weight:800;color:var(--dn)">16:00</div>
+        <div class="t2" style="font-size:9.5px;color:var(--dn)">in 1:28</div></div>
+      <div style="width:1px;height:30px;background:rgba(224,57,63,.22);flex:none"></div>
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">US Non-Farm Payrolls</div>
+        <div class="t2 n" style="margin-top:1px">Forecast 185K · Previous 216K</div></div>
+      <span class="tg r">High</span></div>
+    <div class="rw"><div class="n t2" style="width:40px;flex:none">17:45</div><span class="tg">USD</span>
+      <span style="font-size:13px;flex:1">Services PMI</span><span class="n t2">51.2 / 51.7</span></div>
+    <div class="rw"><div class="n t2" style="width:40px;flex:none">21:00</div><span class="tg">USD</span>
+      <span style="font-size:13px;flex:1">Baker Hughes rig count</span><span class="n t2">486 / 484</span></div>
+  </div>
+</div></div>
+</x-dc>
+</body>
+</html>
