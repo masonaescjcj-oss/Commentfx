@@ -35,12 +35,14 @@ jobs:
       - name: Probe every upstream
         id: probe
         continue-on-error: true
-        # `shell: bash` is not redundant: the default shell runs without
-        # pipefail, so `tee` would report success no matter what the probe
-        # exited with -- and this job would have gone green through every
-        # broken parser it exists to catch. It did, once.
+        # Two things are deliberate here. `shell: bash` is not redundant: the
+        # default shell runs without pipefail, so `tee` would report success
+        # whatever the probe exited with, and this job would have gone green
+        # through every broken parser it exists to catch. It did, once.
+        # And node runs the script directly rather than through pnpm, so a
+        # non-zero exit does not paste a pnpm stack trace into the report.
         shell: bash
-        run: pnpm --filter @commentfx/ingest probe | tee probe.txt
+        run: node --experimental-strip-types packages/ingest/src/probe.ts | tee probe.txt
 
       - name: Report
         uses: actions/github-script@v7
@@ -122,10 +124,9 @@ jobs:
       - name: Compare published licences against the registers
         id: registers
         continue-on-error: true
-        # See the note on the probe step: without pipefail, tee swallows the
-        # exit code and no finding is ever reported.
+        # See the note on the probe step for both of these.
         shell: bash
-        run: pnpm --filter @commentfx/ingest registers:report | tee registers.txt
+        run: node --experimental-strip-types packages/ingest/src/registers/report.ts | tee registers.txt
 
       - name: Report findings
         uses: actions/github-script@v7
@@ -137,7 +138,7 @@ jobs:
 
             await core.summary
               .addHeading(problems ? 'A licence needs an editor' : 'Every licence matches its register')
-              .addRaw(output.replace(/^> .*$/gm, ''))
+              .addRaw(output)
               .write();
 
             if (!problems) return;
@@ -154,11 +155,9 @@ jobs:
             // issue that grows a duplicate comment every morning gets muted,
             // and a muted issue is the same as no issue.
             const body = [
-              'These licences did not match the regulator’s own register. Nothing has been',
-              'changed on the site — a register disagreeing with us is a question for a',
-              'person, not a correction to apply automatically.',
+              'These licences did not match the regulator’s own register.',
               '',
-              output.replace(/^> .*$/gm, '').trim(),
+              output.trim(),
               '',
               `Last checked: ${new Date().toISOString()}`,
             ].join('\n');
