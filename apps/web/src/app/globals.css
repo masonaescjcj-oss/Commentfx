@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Surfaces ─────────────────────────────────────────── */
+  --color-bg:      #F1F2F4;
+  --color-card:    #FFFFFF;
+  --color-card-2:  #F8F9FB;
+  --color-card-3:  #EFF2F6;
+  --color-line:    #EAEDF2;
+  --color-line-2:  #F2F4F7;
+
+  /* ── Text ─────────────────────────────────────────────── */
+  --color-ink:     #0D1421;
+  --color-ink-2:   #58667E;
+  --color-ink-3:   #9AA3B5;
+
+  /* ── Accent: brass. Scores, ranks 1–3, links. Never a button. */
+  --color-brass:    #A87528;
+  --color-brass-2:  #835A18;
+  --color-brass-bg: #FBF4E4;
+
+  /* ── Market semantics. Never used for UI chrome. ──────── */
+  --color-up:      #14B87C;
+  --color-up-bg:   #E4F7EF;
+  --color-down:    #E0393F;
+  --color-down-bg: #FDEBEB;
+  --color-warn:    #BE7A09;
+  --color-warn-bg: #FDF3DC;
+
+  --radius-card: 16px;
+  --shadow-card: 0 1px 2px rgb(13 20 33 / 0.04), 0 6px 18px -10px rgb(13 20 33 / 0.10);
+
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-bricolage), var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Digits must not jitter as prices tick, and columns must line up. */
+  .tnum { font-variant-numeric: tabular-nums; letter-spacing: -0.005em; }
+  :focus-visible { outline: 2px solid var(--color-ink); outline-offset: 2px; border-radius: 4px; }
+  ::selection { background: var(--color-brass-bg); }
+}

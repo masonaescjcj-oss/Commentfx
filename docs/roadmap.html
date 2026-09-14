@@ -135,6 +135,10 @@ footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-si
     <div style="grid-column:span 3;background:#A87528">۴ درآمد</div>
     <div style="grid-column:span 2;background:#0D1421">۵ انتشار</div>
   </div>
+  <div class="callout" style="margin-top:26px"><span>📌</span><div><b>دو تصمیم که این رودمپ را عوض کرد:</b>
+  <b>اسپرد زندهٔ MT5 حذف شد</b> — زیرساخت VPS ویندوز و EA کنار رفت. به‌جایش هزینهٔ معاملهٔ <em>اعلام‌شدهٔ</em> هر بروکر با تاریخ آخرین بازبینی انسانی نشان داده می‌شود.
+  <b>فقط منابع رایگان</b> — CoinGecko سطح رایگان، DefiLlama، GeckoTerminal، GoPlus، Deribit، alternative.me، و تقویم از برنامهٔ انتشار رسمی نهادها. هیچ API پولی.
+  بودجهٔ ماهانه از ~$۱۹۰ به ~$۸۰ رسید.</div></div>
 </header>
 
 <div class="layout">
@@ -156,13 +160,13 @@ footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-si
     <div class="card flat"><b>تیم پیشنهادی (۱۶ هفته)</b>
       <ul style="margin-top:8px;font-size:14px">
         <li><b>یک توسعه‌دهندهٔ فول‌استک</b> — Next.js + Postgres؛ صاحب فرانت و API</li>
-        <li><b>یک توسعه‌دهندهٔ بک‌اند/دیتا</b> — worker ها، ingest، اسکرپرها، MT5 EA</li>
+        <li><b>یک توسعه‌دهندهٔ بک‌اند/دیتا</b> — worker ها، ingest، اسکرپرهای رگولاتور</li>
         <li><b>یک نفر محتوا و دیتا</b> — ورود ۴۲ بروکر، مقالات، روش‌شناسی، مدیریت انجمن از فاز ۳</li>
         <li>طراحی: انجام شده — توکن‌ها در <code>design-web/README.md</code></li></ul></div>
     <div class="card flat"><b>اگر تنها هستید</b>
       <ul style="margin-top:8px;font-size:14px">
         <li>همین ترتیب فازها، ولی <b>۲۴ هفته</b> — نه ۱۶</li>
-        <li>فاز ۲ را نصف کنید: اول فقط CoinGecko و تقویم؛ اسپرد زنده و رگولاتور واچر بعد از انتشار</li>
+        <li>فاز ۲ را نصف کنید: اول فقط CoinGecko و تقویم؛ رگولاتور واچر و رادار میم‌کوین بعد از انتشار</li>
         <li>فاز ۳ را به «نظر + گزارش وضعیت» محدود کنید؛ سیگنال و لیدربورد بعد از انتشار</li>
         <li>ورود دیتای بروکرها را برون‌سپاری کنید — ۴۲ بروکر × ۴۰ فیلد، کار یک هفتهٔ تمام است</li></ul></div>
   </div>
@@ -203,7 +207,7 @@ footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-si
 │   ├── db/           <span class="c">Drizzle schema + migrations + seed</span>
 │   ├── core/         <span class="c">تایپ‌ها، موتور امتیاز بروکر، رادار ریسک، امتیاز سیگنال، امتیاز امنیت میم‌کوین</span>
 │   ├── ui/           <span class="c">توکن‌ها + کامپوننت‌ها (وب و بعداً اپ)</span>
-│   ├── ingest/       <span class="c">کانکتورها: CoinGecko، GeckoTerminal، GoPlus، Finnhub، Deribit، رگولاتورها</span>
+│   ├── ingest/       <span class="c">کانکتورها: CoinGecko، GeckoTerminal، GoPlus، Deribit، DefiLlama، رگولاتورها — همه رایگان</span>
 │   └── config/       <span class="c">eslint، tsconfig، tailwind preset</span>
 ├── infra/            <span class="c">docker-compose (dev)، fly.toml، اسکریپت VPS برای MT5</span>
 ├── design/  design-web/  docs/
@@ -324,30 +328,30 @@ footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-si
     <div class="ph-h"><span class="num">2</span><div><h3>دیتای زنده و اعتماد</h3><div class="goal">هدف: هر عددی که «زنده» ادعا می‌شود، تایم‌استمپ و منبع داشته باشد</div></div><span class="wk">هفتهٔ 6–8</span></div>
     <div class="tracks">
       <div class="track"><h4><i style="background:var(--pd)"></i>محصول</h4><ul>
-        <li>۵ نماد اسپرد: EURUSD، XAUUSD، GBPUSD، BTCUSD، US30</li>
+        <li>فرمول امتیاز ۶ مؤلفه‌ای قفل شد — وزن‌ها در <code>packages/core/src/score.ts</code></li>
         <li>فرمول رادار ریسک (وزن تقویم، آنلاک، انقضا، فاندینگ) — مستند</li>
         <li>لیست رگولاتورهای مانیتور و درجهٔ A/B/C</li>
         <li>آستانهٔ ایندکس میم‌کوین (نقدینگی ≥ $10K)</li></ul></div>
       <div class="track"><h4><i style="background:var(--fe)"></i>فرانت</h4><ul>
-        <li>جدول اسپرد زنده + نمودار ۳۰ روزه + رتبه در صفحهٔ بروکر و لیست</li>
+        <li>هزینهٔ کل (اسپرد + کمیسیون) در یک عدد، با تاریخ آخرین بازبینی</li>
         <li>نقشهٔ Entity با انتخاب کشور (کوکی برای یادآوری)</li>
         <li>نشان وضعیت ۲۴ ساعته (فعلاً از دیتای رگولاتور و آپ‌تایم)</li>
         <li>رادار میم‌کوین با چیپ‌های امنیت و سورت</li>
         <li>تقویم اقتصادی + شمارش معکوس + تفسیر یک‌خطی</li>
         <li>رادار ریسک در هوم؛ لاگ تغییر قوانین پراپ؛ فید آلرت رگولاتور</li></ul></div>
       <div class="track"><h4><i style="background:var(--be)"></i>بک‌اند</h4><ul>
-        <li><b>اسپرد:</b> ۳ VPS ویندوز با MT5 دمو + EA که هر ۶۰ث POST می‌کند → hypertable → continuous aggregate روزانه</li>
+        <li><b>هزینهٔ اعلام‌شده:</b> بازبینی ماهانهٔ صفحات شرایط بروکرها در ادمین؛ هر فیلد تأییدنشده در سایت برچسب می‌خورد</li>
         <li><b>رگولاتور واچر:</b> Playwright روزانه ۵ رجیستری → snapshot → diff → <code>regulator_alerts</code></li>
         <li><b>پراپ رول ترکر:</b> fetch + normalize + diff هفتگی</li>
         <li><b>میم‌کوین:</b> GeckoTerminal new pools هر ۵ دقیقه → GoPlus → امتیاز امنیت</li>
-        <li><b>تقویم:</b> Finnhub/FMP روزانه + مدل زبانی برای تفسیر high-impact (کش‌شده)</li>
+        <li><b>تقویم:</b> برنامهٔ انتشار رسمی BLS/Fed/ECB به‌صورت seed + مقادیر واقعی از FRED (رایگان)</li>
         <li><b>رادار ریسک:</b> cron ساعتی؛ Deribit برای انقضا؛ DefiLlama برای آنلاک</li>
         <li>هر ingest → <code>ingest_runs</code>؛ آلرت به تلگرام مدیر اگر ۲ اجرا پشت هم fail</li></ul></div>
       <div class="track"><h4><i style="background:var(--ad)"></i>ادمین</h4><ul>
         <li>داشبورد سلامت دیتا: هر منبع، آخرین اجرا، تازگی، خطاها، نمودار</li>
         <li>override دستی: entity mapping، امتیاز، وضعیت بروکر</li>
         <li>صف بازبینی آلرت رگولاتور → تأیید → انتشار خودکار خبر</li>
-        <li>مدیریت اکانت‌های دمو و VPS ها (کدام بروکر، آخرین تیک)</li>
+        <li>صف بازبینی هزینه: کدام بروکر بیش از ۳۰ روز بازبینی نشده</li>
         <li>ویرایش دستی رویداد تقویم و تفسیرش</li></ul></div>
     </div>
     <div class="dod"><b>DoD:</b><span>۷ روز پیاپی بدون قطعی ingest</span><span>هر عدد زنده تایم‌استمپ دارد</span><span>نقشهٔ Entity برای ۴۲ بروکر کامل</span><span>اولین آلرت رگولاتور واقعی گرفته شده</span></div>
@@ -531,12 +535,12 @@ footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-si
     <tr><th>جاب</th><th>منبع</th><th>تناوب</th><th>خروجی</th><th>فاز</th></tr>
     <tr><td><b>coin_prices</b></td><td>CoinGecko</td><td class="n">60s</td><td><code>coin_prices</code> hypertable</td><td>۱</td></tr>
     <tr><td><b>coin_meta</b></td><td>CoinGecko</td><td>روزانه</td><td><code>coins</code></td><td>۱</td></tr>
-    <tr><td><b>spread_tick</b></td><td>MT5 EA (۳ VPS) → webhook</td><td class="n">60s</td><td><code>spreads</code> → <code>spread_daily</code></td><td>۲</td></tr>
+    <tr><td><b>cost_review</b></td><td>صفحات شرایط بروکرها (بازبینی انسانی در ادمین)</td><td>ماهانه</td><td><code>verifiedAt</code> — فیلد تأییدنشده در سایت علامت می‌خورد</td><td>۱</td></tr>
     <tr><td><b>regulator_watch</b></td><td>FCA, CySEC, ASIC, FSCA, FSC-MU (Playwright)</td><td>روزانه ۰۶:۰۰</td><td><code>regulator_snapshots</code> → diff → <code>regulator_alerts</code></td><td>۲</td></tr>
     <tr><td><b>prop_rules_diff</b></td><td>صفحهٔ قوانین هر پراپ</td><td>هفتگی</td><td><code>prop_rule_changes</code></td><td>۲</td></tr>
     <tr><td><b>memecoin_scan</b></td><td>GeckoTerminal new pools + GoPlus</td><td class="n">5m</td><td><code>memecoins</code>, <code>memecoin_audits</code></td><td>۲</td></tr>
-    <tr><td><b>calendar_sync</b></td><td>Finnhub / FMP</td><td>روزانه + ۱۵ دقیقه بعد از رویداد (actual)</td><td><code>calendar_events</code></td><td>۲</td></tr>
-    <tr><td><b>calendar_explain</b></td><td>مدل زبانی روی رویدادهای high-impact</td><td>روزانه</td><td>تفسیر یک‌خطی، کش‌شده</td><td>۲</td></tr>
+    <tr><td><b>calendar_sync</b></td><td>برنامهٔ رسمی BLS / Fed / ECB + FRED</td><td>روزانه + ۱۵ دقیقه بعد از رویداد (actual)</td><td><code>calendar_events</code></td><td>۲</td></tr>
+    <tr><td><b>calendar_explain</b> <span class="tag">اختیاری</span></td><td>مدل زبانی روی رویدادهای high-impact</td><td>روزانه</td><td>تفسیر یک‌خطی، کش‌شده — سایت بدون آن هم کامل است</td><td>۶</td></tr>
     <tr><td><b>risk_radar</b></td><td>تقویم + Deribit + DefiLlama + فاندینگ</td><td>ساعتی</td><td><code>risk_radar_daily</code></td><td>۲</td></tr>
     <tr><td><b>signal_score</b></td><td>سیگنال‌های باز × فید قیمت</td><td class="n">60s</td><td><code>signal_outcomes</code>, <code>trader_stats</code></td><td>۳</td></tr>
     <tr><td><b>status_aggregate</b></td><td><code>status_reports</code></td><td class="n">5m</td><td><code>status_daily</code> + تغییر وضعیت</td><td>۳</td></tr>
@@ -650,15 +654,14 @@ POST /api/revalidate         <span class="c">از ادمین</span></pre></div>
     <tr><td><b>Postgres + Timescale</b></td><td class="n">$25</td><td class="n">$60–100</td><td>Neon / Supabase / یا VPS خودمان</td></tr>
     <tr><td><b>Redis</b></td><td class="n">$10</td><td class="n">$20</td><td>Upstash</td></tr>
     <tr><td><b>Worker + Meilisearch</b></td><td class="n">$20</td><td class="n">$40</td><td>Fly.io یا VPS</td></tr>
-    <tr><td><b>۳× VPS ویندوز برای MT5</b></td><td class="n">$30</td><td class="n">$30</td><td>اسپرد زنده — فاز ۲</td></tr>
     <tr><td><b>R2</b></td><td class="n">$5</td><td class="n">$10</td><td>بدون egress</td></tr>
-    <tr><td><b>CoinGecko</b></td><td class="n">$0</td><td class="n">$129</td><td>رایگان تا سقف؛ Analyst بعداً</td></tr>
-    <tr><td><b>تقویم (Finnhub/FMP)</b></td><td class="n">$0</td><td class="n">$50</td><td>—</td></tr>
+    <tr><td><b>CoinGecko</b></td><td class="n">$0</td><td class="n">$0</td><td>سطح رایگان + کش سمت ما</td></tr>
+    <tr><td><b>تقویم</b></td><td class="n">$0</td><td class="n">$0</td><td>برنامهٔ رسمی BLS / Fed / ECB + FRED رایگان</td></tr>
     <tr><td><b>Resend</b></td><td class="n">$20</td><td class="n">$90</td><td>خبرنامه + آلرت</td></tr>
     <tr><td><b>Sentry + BetterStack + PostHog</b></td><td class="n">$40</td><td class="n">$80</td><td>—</td></tr>
     <tr><td><b>Cloudflare</b></td><td class="n">$0</td><td class="n">$20</td><td>WAF Pro اختیاری</td></tr>
-    <tr><td><b>مدل زبانی</b></td><td class="n">$20</td><td class="n">$60</td><td>تفسیر تقویم + خبرنامه، کش‌شده</td></tr>
-    <tr><td><b>جمع</b></td><td class="n"><b>~$190</b></td><td class="n"><b>~$600–700</b></td><td>بدون حقوق تیم</td></tr>
+    <tr><td><b>مدل زبانی</b> <span class="tag">اختیاری</span></td><td class="n">$0</td><td class="n">$20</td><td>فقط اگر تفسیر خودکار خواستید — بدون آن هم سایت کامل است</td></tr>
+    <tr><td><b>جمع</b></td><td class="n"><b>~$80</b></td><td class="n"><b>~$250–320</b></td><td>بدون حقوق تیم · هیچ API پولی</td></tr>
   </table></div>
   <p style="margin-top:12px;font-size:14px">اگر همه‌چیز روی یک VPS قوی با Coolify باشد (Postgres، Redis، Meili، worker، حتی Next.js): حدود <span class="n">$60–80</span> در ماه — ولی خودتان مسئول بکاپ و آپ‌تایم هستید.</p>
 </section>
@@ -667,7 +670,7 @@ POST /api/revalidate         <span class="c">از ادمین</span></pre></div>
 <section id="risks">
   <div class="sh"><span class="k">11</span><h2>ریسک‌ها و پاسخ</h2></div>
   <div class="grid2">
-    <div class="card flat"><b>EA های MT5 ناپایدارند</b><p style="font-size:14px;margin-top:6px">VPS ری‌استارت می‌شود، بروکر اکانت دمو را می‌بندد، اتصال قطع می‌شود. <b>پاسخ:</b> heartbeat هر دقیقه؛ اگر ۵ دقیقه تیک نیامد، جدول اسپرد آن بروکر «به‌روزرسانی متوقف» نشان می‌دهد نه عدد کهنه. اکانت‌های دمو را هر ۳۰ روز تازه کنید.</p></div>
+    <div class="card flat"><b>دیتای اعلام‌شده کهنه می‌شود</b><p style="font-size:14px;margin-top:6px">بروکرها اسپرد و حداقل واریز را بی‌اعلان عوض می‌کنند. <b>پاسخ:</b> هر فیلد یک <code>verifiedAt</code> دارد؛ سایت هر چیزی را که تأیید نشده یا بیش از ۹۰ روز از بازبینی‌اش گذشته علامت می‌زند.</p></div>
     <div class="card flat"><b>منابع دیتا ToS دارند</b><p style="font-size:14px;margin-top:6px">API رسمی همیشه بر اسکرپ ارجح است. اسکرپ فقط برای رجیستری رگولاتورها (دیتای عمومی، تناوب روزانه، user-agent شفاف). کش کنید تا سقف‌ها را نزنید.</p></div>
     <div class="card flat"><b>اسپم و ریویوی جعلی</b><p style="font-size:14px;margin-top:6px">روز اول شروع می‌شود. <b>پاسخ:</b> نشان تأیید فقط با استیتمنت؛ نظر بدون تأیید در رتبه اثر ندارد؛ Turnstile؛ rate limit؛ shadow-ban؛ تشخیص چند حساب. بودجهٔ مدیریت را از فاز ۳ در نظر بگیرید.</p></div>
     <div class="card flat"><b>بروکرها فشار می‌آورند</b><p style="font-size:14px;margin-top:6px">درخواست حذف نظر، تهدید حقوقی. <b>پاسخ:</b> سیاست مکتوب و عمومی: حذف فقط با نقض قوانین. فرآیند claim و پاسخ رسمی. همهٔ رتبه‌ها با فرمول عمومی قابل دفاع.</p></div>
