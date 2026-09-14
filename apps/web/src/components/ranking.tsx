@@ -22,7 +22,16 @@ export function RankingIntro({ title, lead, count, unit, sortedBy }: {
 }
 
 /** One row of any ranking: rank, logo, name, score, a why line, then facts. */
-export function RankRow({ rank, href, logo, name, score, why, facts }: {
+/**
+ * The heading level for each row's company name.
+ *
+ * It depends on where the row is: on a ranking page the list IS the page, so
+ * each company sits directly under the h1; inside a "Compare" or "Other firms"
+ * card it sits under that card's own h2. The component cannot know which, so
+ * the caller says, and the default is the nested case.
+ */
+export function RankRow({ rank, href, logo, name, score, why, facts, headingLevel = 3 }: {
+  headingLevel?: 2 | 3;
   rank: number;
   href: string;
   logo: { initials: string; bg: string; fg: string };
@@ -31,15 +40,16 @@ export function RankRow({ rank, href, logo, name, score, why, facts }: {
   why: string;
   facts: Array<{ label: string; value: string; tone?: 'neutral' | 'good' | 'bad' | 'warn' | 'brass' }>;
 }) {
+  const H = `h${headingLevel}` as 'h2' | 'h3';
   return (
     <article className="flex items-start gap-[10px] py-[14px] border-b border-line-2 last:border-b-0">
       <RankBadge rank={rank} />
       <Logo {...logo} />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <h3 className="text-[15.5px] font-bold tracking-[-0.01em]">
+          <H className="text-[15.5px] font-bold tracking-[-0.01em]">
             <Link href={href} className="hover:text-brass">{name}</Link>
-          </h3>
+          </H>
           <div className="flex-1" />
           <Score value={score} size="lg" />
         </div>

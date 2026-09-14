@@ -37,3 +37,20 @@ jobs:
       # being checked here is that every page still builds.
       - name: Build
         run: pnpm build
+
+      # A palette that looks restrained on a designer's monitor can be
+      # unreadable on a phone outdoors. The first run of this found twenty
+      # distinct failing colour pairs, body text among them at 2.2:1, so it
+      # runs on every push rather than when someone remembers.
+      - name: Install the browser the audit needs
+        run: npx playwright install --with-deps chromium
+
+      - name: Accessibility audit
+        shell: bash
+        run: |
+          pnpm --filter @commentfx/web start &
+          for i in $(seq 1 40); do
+            curl -sf -o /dev/null http://127.0.0.1:3000/ && break
+            sleep 1
+          done
+          AUDIT_BASE=http://127.0.0.1:3000 pnpm --filter @commentfx/web audit:a11y

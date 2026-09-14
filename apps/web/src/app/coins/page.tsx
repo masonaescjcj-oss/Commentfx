@@ -42,9 +42,9 @@ export default async function CoinsPage() {
                     {/* Upstream logo, sized to prevent layout shift. */}
                     <img src={c.image} alt="" width={28} height={28} loading="lazy" decoding="async" className="rounded-full shrink-0" />
                     <div className="min-w-0">
-                      <h3 className="text-[13.5px] font-semibold leading-tight">
+                      <h2 className="text-[13.5px] font-semibold leading-tight">
                         <Link href={`/coins/${c.id}`} className="hover:text-brass">{c.name}</Link>
-                      </h3>
+                      </h2>
                       <p className="text-[11px] text-ink-3 tnum">{c.symbol}</p>
                     </div>
                     <div className="flex-1" />

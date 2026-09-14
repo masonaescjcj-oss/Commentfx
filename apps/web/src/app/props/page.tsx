@@ -44,6 +44,7 @@ export default function PropsPage() {
         <Card className="px-4">
           {list.map((r) => (
             <RankRow
+              headingLevel={2}
               key={r.firm.slug}
               rank={r.rank}
               href={`/props/${r.firm.slug}`}

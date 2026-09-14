@@ -14,3 +14,4 @@ export * from './incidents.ts';
 export * from './calendar.ts';
 export * from './releases.ts';
 export * from './reviews.ts';
+export * from './contrast.ts';

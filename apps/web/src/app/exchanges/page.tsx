@@ -44,6 +44,7 @@ export default function ExchangesPage() {
         <Card className="px-4">
           {list.map((r) => (
             <RankRow
+              headingLevel={2}
               key={r.exchange.slug}
               rank={r.rank}
               href={`/exchanges/${r.exchange.slug}`}

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { legibleTile } from '@commentfx/core';
 
 export function Card({ children, className = '', as: As = 'div', id }: {
   children: ReactNode; className?: string; as?: 'div' | 'section' | 'article';
@@ -69,11 +70,15 @@ export function Tag({ children, tone = 'neutral' }: {
 export function Logo({ initials, bg, fg, size = 40 }: {
   initials: string; bg: string; fg: string; size?: number;
 }) {
+  // The brand's own pairing is the preference, not the last word: these colours
+  // arrive as data and several of them put white text on a mid-tone fill that
+  // nobody can read. legibleTile keeps the hue and fixes the rest.
+  const tile = legibleTile(bg, fg);
   return (
     <span
       aria-hidden
       className="grid place-items-center shrink-0 font-extrabold rounded-xl"
-      style={{ width: size, height: size, background: bg, color: fg, fontSize: size * 0.32 }}
+      style={{ width: size, height: size, background: tile.bg, color: tile.fg, fontSize: size * 0.32 }}
     >
       {initials}
     </span>

@@ -39,7 +39,14 @@ export function Header({ active }: { active?: string }) {
   );
 }
 
-/** Visible breadcrumbs. The matching JSON-LD is emitted by each page. */
+/**
+ * Visible breadcrumbs. The matching JSON-LD is emitted by each page.
+ *
+ * The links carry vertical padding pulled back by an equal negative margin:
+ * the hit area clears the 24px minimum without the row growing or anything
+ * moving. 11.5px text is 19px tall on its own, which is a small thing to ask a
+ * thumb to find.
+ */
 export function Breadcrumbs({ trail }: { trail: Array<{ name: string; path: string }> }) {
   return (
     <nav aria-label="Breadcrumb" className="text-[11.5px] text-ink-3 px-1 pb-1">
@@ -50,7 +57,9 @@ export function Breadcrumbs({ trail }: { trail: Array<{ name: string; path: stri
             {i === trail.length - 1 ? (
               <span className="text-ink-2">{t.name}</span>
             ) : (
-              <Link href={t.path} className="hover:text-ink">{t.name}</Link>
+              <Link href={t.path} className="hover:text-ink inline-block py-[4px] -my-[4px]">
+                {t.name}
+              </Link>
             )}
           </li>
         ))}
@@ -62,14 +71,26 @@ export function Breadcrumbs({ trail }: { trail: Array<{ name: string; path: stri
 export function Footer() {
   return (
     <footer className="mt-8 bg-card border-t border-line px-4 py-7 text-[12.5px] text-ink-2">
-      <div className="flex flex-wrap gap-x-6 gap-y-2 mb-5">
-        <Link href="/methodology" className="font-semibold text-ink">How we score</Link>
-        <Link href="/status" className="font-semibold text-ink">Broker status</Link>
-        <Link href="/reviews" className="font-semibold text-ink">Reviews</Link>
-        <Link href="/best/lowest-spread">Lowest cost</Link>
-        <Link href="/best/tier-1-regulated">Tier-1 regulated</Link>
-        <Link href="/best/low-minimum-deposit">Low minimum</Link>
-        <Link href="/best/fast-withdrawals">Fast withdrawals</Link>
+      {/* Same reason as the breadcrumbs: padded to 24px of hit area, pulled
+          back so the rows stay where they were. */}
+      <div className="flex flex-wrap gap-x-6 gap-y-1 mb-5">
+        {[
+          { href: '/methodology', label: 'How we score', strong: true },
+          { href: '/status', label: 'Broker status', strong: true },
+          { href: '/reviews', label: 'Reviews', strong: true },
+          { href: '/best/lowest-spread', label: 'Lowest cost' },
+          { href: '/best/tier-1-regulated', label: 'Tier-1 regulated' },
+          { href: '/best/low-minimum-deposit', label: 'Low minimum' },
+          { href: '/best/fast-withdrawals', label: 'Fast withdrawals' },
+        ].map((l) => (
+          <Link
+            key={l.href}
+            href={l.href}
+            className={`inline-block py-[4px] ${l.strong ? 'font-semibold text-ink' : ''}`}
+          >
+            {l.label}
+          </Link>
+        ))}
       </div>
       <p className="leading-[1.8] max-w-[60ch] mb-3">
         {SITE.name} earns commission from some brokers when a reader opens an account.

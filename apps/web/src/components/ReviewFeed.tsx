@@ -61,7 +61,7 @@ export function ReviewFeed({ items }: { items: FeedItem[] }) {
                 : 'bg-card-2 text-ink-2 border-line'
             }`}
           >
-            {f.label} <span className="tnum opacity-70">{count(f.key)}</span>
+            {f.label} <span className="tnum font-normal">{count(f.key)}</span>
           </button>
         ))}
       </div>

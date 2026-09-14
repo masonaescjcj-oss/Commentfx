@@ -52,7 +52,7 @@ export default async function BrokersPage() {
         </header>
 
         <Card className="px-4">
-          {list.map((r) => <BrokerRow key={r.broker.slug} r={r} />)}
+          {list.map((r) => <BrokerRow headingLevel={2} key={r.broker.slug} r={r} />)}
         </Card>
 
         <Card className="p-4">

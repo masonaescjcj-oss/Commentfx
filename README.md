@@ -172,6 +172,38 @@ pnpm build                           # all packages
 No database or API key is needed to run the site. Everything renders from the
 seed data in `packages/core/src/data/`.
 
+## Accessibility
+
+`pnpm --filter @commentfx/web audit:a11y` runs axe against the built site on a
+390px viewport, and CI runs it on every push. It is not a formality — the first
+run found **twenty distinct failing colour pairs**, because a palette that looks
+restrained on a designer's monitor is unreadable on a phone outdoors:
+
+| token | was | ratio | now | ratio |
+|---|---|---|---|---|
+| `--ink-3` (secondary text) | `#9AA3B5` | 2.21:1 | `#616C84` | 4.58:1 |
+| `--up` | `#14B87C` | 2.31:1 | `#0E7E55` | 4.56:1 |
+| `--warn` | `#BE7A09` | 3.18:1 | `#9B6307` | 4.55:1 |
+| `--brass` (links) | `#A87528` | 3.66:1 | `#8F6522` | 4.61:1 |
+| `--down` | `#E0393F` | 3.78:1 | `#D22127` | 4.58:1 |
+
+Each ratio is against the darkest surface that colour is actually painted on,
+measured rather than judged by eye, and the numbers are in `globals.css` beside
+the tokens. Two habits went with them: text is never de-emphasised with
+`opacity` (it composites toward the background and takes the contrast with it),
+and links inside a sentence carry an underline, because colour alone is not a
+distinction everyone can see.
+
+Logo tiles are the case a stylesheet cannot fix, because those colours arrive as
+data. `legibleTile` in `packages/core/src/contrast.ts` takes the brand pairing as
+a preference and overrides it when it fails — keeping the hue, switching the text
+to whichever of black or white works, and darkening the tile when neither does. A
+test asserts every logo in the seed data comes out readable.
+
+The audit is also what showed the skip link works: first Tab lands on it at
+122×39, Enter moves focus to `#main`. Worth checking rather than assuming, since
+`sr-only` renders it 1×1 until focused and it is easy to mistake that for a bug.
+
 ## Scheduled jobs
 
 Every parser here fails safe: when a page's markup changes it reports the source

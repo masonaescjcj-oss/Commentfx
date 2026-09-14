@@ -48,7 +48,11 @@ export function EntityMap({ broker }: { broker: Broker }) {
               className={
                 you
                   ? 'border-[1.5px] border-warn bg-[#FFFBF1] rounded-[13px] p-[12px_13px]'
-                  : 'border border-line bg-card-2 rounded-[13px] p-[12px_13px] opacity-80'
+                  // De-emphasised by border and weight, never by opacity:
+                  // fading text composites it towards the background and takes
+                  // the contrast down with it, which is exactly what the
+                  // unselected entities need least.
+                  : 'border border-line bg-card-2 rounded-[13px] p-[12px_13px]'
               }
             >
               <div className="flex items-center gap-2">

@@ -53,7 +53,7 @@ export default async function BestPage({ params }: { params: Promise<Params> }) 
 
         <Card className="px-4">
           {list.map((r) => (
-            <BrokerRow key={r.broker.slug} r={r} extra={{ label: c.metricLabel, value: c.metric(r.broker) }} />
+            <BrokerRow headingLevel={2} key={r.broker.slug} r={r} extra={{ label: c.metricLabel, value: c.metric(r.broker) }} />
           ))}
         </Card>
 

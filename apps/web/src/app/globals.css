@@ -9,22 +9,28 @@
   --color-line:    #EAEDF2;
   --color-line-2:  #F2F4F7;
 
-  /* ── Text ─────────────────────────────────────────────── */
+  /* ── Text ─────────────────────────────────────────────────
+     Every colour below clears 4.5:1 against the darkest surface it is
+     actually painted on, measured rather than judged by eye. The first pass
+     of this palette came straight off the artboards and failed on most of
+     them: --ink-3 sat at 2.2:1, which is a grey that looks restrained on a
+     designer's screen and is unreadable on a phone in daylight. The numbers
+     are in the audit note in README. */
   --color-ink:     #0D1421;
-  --color-ink-2:   #58667E;
-  --color-ink-3:   #9AA3B5;
+  --color-ink-2:   #58667E;   /* 5.05:1 worst case */
+  --color-ink-3:   #616C84;   /* was #9AA3B5 — 2.21:1 */
 
   /* ── Accent: brass. Scores, ranks 1–3, links. Never a button. */
-  --color-brass:    #A87528;
+  --color-brass:    #8F6522;  /* was #A87528 — 3.66:1; 4.61:1 worst case */
   --color-brass-2:  #835A18;
   --color-brass-bg: #FBF4E4;
 
   /* ── Market semantics. Never used for UI chrome. ──────── */
-  --color-up:      #14B87C;
+  --color-up:      #0E7E55;   /* was #14B87C — 2.31:1 */
   --color-up-bg:   #E4F7EF;
-  --color-down:    #E0393F;
+  --color-down:    #D22127;   /* was #E0393F — 3.78:1 */
   --color-down-bg: #FDEBEB;
-  --color-warn:    #BE7A09;
+  --color-warn:    #9B6307;   /* was #BE7A09 — 3.18:1 */
   --color-warn-bg: #FDF3DC;
 
   --radius-card: 16px;
@@ -47,5 +53,9 @@
   /* Digits must not jitter as prices tick, and columns must line up. */
   .tnum { font-variant-numeric: tabular-nums; letter-spacing: -0.005em; }
   :focus-visible { outline: 2px solid var(--color-ink); outline-offset: 2px; border-radius: 4px; }
+  /* A link inside a sentence has to be findable without seeing colour. Links
+     that are their own row -- nav, cards, list items -- are distinguished by
+     position and are left alone. */
+  p a, dd a, li > p a { text-decoration: underline; text-underline-offset: 2px; }
   ::selection { background: var(--color-brass-bg); }
 }
