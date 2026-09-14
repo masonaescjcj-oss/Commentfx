@@ -1,3 +1,4 @@
+import { RELEASES, scheduleNoun } from '@commentfx/core';
 import {
   rankedBrokers, rankedProps, rankedExchanges, BEST_CRITERIA, comparePairs, pairSlug, getBroker,
 } from './repo';
@@ -7,7 +8,7 @@ export interface SearchEntry {
   title: string;
   /** One line of what the reader gets on that page. */
   note: string;
-  group: 'Brokers' | 'Prop firms' | 'Exchanges' | 'Comparisons' | 'Shortlists' | 'Site';
+  group: 'Brokers' | 'Prop firms' | 'Exchanges' | 'Comparisons' | 'Shortlists' | 'Releases' | 'Site';
   /** Extra words worth matching that are not in the title. */
   terms: string;
   score: number | null;
@@ -83,6 +84,17 @@ export function searchIndex(): SearchEntry[] {
     });
   }
 
+  for (const r of RELEASES) {
+    entries.push({
+      path: `/calendar/${r.slug}`,
+      title: `${r.name} ${scheduleNoun(r)}`,
+      note: `Every scheduled date, from the ${r.publisher}`,
+      group: 'Releases',
+      terms: `calendar release schedule ${r.title} ${r.currency}`,
+      score: null,
+    });
+  }
+
   entries.push(
     { path: '/calendar', title: 'Economic calendar', note: 'Release dates and rate decisions from the BLS, the Fed and the ECB', group: 'Site', terms: 'nfp cpi fomc ecb jobs inflation rates news', score: null },
     { path: '/status', title: 'Broker status', note: 'Withdrawal delays and outages reported in the last 24 hours', group: 'Site', terms: 'down outage withdrawal problem incident', score: null },
@@ -98,4 +110,4 @@ export function searchIndex(): SearchEntry[] {
 }
 
 export const GROUP_ORDER: SearchEntry['group'][] =
-  ['Brokers', 'Prop firms', 'Exchanges', 'Comparisons', 'Shortlists', 'Site'];
+  ['Brokers', 'Prop firms', 'Exchanges', 'Comparisons', 'Shortlists', 'Releases', 'Site'];

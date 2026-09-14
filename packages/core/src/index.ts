@@ -12,3 +12,4 @@ export * from './memecoins.ts';
 export * from './name-safety.ts';
 export * from './incidents.ts';
 export * from './calendar.ts';
+export * from './releases.ts';

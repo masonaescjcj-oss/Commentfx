@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { groupByDay, utcDay, IMPACT_RULE, IMPACT_LABEL } from '@commentfx/core';
+import { groupByDay, utcDay, IMPACT_RULE, IMPACT_LABEL, RELEASES } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd, itemListLd } from '@/lib/seo';
 import { calendarData, window14, inWindow, upcomingHigh } from '@/lib/calendar';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
-import { Card, CardHead } from '@/components/primitives';
+import { Card, CardHead, Tag } from '@/components/primitives';
 import { CalendarList } from '@/components/CalendarList';
 import { Unavailable } from '@/components/Unavailable';
 
@@ -129,6 +129,28 @@ export default async function CalendarPage() {
         ) : (
           <CalendarList days={days} todayUtc={today} />
         )}
+
+        <Card className="p-4" as="section">
+          <CardHead title="Every date for one release" />
+          <p className="text-[12px] text-ink-3 leading-[1.8] mb-[10px]">
+            The releases worth a page of their own: the whole forward schedule, what each
+            one measures, and the exact time where the publisher states one.
+          </p>
+          <ul className="flex flex-col">
+            {RELEASES.map((r) => (
+              <li key={r.slug} className="border-b border-line-2 last:border-b-0">
+                <Link href={`/calendar/${r.slug}`} className="flex items-center gap-3 py-[10px] group">
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[13px] font-semibold group-hover:text-brass">{r.name}</span>
+                    <span className="block text-[11.5px] text-ink-3 mt-[2px]">{r.publisher}</span>
+                  </span>
+                  <Tag tone={r.currency === 'USD' ? 'neutral' : 'brass'}>{r.currency}</Tag>
+                  <span aria-hidden className="text-ink-3">›</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Card>
 
         <Card className="p-4" as="section">
           <CardHead title="How impact is graded" href="/methodology" hrefLabel="Method" />

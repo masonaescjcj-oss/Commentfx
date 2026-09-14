@@ -71,6 +71,14 @@ one sentence is what every clock on the page depends on.
 Impact grading is ours, not the institutions'. It is a published list of release
 names rather than a model, deliberately: a list can be argued with.
 
+Seven releases get a page of their own at `/calendar/[release]` — the whole
+forward schedule, what the release measures, and the exact time where the
+publisher states one. The page list is fixed in `packages/core/src/releases.ts`
+rather than derived from whatever the schedule happened to contain at build
+time: a URL that appears and disappears with an upstream fetch is a URL nobody
+can link to. We publish the dates, never the figures — those are authoritative
+at the publisher and nowhere else.
+
 ## Verification
 
 Nothing on this site claims to be checked unless a person checked it and

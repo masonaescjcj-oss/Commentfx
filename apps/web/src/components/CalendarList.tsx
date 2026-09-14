@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { IMPACT_LABEL, type CalendarDay, type CalendarEvent, type Impact } from '@commentfx/core';
+import Link from 'next/link';
+import { IMPACT_LABEL, releaseForTitle, type CalendarDay, type CalendarEvent, type Impact } from '@commentfx/core';
 
 const DOT: Record<Impact, string> = {
   high: 'bg-down',
@@ -85,7 +86,7 @@ export function CalendarList({ days, todayUtc }: { days: CalendarDay[]; todayUtc
                   />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-[13px] font-semibold">{e.title}</span>
+                      <EventTitle event={e} />
                       <span className="text-[10.5px] font-bold text-ink-3 tnum">{e.currency}</span>
                     </div>
                     {e.detail && <p className="text-[11.5px] text-ink-3 mt-[3px] leading-[1.65]">{e.detail}</p>}
@@ -103,6 +104,17 @@ export function CalendarList({ days, todayUtc }: { days: CalendarDay[]; todayUtc
         ))
       )}
     </>
+  );
+}
+
+/** A release with a page of its own links to it; the rest are plain text. */
+function EventTitle({ event }: { event: CalendarEvent }) {
+  const release = releaseForTitle(event.title);
+  if (!release) return <span className="text-[13px] font-semibold">{event.title}</span>;
+  return (
+    <Link href={`/calendar/${release.slug}`} className="text-[13px] font-semibold hover:text-brass">
+      {event.title}
+    </Link>
   );
 }
 

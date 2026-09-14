@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { absoluteUrl } from '@/lib/site';
 import { rankedBrokers, rankedProps, rankedExchanges, BEST_CRITERIA, comparePairs, pairSlug } from '@/lib/repo';
+import { RELEASES } from '@commentfx/core';
 
 /**
  * Generated from the data, never hand-maintained. Priority reflects how much
@@ -43,6 +44,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: 'weekly' as const,
       priority: 0.8,
+    })),
+
+    ...RELEASES.map((r) => ({
+      url: absoluteUrl(`/calendar/${r.slug}`),
+      lastModified: now,
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
     })),
 
     ...BEST_CRITERIA.map((c) => ({
