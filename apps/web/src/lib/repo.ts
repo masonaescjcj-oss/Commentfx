@@ -124,3 +124,35 @@ export function parsePair(slug: string): [string, string] | null {
   if (parts.length !== 2 || !parts[0] || !parts[1]) return null;
   return [parts[0], parts[1]];
 }
+
+/* ── Prop firms ────────────────────────────────────────────────────────── */
+
+import { PROPS, propBySlug, scoreProp, type PropFirm, type PropBreakdown } from '@commentfx/core';
+
+export interface RankedProp { rank: number; firm: PropFirm; score: PropBreakdown }
+
+export function rankedProps(): RankedProp[] {
+  return PROPS
+    .map((firm) => ({ firm, score: scoreProp(firm) }))
+    .sort((a, b) => b.score.total - a.score.total || a.firm.name.localeCompare(b.firm.name))
+    .map((r, i) => ({ rank: i + 1, ...r }));
+}
+
+export const getRankedProp = (slug: string) => rankedProps().find((r) => r.firm.slug === slug);
+export const getProp = propBySlug;
+
+/* ── Exchanges ─────────────────────────────────────────────────────────── */
+
+import { EXCHANGES, exchangeBySlug, scoreExchange, type Exchange, type ExchangeBreakdown } from '@commentfx/core';
+
+export interface RankedExchange { rank: number; exchange: Exchange; score: ExchangeBreakdown }
+
+export function rankedExchanges(): RankedExchange[] {
+  return EXCHANGES
+    .map((exchange) => ({ exchange, score: scoreExchange(exchange) }))
+    .sort((a, b) => b.score.total - a.score.total || a.exchange.name.localeCompare(b.exchange.name))
+    .map((r, i) => ({ rank: i + 1, ...r }));
+}
+
+export const getRankedExchange = (slug: string) => rankedExchanges().find((r) => r.exchange.slug === slug);
+export const getExchange = exchangeBySlug;

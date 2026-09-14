@@ -1,13 +1,18 @@
 import type { Metadata } from 'next';
-import { WEIGHTS, LABELS, REGULATORS, type ScoreKey } from '@commentfx/core';
+import {
+  WEIGHTS, LABELS, REGULATORS, type ScoreKey,
+  PROP_WEIGHTS, PROP_LABELS, type PropKey,
+  EXCHANGE_WEIGHTS, EXCHANGE_LABELS, type ExchangeKey,
+} from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd } from '@/lib/seo';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
 import { Card, CardHead, Meter, Tag } from '@/components/primitives';
 
-const TITLE = 'How we score brokers';
+const TITLE = 'How we score';
 const DESC =
-  'The full scoring method: six weighted components, what each one measures, where the ' +
-  'data comes from, and what happens when a component has no data yet.';
+  'The full method for all three rankings — brokers, prop firms and exchanges. ' +
+  'What every component measures, the weight it carries, and what happens when a ' +
+  'component has no data yet.';
 
 export const metadata: Metadata = pageMetadata({ title: TITLE, description: DESC, path: '/methodology' });
 
@@ -19,6 +24,42 @@ const WHAT: Record<ScoreKey, string> = {
   reviews: 'Mean of verified reviews. Counted only once a broker has at least five — below that it is excluded rather than guessed at.',
   transparency: 'Four disclosures: entity mapping, audited accounts, segregated client funds, public ownership.',
 };
+
+const PROP_WHAT: Record<PropKey, string> = {
+  rules: 'How drawdown is measured carries more than a third of this component on its own. Static drawdown is fixed against your starting balance; trailing drawdown follows equity upward, so an unrealised spike permanently raises the floor. The rest is headroom, profit target, deadline, and whether a consistency rule, news ban or weekend ban applies.',
+  payout: 'Profit split, how often a payout can be requested, and how long after funding the first one becomes available.',
+  cost: 'Challenge fee normalised to a $100k account. Firms price many account sizes, so a headline fee compares nothing.',
+  platform: 'How many platforms are offered and how many markets can be traded.',
+  transparency: 'Three disclosures: a published rule-change history, the legal entity behind the firm, and the broker executing the trades.',
+};
+
+const EXCHANGE_WHAT: Record<ExchangeKey, string> = {
+  solvency: 'What evidence exists that customer funds are there. A self-published proof of reserves is real but the weakest kind — unaudited, chosen by the exchange, silent on liabilities. An audit by a named third party, or the continuous disclosure a public listing forces, scores higher.',
+  security: 'Years since the last customer-funds breach, softened by whether users were made whole. An exchange that was hacked and covered every loss is not in the same category as one that was not.',
+  fees: 'The taker fee actually charged at the lowest tier.',
+  liquidity: 'Reported spot volume, on a logarithmic scale and used only as a band. Volume is self-reported and has been inflated industry-wide for years, which is why it carries the least weight here.',
+  transparency: 'Three disclosures: a public fee schedule, the legal entity, and incident reports.',
+};
+
+function Weights<K extends string>({ keys, weights, labels, what, max }: {
+  keys: K[]; weights: Record<K, number>; labels: Record<K, string>; what: Record<K, string>; max: number;
+}) {
+  return (
+    <ul className="flex flex-col gap-4">
+      {keys.map((k) => (
+        <li key={k}>
+          <div className="flex items-baseline gap-2 mb-[6px]">
+            <h3 className="text-[13.5px] font-bold">{labels[k]}</h3>
+            <div className="flex-1" />
+            <span className="text-[12px] font-extrabold text-brass tnum">{Math.round(weights[k] * 100)}%</span>
+          </div>
+          <Meter value={weights[k] * 100} max={max} />
+          <p className="text-[12px] text-ink-2 leading-[1.8] mt-2">{what[k]}</p>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export default function MethodologyPage() {
   const trail = [{ name: 'Home', path: '/' }, { name: 'How we score', path: '/methodology' }];
@@ -40,20 +81,33 @@ export default function MethodologyPage() {
         </header>
 
         <Card className="p-4" as="section">
-          <CardHead title="The six components" />
-          <ul className="flex flex-col gap-4">
-            {(Object.keys(WEIGHTS) as ScoreKey[]).map((k) => (
-              <li key={k}>
-                <div className="flex items-baseline gap-2 mb-[6px]">
-                  <h2 className="text-[13.5px] font-bold">{LABELS[k]}</h2>
-                  <div className="flex-1" />
-                  <span className="text-[12px] font-extrabold text-brass tnum">{Math.round(WEIGHTS[k] * 100)}%</span>
-                </div>
-                <Meter value={WEIGHTS[k] * 100} max={30} />
-                <p className="text-[12px] text-ink-2 leading-[1.8] mt-2">{WHAT[k]}</p>
-              </li>
-            ))}
-          </ul>
+          <h2 className="text-[15px] font-bold mb-1">Brokers</h2>
+          <p className="text-[11.5px] text-ink-3 mb-4">Six components. Live spreads are deliberately not among them — see below.</p>
+          <Weights keys={Object.keys(WEIGHTS) as ScoreKey[]} weights={WEIGHTS} labels={LABELS} what={WHAT} max={30} />
+        </Card>
+
+        <Card className="p-4" as="section">
+          <h2 className="text-[15px] font-bold mb-1">Prop firms</h2>
+          <p className="text-[11.5px] text-ink-3 mb-4">Five components, weighted toward the rules that decide whether you can pass at all.</p>
+          <Weights keys={Object.keys(PROP_WEIGHTS) as PropKey[]} weights={PROP_WEIGHTS} labels={PROP_LABELS} what={PROP_WHAT} max={30} />
+        </Card>
+
+        <Card className="p-4" as="section">
+          <h2 className="text-[15px] font-bold mb-1">Exchanges</h2>
+          <p className="text-[11.5px] text-ink-3 mb-4">Five components, weighted toward evidence that customer funds exist.</p>
+          <Weights keys={Object.keys(EXCHANGE_WEIGHTS) as ExchangeKey[]} weights={EXCHANGE_WEIGHTS} labels={EXCHANGE_LABELS} what={EXCHANGE_WHAT} max={30} />
+        </Card>
+
+        <Card className="p-4" as="section">
+          <CardHead title="Why there is no live spread feed" />
+          <p className="text-[12.5px] text-ink-2 leading-[1.85]">
+            Publishing live spreads honestly means running a terminal on every broker,
+            around the clock, and being accountable when it silently stops. We do not run
+            that, so we do not claim it. Instead each broker’s <em>published</em> cost is
+            shown with the date a human last checked it against the broker’s own pages,
+            and anything unverified is labelled as such on the page. A figure you can
+            trace beats a figure that merely looks live.
+          </p>
         </Card>
 
         <Card className="p-4" as="section">

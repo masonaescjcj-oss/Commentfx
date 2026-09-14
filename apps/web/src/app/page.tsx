@@ -2,10 +2,12 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { SITE } from '@/lib/site';
 import { pageMetadata, JsonLd, itemListLd } from '@/lib/seo';
-import { rankedBrokers, BEST_CRITERIA } from '@/lib/repo';
+import { rankedBrokers, rankedProps, rankedExchanges, BEST_CRITERIA } from '@/lib/repo';
 import { Header, Footer } from '@/components/chrome';
 import { Card, CardHead } from '@/components/primitives';
 import { BrokerRow } from '@/components/BrokerRow';
+import { RankRow } from '@/components/ranking';
+import { describeDrawdown, volumeBand } from '@commentfx/core';
 
 export const metadata: Metadata = pageMetadata({
   title: `${SITE.name} — ${SITE.tagline}`,
@@ -17,6 +19,8 @@ export const revalidate = 3600;
 
 export default function HomePage() {
   const top = rankedBrokers().slice(0, 5);
+  const topProps = rankedProps().slice(0, 3);
+  const topExchanges = rankedExchanges().slice(0, 3);
 
   return (
     <>
@@ -43,6 +47,34 @@ export default function HomePage() {
         </Card>
 
         <Card className="p-4">
+          <CardHead title="Top prop firms" href="/props" hrefLabel="Full ranking" />
+          {topProps.map((r) => (
+            <RankRow key={r.firm.slug} rank={r.rank} href={`/props/${r.firm.slug}`}
+              logo={r.firm.logo} name={r.firm.name} score={r.score.total} why={r.firm.why}
+              facts={[
+                { label: 'Drawdown', value: describeDrawdown(r.firm.rules.drawdownType),
+                  tone: r.firm.rules.drawdownType === 'static' ? 'good' : r.firm.rules.drawdownType === 'intraday-trailing' ? 'bad' : 'warn' },
+                { label: 'Fee', value: `$${r.firm.feeUsdPer100k}` },
+                { label: 'Split', value: `${r.firm.payout.splitPct}%` },
+              ]} />
+          ))}
+        </Card>
+
+        <Card className="p-4">
+          <CardHead title="Top exchanges" href="/exchanges" hrefLabel="Full ranking" />
+          {topExchanges.map((r) => (
+            <RankRow key={r.exchange.slug} rank={r.rank} href={`/exchanges/${r.exchange.slug}`}
+              logo={r.exchange.logo} name={r.exchange.name} score={r.score.total} why={r.exchange.why}
+              facts={[
+                { label: 'Taker', value: `${r.exchange.takerFeePct}%` },
+                { label: 'Volume', value: volumeBand(r.exchange.spotVolumeUsd) },
+                { label: 'Breach', value: r.exchange.security.lastBreachYear === null ? 'None' : String(r.exchange.security.lastBreachYear),
+                  tone: r.exchange.security.lastBreachYear === null ? 'good' : r.exchange.security.madeUsersWhole ? 'warn' : 'bad' },
+              ]} />
+          ))}
+        </Card>
+
+        <Card className="p-4">
           <CardHead title="Ranked by what you care about" />
           <ul className="flex flex-col">
             {BEST_CRITERIA.map((c) => (
@@ -59,10 +91,9 @@ export default function HomePage() {
       <Footer />
       <JsonLd
         graph={[
-          itemListLd(
-            'Top forex brokers',
-            top.map((r) => ({ name: r.broker.name, path: `/brokers/${r.broker.slug}` })),
-          ),
+          itemListLd('Top forex brokers', top.map((r) => ({ name: r.broker.name, path: `/brokers/${r.broker.slug}` }))),
+          itemListLd('Top prop firms', topProps.map((r) => ({ name: r.firm.name, path: `/props/${r.firm.slug}` }))),
+          itemListLd('Top crypto exchanges', topExchanges.map((r) => ({ name: r.exchange.name, path: `/exchanges/${r.exchange.slug}` }))),
         ]}
       />
     </>

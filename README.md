@@ -40,23 +40,36 @@ the entire Windows-VPS layer from the plan.
 GoPlus, Deribit, alternative.me, Frankfurter, and official release calendars
 from BLS / the Fed / the ECB. Nothing in the stack requires a paid plan.
 
-## How the score works
+## How the scores work
 
-Six weighted components in `packages/core/src/score.ts`:
+Three verticals, three models, one shared mechanism.
 
-| Component | Weight |
-|---|---|
-| Regulation & licensing | 30% |
-| Published trading cost | 20% |
-| Payments & withdrawals | 20% |
-| Platforms & execution | 15% |
-| Verified reviews | 10% |
-| Corporate transparency | 5% |
+| Brokers | | Prop firms | | Exchanges | |
+|---|---|---|---|---|---|
+| Regulation & licensing | 30% | Rule fairness | 30% | Solvency evidence | 30% |
+| Published trading cost | 20% | Payout terms | 25% | Security record | 25% |
+| Payments & withdrawals | 20% | Challenge cost | 20% | Trading fees | 20% |
+| Platforms & execution | 15% | Platforms & markets | 15% | Liquidity | 15% |
+| Verified reviews | 10% | Transparency | 10% | Transparency | 10% |
+| Corporate transparency | 5% | | | | |
 
-One rule matters more than the weights: **a component with no data is excluded
-and the remaining weights are renormalised — never scored as zero.** A broker
-with no reviews yet is not the same thing as a broker with bad reviews, and
-every page says which components were excluded.
+One rule matters more than any weight, and it lives in
+`packages/core/src/scoring-kit.ts` so all three verticals share it: **a component
+with no data is excluded and the remaining weights are renormalised — never
+scored as zero.** A broker with no reviews yet is not the same thing as a broker
+with bad reviews, and every page says which components were excluded.
+
+Three judgements are worth knowing before reading a number:
+
+- **Prop firms** are weighted toward how drawdown is measured. Static drawdown
+  is fixed against your starting balance; trailing follows equity upward, so an
+  unrealised spike permanently raises the floor. The same trader passes one firm
+  and fails another on identical trades because of it.
+- **Exchanges** treat a self-published proof of reserves as the weakest form of
+  solvency evidence — unaudited, chosen by the exchange, silent on liabilities.
+  An audit or a public listing scores higher.
+- **A breach is not a breach.** An exchange that was hacked and covered every
+  loss scores materially above one that did not.
 
 ## SEO
 

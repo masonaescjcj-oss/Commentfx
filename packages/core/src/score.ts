@@ -1,5 +1,6 @@
-import type { Broker, ScoreBreakdown, ScoreComponent, ScoreKey } from './types.ts';
+import type { Broker, ScoreBreakdown, ScoreKey } from './types.ts';
 import { REGULATORS, TIER_SCORE } from './regulators.ts';
+import { composite, clamp, round1, type Input } from './scoring-kit.ts';
 
 /**
  * Nominal weights. Live spread monitoring is deliberately NOT part of this
@@ -23,9 +24,6 @@ export const LABELS: Record<ScoreKey, string> = {
   reviews: 'Verified reviews',
   transparency: 'Corporate transparency',
 };
-
-const clamp = (n: number, lo = 0, hi = 10) => Math.min(hi, Math.max(lo, n));
-const round1 = (n: number) => Math.round(n * 10) / 10;
 
 /** Best licence tier, plus a small bonus for holding several serious ones. */
 export function scoreRegulation(b: Broker): number {
@@ -97,7 +95,7 @@ export function scoreReviews(b: Broker): number | null {
  * thing as a broker with terrible reviews, and the reader is told which is which.
  */
 export function scoreBroker(b: Broker): ScoreBreakdown {
-  const raw: Array<{ key: ScoreKey; value: number | null; note: string }> = [
+  const inputs: Input<ScoreKey>[] = [
     { key: 'regulation', value: scoreRegulation(b), note: licenceNote(b) },
     { key: 'cost', value: scoreCost(b), note: `${effectiveCostPips(b).toFixed(2)} pips all-in on EUR/USD` },
     { key: 'payments', value: scorePayments(b), note: paymentNote(b) },
@@ -105,26 +103,7 @@ export function scoreBroker(b: Broker): ScoreBreakdown {
     { key: 'reviews', value: scoreReviews(b), note: b.reviews.verifiedCount < 5 ? 'Fewer than 5 verified reviews — excluded' : `${b.reviews.verifiedCount} verified reviews` },
     { key: 'transparency', value: scoreTransparency(b), note: transparencyNote(b) },
   ];
-
-  const live = raw.filter((r) => r.value !== null);
-  const liveWeight = live.reduce((s, r) => s + WEIGHTS[r.key], 0);
-
-  const components: ScoreComponent[] = raw.map((r) => ({
-    key: r.key,
-    label: LABELS[r.key],
-    value: r.value,
-    weight: WEIGHTS[r.key],
-    appliedWeight: r.value === null ? 0 : WEIGHTS[r.key] / liveWeight,
-    note: r.note,
-  }));
-
-  const total = components.reduce((s, c) => s + (c.value ?? 0) * c.appliedWeight, 0);
-
-  return {
-    total: round1(total),
-    components,
-    skipped: raw.filter((r) => r.value === null).map((r) => r.key),
-  };
+  return composite(inputs, WEIGHTS, LABELS);
 }
 
 function licenceNote(b: Broker): string {

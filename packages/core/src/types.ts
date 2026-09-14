@@ -86,21 +86,5 @@ export interface Broker {
 export type ScoreKey =
   | 'regulation' | 'cost' | 'payments' | 'platform' | 'reviews' | 'transparency';
 
-export interface ScoreComponent {
-  key: ScoreKey;
-  label: string;
-  /** 0–10, or null when there is not enough data to score it honestly. */
-  value: number | null;
-  /** Nominal weight. Excluded components are renormalised away. */
-  weight: number;
-  /** Weight actually applied after renormalisation. */
-  appliedWeight: number;
-  note: string;
-}
-
-export interface ScoreBreakdown {
-  total: number;               // 0–10, one decimal
-  components: ScoreComponent[];
-  /** Components skipped for want of data — shown to the reader, never hidden. */
-  skipped: ScoreKey[];
-}
+export type ScoreComponent = import('./scoring-kit.ts').Component<ScoreKey>;
+export type ScoreBreakdown = import('./scoring-kit.ts').Composite<ScoreKey>;
