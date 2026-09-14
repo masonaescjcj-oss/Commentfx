@@ -10,7 +10,7 @@
 import { checkSites, type SiteState } from './sites.ts';
 
 const MARK: Record<SiteState, string> = {
-  ok: 'ok  ', moved: 'MOVE', gone: 'GONE', blocked: 'wall', unreachable: 'huh ',
+  ok: 'ok  ', moved: 'MOVE', mismatch: 'WHO?', gone: 'GONE', blocked: 'wall', unreachable: 'huh ',
 };
 
 const checks = await checkSites();
@@ -21,6 +21,7 @@ for (const c of checks) {
 }
 
 const gone = checks.filter((c) => c.state === 'gone');
+const mismatched = checks.filter((c) => c.state === 'mismatch');
 const moved = checks.filter((c) => c.state === 'moved');
 const blocked = checks.filter((c) => c.state === 'blocked' || c.state === 'unreachable');
 
@@ -34,11 +35,19 @@ if (moved.length > 0) {
   }
 }
 
+if (mismatched.length > 0) {
+  console.log('');
+  for (const c of mismatched) {
+    console.log(`- **${c.name}** (\`${c.slug}\`) — ${c.website}: ${c.detail}. A live link to the wrong company is worse than a dead one.`);
+  }
+}
+
 if (gone.length > 0) {
   console.log('');
   for (const c of gone) {
     console.log(`- **${c.name}** (\`${c.slug}\`) — ${c.website}: ${c.detail}`);
   }
   console.log('\nA dead company site means a rebrand or an exit. Either way the record needs a person.');
-  process.exit(2);
 }
+
+if (gone.length + mismatched.length > 0) process.exit(2);

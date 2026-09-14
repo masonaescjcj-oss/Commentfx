@@ -163,6 +163,21 @@ Raw Trading Ltd of the Seychelles -- the broker routing a visitor to a different
 licence, which is precisely the thing the entity map on each broker page exists
 to show.
 
+The check also asks whether the page **belongs to the company we have it
+against**, because a link can be alive and still be wrong and liveness checking
+would pass that forever. Any distinctive word from the brand or from one of its
+legal entities counts, deliberately generously: the cost of a false alarm is
+someone re-checking a fine link, the cost of a miss is publishing a stranger's
+business as a broker's.
+
+Its limit is written into a test rather than left for someone to discover. It
+would **not** have caught the octa.com mistake, because the tablet-mount company
+there is also called Octa and the record's own name vouches for it. Two
+businesses sharing a name is beyond what name matching can settle, and a green
+run is not proof that every link points where it should. Six of the 26 sites
+also refuse this host outright, so they are not checked at all rather than
+quietly counted as fine.
+
 The admin that records these **fails closed**: with no `ADMIN_TOKEN` configured,
 every `/admin` route 404s, so an accidental deploy exposes nothing. The token is
 a deliberate stopgap and not an auth system — it has no per-user identity and no

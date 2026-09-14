@@ -228,7 +228,7 @@ jobs:
 
             if (!dead && !moved) return;
 
-            const title = 'Company sites that have gone or moved';
+            const title = 'Company sites that need a look';
             const { data: open } = await github.rest.issues.listForRepo({
               owner: context.repo.owner, repo: context.repo.repo,
               state: 'open', labels: 'links',
@@ -236,14 +236,11 @@ jobs:
             const existing = open.find((i) => i.title === title);
 
             const body = [
-              dead
-                ? 'A site on one of our records no longer answers.'
-                : 'A site on one of our records now redirects somewhere else. It still works,',
-              dead
-                ? 'A dead company site is usually a rebrand or an exit.'
-                : 'so nothing is broken — but a company that moved address usually renamed too.',
-              'Either way the record behind it is stale and needs a person, not an',
-              'automatic edit.',
+              'One of the company sites on our records needs a look: it has gone, it now',
+              'answers from somewhere else, or the page it serves never names the company',
+              'we have it against. The report says which. None of these is edited',
+              'automatically — a live link to the wrong company is the kind of mistake a',
+              'person has to make the call on.',
               '',
               '```',
               output.trim(),
