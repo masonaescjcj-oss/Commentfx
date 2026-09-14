@@ -1,0 +1,685 @@
+<title>رودمپ CommentFX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#F1F2F4;--card:#FFFFFF;--card2:#F8F9FB;--card3:#EFF2F6;--line:#EAEDF2;--line2:#F2F4F7;
+  --ink:#0D1421;--ink2:#58667E;--ink3:#9AA3B5;
+  --br:#A87528;--br2:#835A18;--brbg:#FBF4E4;
+  --up:#14B87C;--upbg:#E4F7EF;--dn:#E0393F;--dnbg:#FDEBEB;--wn:#BE7A09;--wnbg:#FDF3DC;
+  --fe:#2C6FD1;--febg:#E8F0FC;--be:#7C5CD6;--bebg:#F0EBFB;--ad:#1F8A70;--adbg:#E3F5EF;--pd:#A87528;--pdbg:#FBF4E4;
+  --sh:0 1px 2px rgba(13,20,33,.04),0 6px 18px -10px rgba(13,20,33,.10);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1117;--card:#151B24;--card2:#1B222D;--card3:#222B37;--line:#242D3A;--line2:#1E2631;
+    --ink:#E8ECF2;--ink2:#A9B3C2;--ink3:#6F7B8E;
+    --br:#D9B071;--br2:#EBC88F;--brbg:#2A2117;
+    --up:#34D399;--upbg:#0F2A20;--dn:#F87171;--dnbg:#2C1719;--wn:#F5B942;--wnbg:#2E2513;
+    --fe:#6EA1F2;--febg:#14233A;--be:#A98BF5;--bebg:#231C3A;--ad:#3FBF9A;--adbg:#0F2A24;--pd:#D9B071;--pdbg:#2A2117;
+    --sh:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1117;--card:#151B24;--card2:#1B222D;--card3:#222B37;--line:#242D3A;--line2:#1E2631;
+  --ink:#E8ECF2;--ink2:#A9B3C2;--ink3:#6F7B8E;
+  --br:#D9B071;--br2:#EBC88F;--brbg:#2A2117;
+  --up:#34D399;--upbg:#0F2A20;--dn:#F87171;--dnbg:#2C1719;--wn:#F5B942;--wnbg:#2E2513;
+  --fe:#6EA1F2;--febg:#14233A;--be:#A98BF5;--bebg:#231C3A;--ad:#3FBF9A;--adbg:#0F2A24;--pd:#D9B071;--pdbg:#2A2117;
+  --sh:none;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,system-ui,sans-serif;direction:rtl;font-size:15px;line-height:1.85;-webkit-font-smoothing:antialiased}
+.n{font-family:Manrope,system-ui,sans-serif;direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+a{color:var(--br);text-decoration:none}
+.wrap{max-width:1140px;margin:0 auto;padding-inline:20px;padding-block:0 80px}
+.layout{display:grid;grid-template-columns:1fr;gap:40px}
+@media (min-width:1000px){.layout{grid-template-columns:210px 1fr;align-items:start}}
+.toc{position:sticky;top:20px;display:none;font-size:13px}
+@media (min-width:1000px){.toc{display:block}}
+.toc a{display:block;color:var(--ink3);padding:5px 0;border-inline-start:2px solid var(--line);padding-inline-start:12px}
+.toc a:hover{color:var(--ink);border-color:var(--br)}
+.toc .g{margin-top:14px;font-size:11px;letter-spacing:.08em;color:var(--ink3);font-weight:700}
+
+header{padding-block:56px 26px}
+.brand{display:inline-flex;align-items:center;gap:9px;margin-bottom:22px}
+.brand i{width:32px;height:32px;border-radius:11px 11px 4px 11px;background:var(--ink);display:grid;place-items:center;color:#fff;font-family:Manrope;font-weight:800;font-size:11px}
+.brand b{font-family:Manrope;font-weight:800;font-size:19px;letter-spacing:-.03em;direction:ltr}
+h1{font-size:clamp(28px,4.6vw,40px);font-weight:800;line-height:1.35;margin:0 0 14px;letter-spacing:-.015em;text-wrap:balance}
+.lede{font-size:16.5px;color:var(--ink2);max-width:62ch;margin:0}
+
+.stats{display:flex;flex-wrap:wrap;gap:0;margin-top:30px;border-block:1px solid var(--line)}
+.stat{padding:16px 24px 16px 0;margin-inline-end:24px;border-inline-end:1px solid var(--line)}
+.stat:last-child{border-inline-end:0}
+.stat b{display:block;font-family:Manrope;direction:ltr;font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1.2}
+.stat span{font-size:12.5px;color:var(--ink3)}
+
+/* timeline */
+.tl{display:grid;grid-template-columns:repeat(16,1fr);gap:3px;margin-top:28px}
+.tl div{height:38px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;padding:0 6px;white-space:nowrap;overflow:hidden}
+.tl .w{grid-column:span 1;height:18px;background:transparent;color:var(--ink3);font-family:Manrope;font-weight:600;font-size:10.5px}
+@media (max-width:640px){.tl div{font-size:9px}}
+
+section{margin-top:56px}
+.sh{display:flex;align-items:baseline;gap:12px;margin-bottom:18px}
+.sh h2{font-size:22px;font-weight:800;margin:0;letter-spacing:-.01em}
+.sh .k{font-family:Manrope;font-size:12px;color:var(--ink3);font-weight:700;letter-spacing:.08em;direction:ltr}
+h3{font-size:16px;font-weight:700;margin:24px 0 10px}
+p{margin:0 0 12px;max-width:72ch}
+.card{background:var(--card);border-radius:16px;box-shadow:var(--sh);padding:20px 22px}
+.card.flat{box-shadow:none;border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:start;font-weight:600;color:var(--ink3);font-size:12px;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:10px;border-bottom:1px solid var(--line2);vertical-align:top;color:var(--ink2)}
+tr:last-child td{border-bottom:0}
+td b{color:var(--ink);font-weight:600}
+.scroll{overflow-x:auto}
+ul{margin:0;padding-inline-start:18px}
+li{margin:5px 0;color:var(--ink2)}
+li b{color:var(--ink);font-weight:600}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.callout{padding:13px 16px;border-radius:12px;background:var(--brbg);color:var(--ink2);font-size:14px;display:flex;gap:10px;align-items:flex-start}
+.callout b{color:var(--br2)}
+.callout.warn{background:var(--wnbg)}.callout.warn b{color:var(--wn)}
+.callout.red{background:var(--dnbg)}.callout.red b{color:var(--dn)}
+code,pre{font-family:Manrope,ui-monospace,monospace;direction:ltr;unicode-bidi:isolate}
+code{font-size:12.5px;background:var(--card3);padding:1px 6px;border-radius:5px;color:var(--ink)}
+pre{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:12.5px;line-height:1.7;overflow-x:auto;text-align:left;margin:0;color:var(--ink2)}
+pre b{color:var(--ink);font-weight:700}
+pre .c{color:var(--ink3)}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;background:var(--card3);color:var(--ink2);white-space:nowrap;font-weight:600}
+.tag.fe{background:var(--febg);color:var(--fe)}.tag.be{background:var(--bebg);color:var(--be)}
+.tag.ad{background:var(--adbg);color:var(--ad)}.tag.pd{background:var(--pdbg);color:var(--pd)}
+.tag.ok{background:var(--upbg);color:var(--up)}
+
+/* phases */
+.phase{background:var(--card);border-radius:18px;box-shadow:var(--sh);padding:0;overflow:hidden;margin-bottom:18px}
+.ph-h{display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--line)}
+.ph-h .num{font-family:Manrope;font-weight:800;font-size:30px;letter-spacing:-.04em;color:var(--br);direction:ltr;line-height:1;flex:none}
+.ph-h h3{margin:0;font-size:18px}
+.ph-h .wk{font-family:Manrope;direction:ltr;font-size:12px;color:var(--ink3);font-weight:700;margin-inline-start:auto;white-space:nowrap}
+.ph-h .goal{font-size:13px;color:var(--ink2);margin-top:2px}
+.tracks{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0}
+.track{padding:16px 20px;border-inline-end:1px solid var(--line2);border-bottom:1px solid var(--line2)}
+.track:last-child{border-inline-end:0}
+.track h4{margin:0 0 9px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px}
+.track h4 i{width:8px;height:8px;border-radius:50%;display:block}
+.track ul{padding-inline-start:16px;font-size:13.5px}
+.track li{margin:4px 0;line-height:1.7}
+.dod{padding:14px 22px;background:var(--card2);display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13px}
+.dod b{color:var(--ink);font-weight:700}
+.dod span{color:var(--ink2)}
+
+footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-size:13px;color:var(--ink3)}
+@media (max-width:520px){.wrap{padding-inline:16px}header{padding-block:36px 20px}.track{border-inline-end:0}}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="brand"><i>FX</i><b>CommentFX</b></div>
+  <h1>رودمپ صفر تا صد — از خط اول کد تا انتشار عمومی</h1>
+  <p class="lede">شانزده هفته، شش فاز، چهار مسیر موازی: <b>محصول</b>، <b>فرانت</b>، <b>بک‌اند</b> و <b>پنل ادمین</b>. هر فاز یک «تعریف تمام‌شدن» دارد که تا پاس نشود فاز بعدی شروع نمی‌شود.</p>
+  <div class="stats">
+    <div class="stat"><b>16</b><span>هفته تا انتشار عمومی</span></div>
+    <div class="stat"><b>6</b><span>فاز</span></div>
+    <div class="stat"><b>4</b><span>مسیر موازی</span></div>
+    <div class="stat"><b>~$300</b><span>هزینهٔ زیرساخت ماهانه در شروع</span></div>
+  </div>
+  <div class="tl">
+    <div class="w">1</div><div class="w">2</div><div class="w">3</div><div class="w">4</div><div class="w">5</div><div class="w">6</div><div class="w">7</div><div class="w">8</div><div class="w">9</div><div class="w">10</div><div class="w">11</div><div class="w">12</div><div class="w">13</div><div class="w">14</div><div class="w">15</div><div class="w">16</div>
+    <div style="grid-column:span 2;background:#58667E">۰ زیرساخت</div>
+    <div style="grid-column:span 3;background:#2C6FD1">۱ دایرکتوری</div>
+    <div style="grid-column:span 3;background:#7C5CD6">۲ دیتای زنده</div>
+    <div style="grid-column:span 3;background:#1F8A70">۳ جامعه</div>
+    <div style="grid-column:span 3;background:#A87528">۴ درآمد</div>
+    <div style="grid-column:span 2;background:#0D1421">۵ انتشار</div>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="toc" aria-label="فهرست">
+  <div class="g">پایه</div>
+  <a href="#team">تیم و زمان‌بندی</a><a href="#stack">استک فنی</a><a href="#arch">معماری</a><a href="#data">مدل داده</a>
+  <div class="g">فازها</div>
+  <a href="#p0">۰ · زیرساخت</a><a href="#p1">۱ · دایرکتوری</a><a href="#p2">۲ · دیتای زنده</a><a href="#p3">۳ · جامعه</a><a href="#p4">۴ · درآمد</a><a href="#p5">۵ · انتشار</a><a href="#p6">۶ · بعد از انتشار</a>
+  <div class="g">مرجع</div>
+  <a href="#admin">پنل ادمین کامل</a><a href="#ingest">جاب‌های دیتا</a><a href="#api">API</a><a href="#launch">چک‌لیست انتشار</a><a href="#budget">بودجه</a><a href="#risks">ریسک‌ها</a>
+</nav>
+
+<main>
+
+<!-- ================= TEAM ================= -->
+<section id="team">
+  <div class="sh"><span class="k">01</span><h2>تیم و زمان‌بندی واقع‌بینانه</h2></div>
+  <div class="grid2">
+    <div class="card flat"><b>تیم پیشنهادی (۱۶ هفته)</b>
+      <ul style="margin-top:8px;font-size:14px">
+        <li><b>یک توسعه‌دهندهٔ فول‌استک</b> — Next.js + Postgres؛ صاحب فرانت و API</li>
+        <li><b>یک توسعه‌دهندهٔ بک‌اند/دیتا</b> — worker ها، ingest، اسکرپرها، MT5 EA</li>
+        <li><b>یک نفر محتوا و دیتا</b> — ورود ۴۲ بروکر، مقالات، روش‌شناسی، مدیریت انجمن از فاز ۳</li>
+        <li>طراحی: انجام شده — توکن‌ها در <code>design-web/README.md</code></li></ul></div>
+    <div class="card flat"><b>اگر تنها هستید</b>
+      <ul style="margin-top:8px;font-size:14px">
+        <li>همین ترتیب فازها، ولی <b>۲۴ هفته</b> — نه ۱۶</li>
+        <li>فاز ۲ را نصف کنید: اول فقط CoinGecko و تقویم؛ اسپرد زنده و رگولاتور واچر بعد از انتشار</li>
+        <li>فاز ۳ را به «نظر + گزارش وضعیت» محدود کنید؛ سیگنال و لیدربورد بعد از انتشار</li>
+        <li>ورود دیتای بروکرها را برون‌سپاری کنید — ۴۲ بروکر × ۴۰ فیلد، کار یک هفتهٔ تمام است</li></ul></div>
+  </div>
+  <div class="callout" style="margin-top:14px"><span>⏱</span><div><b>قاعدهٔ زمان‌بندی:</b> هر فاز یک «تعریف تمام‌شدن» (DoD) دارد. تا DoD پاس نشود، فاز بعد شروع نمی‌شود — حتی اگر تقویم بگوید وقتش است. این تنها راه جلوگیری از انتشار چیزی است که نصفه کار می‌کند.</div></div>
+</section>
+
+<!-- ================= STACK ================= -->
+<section id="stack">
+  <div class="sh"><span class="k">02</span><h2>استک فنی — و چرا</h2></div>
+  <div class="card flat scroll">
+  <table>
+    <tr><th>لایه</th><th>انتخاب</th><th>چرا این</th><th>جایگزین</th></tr>
+    <tr><td><b>فرانت</b></td><td>Next.js 15 (App Router) · TypeScript · Tailwind</td><td>RSC برای صفحات سئو با حداقل JS؛ ISR برای ۱۰هزار صفحهٔ کوین؛ یک فریم‌ورک برای وب و ادمین</td><td>Astro (اگر فقط محتوا بود)</td></tr>
+    <tr><td><b>UI</b></td><td>پکیج <code>ui</code> داخلی روی توکن‌های طراحی + Radix primitives</td><td>کامپوننت‌های Card، Row، RankBadge، ScoreChip، Sparkline دقیقاً از ماکاپ‌ها</td><td>shadcn/ui به‌عنوان پایه</td></tr>
+    <tr><td><b>دیتابیس</b></td><td>PostgreSQL 16 + TimescaleDB · Drizzle ORM</td><td>hypertable برای قیمت و اسپرد (میلیون‌ها ردیف/ماه)؛ Drizzle تایپ‌سیف و بدون جادو</td><td>Prisma (کندتر روی کوئری‌های سنگین)</td></tr>
+    <tr><td><b>کش و صف</b></td><td>Redis · BullMQ</td><td>صف جاب‌های ingest با retry و زمان‌بندی؛ کش API؛ rate limit</td><td>Inngest (managed)</td></tr>
+    <tr><td><b>جستجو</b></td><td>Meilisearch</td><td>جستجوی فوری بروکر/کوین/تریدر با typo tolerance؛ فارسی و انگلیسی</td><td>Postgres FTS (برای شروع کافی است)</td></tr>
+    <tr><td><b>ادمین / CMS</b></td><td>Payload CMS 3 (روی همان Postgres و همان Next.js)</td><td>کالکشن‌های تایپ‌سیف، نقش‌ها، مدیا، ویرایشگر مقاله — بدون ساخت ادمین از صفر</td><td>ادمین دست‌ساز (۴ هفته اضافه)</td></tr>
+    <tr><td><b>Auth</b></td><td>better-auth · OTP ایمیل + Google · نشست در Postgres</td><td>ساده، self-hosted، نقش‌های سفارشی</td><td>Clerk (وابستگی خارجی)</td></tr>
+    <tr><td><b>Worker</b></td><td>Node 22 · BullMQ · Playwright</td><td>پروسهٔ جدا از وب؛ مقیاس مستقل؛ اسکرپ رگولاتورها</td><td>—</td></tr>
+    <tr><td><b>فایل</b></td><td>Cloudflare R2 (S3-compatible)</td><td>بدون هزینهٔ egress؛ استیتمنت‌ها و مدیا</td><td>S3</td></tr>
+    <tr><td><b>ایمیل / تلگرام</b></td><td>Resend · grammY (Telegram bot)</td><td>خبرنامه، آلرت، OTP</td><td>Postmark</td></tr>
+    <tr><td><b>پرداخت</b></td><td>Stripe + یک درگاه کریپتو</td><td>اشتراک Pro؛ کریپتو برای مناطقی که Stripe ندارد</td><td>—</td></tr>
+    <tr><td><b>مانیتورینگ</b></td><td>Sentry · BetterStack · PostHog</td><td>خطا، آپ‌تایم، آنالیتیکس محصول</td><td>Plausible (اگر فقط بازدید)</td></tr>
+    <tr><td><b>دیپلوی</b></td><td>Vercel (web + admin) · Fly.io یا VPS (worker, Meili) · Cloudflare (DNS, WAF)</td><td>Vercel برای ISR و edge؛ worker جای خودش</td><td>همه روی یک VPS با Coolify</td></tr>
+  </table></div>
+</section>
+
+<!-- ================= ARCH ================= -->
+<section id="arch">
+  <div class="sh"><span class="k">03</span><h2>معماری مونوریپو</h2></div>
+<pre>commentfx/
+├── apps/
+│   ├── web/          <span class="c">Next.js — سایت عمومی، API routes، ویجت‌های امبد</span>
+│   ├── admin/        <span class="c">Payload CMS — پنل ادمین، CMS، صف مدیریت</span>
+│   └── worker/       <span class="c">BullMQ — ingest، امتیازدهی، آلرت، خبرنامه، اسکرپ</span>
+├── packages/
+│   ├── db/           <span class="c">Drizzle schema + migrations + seed</span>
+│   ├── core/         <span class="c">تایپ‌ها، موتور امتیاز بروکر، رادار ریسک، امتیاز سیگنال، امتیاز امنیت میم‌کوین</span>
+│   ├── ui/           <span class="c">توکن‌ها + کامپوننت‌ها (وب و بعداً اپ)</span>
+│   ├── ingest/       <span class="c">کانکتورها: CoinGecko، GeckoTerminal، GoPlus، Finnhub، Deribit، رگولاتورها</span>
+│   └── config/       <span class="c">eslint، tsconfig، tailwind preset</span>
+├── infra/            <span class="c">docker-compose (dev)، fly.toml، اسکریپت VPS برای MT5</span>
+├── design/  design-web/  docs/
+└── turbo.json  pnpm-workspace.yaml
+
+<b>جریان داده:</b>
+منابع خارجی ──▶ worker (ingest) ──▶ Postgres/Timescale ──▶ web (RSC + ISR) ──▶ کاربر
+                                  └──▶ Redis (کش، pub/sub) ──▶ ویجت‌های زنده
+کاربر ──▶ web (API route) ──▶ Postgres ──▶ صف مدیریت (admin) ──▶ انتشار</pre>
+  <div class="callout" style="margin-top:14px"><span>⚙️</span><div><b>یک قاعدهٔ معماری:</b> وب هیچ‌وقت مستقیم به منبع خارجی وصل نمی‌شود. همه‌چیز از worker می‌آید و در دیتابیس می‌نشیند. اگر CoinGecko قطع شود، سایت آخرین قیمت را با تایم‌استمپ نشان می‌دهد — نه خطای ۵۰۰.</div></div>
+</section>
+
+<!-- ================= DATA ================= -->
+<section id="data">
+  <div class="sh"><span class="k">04</span><h2>مدل داده — جداول اصلی</h2></div>
+  <div class="grid2">
+    <div class="card flat"><b>دایرکتوری</b><ul style="margin-top:8px;font-size:13.5px">
+      <li><code>brokers</code> — نام، slug، تأسیس، HQ، پلتفرم‌ها، امتیاز محاسبه‌شده، وضعیت</li>
+      <li><code>broker_entities</code> — شرکت‌های حقوقی هر بروکر: کشور ثبت، رگولاتور، شمارهٔ لایسنس، حفاظت</li>
+      <li><code>entity_country_map</code> — کدام کشور → کدام entity (قلب نقشهٔ Entity)</li>
+      <li><code>regulators</code> — FCA, CySEC… با درجه A/B/C و URL رجیستری</li>
+      <li><code>broker_accounts</code> · <code>payment_methods</code> · <code>broker_changes</code> (لاگ تغییرات)</li>
+      <li><code>props</code> · <code>prop_rules</code> (ساختاریافته) · <code>prop_rule_changes</code></li>
+      <li><code>exchanges</code> · <code>exchange_reserves</code> · <code>exchange_incidents</code></li></ul></div>
+    <div class="card flat"><b>دیتای زنده</b><ul style="margin-top:8px;font-size:13.5px">
+      <li><code>coins</code> · <code>coin_prices</code> <span class="tag">hypertable</span></li>
+      <li><code>spreads</code> <span class="tag">hypertable</span> · <code>spread_daily</code> <span class="tag">continuous aggregate</span></li>
+      <li><code>memecoins</code> · <code>memecoin_audits</code> (GoPlus snapshot + امتیاز)</li>
+      <li><code>calendar_events</code> · <code>event_reactions</code> (واکنش تاریخی بازار)</li>
+      <li><code>risk_radar_daily</code> · <code>regulator_snapshots</code> · <code>regulator_alerts</code></li>
+      <li><code>ingest_runs</code> — هر اجرا: منبع، شروع، پایان، ردیف‌ها، خطا</li></ul></div>
+    <div class="card flat"><b>جامعه</b><ul style="margin-top:8px;font-size:13.5px">
+      <li><code>users</code> · <code>profiles</code> · <code>roles</code> (user, verified, moderator, broker_rep, admin)</li>
+      <li><code>reviews</code> · <code>statements</code> (موقت، ۲۴ ساعت) · <code>verifications</code></li>
+      <li><code>status_reports</code> (Downdetector) · <code>status_daily</code> (تجمیع)</li>
+      <li><code>comments</code> (polymorphic: هر موجودیت) · <code>reactions</code></li>
+      <li><code>signals</code> (immutable) · <code>signal_outcomes</code> · <code>trader_stats</code></li>
+      <li><code>broker_claims</code> · <code>broker_replies</code> · <code>moderation_actions</code> · <code>audit_log</code></li></ul></div>
+    <div class="card flat"><b>درآمد و محتوا</b><ul style="margin-top:8px;font-size:13.5px">
+      <li><code>affiliate_links</code> (per broker × geo) · <code>clicks</code> · <code>conversions</code></li>
+      <li><code>subscriptions</code> · <code>plans</code> · <code>payments</code></li>
+      <li><code>alerts</code> (شرط) · <code>alert_deliveries</code></li>
+      <li><code>newsletter_subscribers</code> · <code>newsletter_issues</code></li>
+      <li><code>articles</code> · <code>authors</code> · <code>media</code> · <code>tags</code> (Payload)</li>
+      <li><code>widgets</code> · <code>widget_impressions</code></li></ul></div>
+  </div>
+</section>
+
+<!-- ================= PHASES ================= -->
+<section id="phases">
+  <div class="sh"><span class="k">05</span><h2>فازها</h2></div>
+  <p>هر فاز چهار مسیر دارد. <span class="tag pd">محصول</span> تصمیم و محتوا، <span class="tag fe">فرانت</span> صفحات و UI، <span class="tag be">بک‌اند</span> دیتا و API و worker، <span class="tag ad">ادمین</span> پنل و ابزار مدیریت.</p>
+
+  <!-- ---- P0 ---- -->
+  <div class="phase" id="p0">
+    <div class="ph-h"><span class="num">0</span><div><h3>زیرساخت</h3><div class="goal">هدف: <code>pnpm dev</code> همه‌چیز را بالا بیاورد و یک بروکر از ادمین وارد و در وب دیده شود</div></div><span class="wk">هفتهٔ 1–2</span></div>
+    <div class="tracks">
+      <div class="track"><h4><i style="background:var(--pd)"></i>محصول</h4><ul>
+        <li>تصمیم نهایی: زبان اول (en / fa / هر دو)، بازار هدف، دامنه</li>
+        <li>فرمول امتیاز ۶ مؤلفه‌ای را قفل کنید — بعداً تغییرش رتبه‌ها را می‌ریزد</li>
+        <li>اسپردشیت ۴۲ بروکر × فیلدها (از قالب ادمین)</li>
+        <li>متن صفحهٔ روش‌شناسی و افشای افیلیت — پیش‌نویس</li></ul></div>
+      <div class="track"><h4><i style="background:var(--fe)"></i>فرانت</h4><ul>
+        <li>مونوریپو: pnpm + Turborepo، <code>apps/web</code> با App Router</li>
+        <li>Tailwind preset از توکن‌های <code>design-web/README.md</code></li>
+        <li>پکیج <code>ui</code>: Card، Row، RankBadge، ScoreChip، Tag، Button، Sparkline، Header، ChipNav</li>
+        <li>لایوت موبایل‌فرست + هدر + ناوبری دسته‌ها</li>
+        <li>Storybook یا صفحهٔ <code>/dev/ui</code> برای دیدن کامپوننت‌ها</li></ul></div>
+      <div class="track"><h4><i style="background:var(--be)"></i>بک‌اند</h4><ul>
+        <li>Postgres + Timescale (docker-compose در dev، Neon/Supabase یا VPS در prod)</li>
+        <li>Drizzle: اسکیمای v1 (دایرکتوری + users) + migration + seed</li>
+        <li>Redis، R2 bucket، متغیرهای محیطی با <code>zod</code> validation</li>
+        <li>better-auth: OTP ایمیل + Google؛ نقش‌ها در جدول</li>
+        <li><code>apps/worker</code>: BullMQ، یک جاب healthcheck، لاگ ساختاریافته</li></ul></div>
+      <div class="track"><h4><i style="background:var(--ad)"></i>ادمین</h4><ul>
+        <li>Payload CMS روی همان Postgres؛ لاگین با نقش admin</li>
+        <li>کالکشن‌های اولیه: Brokers، Regulators، Users، Media</li>
+        <li>CI: GitHub Actions — lint، typecheck، test، build</li>
+        <li>Vercel preview برای هر PR؛ worker روی Fly؛ Sentry در هر سه اپ</li></ul></div>
+    </div>
+    <div class="dod"><b>DoD:</b><span>یک بروکر از ادمین ثبت → در <code>/brokers/[slug]</code> رندر می‌شود</span><span>CI سبز</span><span>Sentry اولین خطا را گرفته</span><span>ریستور بکاپ dev تست شده</span></div>
+  </div>
+
+  <!-- ---- P1 ---- -->
+  <div class="phase" id="p1">
+    <div class="ph-h"><span class="num">1</span><div><h3>دایرکتوری</h3><div class="goal">هدف: سایتی که گوگل بتواند بخزد — ۱۰۰+ صفحهٔ واقعی با دیتای واقعی</div></div><span class="wk">هفتهٔ 3–5</span></div>
+    <div class="tracks">
+      <div class="track"><h4><i style="background:var(--pd)"></i>محصول</h4><ul>
+        <li>ورود کامل ۴۲ بروکر، ۱۷ پراپ، ۲۴ صرافی — با entity ها و لایسنس‌ها</li>
+        <li>۱۰ مقالهٔ پایه (رگولاتوری، مقایسه، آموزش)</li>
+        <li>صفحات about / methodology / authors / disclosure</li>
+        <li>خط «چرا» برای هر بروکر در ۱۰ رتبهٔ اول</li></ul></div>
+      <div class="track"><h4><i style="background:var(--fe)"></i>فرانت</h4><ul>
+        <li>هوم (کارت‌های استاتیک + کوین‌ها)، لیست بروکر با فیلتر/سورت در URL</li>
+        <li>صفحهٔ بروکر (بدون بخش‌های زنده)، صرافی، پراپ، کوین، مقاله، مقایسه</li>
+        <li>ISR: کوین ۶۰ث، بروکر ۱ روز + revalidate از ادمین</li>
+        <li>JSON-LD: FinancialService، AggregateRating، Article، BreadcrumbList، FAQPage</li>
+        <li>Sitemap index (brokers/coins/articles)، robots، canonical، OG image خودکار</li>
+        <li>جستجوی سراسری با Meilisearch</li></ul></div>
+      <div class="track"><h4><i style="background:var(--be)"></i>بک‌اند</h4><ul>
+        <li>CoinGecko ingest: ۵۰۰ کوین اول — قیمت هر ۶۰ث، متادیتا روزانه، تاریخچه ۹۰ روز</li>
+        <li>موتور امتیاز v1 در <code>packages/core</code> — تست‌شده، با فرمول عمومی</li>
+        <li>API داخلی (route handlers): brokers، coins، search، compare</li>
+        <li>ایندکس Meilisearch از رویدادهای ادمین</li>
+        <li>revalidate webhook: ذخیره در ادمین → پاک شدن کش صفحه</li></ul></div>
+      <div class="track"><h4><i style="background:var(--ad)"></i>ادمین</h4><ul>
+        <li>فرم کامل بروکر: entity ها (تکرارشونده)، لایسنس‌ها، حساب‌ها، روش‌های واریز، پلتفرم‌ها، خط «چرا»</li>
+        <li>پراپ: قوانین ساختاریافته (هدف، DD روزانه/کل، حداقل روز، consistency…)</li>
+        <li>صرافی: کارمزدها، KYC، شبکه‌ها</li>
+        <li>مقالات: نویسنده، دسته، تگ، SEO fields، زمان‌بندی انتشار، پیش‌نمایش</li>
+        <li>نقشهٔ کشور → entity به‌صورت جدول قابل ویرایش</li></ul></div>
+    </div>
+    <div class="dod"><b>DoD:</b><span>۱۰۰+ صفحهٔ ایندکس‌پذیر</span><span>Rich Results Test پاس</span><span>Lighthouse موبایل ≥ ۸۵</span><span>GSC وصل و sitemap ثبت</span><span>همهٔ ۴۲ بروکر بدون فیلد خالی</span></div>
+  </div>
+
+  <!-- ---- P2 ---- -->
+  <div class="phase" id="p2">
+    <div class="ph-h"><span class="num">2</span><div><h3>دیتای زنده و اعتماد</h3><div class="goal">هدف: هر عددی که «زنده» ادعا می‌شود، تایم‌استمپ و منبع داشته باشد</div></div><span class="wk">هفتهٔ 6–8</span></div>
+    <div class="tracks">
+      <div class="track"><h4><i style="background:var(--pd)"></i>محصول</h4><ul>
+        <li>۵ نماد اسپرد: EURUSD، XAUUSD، GBPUSD، BTCUSD، US30</li>
+        <li>فرمول رادار ریسک (وزن تقویم، آنلاک، انقضا، فاندینگ) — مستند</li>
+        <li>لیست رگولاتورهای مانیتور و درجهٔ A/B/C</li>
+        <li>آستانهٔ ایندکس میم‌کوین (نقدینگی ≥ $10K)</li></ul></div>
+      <div class="track"><h4><i style="background:var(--fe)"></i>فرانت</h4><ul>
+        <li>جدول اسپرد زنده + نمودار ۳۰ روزه + رتبه در صفحهٔ بروکر و لیست</li>
+        <li>نقشهٔ Entity با انتخاب کشور (کوکی برای یادآوری)</li>
+        <li>نشان وضعیت ۲۴ ساعته (فعلاً از دیتای رگولاتور و آپ‌تایم)</li>
+        <li>رادار میم‌کوین با چیپ‌های امنیت و سورت</li>
+        <li>تقویم اقتصادی + شمارش معکوس + تفسیر یک‌خطی</li>
+        <li>رادار ریسک در هوم؛ لاگ تغییر قوانین پراپ؛ فید آلرت رگولاتور</li></ul></div>
+      <div class="track"><h4><i style="background:var(--be)"></i>بک‌اند</h4><ul>
+        <li><b>اسپرد:</b> ۳ VPS ویندوز با MT5 دمو + EA که هر ۶۰ث POST می‌کند → hypertable → continuous aggregate روزانه</li>
+        <li><b>رگولاتور واچر:</b> Playwright روزانه ۵ رجیستری → snapshot → diff → <code>regulator_alerts</code></li>
+        <li><b>پراپ رول ترکر:</b> fetch + normalize + diff هفتگی</li>
+        <li><b>میم‌کوین:</b> GeckoTerminal new pools هر ۵ دقیقه → GoPlus → امتیاز امنیت</li>
+        <li><b>تقویم:</b> Finnhub/FMP روزانه + مدل زبانی برای تفسیر high-impact (کش‌شده)</li>
+        <li><b>رادار ریسک:</b> cron ساعتی؛ Deribit برای انقضا؛ DefiLlama برای آنلاک</li>
+        <li>هر ingest → <code>ingest_runs</code>؛ آلرت به تلگرام مدیر اگر ۲ اجرا پشت هم fail</li></ul></div>
+      <div class="track"><h4><i style="background:var(--ad)"></i>ادمین</h4><ul>
+        <li>داشبورد سلامت دیتا: هر منبع، آخرین اجرا، تازگی، خطاها، نمودار</li>
+        <li>override دستی: entity mapping، امتیاز، وضعیت بروکر</li>
+        <li>صف بازبینی آلرت رگولاتور → تأیید → انتشار خودکار خبر</li>
+        <li>مدیریت اکانت‌های دمو و VPS ها (کدام بروکر، آخرین تیک)</li>
+        <li>ویرایش دستی رویداد تقویم و تفسیرش</li></ul></div>
+    </div>
+    <div class="dod"><b>DoD:</b><span>۷ روز پیاپی بدون قطعی ingest</span><span>هر عدد زنده تایم‌استمپ دارد</span><span>نقشهٔ Entity برای ۴۲ بروکر کامل</span><span>اولین آلرت رگولاتور واقعی گرفته شده</span></div>
+  </div>
+
+  <!-- ---- P3 ---- -->
+  <div class="phase" id="p3">
+    <div class="ph-h"><span class="num">3</span><div><h3>جامعه</h3><div class="goal">هدف: محتوای کاربر شروع شود — نظر تأییدشده، گزارش وضعیت، سیگنال امتیازدار</div></div><span class="wk">هفتهٔ 9–11</span></div>
+    <div class="tracks">
+      <div class="track"><h4><i style="background:var(--pd)"></i>محصول</h4><ul>
+        <li>قوانین انجمن، سیاست حذف نظر (فقط نقض قوانین — هرگز درخواست بروکر)</li>
+        <li>فرآیند claim بروکر: ایمیل دامنهٔ رسمی + مدرک</li>
+        <li>دیسکلیمر سیگنال؛ ممنوعیت واژه‌های «تضمین»، «قطعی»</li>
+        <li>دعوت ۲۰ کاربر اولیه از گروه‌های تریدینگ برای seed نظرات</li></ul></div>
+      <div class="track"><h4><i style="background:var(--fe)"></i>فرانت</h4><ul>
+        <li>ثبت‌نام/ورود (OTP)، پروفایل عمومی، تنظیمات</li>
+        <li>فرم نظر + آپلود استیتمنت + نشان تأیید</li>
+        <li>گزارش وضعیت یک‌کلیکی (تأخیر برداشت / قطعی / اسلیپیج) → نمودار ۲۴h</li>
+        <li>کامنت روی بروکر، کوین، رویداد، مقاله (threaded)</li>
+        <li>فرم سیگنال ساختاریافته؛ فید؛ لیدربورد؛ پروفایل تریدر با آمار</li>
+        <li>پاسخ رسمی بروکر زیر نظرات؛ نشان «پروفایل رسمی»</li></ul></div>
+      <div class="track"><h4><i style="background:var(--be)"></i>بک‌اند</h4><ul>
+        <li>نقش‌ها و مجوزها (RBAC) در middleware</li>
+        <li><b>استیتمنت:</b> آپلود → R2 → worker: OCR (tesseract) + regex حذف شمارهٔ حساب و نام → نشان → حذف فایل بعد ۲۴ ساعت</li>
+        <li><b>گزارش وضعیت:</b> rate limit (IP + user + broker)، تجمیع ۲۴h/۷d، آستانهٔ تغییر وضعیت (مثلاً ≥۱۰ گزارش مستقل)</li>
+        <li><b>سیگنال:</b> schema سخت (zod)، immutable، worker هر ۱ دقیقه: TP/SL touch با فید قیمت → outcome → R → آمار تریدر؛ لیدربورد با حداقل ۳۰ سیگنال</li>
+        <li>ضد اسپم: Turnstile، rate limit، لینک nofollow، فیلتر کلمات، shadow-ban</li>
+        <li>نوتیفیکیشن درون‌سایتی (پاسخ، فالو)</li></ul></div>
+      <div class="track"><h4><i style="background:var(--ad)"></i>ادمین</h4><ul>
+        <li>صف مدیریت واحد: نظر، کامنت، گزارش، سیگنال — با تأیید/رد/ویرایش/بن یک‌کلیکی</li>
+        <li>بازبینی استیتمنت (تصویر ماسک‌شده) → تأیید نشان</li>
+        <li>تأیید claim بروکر؛ مدیریت نمایندگان</li>
+        <li>مدیریت کاربران: نقش، بن، shadow-ban، تاریخچه</li>
+        <li><code>audit_log</code> برای هر اقدام مدیر — غیرقابل حذف</li>
+        <li>گزارش‌های تکراری/مشکوک (یک IP، چند حساب)</li></ul></div>
+    </div>
+    <div class="dod"><b>DoD:</b><span>۱۰۰ نظر تأییدشده</span><span>صف مدیریت زیر ۲۴ ساعت خالی می‌شود</span><span>اولین سیگنال به‌صورت خودکار امتیاز گرفته</span><span>۳ بروکر پروفایل claim کرده‌اند</span></div>
+  </div>
+
+  <!-- ---- P4 ---- -->
+  <div class="phase" id="p4">
+    <div class="ph-h"><span class="num">4</span><div><h3>رشد و درآمد</h3><div class="goal">هدف: اولین دلار افیلیت و ۱۰۰۰ مشترک خبرنامه — قبل از انتشار عمومی</div></div><span class="wk">هفتهٔ 12–14</span></div>
+    <div class="tracks">
+      <div class="track"><h4><i style="background:var(--pd)"></i>محصول</h4><ul>
+        <li>قرارداد افیلیت با ۱۰ بروکر برتر (CPA یا رِوشِر)، ۵ پراپ، ۴ صرافی</li>
+        <li>متن افشا روی هر لینک — نه فقط فوتر</li>
+        <li>پلن Pro: چه چیزی رایگان، چه چیزی پولی (جدول در بلوپرینت)</li>
+        <li>ساختار «صبحانهٔ بازار»: ۵ خط، هر صبح ۷:۰۰ به وقت مخاطب</li></ul></div>
+      <div class="track"><h4><i style="background:var(--fe)"></i>فرانت</h4><ul>
+        <li>دکمه‌های افیلیت با افشا؛ صفحهٔ «کجا بخرم»</li>
+        <li>signup خبرنامه (هوم، مقاله، فوتر) + صفحهٔ آرشیو</li>
+        <li>آلرت: قیمت، اسپرد، خبر، سیگنال تریدر فالوشده — با نام‌پد ماکاپ</li>
+        <li>ویجت‌های امبد: تیکر، تقویم، وضعیت بروکر — صفحهٔ سازندهٔ ویجت</li>
+        <li>صفحهٔ Pro، checkout، مدیریت اشتراک</li>
+        <li>i18n (next-intl): en + fa، hreflang، سوییچ زبان</li></ul></div>
+      <div class="track"><h4><i style="background:var(--be)"></i>بک‌اند</h4><ul>
+        <li><b>افیلیت:</b> <code>/go/[id]</code> redirect با click id و geo؛ postback endpoint؛ جدول تبدیل</li>
+        <li><b>خبرنامه:</b> worker روزانه: جمع دیتای خودمان (رادار، تقویم، آلرت رگولاتور، بهترین سیگنال) → مدل زبانی → پیش‌نویس → تأیید یا ارسال خودکار → Resend + تلگرام</li>
+        <li><b>آلرت:</b> جدول شرط‌ها → worker هر دقیقه ارزیابی → ایمیل/تلگرام → لاگ تحویل</li>
+        <li><b>ویجت:</b> endpoint JSON با کش CDN + اسکریپت ۳KB</li>
+        <li><b>Pro:</b> Stripe checkout + webhook؛ درگاه کریپتو؛ feature flags per user</li></ul></div>
+      <div class="track"><h4><i style="background:var(--ad)"></i>ادمین</h4><ul>
+        <li>مدیریت افیلیت: لینک per بروکر × کشور، نرخ کمیسیون، گزارش کلیک/تبدیل/درآمد</li>
+        <li>ادیتور خبرنامه: پیش‌نویس خودکار، ویرایش، پیش‌نمایش، ارسال، آمار open/click</li>
+        <li>مدیریت پلن‌ها، اشتراک‌ها، کوپن‌ها، ریفاند</li>
+        <li>مدیریت ترجمه‌ها (رشته‌های UI و محتوای دو زبانه)</li>
+        <li>آمار ویجت: کدام سایت‌ها، چند نمایش</li></ul></div>
+    </div>
+    <div class="dod"><b>DoD:</b><span>اولین تبدیل افیلیت ثبت‌شده</span><span>۱۰۰۰ مشترک خبرنامه</span><span>۵ سایت ویجت را نصب کرده‌اند</span><span>هر دو زبان بدون رشتهٔ ترجمه‌نشده</span></div>
+  </div>
+
+  <!-- ---- P5 ---- -->
+  <div class="phase" id="p5">
+    <div class="ph-h"><span class="num">5</span><div><h3>انتشار</h3><div class="goal">هدف: soft launch با ۵۰ کاربر دعوتی، رفع، بعد انتشار عمومی</div></div><span class="wk">هفتهٔ 15–16</span></div>
+    <div class="tracks">
+      <div class="track"><h4><i style="background:var(--pd)"></i>محصول</h4><ul>
+        <li>۲۰ مقالهٔ پایه منتشر؛ ۴۲ بروکر بدون فیلد خالی</li>
+        <li>حقوقی: ToS، Privacy، افشای افیلیت، دیسکلیمر ریسک، سیاست نظرات، فرآیند اعتراض بروکر</li>
+        <li>هفتهٔ ۱۵: soft launch → بازخورد → لیست رفع</li>
+        <li>هفتهٔ ۱۶: اعلان (تلگرام، توییتر، ردیت r/Forex)، outreach به ۲۰ سایت برای ویجت</li></ul></div>
+      <div class="track"><h4><i style="background:var(--fe)"></i>فرانت</h4><ul>
+        <li>Lighthouse موبایل ≥ ۹۰ روی هوم، لیست، صفحهٔ بروکر</li>
+        <li>LCP &lt; 2.5s · INP &lt; 200ms · CLS &lt; 0.1</li>
+        <li>تصاویر AVIF/WebP با next/image؛ فونت self-host با <code>font-display: swap</code></li>
+        <li>صفحات 404/500 مفید؛ حالت‌های خالی و لودینگ (اسکلتون از ماکاپ)</li>
+        <li>تست دستی روی iOS Safari + Android Chrome + دسکتاپ</li>
+        <li>a11y: کنتراست، فوکوس، label ها</li></ul></div>
+      <div class="track"><h4><i style="background:var(--be)"></i>بک‌اند</h4><ul>
+        <li>امنیت: rate limit همهٔ POST ها، CSP، CSRF، zod روی هر ورودی، اسکن آپلود، Cloudflare WAF</li>
+        <li>rotation کلیدها؛ <code>pnpm audit</code> پاک؛ dependabot</li>
+        <li>بکاپ: Postgres PITR، R2 versioning، <b>تست ریستور واقعی</b></li>
+        <li>مانیتورینگ: Sentry، BetterStack uptime (وب + API + worker)، آلرت ingest</li>
+        <li>لود تست: ۵۰۰ کاربر همزمان روی صفحهٔ بروکر</li>
+        <li>runbook: اگر X قطع شد چه کنیم</li></ul></div>
+      <div class="track"><h4><i style="background:var(--ad)"></i>ادمین</h4><ul>
+        <li>داشبورد انتشار: ترافیک، ثبت‌نام، نظرات، کلیک افیلیت، خطاها — یک صفحه</li>
+        <li>ابزار «اعلان سراسری» (بنر بالای سایت)</li>
+        <li>لیست فیلدهای خالی و صفحات ضعیف (thin content) برای رفع</li>
+        <li>گزارش سئو: صفحات ایندکس‌شده، خطاهای GSC، کلیک‌ها</li></ul></div>
+    </div>
+    <div class="dod"><b>DoD:</b><span>۳۰۰+ صفحهٔ ایندکس‌شده</span><span>آپ‌تایم ۷ روز ≥ ۹۹.۹٪</span><span>صفر خطای P0 در Sentry</span><span>ریستور بکاپ در محیط staging موفق</span><span>همهٔ صفحات حقوقی منتشر</span></div>
+  </div>
+
+  <!-- ---- P6 ---- -->
+  <div class="phase" id="p6">
+    <div class="ph-h"><span class="num">6</span><div><h3>بعد از انتشار</h3><div class="goal">هدف: چیزهایی که کپی‌کردنشان ماه‌ها طول می‌کشد</div></div><span class="wk">ماه 5+</span></div>
+    <div class="tracks">
+      <div class="track"><h4><i style="background:var(--pd)"></i>محصول</h4><ul>
+        <li>ریتم هفتگی: دوشنبه دیتا، چهارشنبه محتوا، جمعه انجمن</li>
+        <li>گسترش: ۱۰۰ بروکر، ۴۰ پراپ، ۵۰ صرافی</li>
+        <li>زبان سوم (عربی یا ترکی) اگر انگلیسی/فارسی جواب داد</li></ul></div>
+      <div class="track"><h4><i style="background:var(--fe)"></i>فرانت</h4><ul>
+        <li><b>اپ Expo</b> با <code>packages/core</code> و <code>ui</code> — ۵ تب از ماکاپ اپ</li>
+        <li>پوش: آلرت، اختلال بروکرِ من، سیگنال تریدر فالوشده</li>
+        <li>چت زنده (Centrifugo): اتاق نماد + اتاق رویداد</li></ul></div>
+      <div class="track"><h4><i style="background:var(--be)"></i>بک‌اند</h4><ul>
+        <li>API عمومی با کلید برای پارتنرها (Pro/Enterprise)</li>
+        <li>رگولاتورهای بیشتر: DFSA، MAS، FINMA، FSCA کامل</li>
+        <li>بک‌تست رویداد: واکنش تاریخی بازار به هر NFP/FOMC</li>
+        <li>اتصال Myfxbook/MT5 investor برای نشان «حساب واقعی» تریدر</li></ul></div>
+      <div class="track"><h4><i style="background:var(--ad)"></i>ادمین</h4><ul>
+        <li>مدیریت اتاق‌های چت و مودهای داوطلب</li>
+        <li>مدیریت کلیدهای API و سهمیه</li>
+        <li>گزارش‌های ماهانه برای بروکرهای claim‌شده (پولی)</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ADMIN ================= -->
+<section id="admin">
+  <div class="sh"><span class="k">06</span><h2>پنل ادمین — فهرست کامل</h2></div>
+  <p>روی Payload CMS، با ماژول‌های سفارشی برای چیزهایی که CMS ندارد (صف مدیریت، سلامت دیتا، افیلیت).</p>
+  <div class="grid2">
+    <div class="card flat"><b>دایرکتوری</b><ul style="margin-top:8px;font-size:13.5px">
+      <li>بروکر / پراپ / صرافی: CRUD کامل، فیلدهای ساختاریافته، پیش‌نمایش صفحه</li>
+      <li>entity ها و لایسنس‌ها؛ نقشهٔ کشور → entity</li>
+      <li>رگولاتورها با درجه و URL رجیستری</li>
+      <li>لاگ تغییرات هر موجودیت (کی، چی، چرا)</li>
+      <li>ورود گروهی از CSV؛ خروجی CSV</li>
+      <li>«فیلدهای خالی» — لیست چیزهایی که باید پر شود</li></ul></div>
+    <div class="card flat"><b>محتوا</b><ul style="margin-top:8px;font-size:13.5px">
+      <li>مقالات: ویرایشگر بلوکی، نویسنده، دسته، تگ، SEO، زمان‌بندی، پیش‌نمایش، نسخه‌ها</li>
+      <li>نویسندگان با بیو و لینک‌ها (E-E-A-T)</li>
+      <li>مدیا با آلت‌تکست اجباری</li>
+      <li>صفحات ثابت (about، methodology، legal)</li>
+      <li>ترجمه‌ها: رشته‌های UI + محتوای دو زبانه کنار هم</li>
+      <li>خبرنامه: پیش‌نویس خودکار، ویرایش، ارسال، آمار</li></ul></div>
+    <div class="card flat"><b>دیتا و سلامت</b><ul style="margin-top:8px;font-size:13.5px">
+      <li>داشبورد ingest: هر منبع، آخرین اجرا، تازگی، خطا، اجرای دستی</li>
+      <li>اکانت‌های دمو و VPS های اسپرد</li>
+      <li>صف آلرت رگولاتور → بازبینی → انتشار</li>
+      <li>override: امتیاز، وضعیت، entity، تفسیر تقویم</li>
+      <li>مدیریت میم‌کوین: بلک‌لیست دستی، آستانه‌ها</li>
+      <li>revalidate دستی هر صفحه</li></ul></div>
+    <div class="card flat"><b>جامعه و مدیریت</b><ul style="margin-top:8px;font-size:13.5px">
+      <li>صف واحد: نظر، کامنت، گزارش وضعیت، سیگنال — فیلتر، اکشن سریع، کیبورد</li>
+      <li>بازبینی استیتمنت (ماسک‌شده) و صدور نشان</li>
+      <li>claim بروکر: درخواست‌ها، مدارک، تأیید، نمایندگان</li>
+      <li>کاربران: جستجو، نقش، بن، shadow-ban، تاریخچهٔ فعالیت</li>
+      <li>تشخیص سوءاستفاده: چند حساب/یک IP، الگوی نظرات</li>
+      <li><code>audit_log</code> فقط‌خواندنی</li></ul></div>
+    <div class="card flat"><b>درآمد</b><ul style="margin-top:8px;font-size:13.5px">
+      <li>افیلیت: لینک per بروکر × کشور، کمیسیون، کلیک، تبدیل، درآمد، postback log</li>
+      <li>اشتراک Pro: پلن‌ها، مشترکان، کوپن، ریفاند، churn</li>
+      <li>پروفایل رسمی بروکر (پولی): وضعیت، فاکتور</li>
+      <li>ویجت‌ها: دامنه‌ها، نمایش‌ها</li></ul></div>
+    <div class="card flat"><b>سیستم</b><ul style="margin-top:8px;font-size:13.5px">
+      <li>داشبورد یک‌صفحه‌ای: ترافیک، ثبت‌نام، صف، درآمد، خطا</li>
+      <li>اعلان سراسری (بنر)</li>
+      <li>feature flags</li>
+      <li>گزارش سئو از GSC API</li>
+      <li>نقش‌های ادمین: admin، editor، moderator، data، finance</li></ul></div>
+  </div>
+</section>
+
+<!-- ================= INGEST ================= -->
+<section id="ingest">
+  <div class="sh"><span class="k">07</span><h2>جاب‌های دیتا — زمان‌بندی</h2></div>
+  <div class="card flat scroll">
+  <table>
+    <tr><th>جاب</th><th>منبع</th><th>تناوب</th><th>خروجی</th><th>فاز</th></tr>
+    <tr><td><b>coin_prices</b></td><td>CoinGecko</td><td class="n">60s</td><td><code>coin_prices</code> hypertable</td><td>۱</td></tr>
+    <tr><td><b>coin_meta</b></td><td>CoinGecko</td><td>روزانه</td><td><code>coins</code></td><td>۱</td></tr>
+    <tr><td><b>spread_tick</b></td><td>MT5 EA (۳ VPS) → webhook</td><td class="n">60s</td><td><code>spreads</code> → <code>spread_daily</code></td><td>۲</td></tr>
+    <tr><td><b>regulator_watch</b></td><td>FCA, CySEC, ASIC, FSCA, FSC-MU (Playwright)</td><td>روزانه ۰۶:۰۰</td><td><code>regulator_snapshots</code> → diff → <code>regulator_alerts</code></td><td>۲</td></tr>
+    <tr><td><b>prop_rules_diff</b></td><td>صفحهٔ قوانین هر پراپ</td><td>هفتگی</td><td><code>prop_rule_changes</code></td><td>۲</td></tr>
+    <tr><td><b>memecoin_scan</b></td><td>GeckoTerminal new pools + GoPlus</td><td class="n">5m</td><td><code>memecoins</code>, <code>memecoin_audits</code></td><td>۲</td></tr>
+    <tr><td><b>calendar_sync</b></td><td>Finnhub / FMP</td><td>روزانه + ۱۵ دقیقه بعد از رویداد (actual)</td><td><code>calendar_events</code></td><td>۲</td></tr>
+    <tr><td><b>calendar_explain</b></td><td>مدل زبانی روی رویدادهای high-impact</td><td>روزانه</td><td>تفسیر یک‌خطی، کش‌شده</td><td>۲</td></tr>
+    <tr><td><b>risk_radar</b></td><td>تقویم + Deribit + DefiLlama + فاندینگ</td><td>ساعتی</td><td><code>risk_radar_daily</code></td><td>۲</td></tr>
+    <tr><td><b>signal_score</b></td><td>سیگنال‌های باز × فید قیمت</td><td class="n">60s</td><td><code>signal_outcomes</code>, <code>trader_stats</code></td><td>۳</td></tr>
+    <tr><td><b>status_aggregate</b></td><td><code>status_reports</code></td><td class="n">5m</td><td><code>status_daily</code> + تغییر وضعیت</td><td>۳</td></tr>
+    <tr><td><b>statement_process</b></td><td>آپلودهای جدید</td><td>on demand</td><td>OCR + ماسک → نشان → حذف فایل</td><td>۳</td></tr>
+    <tr><td><b>alert_eval</b></td><td>شرط‌های آلرت × دیتا</td><td class="n">60s</td><td><code>alert_deliveries</code></td><td>۴</td></tr>
+    <tr><td><b>morning_brief</b></td><td>دیتای خودمان → مدل زبانی</td><td>روزانه ۰۶:۳۰</td><td>پیش‌نویس خبرنامه</td><td>۴</td></tr>
+    <tr><td><b>affiliate_postback</b></td><td>webhook بروکرها</td><td>on demand</td><td><code>conversions</code></td><td>۴</td></tr>
+    <tr><td><b>search_index</b></td><td>رویدادهای ادمین</td><td>on demand</td><td>Meilisearch</td><td>۱</td></tr>
+    <tr><td><b>sitemap_build</b></td><td>دیتابیس</td><td>ساعتی</td><td>sitemap index</td><td>۱</td></tr>
+  </table></div>
+  <div class="callout warn" style="margin-top:14px"><span>⚠️</span><div><b>هر جاب باید idempotent باشد</b> — اجرای دوباره نتیجه را عوض نکند. و هر جاب در <code>ingest_runs</code> ثبت شود. اگر ۲ اجرای پشت هم fail شد، تلگرام مدیر. این دو قاعده ۸۰٪ مشکلات دیتای زنده را از بین می‌برد.</div></div>
+</section>
+
+<!-- ================= API ================= -->
+<section id="api">
+  <div class="sh"><span class="k">08</span><h2>سطح API</h2></div>
+  <div class="grid2">
+    <div class="card flat"><b>عمومی (خواندن)</b>
+<pre style="margin-top:10px;font-size:12px">GET /api/brokers?regulator=&amp;minDeposit=&amp;sort=
+GET /api/brokers/:slug
+GET /api/brokers/:slug/spreads?range=30d
+GET /api/brokers/:slug/status
+GET /api/brokers/:slug/entity?country=SG
+GET /api/compare?a=exness&amp;b=ic-markets
+GET /api/props  /api/exchanges  /api/memecoins
+GET /api/coins/:slug  /api/coins/:slug/where-to-buy
+GET /api/calendar?from=&amp;to=&amp;impact=
+GET /api/radar/today
+GET /api/signals?symbol=&amp;trader=
+GET /api/leaderboard?period=30d
+GET /api/search?q=
+GET /api/widgets/ticker|calendar|status  <span class="c">← کش CDN</span>
+GET /go/:affiliateId  <span class="c">← redirect + tracking</span></pre></div>
+    <div class="card flat"><b>احراز هویت‌شده (نوشتن)</b>
+<pre style="margin-top:10px;font-size:12px">POST /api/reviews            <span class="c">+ statement upload (multipart)</span>
+POST /api/reports/status     <span class="c">rate-limited</span>
+POST /api/comments
+POST /api/signals            <span class="c">immutable after create</span>
+POST /api/signals/:id/close  <span class="c">manual close only</span>
+POST /api/alerts   DELETE /api/alerts/:id
+POST /api/follow/:userId
+POST /api/broker-claims
+POST /api/broker-replies     <span class="c">role: broker_rep</span>
+POST /api/newsletter/subscribe
+POST /api/checkout           <span class="c">Stripe session</span>
+POST /api/webhooks/stripe
+POST /api/webhooks/affiliate/:broker
+POST /api/webhooks/spread    <span class="c">از EA، با secret</span>
+POST /api/revalidate         <span class="c">از ادمین</span></pre></div>
+  </div>
+  <p style="margin-top:12px;font-size:14px">همه با <code>zod</code> اعتبارسنجی، همهٔ POST ها rate-limited، پاسخ‌ها با <code>Cache-Control</code> صریح. صفحات وب از همین توابع مستقیماً در RSC استفاده می‌کنند — نه از طریق HTTP.</p>
+</section>
+
+<!-- ================= LAUNCH ================= -->
+<section id="launch">
+  <div class="sh"><span class="k">09</span><h2>چک‌لیست انتشار</h2></div>
+  <div class="grid2">
+    <div class="card flat"><b>سئو</b><ul style="margin-top:8px;font-size:13.5px">
+      <li>۳۰۰+ صفحهٔ ایندکس‌پذیر با محتوای واقعی؛ thin content → noindex</li>
+      <li>Rich Results Test برای ۵ نوع صفحه پاس</li>
+      <li>sitemap index ثبت در GSC و Bing</li>
+      <li>canonical، hreflang، robots درست</li>
+      <li>OG image برای هر صفحه؛ عنوان و description یکتا</li>
+      <li>صفحات methodology / authors / about / disclosure منتشر</li>
+      <li>لینک داخلی: هر بروکر ↔ مقایسه ↔ مقالات ↔ کوین‌های CFD</li></ul></div>
+    <div class="card flat"><b>پرفورمنس</b><ul style="margin-top:8px;font-size:13.5px">
+      <li>Lighthouse موبایل ≥ ۹۰ (هوم، لیست، بروکر، مقاله)</li>
+      <li>LCP &lt; 2.5s · INP &lt; 200ms · CLS &lt; 0.1</li>
+      <li>JS اولیه &lt; 150KB روی صفحات محتوایی</li>
+      <li>فونت self-host، AVIF، lazy load زیر فولد</li>
+      <li>ISR درست: کوین ۶۰ث، بروکر روزانه + on-demand</li></ul></div>
+    <div class="card flat"><b>امنیت</b><ul style="margin-top:8px;font-size:13.5px">
+      <li>rate limit همهٔ POST ها؛ Turnstile روی فرم‌های عمومی</li>
+      <li>CSP، HSTS، CSRF، secure cookies</li>
+      <li>zod روی هر ورودی؛ اسکن آپلود؛ محدودیت حجم</li>
+      <li>Cloudflare WAF + bot fight</li>
+      <li>کلیدها در secret manager؛ rotation انجام‌شده</li>
+      <li><code>pnpm audit</code> پاک؛ dependabot فعال</li>
+      <li>تست: SQLi، XSS، IDOR روی endpoint های نوشتن</li></ul></div>
+    <div class="card flat"><b>عملیات</b><ul style="margin-top:8px;font-size:13.5px">
+      <li>Sentry در web/admin/worker با release tracking</li>
+      <li>BetterStack: وب، API، worker heartbeat، ingest تازگی</li>
+      <li>Postgres PITR + R2 versioning + <b>ریستور تست‌شده</b></li>
+      <li>runbook: قطعی CoinGecko، قطعی VPS اسپرد، حملهٔ اسپم، درخواست حذف بروکر</li>
+      <li>لود تست ۵۰۰ همزمان پاس</li>
+      <li>دامنه، DNS، SSL، ایمیل (SPF/DKIM/DMARC)</li></ul></div>
+    <div class="card flat"><b>حقوقی</b><ul style="margin-top:8px;font-size:13.5px">
+      <li>Terms of Service · Privacy Policy (GDPR-aware)</li>
+      <li>افشای افیلیت — روی هر لینک و صفحهٔ جدا</li>
+      <li>دیسکلیمر ریسک — فوتر و صفحهٔ سیگنال</li>
+      <li>سیاست نظرات و فرآیند اعتراض بروکر</li>
+      <li>سیاست حذف دیتا و استیتمنت (۲۴ ساعت)</li>
+      <li>مشاورهٔ حقوقی برای حوزهٔ قضایی شرکت</li></ul></div>
+    <div class="card flat"><b>محتوا و اعلان</b><ul style="margin-top:8px;font-size:13.5px">
+      <li>۴۲ بروکر، ۱۷ پراپ، ۲۴ صرافی — بدون فیلد خالی</li>
+      <li>۲۰ مقالهٔ پایه با نویسندهٔ واقعی</li>
+      <li>۱۰۰ نظر تأییدشدهٔ seed</li>
+      <li>soft launch ۵۰ نفر → ۱ هفته → رفع</li>
+      <li>اعلان: تلگرام، توییتر، ردیت، Product Hunt (en)</li>
+      <li>outreach ۲۰ سایت/کانال برای ویجت</li></ul></div>
+  </div>
+</section>
+
+<!-- ================= BUDGET ================= -->
+<section id="budget">
+  <div class="sh"><span class="k">10</span><h2>بودجهٔ زیرساخت ماهانه</h2></div>
+  <div class="card flat scroll">
+  <table>
+    <tr><th>سرویس</th><th>شروع</th><th>در ۱۰۰هزار بازدید/ماه</th><th>یادداشت</th></tr>
+    <tr><td><b>Vercel Pro</b></td><td class="n">$20</td><td class="n">$20–60</td><td>web + admin</td></tr>
+    <tr><td><b>Postgres + Timescale</b></td><td class="n">$25</td><td class="n">$60–100</td><td>Neon / Supabase / یا VPS خودمان</td></tr>
+    <tr><td><b>Redis</b></td><td class="n">$10</td><td class="n">$20</td><td>Upstash</td></tr>
+    <tr><td><b>Worker + Meilisearch</b></td><td class="n">$20</td><td class="n">$40</td><td>Fly.io یا VPS</td></tr>
+    <tr><td><b>۳× VPS ویندوز برای MT5</b></td><td class="n">$30</td><td class="n">$30</td><td>اسپرد زنده — فاز ۲</td></tr>
+    <tr><td><b>R2</b></td><td class="n">$5</td><td class="n">$10</td><td>بدون egress</td></tr>
+    <tr><td><b>CoinGecko</b></td><td class="n">$0</td><td class="n">$129</td><td>رایگان تا سقف؛ Analyst بعداً</td></tr>
+    <tr><td><b>تقویم (Finnhub/FMP)</b></td><td class="n">$0</td><td class="n">$50</td><td>—</td></tr>
+    <tr><td><b>Resend</b></td><td class="n">$20</td><td class="n">$90</td><td>خبرنامه + آلرت</td></tr>
+    <tr><td><b>Sentry + BetterStack + PostHog</b></td><td class="n">$40</td><td class="n">$80</td><td>—</td></tr>
+    <tr><td><b>Cloudflare</b></td><td class="n">$0</td><td class="n">$20</td><td>WAF Pro اختیاری</td></tr>
+    <tr><td><b>مدل زبانی</b></td><td class="n">$20</td><td class="n">$60</td><td>تفسیر تقویم + خبرنامه، کش‌شده</td></tr>
+    <tr><td><b>جمع</b></td><td class="n"><b>~$190</b></td><td class="n"><b>~$600–700</b></td><td>بدون حقوق تیم</td></tr>
+  </table></div>
+  <p style="margin-top:12px;font-size:14px">اگر همه‌چیز روی یک VPS قوی با Coolify باشد (Postgres، Redis، Meili، worker، حتی Next.js): حدود <span class="n">$60–80</span> در ماه — ولی خودتان مسئول بکاپ و آپ‌تایم هستید.</p>
+</section>
+
+<!-- ================= RISKS ================= -->
+<section id="risks">
+  <div class="sh"><span class="k">11</span><h2>ریسک‌ها و پاسخ</h2></div>
+  <div class="grid2">
+    <div class="card flat"><b>EA های MT5 ناپایدارند</b><p style="font-size:14px;margin-top:6px">VPS ری‌استارت می‌شود، بروکر اکانت دمو را می‌بندد، اتصال قطع می‌شود. <b>پاسخ:</b> heartbeat هر دقیقه؛ اگر ۵ دقیقه تیک نیامد، جدول اسپرد آن بروکر «به‌روزرسانی متوقف» نشان می‌دهد نه عدد کهنه. اکانت‌های دمو را هر ۳۰ روز تازه کنید.</p></div>
+    <div class="card flat"><b>منابع دیتا ToS دارند</b><p style="font-size:14px;margin-top:6px">API رسمی همیشه بر اسکرپ ارجح است. اسکرپ فقط برای رجیستری رگولاتورها (دیتای عمومی، تناوب روزانه، user-agent شفاف). کش کنید تا سقف‌ها را نزنید.</p></div>
+    <div class="card flat"><b>اسپم و ریویوی جعلی</b><p style="font-size:14px;margin-top:6px">روز اول شروع می‌شود. <b>پاسخ:</b> نشان تأیید فقط با استیتمنت؛ نظر بدون تأیید در رتبه اثر ندارد؛ Turnstile؛ rate limit؛ shadow-ban؛ تشخیص چند حساب. بودجهٔ مدیریت را از فاز ۳ در نظر بگیرید.</p></div>
+    <div class="card flat"><b>بروکرها فشار می‌آورند</b><p style="font-size:14px;margin-top:6px">درخواست حذف نظر، تهدید حقوقی. <b>پاسخ:</b> سیاست مکتوب و عمومی: حذف فقط با نقض قوانین. فرآیند claim و پاسخ رسمی. همهٔ رتبه‌ها با فرمول عمومی قابل دفاع.</p></div>
+    <div class="card flat"><b>تأیید افیلیت کند است</b><p style="font-size:14px;margin-top:6px">بروکرها ۲–۶ هفته برای تأیید پارتنر وقت می‌گیرند. <b>پاسخ:</b> درخواست‌ها را از فاز ۱ بفرستید، نه فاز ۴. با ترافیک واقعی درخواست بدهید.</p></div>
+    <div class="card flat"><b>scope creep</b><p style="font-size:14px;margin-top:6px">چت زنده، اپ، API — همه جذاب‌اند و همه بعد از انتشارند. <b>پاسخ:</b> DoD هر فاز. هر ایدهٔ جدید به فاز ۶ می‌رود مگر اینکه چیزی را از فاز فعلی حذف کند.</p></div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<footer>
+  <p style="max-width:70ch">این رودمپ با فرض تیم ۳ نفره نوشته شده. ارقام بودجه تقریبی و بر اساس قیمت‌های عمومی سرویس‌ها در زمان نوشتن است. طراحی‌ها در <code>design/</code> و <code>design-web/</code> و بلوپرینت محصول در آرتیفکت جدا.</p>
+</footer>
+</div>
