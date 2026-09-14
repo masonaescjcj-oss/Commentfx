@@ -15,6 +15,8 @@ every link that carries one — and never touch the score.
 | New DEX pools | GeckoTerminal | free |
 | Token contract audits | GoPlus | free |
 | Broker, prop and exchange records | curated, checked against regulators | free |
+| Licence verification | CySEC public register (scraped) | free |
+| Economic calendar | BLS release schedule, FOMC calendar, ECB calendar | free |
 
 No API key is needed to run or build the site. A free tier going quiet must never
 take the site down, so every fetch has a timeout, returns null on failure, and the
@@ -32,6 +34,42 @@ reporters and the threshold is published on the page.
 
 None of it touches a score. Unverified crowd signal beside a verified number is
 useful; unverified crowd signal *inside* it would destroy the number.
+
+## Register checks
+
+Once a day every licence we publish is compared against the register of the
+regulator that issued it. The result is stored per licence and shown on the
+broker page: confirmed and under what name, not on the register, or explicitly
+not machine-checked with the reason.
+
+Only CySEC is readable from a datacentre today. The FCA, ASIC, the Mauritius FSC
+and the NFA were each probed and are **declared as blocked with the reason**
+rather than omitted, so register coverage never looks wider than it is.
+
+Two rules hold, and both are tested:
+
+- "The register says nothing" and "we could not read the register" never collapse
+  into the same answer. A fetch failure is not evidence about a licence, and it
+  never overwrites what the register last actually said.
+- Nothing is corrected automatically. A register disagreeing with us is a
+  question for an editor — a scraper is wrong often enough that automatic
+  correction would eventually publish a falsehood about a real company.
+
+## Economic calendar
+
+`/calendar` carries US and euro-area releases and rate decisions, each taken from
+the institution that sets it. Nothing is copied from another calendar site and
+nothing is inferred from a pattern.
+
+A release time appears only where the source publishes one. The BLS states exact
+times and names the zone; the Fed and the ECB publish dates without them, and
+those rows say so. Times convert through `Intl`, not a fixed offset — 08:30 in
+Washington is 12:30 UTC in October and 13:30 UTC in December — and the BLS fetch
+fails outright if the page stops stating that its times are Eastern, because that
+one sentence is what every clock on the page depends on.
+
+Impact grading is ours, not the institutions'. It is a published list of release
+names rather than a model, deliberately: a list can be argued with.
 
 ## Verification
 
@@ -62,16 +100,40 @@ pnpm build                           # all packages
 No database or API key is needed to run the site. Everything renders from the
 seed data in `packages/core/src/data/`.
 
+## Scheduled jobs
+
+Every parser here fails safe: when a page's markup changes it reports the source
+as unavailable rather than publishing nonsense, and the site renders an honest
+"we could not read this". That is right for a reader and invisible to us — a
+scraper that broke in March would still be politely unavailable in June. So the
+silence is turned into a notification:
+
+```sh
+pnpm --filter @commentfx/ingest probe             # every upstream, exit 1 if a parser broke
+pnpm --filter @commentfx/ingest registers:report  # licence findings, no database, exit 2 if any
+pnpm --filter @commentfx/web check-registers      # the same check, written to the database
+```
+
+`.github/workflows/sources.yml` runs the first two daily. A broken parser opens
+an issue and closes it when the source recovers; licence findings update one
+issue in place rather than commenting daily, because an issue that grows a
+duplicate comment every morning gets muted, and a muted issue is the same as no
+issue.
+
+In production `check-registers` is the one that matters — it needs `DATABASE_URL`
+and should run on the same daily schedule.
+
 ## Layout
 
 ```
-apps/web        Next.js 15 — the public site, statically generated
-packages/core   types, the scoring engines, regulator registry, seed data
-packages/db     schema, migrations, verification tracking, audit log
-packages/ingest free-tier upstreams behind one failure-tolerant contract
-design/         app screen designs (dark, Persian)
-design-web/     website designs (light, English) — the tokens the app uses
-docs/           the 16-week roadmap
+apps/web          Next.js 15 — the public site, statically generated
+packages/core     types, the scoring engines, regulator registry, seed data
+packages/db       schema, migrations, verification tracking, audit log
+packages/ingest   free-tier upstreams behind one failure-tolerant contract
+.github/workflows CI, and the daily upstream probe
+design/           app screen designs (dark, Persian)
+design-web/       website designs (light, English) — the tokens the app uses
+docs/             the 16-week roadmap
 ```
 
 ## Two constraints that shape the build
@@ -136,6 +198,16 @@ shipping a rating with nothing behind it is how a site loses rich results.
 Programmatic pages come from real queries over the data, not templates:
 `/best/[criterion]` and `/compare/[a]-vs-[b]`. The sitemap is generated from the
 same source, so it can never drift from what exists.
+
+`/search` renders the whole directory into the page and filters it in the
+browser — no request, nothing logged, and with JavaScript off it is a plain
+directory, which is also the internal link hub the site needed.
+
+Comparison pages are generated from the same function the broker pages use to
+pick their alternatives. These were allowed to drift once: the pages linked three
+alternatives each while only the top six brokers got a built page, so most
+"X vs Y" links on the site were 404s. Anything linked is now built, and a sweep
+of every internal href across all prerendered pages finds nothing dead.
 
 ## Data status
 

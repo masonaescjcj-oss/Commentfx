@@ -1,0 +1,170 @@
+name: Upstream sources
+
+# Every parser on this site fails safe: when a page's markup changes it reports
+# the source as unavailable rather than publishing nonsense, and the site shows
+# an honest "we could not read this". That is right for a reader and invisible
+# to us, so a scraper that broke in March would still be politely unavailable in
+# June. This job is what turns that silence into a notification.
+
+on:
+  schedule:
+    # 06:20 UTC daily. Off the hour, because every scheduled job in the world
+    # runs at :00 and GitHub queues them.
+    - cron: '20 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      broken: ${{ steps.probe.outcome == 'failure' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Probe every upstream
+        id: probe
+        continue-on-error: true
+        run: |
+          pnpm --filter @commentfx/ingest probe | tee probe.txt
+
+      - name: Report
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const output = fs.readFileSync('probe.txt', 'utf8');
+            const broken = '${{ steps.probe.outcome }}' === 'failure';
+
+            await core.summary
+              .addHeading(broken ? 'A parsed source is broken' : 'Every parsed source is readable')
+              .addCodeBlock(output)
+              .write();
+
+            const title = 'Upstream source is unreadable';
+            const { data: open } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'upstream',
+            });
+            const existing = open.find((i) => i.title === title);
+
+            if (!broken) {
+              // Close it with a note rather than silently: whoever is watching
+              // the issue should see that it recovered and on which run.
+              if (existing) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  issue_number: existing.number,
+                  body: `Every parsed source is readable again as of ${new Date().toISOString()}.\n\n\`\`\`\n${output}\n\`\`\``,
+                });
+                await github.rest.issues.update({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  issue_number: existing.number, state: 'closed',
+                });
+              }
+              return;
+            }
+
+            const body = [
+              'A source the site parses could not be read. Until the parser is fixed, the',
+              'pages that use it will show an honest "unavailable" state — nothing wrong is',
+              'published, but nothing is published either.',
+              '',
+              '```',
+              output.trim(),
+              '```',
+              '',
+              `[Run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+            ].join('\n');
+
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: existing.number, body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title, body, labels: ['upstream'],
+              });
+            }
+
+      - name: Fail the run if a parsed source is broken
+        if: steps.probe.outcome == 'failure'
+        run: exit 1
+
+  registers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Compare published licences against the registers
+        id: registers
+        continue-on-error: true
+        run: |
+          pnpm --filter @commentfx/ingest registers:report | tee registers.txt
+
+      - name: Report findings
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const output = fs.readFileSync('registers.txt', 'utf8');
+            const problems = '${{ steps.registers.outcome }}' === 'failure';
+
+            await core.summary
+              .addHeading(problems ? 'A licence needs an editor' : 'Every licence matches its register')
+              .addRaw(output.replace(/^> .*$/gm, ''))
+              .write();
+
+            if (!problems) return;
+
+            const title = 'Licence findings from the regulator registers';
+            const { data: open } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'registers',
+            });
+            const existing = open.find((i) => i.title === title);
+
+            // The findings are the same every day until someone acts on one, so
+            // this replaces the issue body rather than commenting daily. An
+            // issue that grows a duplicate comment every morning gets muted,
+            // and a muted issue is the same as no issue.
+            const body = [
+              'These licences did not match the regulator’s own register. Nothing has been',
+              'changed on the site — a register disagreeing with us is a question for a',
+              'person, not a correction to apply automatically.',
+              '',
+              output.replace(/^> .*$/gm, '').trim(),
+              '',
+              `Last checked: ${new Date().toISOString()}`,
+            ].join('\n');
+
+            if (existing) {
+              await github.rest.issues.update({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: existing.number, body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title, body, labels: ['registers'],
+              });
+            }

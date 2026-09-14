@@ -1,4 +1,5 @@
-import type { RegisterResult, RegisterSource } from './types.ts';
+import { BROKERS } from '@commentfx/core';
+import { compareLicence, type Finding, type RegisterResult, type RegisterSource } from './types.ts';
 import { cysec } from './cysec.ts';
 
 export * from './types.ts';
@@ -32,4 +33,40 @@ export const sourceFor = (code: string) => SOURCES.find((s) => s.code === code);
 
 export async function fetchAllRegisters(): Promise<RegisterResult[]> {
   return Promise.all(SOURCES.map((s) => s.fetch()));
+}
+
+/** A finding tied to the record it is about. */
+export interface LicenceFinding extends Finding {
+  brokerSlug: string;
+  brokerName: string;
+  sourceUrl: string;
+}
+
+/**
+ * Compares every licence we publish against the register that issued it.
+ *
+ * One function so the job that writes findings to the database and the job that
+ * reports them in CI can never disagree about what the register said.
+ */
+export function licenceFindings(results: RegisterResult[]): LicenceFinding[] {
+  const out: LicenceFinding[] = [];
+
+  for (const source of SOURCES) {
+    const result = results.find((r) => r.regulator === source.code);
+    if (!result) continue;
+
+    for (const broker of BROKERS) {
+      for (const entity of broker.entities) {
+        if (entity.licence.regulator !== source.code) continue;
+        out.push({
+          ...compareLicence(result, entity.licence.number, entity.legalName),
+          brokerSlug: broker.slug,
+          brokerName: broker.name,
+          sourceUrl: source.sourceUrl,
+        });
+      }
+    }
+  }
+
+  return out;
 }
