@@ -89,19 +89,24 @@ export async function submitReview(
  * but the author's, and an attacker who could measure how quickly a wrong guess
  * was rejected could walk one character at a time towards a right one.
  */
-export async function withdrawReview(db: AppDb, id: number, token: string): Promise<boolean> {
+export async function withdrawReview(
+  db: AppDb, id: number, token: string,
+): Promise<{ kind: ReviewKind; slug: string } | null> {
   const [row] = await db.select().from(reviews).where(eq(reviews.id, id));
-  if (!row) return false;
+  if (!row) return null;
 
   const given = Buffer.from(tokenDigest(token));
   const held = Buffer.from(row.deleteTokenHash);
-  if (given.length !== held.length || !timingSafeEqual(given, held)) return false;
+  if (given.length !== held.length || !timingSafeEqual(given, held)) return null;
 
   await db
     .update(reviews)
     .set({ hidden: true, hiddenReason: 'withdrawn by its author' })
     .where(eq(reviews.id, id));
-  return true;
+
+  // Which page to clear. The caller cannot know it from the code alone, and
+  // guessing led to purging three whole layouts and still missing the feed.
+  return { kind: row.kind as ReviewKind, slug: row.slug };
 }
 
 const published = (r: typeof reviews.$inferSelect): PublishedReview => ({

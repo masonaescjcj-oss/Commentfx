@@ -10,7 +10,8 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "check-registers": "node --experimental-strip-types scripts/check-registers.ts",
-    "audit:a11y": "node scripts/audit-a11y.mjs"
+    "audit:a11y": "node scripts/audit-a11y.mjs",
+    "smoke": "node scripts/smoke-flows.mjs"
   },
   "dependencies": {
     "@commentfx/core": "workspace:*",

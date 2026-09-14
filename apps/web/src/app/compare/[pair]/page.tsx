@@ -15,7 +15,18 @@ export function generateStaticParams(): Params[] {
 }
 
 export const revalidate = 3600;
-export const dynamicParams = false;
+/**
+ * Deliberately NOT `dynamicParams = false`.
+ *
+ * Every known slug is prerendered by generateStaticParams above, and an unknown
+ * one is caught by the notFound() below — so refusing dynamic params bought
+ * nothing, and it cost something severe: revalidatePath() from a server action
+ * purges the prerendered entry, and with no fallback allowed Next could not
+ * regenerate it. Writing a review or reporting an outage took that company's
+ * page down with a permanent 404 (`Internal: NoFallbackError`). Found by
+ * driving the real form in a browser; no unit test can see this, because it is
+ * a property of the rendering runtime rather than of our code.
+ */
 
 function rows(a: RankedBroker, b: RankedBroker) {
   const ab = a.broker, bb = b.broker;

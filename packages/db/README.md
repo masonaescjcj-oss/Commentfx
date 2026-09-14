@@ -87,3 +87,26 @@ Two rules are enforced in `registers.ts` and covered by tests:
 
 Run the readers with `pnpm --filter @commentfx/web check-registers` (needs
 `DATABASE_URL` or `PGLITE_DIR`). It exits 2 when something needs a human.
+
+
+## Two ways to break a file-backed PGlite
+
+Both were hit while driving the real site, and both are dev-only — production
+runs `DATABASE_URL` against real Postgres, which has neither problem.
+
+**Never point a `next build` at `PGLITE_DIR`.** Next prerenders in parallel
+worker processes and each one opens the database. PGlite is single-process; the
+WASM instance aborts, every read in the build returns empty, and the pages come
+out looking as though there were no reviews rather than failing. Build with no
+database — the way CI and production do — and supply `PGLITE_DIR` to
+`next start` only.
+
+**Never `kill -9` a server holding one.** SIGKILL gives PGlite no chance to
+close, and the next open aborts on the first write. `kill -TERM` and wait.
+
+Both failures announce themselves the same way, which is worth recognising:
+
+    [reviews] stats lookup failed: [RuntimeError: Aborted().]
+
+That line exists because `lib/reviews.ts` logs before it degrades. Without it
+the site would simply have shown no reviews and said nothing.

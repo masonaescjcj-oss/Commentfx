@@ -127,11 +127,12 @@ test('an author can withdraw what they wrote, with the token they were given', a
   assert.ok(res.ok);
   const [r] = await reviewsFor(db, 'broker', 'exness');
 
-  assert.equal(await withdrawReview(db, r!.id, 'not-the-token'), false, 'a guess must not work');
-  assert.equal(await withdrawReview(db, r!.id, ''), false, 'an empty token must not work');
+  assert.equal(await withdrawReview(db, r!.id, 'not-the-token'), null, 'a guess must not work');
+  assert.equal(await withdrawReview(db, r!.id, ''), null, 'an empty token must not work');
   assert.equal((await reviewsFor(db, 'broker', 'exness')).length, 1);
 
-  assert.equal(await withdrawReview(db, r!.id, res.deleteToken), true);
+  assert.deepEqual(await withdrawReview(db, r!.id, res.deleteToken), { kind: 'broker', slug: 'exness' },
+    'it says which page to clear');
   assert.equal((await reviewsFor(db, 'broker', 'exness')).length, 0, 'withdrawn means gone from the page');
   await close();
 });
@@ -197,7 +198,7 @@ test('a withdrawal code cannot be reused to withdraw a different review', async 
   assert.ok(mine.ok);
   assert.ok(theirs.ok);
 
-  assert.equal(await withdrawReview(db, theirs.id, mine.deleteToken), false,
+  assert.equal(await withdrawReview(db, theirs.id, mine.deleteToken), null,
     'holding one code must not let you delete someone else\'s review');
   assert.equal((await reviewsFor(db, 'broker', 'exness')).length, 2);
   await close();
