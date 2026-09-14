@@ -6,7 +6,9 @@ import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { rankedExchanges, getRankedExchange } from '@/lib/repo';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
 import { Card, CardHead, Logo, Score, Tag } from '@/components/primitives';
-import { ScoreBreakdownCard, FactList, SeedNotice } from '@/components/ranking';
+import { coverage } from '@/lib/verify';
+import { VerificationPanel } from '@/components/VerificationPanel';
+import { ScoreBreakdownCard, FactList } from '@/components/ranking';
 
 type Params = { slug: string };
 
@@ -38,6 +40,7 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
 
   const e = r.exchange;
   const all = rankedExchanges();
+  const cov = await coverage('exchange', e.slug);
   const trail = [
     { name: 'Home', path: '/' },
     { name: 'Exchanges', path: '/exchanges' },
@@ -94,8 +97,9 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
               ? <Tag tone="good">No breach on record</Tag>
               : <Tag tone={e.security.madeUsersWhole ? 'warn' : 'bad'}>Breach {e.security.lastBreachYear}</Tag>}
           </div>
-          <div className="mt-3"><SeedNotice what="Reported volume is self-reported." /></div>
         </Card>
+
+        <VerificationPanel coverage={cov} />
 
         <ScoreBreakdownCard components={r.score.components} skipped={r.score.skipped} />
 

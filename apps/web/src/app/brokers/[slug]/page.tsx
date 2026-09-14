@@ -4,6 +4,8 @@ import type { Metadata } from 'next';
 import { REGULATORS, effectiveCostPips, hours, leverage } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, financialServiceLd, faqLd } from '@/lib/seo';
 import { rankedBrokers, getRanked } from '@/lib/repo';
+import { coverage } from '@/lib/verify';
+import { VerificationPanel } from '@/components/VerificationPanel';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
 import { Card, CardHead, Logo, Score, Tag, Meter } from '@/components/primitives';
 import { Flag } from '@/components/Flag';
@@ -40,13 +42,13 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
 
   const b = r.broker;
   const all = rankedBrokers();
+  const cov = await coverage('broker', b.slug);
   const alternatives = all.filter((x) => x.broker.slug !== b.slug).slice(0, 3);
   const trail = [
     { name: 'Home', path: '/' },
     { name: 'Brokers', path: '/brokers' },
     { name: b.name, path: `/brokers/${b.slug}` },
   ];
-  const unverified = !b.cost.verifiedAt;
 
   const faq = [
     {
@@ -105,13 +107,9 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
             ))}
           </dl>
 
-          {unverified && (
-            <p className="mt-3 p-3 rounded-xl bg-warn-bg text-[11.5px] text-warn leading-[1.7]">
-              These figures come from the broker’s own published pages and have not been
-              re-checked by an editor yet. Verify anything you plan to act on.
-            </p>
-          )}
         </Card>
+
+        <VerificationPanel coverage={cov} />
 
         <Card className="p-4" as="section">
           <CardHead title="Score breakdown" href="/methodology" hrefLabel="Method" />

@@ -22,6 +22,23 @@ page renders an honest "unavailable" state with the reason. Nothing is ever serv
 as current that could not be confirmed, and every live page carries the timestamp
 of the fetch behind it.
 
+## Verification
+
+Nothing on this site claims to be checked unless a person checked it and
+recorded where. `verifications` is keyed per field, so a broker page can show
+that its licence numbers were read off the regulator's register this week while
+its withdrawal terms have never been checked — and it says exactly that, field
+by field, with a link to each source.
+
+A verification expires after 90 days. Expired and never-checked are shown as
+different states, because they are different facts.
+
+The admin that records these **fails closed**: with no `ADMIN_TOKEN` configured,
+every `/admin` route 404s, so an accidental deploy exposes nothing. The token is
+a deliberate stopgap and not an auth system — it has no per-user identity and no
+revocation — which is why every write records an actor into an append-only audit
+log. Replace it with real accounts before anyone but its author touches it.
+
 ## Running it
 
 ```sh
@@ -38,7 +55,9 @@ seed data in `packages/core/src/data/`.
 
 ```
 apps/web        Next.js 15 — the public site, statically generated
-packages/core   types, the scoring engine, regulator registry, seed data
+packages/core   types, the scoring engines, regulator registry, seed data
+packages/db     schema, migrations, verification tracking, audit log
+packages/ingest free-tier upstreams behind one failure-tolerant contract
 design/         app screen designs (dark, Persian)
 design-web/     website designs (light, English) — the tokens the app uses
 docs/           the 16-week roadmap

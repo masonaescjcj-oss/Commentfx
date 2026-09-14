@@ -6,7 +6,9 @@ import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { rankedProps, getRankedProp } from '@/lib/repo';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
 import { Card, CardHead, Logo, Score, Tag } from '@/components/primitives';
-import { ScoreBreakdownCard, FactList, SeedNotice } from '@/components/ranking';
+import { coverage } from '@/lib/verify';
+import { VerificationPanel } from '@/components/VerificationPanel';
+import { ScoreBreakdownCard, FactList } from '@/components/ranking';
 
 type Params = { slug: string };
 
@@ -38,6 +40,7 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
 
   const f = r.firm;
   const all = rankedProps();
+  const cov = await coverage('prop', f.slug);
   const trail = [
     { name: 'Home', path: '/' },
     { name: 'Prop Firms', path: '/props' },
@@ -96,8 +99,9 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
             {f.rules.timeLimitDays === null ? <Tag tone="good">No time limit</Tag> : <Tag tone="warn">{f.rules.timeLimitDays}-day limit</Tag>}
             {f.rules.newsTrading ? <Tag tone="good">News trading</Tag> : <Tag tone="bad">No news trading</Tag>}
           </div>
-          <div className="mt-3"><SeedNotice what="Prop rules change often." /></div>
         </Card>
+
+        <VerificationPanel coverage={cov} />
 
         <ScoreBreakdownCard components={r.score.components} skipped={r.score.skipped} />
 

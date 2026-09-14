@@ -2,8 +2,9 @@ import type { NextConfig } from 'next';
 
 const config: NextConfig = {
   reactStrictMode: true,
+  serverExternalPackages: ['@electric-sql/pglite', 'pg'],
   poweredByHeader: false,
-  transpilePackages: ['@commentfx/core', '@commentfx/ingest'],
+  transpilePackages: ['@commentfx/core', '@commentfx/ingest', '@commentfx/db'],
   experimental: { optimizePackageImports: ['@commentfx/core', '@commentfx/ingest'] },
   async headers() {
     return [

@@ -137,7 +137,7 @@ export const BROKERS: Broker[] = [
   {
     slug: 'alpari', name: 'Alpari', founded: 1998, headquarters: 'MU',
     entities: [
-      { legalName: 'Alpari International Limited', country: 'MU', licence: { regulator: 'FSC-MU', number: 'C113012295', status: 'registered' }, serves: ['*'] },
+      { legalName: 'Alpari International Limited', country: 'MU', licence: { regulator: 'FSC-MU', number: 'C118023544', status: 'registered' }, serves: ['*'] },
     ],
     cost: { eurusdSpread: 1.2, commissionPerLot: 0, swapFreeAvailable: true, verifiedAt: null },
     payments: { methods: ['bank', 'card', 'crypto', 'ewallet'], statedWithdrawalHours: 48, minDepositUsd: 20, verifiedAt: null },
