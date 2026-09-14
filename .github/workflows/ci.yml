@@ -43,7 +43,10 @@ jobs:
       # distinct failing colour pairs, body text among them at 2.2:1, so it
       # runs on every push rather than when someone remembers.
       - name: Install the browser the audit needs
-        run: npx playwright install --with-deps chromium
+        # Through the workspace, not npx: playwright is a devDependency of
+        # apps/web and pnpm does not hoist it to the root, so a bare `npx
+        # playwright` at the repo root finds nothing.
+        run: pnpm --filter @commentfx/web exec playwright install --with-deps chromium
 
       - name: Accessibility audit
         shell: bash
