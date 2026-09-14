@@ -1,0 +1,4 @@
+# Seeded canvas build output — ~2.7MB of vendored editor payload.
+# Regenerate from the .dc.html sources with the design skill's seed-canvas.mjs.
+commentfx-app-screens.html
+__pycache__/

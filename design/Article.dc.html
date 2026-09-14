@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap">
+  <style>
+:root{--bg:#0B0E14;--sf:#141922;--sf2:#1C222D;--sf3:#232B38;--ln:#242C3A;--ink:#EEF1F6;--ink2:#A8B2C4;--mut:#6E7A8F;
+--br:#D9B071;--br2:#8F6F3C;--brs:#2A2117;--tl:#5FC9C0;--tls:#13292A;
+--up:#3DD68C;--ups:#0F2A20;--dn:#FF6B6B;--dns:#2C1719;--wn:#F5B942;--wns:#2E2513;--r:14px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,system-ui,sans-serif;direction:rtl;font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:var(--br);text-decoration:none}
+a:hover{color:#EBC88F}
+.n{font-family:Manrope,system-ui,sans-serif;direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+.ph{background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.hd{display:flex;align-items:center;gap:10px;padding:16px 16px 10px;flex:none}
+.lg{display:flex;align-items:center;gap:7px;font-family:Manrope;font-weight:800;font-size:16px;letter-spacing:-.025em;direction:ltr}
+.lgm{width:25px;height:25px;border-radius:9px 9px 3px 9px;background:linear-gradient(145deg,#E8C489,var(--br2));display:grid;place-items:center;color:#0B0E14;font-size:10px;font-weight:800;flex:none}
+.sp{flex:1}
+.ic{width:34px;height:34px;border-radius:11px;background:var(--sf);border:1px solid var(--ln);display:grid;place-items:center;color:var(--ink2);flex:none}
+.bd{flex:1;padding:0 16px;display:flex;flex-direction:column;gap:11px;overflow:hidden}
+.cd{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:13px 14px}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.ch b{font-size:13.5px;font-weight:700}
+.ch span.lv{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--mut)}
+.ch span.lv i{width:6px;height:6px;border-radius:50%;background:var(--up);display:block}
+.rw{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--ln)}
+.rw:last-child{border-bottom:0;padding-bottom:0}
+.av{width:31px;height:31px;border-radius:10px;display:grid;place-items:center;font-family:Manrope;font-weight:800;font-size:11px;flex:none;color:#0B0E14}
+.t1{font-size:13px;font-weight:600;line-height:1.35}
+.t2{font-size:10.5px;color:var(--mut);line-height:1.45}
+.up{color:var(--up)}
+.dn{color:var(--dn)}
+.pl{font-family:Manrope;font-size:11px;font-weight:700;padding:2px 7px;border-radius:7px;direction:ltr;display:inline-block;line-height:1.5}
+.pl.u{background:var(--ups);color:var(--up)}
+.pl.d{background:var(--dns);color:var(--dn)}
+.tg{font-size:10px;padding:1px 6px;border-radius:5px;border:1px solid var(--ln);color:var(--ink2);font-family:Manrope;direction:ltr;display:inline-block;line-height:1.6}
+.tg.g{border-color:#2E4A3C;color:var(--up);background:var(--ups)}
+.sc{font-family:Manrope;font-weight:800;font-size:15px;color:var(--br);direction:ltr;letter-spacing:-.02em}
+.tb{display:flex;border-top:1px solid var(--ln);background:var(--sf);padding:9px 4px 12px;flex:none}
+.tbi{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9.5px;color:var(--mut)}
+.tbi.on{color:var(--br)}
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(145deg,#E8C489,var(--br2));color:#0B0E14;font-weight:800;font-size:14px;padding:13px;border-radius:12px}
+.btn2{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--sf2);border:1px solid var(--ln);color:var(--ink);font-weight:600;font-size:13px;padding:11px;border-radius:11px}
+.seg{display:flex;gap:4px;background:var(--sf2);border:1px solid var(--ln);border-radius:11px;padding:3px}
+.seg div{flex:1;text-align:center;font-size:11.5px;padding:5px 4px;border-radius:8px;color:var(--mut)}
+.seg div.on{background:var(--sf3);color:var(--ink);font-weight:600}
+.fl{display:flex;gap:6px;overflow:hidden}
+.fl span{font-size:11.5px;padding:5px 11px;border-radius:9px;background:var(--sf);border:1px solid var(--ln);color:var(--ink2);white-space:nowrap;flex:none}
+.fl span.on{background:var(--brs);border-color:var(--br2);color:var(--br);font-weight:600}
+.kv{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--ln);font-size:12.5px}
+.kv:last-child{border-bottom:0}
+.kv span{color:var(--mut)}
+.kv b{font-weight:600}
+  </style>
+</helmet>
+<div class="ph" style="width:390px;height:1240px">
+  <div class="hd"><div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></div><div class="sp"></div><div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.6 5.6 6 .8-4.4 4.3 1.1 6.1L12 17l-5.3 2.8 1.1-6.1L3.4 9.4l6-.8L12 3Z"/></svg></div><div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.2 2.3 3.4 5.3 3.4 8.5S14.2 18.2 12 20.5c-2.2-2.3-3.4-5.3-3.4-8.5S9.8 5.8 12 3.5Z"/></svg></div></div>
+  <div style="padding:4px 16px 0;flex:none">
+    <span class="tg" style="border-color:var(--br2);color:var(--br)">رگولاتوری</span>
+    <h1 style="font-size:25px;font-weight:800;line-height:1.45;margin:12px 0 0;letter-spacing:-.01em;text-wrap:pretty">
+      CySEC لایسنس یک بروکر بزرگ را تعلیق کرد — برای مشتریان ایرانی چه معنایی دارد؟</h1>
+    <div style="display:flex;align-items:center;gap:9px;margin:16px 0 18px">
+      <div style="width:32px;height:32px;border-radius:50%;background:#4A7BD9;display:grid;place-items:center;font-size:13px;font-weight:700;flex:none">ر</div>
+      <div style="flex:1"><div class="t1">رضا موسوی</div><div class="t2">تحلیلگر رگولاتوری · ۲۲ شهریور ۱۴۰۵</div></div>
+      <span class="t2">۶ دقیقه</span></div>
+    <div style="height:190px;border-radius:14px;background:linear-gradient(140deg,#2A3446,#161C26);border:1px solid var(--ln);position:relative;overflow:hidden">
+      <div style="position:absolute;inset:auto 0 0 0;padding:12px 14px;background:linear-gradient(to top,rgba(11,14,20,.92),transparent)" class="t2">تصویر: ساختمان کمیسیون بورس قبرس</div></div>
+  </div>
+  <div style="padding:18px 16px 0;font-size:14.5px;line-height:2.05;color:var(--ink2)">
+    <p style="margin:0 0 16px">کمیسیون بورس و اوراق بهادار قبرس روز سه‌شنبه لایسنس یکی از بروکرهای شناخته‌شدهٔ بازار را به حالت تعلیق درآورد. طبق اطلاعیهٔ رسمی، این تصمیم پس از بررسی نحوهٔ تفکیک وجوه مشتریان گرفته شده است.</p>
+    <div style="border-right:2px solid var(--br);padding:2px 14px 2px 0;margin:0 0 16px">
+      <div style="font-size:16px;font-weight:700;color:var(--ink);line-height:1.85">تعلیق یعنی بروکر نمی‌تواند مشتری جدید بگیرد — نه اینکه پول مشتریان فعلی از بین رفته است.</div></div>
+    <p style="margin:0 0 16px">برای کاربران ایرانی یک نکتهٔ مهم وجود دارد: اگر حساب شما زیر شرکت قبرسی ثبت نشده باشد، این تعلیق مستقیماً روی حساب شما اثر نمی‌گذارد — ولی نشانهٔ مهمی دربارهٔ وضعیت مالی گروه است.</p>
+    <h2 style="font-size:17px;font-weight:700;color:var(--ink);margin:22px 0 12px">چطور بفهمم زیر کدام شرکت هستم؟</h2>
+    <p style="margin:0 0 16px">در قرارداد مشتری (Client Agreement) نام شرکت طرف قرارداد نوشته شده است. همچنین می‌توانید از ابزار نقشهٔ Entity در صفحهٔ هر بروکر استفاده کنید.</p>
+  </div>
+  <div style="padding:4px 16px 0;flex:none">
+    <div class="cd" style="border-color:var(--br2);background:linear-gradient(160deg,#1E2431,#13181F)">
+      <div class="t2" style="margin-bottom:10px">مرتبط با این مقاله</div>
+      <div style="display:flex;align-items:center;gap:11px">
+        <div style="width:38px;height:38px;border-radius:11px;background:#FFD84D;display:grid;place-items:center;font-family:Manrope;font-weight:800;font-size:13px;color:#0B0E14;flex:none">E</div>
+        <div style="flex:1"><div class="n" style="font-size:14px;font-weight:700">Exness</div>
+        <div class="t2">نقشهٔ Entity · ۳ لایسنس · وضعیت عادی</div></div>
+        <span class="sc">8.9</span></div>
+      <div class="btn2" style="margin-top:11px">بررسی وضعیت لایسنس‌ها</div></div>
+  </div>
+  <div style="padding:14px 16px 0;flex:none">
+    <div class="cd"><div class="ch"><b>۲۴ نظر</b><a>همه ›</a></div>
+      <div class="rw"><div style="width:28px;height:28px;border-radius:50%;background:#8A6BD9;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none">ح</div>
+        <div><div class="t1">حسین ط.</div><div class="t2" style="color:var(--ink2);line-height:1.7;margin-top:2px">من حسابم زیر سیشله، الان باید نگران باشم یا نه؟</div></div></div>
+      <div class="rw"><div style="width:28px;height:28px;border-radius:50%;background:#2E7D6B;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none">ر</div>
+        <div><div style="display:flex;align-items:center;gap:5px"><span class="t1">رضا موسوی</span><span class="tg" style="border-color:var(--br2);color:var(--br)">نویسنده</span></div>
+        <div class="t2" style="color:var(--ink2);line-height:1.7;margin-top:2px">فعلاً نه. ولی برداشت‌های بزرگ را عقب نیندازید تا وضعیت روشن شود.</div></div></div>
+    </div>
+  </div>
+  <div class="tb"><div class="tbi on"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg><span>خانه</span></div><div class="tbi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg><span>بروکرها</span></div><div class="tbi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9"/><path d="M10 19V4"/><path d="M16 19v-7"/><path d="M21 19H3"/></svg><span>بازار</span></div><div class="tbi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg><span>سیگنال</span></div><div class="tbi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.9-3.8 3.9-5.6 7.5-5.6s6.6 1.8 7.5 5.6"/></svg><span>من</span></div></div>
+</div>
+</x-dc>
+</body>
+</html>

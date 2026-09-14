@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap">
+  <style>
+:root{--bg:#0B0E14;--sf:#141922;--sf2:#1C222D;--sf3:#232B38;--ln:#242C3A;--ink:#EEF1F6;--ink2:#A8B2C4;--mut:#6E7A8F;
+--br:#D9B071;--br2:#8F6F3C;--brs:#2A2117;--tl:#5FC9C0;--tls:#13292A;
+--up:#3DD68C;--ups:#0F2A20;--dn:#FF6B6B;--dns:#2C1719;--wn:#F5B942;--wns:#2E2513;--r:14px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,system-ui,sans-serif;direction:rtl;font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:var(--br);text-decoration:none}
+a:hover{color:#EBC88F}
+.n{font-family:Manrope,system-ui,sans-serif;direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+.ph{background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.hd{display:flex;align-items:center;gap:10px;padding:16px 16px 10px;flex:none}
+.lg{display:flex;align-items:center;gap:7px;font-family:Manrope;font-weight:800;font-size:16px;letter-spacing:-.025em;direction:ltr}
+.lgm{width:25px;height:25px;border-radius:9px 9px 3px 9px;background:linear-gradient(145deg,#E8C489,var(--br2));display:grid;place-items:center;color:#0B0E14;font-size:10px;font-weight:800;flex:none}
+.sp{flex:1}
+.ic{width:34px;height:34px;border-radius:11px;background:var(--sf);border:1px solid var(--ln);display:grid;place-items:center;color:var(--ink2);flex:none}
+.bd{flex:1;padding:0 16px;display:flex;flex-direction:column;gap:11px;overflow:hidden}
+.cd{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:13px 14px}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.ch b{font-size:13.5px;font-weight:700}
+.ch span.lv{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--mut)}
+.ch span.lv i{width:6px;height:6px;border-radius:50%;background:var(--up);display:block}
+.rw{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--ln)}
+.rw:last-child{border-bottom:0;padding-bottom:0}
+.av{width:31px;height:31px;border-radius:10px;display:grid;place-items:center;font-family:Manrope;font-weight:800;font-size:11px;flex:none;color:#0B0E14}
+.t1{font-size:13px;font-weight:600;line-height:1.35}
+.t2{font-size:10.5px;color:var(--mut);line-height:1.45}
+.up{color:var(--up)}
+.dn{color:var(--dn)}
+.pl{font-family:Manrope;font-size:11px;font-weight:700;padding:2px 7px;border-radius:7px;direction:ltr;display:inline-block;line-height:1.5}
+.pl.u{background:var(--ups);color:var(--up)}
+.pl.d{background:var(--dns);color:var(--dn)}
+.tg{font-size:10px;padding:1px 6px;border-radius:5px;border:1px solid var(--ln);color:var(--ink2);font-family:Manrope;direction:ltr;display:inline-block;line-height:1.6}
+.tg.g{border-color:#2E4A3C;color:var(--up);background:var(--ups)}
+.sc{font-family:Manrope;font-weight:800;font-size:15px;color:var(--br);direction:ltr;letter-spacing:-.02em}
+.tb{display:flex;border-top:1px solid var(--ln);background:var(--sf);padding:9px 4px 12px;flex:none}
+.tbi{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9.5px;color:var(--mut)}
+.tbi.on{color:var(--br)}
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(145deg,#E8C489,var(--br2));color:#0B0E14;font-weight:800;font-size:14px;padding:13px;border-radius:12px}
+.btn2{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--sf2);border:1px solid var(--ln);color:var(--ink);font-weight:600;font-size:13px;padding:11px;border-radius:11px}
+.seg{display:flex;gap:4px;background:var(--sf2);border:1px solid var(--ln);border-radius:11px;padding:3px}
+.seg div{flex:1;text-align:center;font-size:11.5px;padding:5px 4px;border-radius:8px;color:var(--mut)}
+.seg div.on{background:var(--sf3);color:var(--ink);font-weight:600}
+.fl{display:flex;gap:6px;overflow:hidden}
+.fl span{font-size:11.5px;padding:5px 11px;border-radius:9px;background:var(--sf);border:1px solid var(--ln);color:var(--ink2);white-space:nowrap;flex:none}
+.fl span.on{background:var(--brs);border-color:var(--br2);color:var(--br);font-weight:600}
+.kv{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--ln);font-size:12.5px}
+.kv:last-child{border-bottom:0}
+.kv span{color:var(--mut)}
+.kv b{font-weight:600}
+  </style>
+</helmet>
+<div class="ph" style="width:390px;height:844px">
+  <div class="hd"><div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></div><b style="font-size:15px;font-weight:700">مقایسهٔ بروکر</b><div class="sp"></div><div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></div></div>
+  <div style="display:flex;align-items:flex-start;padding:6px 16px 14px;gap:10px;flex:none">
+    <div style="flex:1;text-align:center"><div style="width:46px;height:46px;border-radius:14px;background:#FFD84D;margin:0 auto 7px;display:grid;place-items:center;font-family:Manrope;font-weight:800;font-size:16px;color:#0B0E14">E</div>
+      <div class="n" style="font-size:14px;font-weight:700">Exness</div><div class="t2">۳ لایسنس</div></div>
+    <div style="width:112px;text-align:center;padding-top:16px"><span style="font-size:11px;color:var(--mut);background:var(--sf);border:1px solid var(--ln);padding:4px 12px;border-radius:99px">در برابر</span></div>
+    <div style="flex:1;text-align:center"><div style="width:46px;height:46px;border-radius:14px;background:#2E3A4D;margin:0 auto 7px;display:grid;place-items:center;font-family:Manrope;font-weight:800;font-size:14px;color:#EEF1F6">IC</div>
+      <div class="n" style="font-size:14px;font-weight:700">IC Markets</div><div class="t2">۳ لایسنس</div></div>
+  </div>
+  <div style="flex:1;padding:0 16px;overflow:hidden">
+    <div class="cd" style="padding:4px 14px 10px"><div style="display:flex;align-items:center;padding:11px 0;border-bottom:1px solid var(--ln)"><div style="flex:1;text-align:center;font-size:12.5px;font-weight:800;color:var(--br)" class="n">8.9</div><div style="width:112px;text-align:center;font-size:10.5px;color:var(--mut)">امتیاز کل</div><div style="flex:1;text-align:center;font-size:12.5px;color:var(--ink2)" class="n">8.7</div></div><div style="display:flex;align-items:center;padding:11px 0;border-bottom:1px solid var(--ln)"><div style="flex:1;text-align:center;font-size:12.5px;color:var(--ink2)" class="n">FCA · CySEC</div><div style="width:112px;text-align:center;font-size:10.5px;color:var(--mut)">رگولاتور اصلی</div><div style="flex:1;text-align:center;font-size:12.5px;color:var(--ink2)" class="n">ASIC · CySEC</div></div><div style="display:flex;align-items:center;padding:11px 0;border-bottom:1px solid var(--ln)"><div style="flex:1;text-align:center;font-size:12.5px;color:var(--ink2)" class="n">0.7</div><div style="width:112px;text-align:center;font-size:10.5px;color:var(--mut)">اسپرد EURUSD</div><div style="flex:1;text-align:center;font-size:12.5px;font-weight:800;color:var(--br)" class="n">0.1</div></div><div style="display:flex;align-items:center;padding:11px 0;border-bottom:1px solid var(--ln)"><div style="flex:1;text-align:center;font-size:12.5px;font-weight:800;color:var(--br)" class="n">1.4</div><div style="width:112px;text-align:center;font-size:10.5px;color:var(--mut)">اسپرد طلا</div><div style="flex:1;text-align:center;font-size:12.5px;color:var(--ink2)" class="n">1.6</div></div><div style="display:flex;align-items:center;padding:11px 0;border-bottom:1px solid var(--ln)"><div style="flex:1;text-align:center;font-size:12.5px;font-weight:800;color:var(--br)" class="n">$10</div><div style="width:112px;text-align:center;font-size:10.5px;color:var(--mut)">حداقل واریز</div><div style="flex:1;text-align:center;font-size:12.5px;color:var(--ink2)" class="n">$200</div></div><div style="display:flex;align-items:center;padding:11px 0;border-bottom:1px solid var(--ln)"><div style="flex:1;text-align:center;font-size:12.5px;font-weight:800;color:var(--br)" class="n">1:2000</div><div style="width:112px;text-align:center;font-size:10.5px;color:var(--mut)">اهرم</div><div style="flex:1;text-align:center;font-size:12.5px;color:var(--ink2)" class="n">1:500</div></div><div style="display:flex;align-items:center;padding:11px 0;border-bottom:1px solid var(--ln)"><div style="flex:1;text-align:center;font-size:12.5px;font-weight:800;color:var(--br)" class="n">۱۸ دقیقه</div><div style="width:112px;text-align:center;font-size:10.5px;color:var(--mut)">میانهٔ برداشت</div><div style="flex:1;text-align:center;font-size:12.5px;color:var(--ink2)" class="n">۴ ساعت</div></div><div style="display:flex;align-items:center;padding:11px 0;border-bottom:1px solid var(--ln)"><div style="flex:1;text-align:center;font-size:12.5px;font-weight:800;color:var(--br)" class="n">دارد</div><div style="width:112px;text-align:center;font-size:10.5px;color:var(--mut)">واریز ریالی</div><div style="flex:1;text-align:center;font-size:12.5px;color:var(--ink2)" class="n">ندارد</div></div><div style="display:flex;align-items:center;padding:11px 0;border-bottom:1px solid var(--ln)"><div style="flex:1;text-align:center;font-size:12.5px;color:var(--ink2)" class="n">دارد</div><div style="width:112px;text-align:center;font-size:10.5px;color:var(--mut)">حساب اسلامی</div><div style="flex:1;text-align:center;font-size:12.5px;color:var(--ink2)" class="n">دارد</div></div><div style="display:flex;align-items:center;padding:11px 0;border-bottom:1px solid var(--ln)"><div style="flex:1;text-align:center;font-size:12.5px;color:var(--ink2)" class="n">آزاد</div><div style="width:112px;text-align:center;font-size:10.5px;color:var(--mut)">اسکالپ</div><div style="flex:1;text-align:center;font-size:12.5px;color:var(--ink2)" class="n">آزاد</div></div></div>
+    <div style="margin-top:12px;padding:11px 13px;background:var(--brs);border:1px solid var(--br2);border-radius:12px;display:flex;gap:9px">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--br)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m3 16 5.5-5.5 4 4L21 6"/><path d="M15.5 6H21v5.5"/></svg><div><div style="font-size:12.5px;font-weight:700;color:var(--br);margin-bottom:3px">جمع‌بندی</div>
+      <div class="t2" style="line-height:1.75">برای شروع با سرمایهٔ کم و برداشت سریع، Exness. برای اسکالپ با کمترین هزینهٔ اسپرد، IC Markets — به شرط سرمایهٔ بالای $۲۰۰.</div></div></div>
+  </div>
+  <div style="display:flex;gap:9px;padding:12px 16px;flex:none">
+    <div class="btn" style="flex:1;font-size:13px">Exness</div><div class="btn2" style="flex:1">IC Markets</div></div>
+  <div class="tb"><div class="tbi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg><span>خانه</span></div><div class="tbi on"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg><span>بروکرها</span></div><div class="tbi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9"/><path d="M10 19V4"/><path d="M16 19v-7"/><path d="M21 19H3"/></svg><span>بازار</span></div><div class="tbi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg><span>سیگنال</span></div><div class="tbi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.9-3.8 3.9-5.6 7.5-5.6s6.6 1.8 7.5 5.6"/></svg><span>من</span></div></div>
+</div>
+</x-dc>
+</body>
+</html>

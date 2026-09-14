@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap">
+  <style>
+:root{--bg:#0B0E14;--sf:#141922;--sf2:#1C222D;--sf3:#232B38;--ln:#242C3A;--ink:#EEF1F6;--ink2:#A8B2C4;--mut:#6E7A8F;
+--br:#D9B071;--br2:#8F6F3C;--brs:#2A2117;--tl:#5FC9C0;--tls:#13292A;
+--up:#3DD68C;--ups:#0F2A20;--dn:#FF6B6B;--dns:#2C1719;--wn:#F5B942;--wns:#2E2513;--r:14px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,system-ui,sans-serif;direction:rtl;font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:var(--br);text-decoration:none}
+a:hover{color:#EBC88F}
+.n{font-family:Manrope,system-ui,sans-serif;direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+.ph{background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.hd{display:flex;align-items:center;gap:10px;padding:16px 16px 10px;flex:none}
+.lg{display:flex;align-items:center;gap:7px;font-family:Manrope;font-weight:800;font-size:16px;letter-spacing:-.025em;direction:ltr}
+.lgm{width:25px;height:25px;border-radius:9px 9px 3px 9px;background:linear-gradient(145deg,#E8C489,var(--br2));display:grid;place-items:center;color:#0B0E14;font-size:10px;font-weight:800;flex:none}
+.sp{flex:1}
+.ic{width:34px;height:34px;border-radius:11px;background:var(--sf);border:1px solid var(--ln);display:grid;place-items:center;color:var(--ink2);flex:none}
+.bd{flex:1;padding:0 16px;display:flex;flex-direction:column;gap:11px;overflow:hidden}
+.cd{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:13px 14px}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.ch b{font-size:13.5px;font-weight:700}
+.ch span.lv{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--mut)}
+.ch span.lv i{width:6px;height:6px;border-radius:50%;background:var(--up);display:block}
+.rw{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--ln)}
+.rw:last-child{border-bottom:0;padding-bottom:0}
+.av{width:31px;height:31px;border-radius:10px;display:grid;place-items:center;font-family:Manrope;font-weight:800;font-size:11px;flex:none;color:#0B0E14}
+.t1{font-size:13px;font-weight:600;line-height:1.35}
+.t2{font-size:10.5px;color:var(--mut);line-height:1.45}
+.up{color:var(--up)}
+.dn{color:var(--dn)}
+.pl{font-family:Manrope;font-size:11px;font-weight:700;padding:2px 7px;border-radius:7px;direction:ltr;display:inline-block;line-height:1.5}
+.pl.u{background:var(--ups);color:var(--up)}
+.pl.d{background:var(--dns);color:var(--dn)}
+.tg{font-size:10px;padding:1px 6px;border-radius:5px;border:1px solid var(--ln);color:var(--ink2);font-family:Manrope;direction:ltr;display:inline-block;line-height:1.6}
+.tg.g{border-color:#2E4A3C;color:var(--up);background:var(--ups)}
+.sc{font-family:Manrope;font-weight:800;font-size:15px;color:var(--br);direction:ltr;letter-spacing:-.02em}
+.tb{display:flex;border-top:1px solid var(--ln);background:var(--sf);padding:9px 4px 12px;flex:none}
+.tbi{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9.5px;color:var(--mut)}
+.tbi.on{color:var(--br)}
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(145deg,#E8C489,var(--br2));color:#0B0E14;font-weight:800;font-size:14px;padding:13px;border-radius:12px}
+.btn2{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--sf2);border:1px solid var(--ln);color:var(--ink);font-weight:600;font-size:13px;padding:11px;border-radius:11px}
+.seg{display:flex;gap:4px;background:var(--sf2);border:1px solid var(--ln);border-radius:11px;padding:3px}
+.seg div{flex:1;text-align:center;font-size:11.5px;padding:5px 4px;border-radius:8px;color:var(--mut)}
+.seg div.on{background:var(--sf3);color:var(--ink);font-weight:600}
+.fl{display:flex;gap:6px;overflow:hidden}
+.fl span{font-size:11.5px;padding:5px 11px;border-radius:9px;background:var(--sf);border:1px solid var(--ln);color:var(--ink2);white-space:nowrap;flex:none}
+.fl span.on{background:var(--brs);border-color:var(--br2);color:var(--br);font-weight:600}
+.kv{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--ln);font-size:12.5px}
+.kv:last-child{border-bottom:0}
+.kv span{color:var(--mut)}
+.kv b{font-weight:600}
+  </style>
+</helmet>
+<div class="ph" style="width:390px;height:900px">
+  <div class="hd"><div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></div>
+    <div style="display:flex;align-items:center;gap:7px"><div style="width:24px;height:24px;border-radius:50%;background:#F7931A;display:grid;place-items:center;font-size:12px;color:#0B0E14;font-weight:800">₿</div>
+    <span class="n" style="font-size:15px;font-weight:800">BTC</span><span class="tg" style="border-color:var(--br2);color:var(--br)">#1</span></div>
+    <div class="sp"></div><div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-3.5-3.5"/></svg></div><div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.6 5.6 6 .8-4.4 4.3 1.1 6.1L12 17l-5.3 2.8 1.1-6.1L3.4 9.4l6-.8L12 3Z"/></svg></div></div>
+  <div style="display:flex;border-bottom:1px solid var(--ln);flex:none;padding:0 10px"><div style="padding:12px 10px;font-size:12.5px;color:var(--br);font-weight:700;border-bottom:2px solid var(--br)">نمای کلی</div><div style="padding:12px 10px;font-size:12.5px;color:var(--mut)">بازارها</div><div style="padding:12px 10px;font-size:12.5px;color:var(--mut)">آنلاک</div><div style="padding:12px 10px;font-size:12.5px;color:var(--mut)">سیگنال</div><div style="padding:12px 10px;font-size:12.5px;color:var(--mut)">اخبار</div></div>
+  <div style="padding:16px 16px 0;flex:none">
+    <div class="t2">بیت‌کوین</div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:2px">
+      <span class="n" style="font-size:33px;font-weight:800;letter-spacing:-.04em">$67,412</span>
+      <span class="pl u" style="font-size:12.5px;padding:3px 9px">▲ 1.82%</span></div>
+    <div class="t2 n" style="margin-top:4px">2,412,300 تومان · <span class="up">+0.4%</span></div>
+  </div>
+  <div style="padding:14px 16px 0;flex:none"><div class="seg"><div class="">1س</div><div class="on">24س</div><div class="">7ر</div><div class="">30ر</div><div class="">1س</div><div class="">همه</div></div></div>
+  <div style="padding:14px 16px 0;flex:none;position:relative">
+    <div class="n" style="position:absolute;left:22px;top:10px;font-size:10px;color:var(--mut)">$68,900</div>
+    <div class="n" style="position:absolute;left:22px;bottom:44px;font-size:10px;color:var(--mut)">$64,100</div>
+    <svg width="342" height="130" viewBox="0 0 342 130" fill="none" style="flex:none"><defs><linearGradient id="sg5633" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3DD68C" stop-opacity=".30"/><stop offset="1" stop-color="#3DD68C" stop-opacity="0"/></linearGradient></defs><path d="M0.0,89.6 L13.7,101.0 L27.4,108.6 L41.0,97.2 L54.7,112.3 L68.4,119.9 L82.1,108.6 L95.8,116.1 L109.4,127.5 L123.1,112.3 L136.8,93.4 L150.5,101.0 L164.2,82.0 L177.8,70.7 L191.5,78.3 L205.2,59.3 L218.9,48.0 L232.6,55.5 L246.2,40.4 L259.9,51.7 L273.6,36.6 L287.3,21.4 L301.0,29.0 L314.6,10.1 L328.3,17.7 L342.0,2.5 L342,130 L0,130 Z" fill="url(#sg5633)"/><path d="M0.0,89.6 L13.7,101.0 L27.4,108.6 L41.0,97.2 L54.7,112.3 L68.4,119.9 L82.1,108.6 L95.8,116.1 L109.4,127.5 L123.1,112.3 L136.8,93.4 L150.5,101.0 L164.2,82.0 L177.8,70.7 L191.5,78.3 L205.2,59.3 L218.9,48.0 L232.6,55.5 L246.2,40.4 L259.9,51.7 L273.6,36.6 L287.3,21.4 L301.0,29.0 L314.6,10.1 L328.3,17.7 L342.0,2.5" stroke="#3DD68C" stroke-width="2.1" stroke-linejoin="round" stroke-linecap="round" fill="none"/></svg>
+    <div style="display:flex;gap:2px;align-items:flex-end;height:30px;margin-top:6px"><div style="flex:1;height:9px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:14px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:11px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:20px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:13px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:8px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:17px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:26px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:12px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:10px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:22px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:15px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:9px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:13px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:28px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:18px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:11px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:16px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:9px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:24px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:13px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:19px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:11px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:15px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:21px;background:var(--sf3);border-radius:2px 2px 0 0"></div><div style="flex:1;height:12px;background:var(--sf3);border-radius:2px 2px 0 0"></div></div>
+    <div style="display:flex;justify-content:space-between;margin-top:5px" class="t2 n">
+      <span>18:00</span><span>00:00</span><span>06:00</span><span>12:00</span></div>
+  </div>
+  <div style="padding:16px 16px 0;flex:none"><div class="btn">کجا بخرم؟</div></div>
+  <div style="padding:14px 16px 0;flex:none">
+    <div class="cd">
+      <div class="ch"><b>آمار</b><a>همه ›</a></div>
+      <div class="t2" style="margin-bottom:6px">بازهٔ ۲۴ ساعته</div>
+      <div style="height:5px;border-radius:99px;background:var(--sf3);position:relative;margin-bottom:6px">
+        <div style="position:absolute;right:0;width:62%;height:100%;background:linear-gradient(to left,var(--br),var(--br2));border-radius:99px"></div>
+        <i style="position:absolute;right:62%;top:-4px;width:13px;height:13px;border-radius:50%;background:var(--ink);border:3px solid var(--sf);transform:translateX(50%)"></i></div>
+      <div style="display:flex;justify-content:space-between" class="t2 n"><span>$64,100</span><span>$68,900</span></div>
+      <div style="margin-top:10px">
+        <div class="kv"><span>ارزش بازار</span><b class="n">$1.33T</b></div>
+        <div class="kv"><span>حجم ۲۴ ساعته</span><b class="n">$41.2B</b></div>
+        <div class="kv"><span>عرضهٔ در گردش</span><b class="n">19.7M BTC</b></div>
+      </div>
+    </div>
+  </div>
+  <div class="tb"><div class="tbi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg><span>خانه</span></div><div class="tbi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg><span>بروکرها</span></div><div class="tbi on"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9"/><path d="M10 19V4"/><path d="M16 19v-7"/><path d="M21 19H3"/></svg><span>بازار</span></div><div class="tbi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg><span>سیگنال</span></div><div class="tbi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.9-3.8 3.9-5.6 7.5-5.6s6.6 1.8 7.5 5.6"/></svg><span>من</span></div></div>
+</div>
+</x-dc>
+</body>
+</html>

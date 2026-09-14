@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap">
+  <style>
+:root{--bg:#0B0E14;--sf:#141922;--sf2:#1C222D;--sf3:#232B38;--ln:#242C3A;--ink:#EEF1F6;--ink2:#A8B2C4;--mut:#6E7A8F;
+--br:#D9B071;--br2:#8F6F3C;--brs:#2A2117;--tl:#5FC9C0;--tls:#13292A;
+--up:#3DD68C;--ups:#0F2A20;--dn:#FF6B6B;--dns:#2C1719;--wn:#F5B942;--wns:#2E2513;--r:14px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,system-ui,sans-serif;direction:rtl;font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:var(--br);text-decoration:none}
+a:hover{color:#EBC88F}
+.n{font-family:Manrope,system-ui,sans-serif;direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+.ph{background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.hd{display:flex;align-items:center;gap:10px;padding:16px 16px 10px;flex:none}
+.lg{display:flex;align-items:center;gap:7px;font-family:Manrope;font-weight:800;font-size:16px;letter-spacing:-.025em;direction:ltr}
+.lgm{width:25px;height:25px;border-radius:9px 9px 3px 9px;background:linear-gradient(145deg,#E8C489,var(--br2));display:grid;place-items:center;color:#0B0E14;font-size:10px;font-weight:800;flex:none}
+.sp{flex:1}
+.ic{width:34px;height:34px;border-radius:11px;background:var(--sf);border:1px solid var(--ln);display:grid;place-items:center;color:var(--ink2);flex:none}
+.bd{flex:1;padding:0 16px;display:flex;flex-direction:column;gap:11px;overflow:hidden}
+.cd{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:13px 14px}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.ch b{font-size:13.5px;font-weight:700}
+.ch span.lv{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--mut)}
+.ch span.lv i{width:6px;height:6px;border-radius:50%;background:var(--up);display:block}
+.rw{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--ln)}
+.rw:last-child{border-bottom:0;padding-bottom:0}
+.av{width:31px;height:31px;border-radius:10px;display:grid;place-items:center;font-family:Manrope;font-weight:800;font-size:11px;flex:none;color:#0B0E14}
+.t1{font-size:13px;font-weight:600;line-height:1.35}
+.t2{font-size:10.5px;color:var(--mut);line-height:1.45}
+.up{color:var(--up)}
+.dn{color:var(--dn)}
+.pl{font-family:Manrope;font-size:11px;font-weight:700;padding:2px 7px;border-radius:7px;direction:ltr;display:inline-block;line-height:1.5}
+.pl.u{background:var(--ups);color:var(--up)}
+.pl.d{background:var(--dns);color:var(--dn)}
+.tg{font-size:10px;padding:1px 6px;border-radius:5px;border:1px solid var(--ln);color:var(--ink2);font-family:Manrope;direction:ltr;display:inline-block;line-height:1.6}
+.tg.g{border-color:#2E4A3C;color:var(--up);background:var(--ups)}
+.sc{font-family:Manrope;font-weight:800;font-size:15px;color:var(--br);direction:ltr;letter-spacing:-.02em}
+.tb{display:flex;border-top:1px solid var(--ln);background:var(--sf);padding:9px 4px 12px;flex:none}
+.tbi{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9.5px;color:var(--mut)}
+.tbi.on{color:var(--br)}
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(145deg,#E8C489,var(--br2));color:#0B0E14;font-weight:800;font-size:14px;padding:13px;border-radius:12px}
+.btn2{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--sf2);border:1px solid var(--ln);color:var(--ink);font-weight:600;font-size:13px;padding:11px;border-radius:11px}
+.seg{display:flex;gap:4px;background:var(--sf2);border:1px solid var(--ln);border-radius:11px;padding:3px}
+.seg div{flex:1;text-align:center;font-size:11.5px;padding:5px 4px;border-radius:8px;color:var(--mut)}
+.seg div.on{background:var(--sf3);color:var(--ink);font-weight:600}
+.fl{display:flex;gap:6px;overflow:hidden}
+.fl span{font-size:11.5px;padding:5px 11px;border-radius:9px;background:var(--sf);border:1px solid var(--ln);color:var(--ink2);white-space:nowrap;flex:none}
+.fl span.on{background:var(--brs);border-color:var(--br2);color:var(--br);font-weight:600}
+.kv{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--ln);font-size:12.5px}
+.kv:last-child{border-bottom:0}
+.kv span{color:var(--mut)}
+.kv b{font-weight:600}
+  </style>
+</helmet>
+<div class="ph" style="width:390px;height:2440px">
+  <div style="background:linear-gradient(165deg,#1B2331 0%,#12171F 62%);padding:16px 16px 18px;flex:none;border-bottom:1px solid var(--ln)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <div class="ic" style="background:rgba(255,255,255,.05)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></div><div class="sp"></div>
+      <div class="ic" style="background:rgba(255,255,255,.05)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.6 5.6 6 .8-4.4 4.3 1.1 6.1L12 17l-5.3 2.8 1.1-6.1L3.4 9.4l6-.8L12 3Z"/></svg></div>
+      <div class="ic" style="background:rgba(255,255,255,.05)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.2 2.3 3.4 5.3 3.4 8.5S14.2 18.2 12 20.5c-2.2-2.3-3.4-5.3-3.4-8.5S9.8 5.8 12 3.5Z"/></svg></div>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:13px">
+      <div style="width:58px;height:58px;border-radius:17px;background:#FFD84D;display:grid;place-items:center;font-family:Manrope;font-weight:800;font-size:19px;color:#0B0E14;flex:none">E</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="n" style="font-size:21px;font-weight:800;letter-spacing:-.03em">Exness</span>
+          <span class="t2" style="font-size:12px">اکسنس</span></div>
+        <div style="display:flex;gap:4px;margin-top:7px;flex-wrap:wrap">
+          <span class="tg" style="border-color:#3A4759">FCA · ۷۳۰۷۲۹</span><span class="tg" style="border-color:#3A4759">CySEC · ۱۷۸/۱۲</span><span class="tg" style="border-color:#3A4759">FSA-SC</span></div>
+      </div>
+      <div style="text-align:center;flex:none">
+        <div class="n" style="font-size:30px;font-weight:800;color:var(--br);letter-spacing:-.04em;line-height:1">8.9</div>
+        <div class="t2" style="font-size:10px">از ۱۰</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;margin-top:14px;padding:8px 11px;background:var(--ups);border:1px solid #2E4A3C;border-radius:10px">
+      <i style="width:7px;height:7px;border-radius:50%;background:var(--up);flex:none"></i>
+      <span style="font-size:11.5px;color:var(--up);font-weight:600">وضعیت ۲۴ ساعت اخیر: عادی</span>
+      <div class="sp"></div><span class="t2">۰ گزارش اختلال</span></div>
+  </div>
+
+  <div style="display:flex;border-bottom:1px solid var(--ln);flex:none"><div style="flex:1;text-align:center;padding:12px 4px;font-size:12.5px;color:var(--br);font-weight:700;border-bottom:2px solid var(--br)">نمای کلی</div><div style="flex:1;text-align:center;padding:12px 4px;font-size:12.5px;color:var(--mut)">اسپرد</div><div style="flex:1;text-align:center;padding:12px 4px;font-size:12.5px;color:var(--mut)">برداشت</div><div style="flex:1;text-align:center;padding:12px 4px;font-size:12.5px;color:var(--mut)">نظرات</div><div style="flex:1;text-align:center;padding:12px 4px;font-size:12.5px;color:var(--mut)">مقالات</div></div>
+
+  <div style="display:flex;gap:9px;padding:13px 16px;flex:none">
+    <div class="btn" style="flex:2">افتتاح حساب</div>
+    <div class="btn2" style="flex:1"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> مقایسه</div>
+  </div>
+  <div class="t2" style="padding:0 16px 12px;text-align:center;flex:none;font-size:10px">با کلیک روی این دکمه ممکن است کمیسیون دریافت کنیم — امتیاز بالا از این بابت تغییر نمی‌کند.</div>
+
+  <div style="display:flex;flex-direction:column;gap:11px;padding:0 16px 16px">
+
+    <div class="cd"><div class="ch"><b>امتیاز تفکیکی</b><a>روش‌شناسی ›</a></div><div style="padding:7px 0"><div style="display:flex;align-items:baseline;gap:7px;margin-bottom:5px"><span style="font-size:12.5px">رگولیشن و لایسنس</span><span class="t2 n">25٪</span><div class="sp"></div><span class="n" style="font-size:13px;font-weight:800;color:var(--up)">9.4</span></div><div style="height:5px;border-radius:99px;background:var(--sf3);overflow:hidden"><div style="height:100%;width:94.0%;background:var(--up);border-radius:99px"></div></div></div><div style="padding:7px 0"><div style="display:flex;align-items:baseline;gap:7px;margin-bottom:5px"><span style="font-size:12.5px">هزینهٔ معامله</span><span class="t2 n">20٪</span><div class="sp"></div><span class="n" style="font-size:13px;font-weight:800;color:var(--up)">9.1</span></div><div style="height:5px;border-radius:99px;background:var(--sf3);overflow:hidden"><div style="height:100%;width:91.0%;background:var(--up);border-radius:99px"></div></div></div><div style="padding:7px 0"><div style="display:flex;align-items:baseline;gap:7px;margin-bottom:5px"><span style="font-size:12.5px">سرعت برداشت</span><span class="t2 n">20٪</span><div class="sp"></div><span class="n" style="font-size:13px;font-weight:800;color:var(--up)">9.6</span></div><div style="height:5px;border-radius:99px;background:var(--sf3);overflow:hidden"><div style="height:100%;width:96.0%;background:var(--up);border-radius:99px"></div></div></div><div style="padding:7px 0"><div style="display:flex;align-items:baseline;gap:7px;margin-bottom:5px"><span style="font-size:12.5px">اجرا و پایداری</span><span class="t2 n">15٪</span><div class="sp"></div><span class="n" style="font-size:13px;font-weight:800;color:var(--br)">8.2</span></div><div style="height:5px;border-radius:99px;background:var(--sf3);overflow:hidden"><div style="height:100%;width:82.0%;background:var(--br);border-radius:99px"></div></div></div><div style="padding:7px 0"><div style="display:flex;align-items:baseline;gap:7px;margin-bottom:5px"><span style="font-size:12.5px">نظرات تأییدشده</span><span class="t2 n">10٪</span><div class="sp"></div><span class="n" style="font-size:13px;font-weight:800;color:var(--br)">8.0</span></div><div style="height:5px;border-radius:99px;background:var(--sf3);overflow:hidden"><div style="height:100%;width:80.0%;background:var(--br);border-radius:99px"></div></div></div><div style="padding:7px 0"><div style="display:flex;align-items:baseline;gap:7px;margin-bottom:5px"><span style="font-size:12.5px">شفافیت شرکتی</span><span class="t2 n">10٪</span><div class="sp"></div><span class="n" style="font-size:13px;font-weight:800;color:var(--wn)">7.1</span></div><div style="height:5px;border-radius:99px;background:var(--sf3);overflow:hidden"><div style="height:100%;width:71.0%;background:var(--wn);border-radius:99px"></div></div></div></div>
+
+    <div class="cd" style="border-color:var(--br2)">
+      <div class="ch"><b>شما زیر کدام شرکت ثبت می‌شوید؟</b></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <span class="t2">کشور اقامت</span>
+        <div style="display:inline-flex;align-items:center;gap:6px;background:var(--sf2);border:1px solid var(--ln);border-radius:9px;padding:6px 11px;font-size:12.5px;font-weight:600">ایران <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div>
+      </div><div style="border:1.5px solid var(--wn);background:var(--wns);border-radius:12px;padding:11px 12px;margin-bottom:7px"><div style="display:flex;align-items:center;gap:7px"><span class="n" style="font-size:13px;font-weight:800">Exness (SC) Ltd</span><span class="tg" style="border-color:var(--br2);color:var(--br)">FSA-SC</span><div class="sp"></div><span style="font-size:10.5px;font-weight:800;color:#0B0E14;background:var(--wn);padding:2px 8px;border-radius:6px">شما اینجا</span></div><div style="display:flex;align-items:center;gap:6px;margin-top:7px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--wn)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5"/><path d="M12 16.5h.01"/><circle cx="12" cy="12" r="8.5"/></svg><span style="font-size:11.5px;color:var(--wn);font-weight:600">هیچ حفاظتی ندارد</span></div><div class="t2" style="margin-top:3px">کشور ثبت: سیشل</div></div><div style="border:1px solid var(--ln);border-radius:12px;padding:10px 12px;margin-bottom:7px;opacity:.62"><div style="display:flex;align-items:center;gap:7px"><span class="n" style="font-size:12.5px;font-weight:700">Exness (CY) Ltd</span><span class="tg">CySEC</span></div><div style="display:flex;align-items:center;gap:6px;margin-top:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--up)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v6c0 4.4 3 7.7 7 9 4-1.3 7-4.6 7-9V6l-7-3Z"/><path d="m9.2 12 2 2 3.6-3.8"/></svg><span style="font-size:11px;color:var(--up)">صندوق ICF تا €۲۰٬۰۰۰</span></div></div><div style="border:1px solid var(--ln);border-radius:12px;padding:10px 12px;margin-bottom:7px;opacity:.62"><div style="display:flex;align-items:center;gap:7px"><span class="n" style="font-size:12.5px;font-weight:700">Exness (UK) Ltd</span><span class="tg">FCA</span></div><div style="display:flex;align-items:center;gap:6px;margin-top:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--up)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v6c0 4.4 3 7.7 7 9 4-1.3 7-4.6 7-9V6l-7-3Z"/><path d="m9.2 12 2 2 3.6-3.8"/></svg><span style="font-size:11px;color:var(--up)">صندوق FSCS تا £۸۵٬۰۰۰</span></div></div>
+      <div class="t2" style="margin-top:4px;line-height:1.75">بروکر تبلیغ FCA می‌کند، ولی کاربران خارج از اروپا زیر شرکت سیشل ثبت می‌شوند. در صورت اختلاف، مرجع رسیدگی FSA سیشل است.</div>
+    </div>
+
+    <div class="cd"><div class="ch"><b>اسپرد زنده</b><span class="lv"><i></i>به‌روز</span></div><div class="kv"><span class="n" style="color:var(--ink);font-weight:600">EURUSD</span><div class="sp"></div><span class="t2 n" style="margin-left:14px">میانگین ۳۰ روز 0.9</span><b class="n" style="font-size:14px;color:var(--up);margin-left:10px">0.7</b><span class="tg" style="border-color:var(--br2);color:var(--br)">رتبه ۳</span></div><div class="kv"><span class="n" style="color:var(--ink);font-weight:600">XAUUSD</span><div class="sp"></div><span class="t2 n" style="margin-left:14px">میانگین ۳۰ روز 1.8</span><b class="n" style="font-size:14px;color:var(--up);margin-left:10px">1.4</b><span class="tg" style="border-color:var(--br2);color:var(--br)">رتبه ۵</span></div><div class="kv"><span class="n" style="color:var(--ink);font-weight:600">GBPUSD</span><div class="sp"></div><span class="t2 n" style="margin-left:14px">میانگین ۳۰ روز 1.2</span><b class="n" style="font-size:14px;color:var(--br);margin-left:10px">1.1</b><span class="tg" style="border-color:var(--br2);color:var(--br)">رتبه ۷</span></div><div class="kv"><span class="n" style="color:var(--ink);font-weight:600">BTCUSD</span><div class="sp"></div><span class="t2 n" style="margin-left:14px">میانگین ۳۰ روز 31</span><b class="n" style="font-size:14px;color:var(--up);margin-left:10px">24</b><span class="tg" style="border-color:var(--br2);color:var(--br)">رتبه ۲</span></div>
+      <div class="t2" style="margin-top:9px">میانگین از حساب دمو · هر ۶۰ ثانیه · رتبه در میان ۴۲ بروکر</div></div>
+
+    <div class="cd">
+      <div class="ch"><b>زمان واقعی برداشت</b><span class="t2 n">۳۴۰ گزارش · ۹۰ روز</span></div>
+      <div style="display:flex;align-items:flex-end;gap:8px;margin-bottom:14px">
+        <div class="n" style="font-size:32px;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--up)">18</div>
+        <div style="padding-bottom:3px"><div style="font-size:13px;font-weight:700">دقیقه</div><div class="t2">میانهٔ زمان برداشت</div></div>
+      </div>
+      <div style="display:flex;gap:7px;align-items:flex-end;height:100px"><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px"><div class="n" style="font-size:10.5px;color:var(--ink2);font-weight:700">62%</div><div style="width:100%;height:66px;border-radius:5px 5px 0 0;background:linear-gradient(to top,var(--br2),var(--br))"></div><div class="t2" style="font-size:9.5px">زیر ۱۵د</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px"><div class="n" style="font-size:10.5px;color:var(--ink2);font-weight:700">24%</div><div style="width:100%;height:34px;border-radius:5px 5px 0 0;background:linear-gradient(to top,var(--br2),var(--br))"></div><div class="t2" style="font-size:9.5px">۱۵–۶۰د</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px"><div class="n" style="font-size:10.5px;color:var(--ink2);font-weight:700">9%</div><div style="width:100%;height:21px;border-radius:5px 5px 0 0;background:linear-gradient(to top,var(--br2),var(--br))"></div><div class="t2" style="font-size:9.5px">۱–۶س</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px"><div class="n" style="font-size:10.5px;color:var(--ink2);font-weight:700">5%</div><div style="width:100%;height:18px;border-radius:5px 5px 0 0;background:linear-gradient(to top,var(--br2),var(--br))"></div><div class="t2" style="font-size:9.5px">بالای ۶س</div></div></div>
+      <div style="margin-top:12px;border-top:1px solid var(--ln);padding-top:10px">
+        <div class="kv"><span>تتر (TRC20)</span><b class="n up">~۱۲ دقیقه</b></div>
+        <div class="kv"><span>صرافی ریالی واسط</span><b class="n" style="color:var(--wn)">~۲ ساعت</b></div>
+        <div class="kv"><span>Perfect Money</span><b class="n up">~۲۰ دقیقه</b></div>
+      </div>
+    </div>
+
+    <div class="cd"><div class="ch"><b>نظرات تأییدشده</b><a>۲۱۴ نظر ›</a></div>
+      <div style="display:flex;align-items:center;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--ln)">
+        <div class="n" style="font-size:26px;font-weight:800;letter-spacing:-.03em">4.3</div>
+        <div><div style="display:flex;gap:2px"><svg width="12" height="12" viewBox="0 0 24 24" fill="#D9B071" stroke="none"><path d="m12 3 2.6 5.6 6 .8-4.4 4.3 1.1 6.1L12 17l-5.3 2.8 1.1-6.1L3.4 9.4l6-.8L12 3Z"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="#D9B071" stroke="none"><path d="m12 3 2.6 5.6 6 .8-4.4 4.3 1.1 6.1L12 17l-5.3 2.8 1.1-6.1L3.4 9.4l6-.8L12 3Z"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="#D9B071" stroke="none"><path d="m12 3 2.6 5.6 6 .8-4.4 4.3 1.1 6.1L12 17l-5.3 2.8 1.1-6.1L3.4 9.4l6-.8L12 3Z"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="#D9B071" stroke="none"><path d="m12 3 2.6 5.6 6 .8-4.4 4.3 1.1 6.1L12 17l-5.3 2.8 1.1-6.1L3.4 9.4l6-.8L12 3Z"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="#2A3342" stroke="none"><path d="m12 3 2.6 5.6 6 .8-4.4 4.3 1.1 6.1L12 17l-5.3 2.8 1.1-6.1L3.4 9.4l6-.8L12 3Z"/></svg></div><div class="t2">فقط از کاربرانی که استیتمنت آپلود کرده‌اند</div></div>
+      </div><div style="padding:12px 0;border-bottom:1px solid var(--ln)"><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;background:#4A7BD9;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none">م</div><div><div style="display:flex;align-items:center;gap:5px"><span class="t1">مهران ر.</span><span class="tg g" style="display:inline-flex;align-items:center;gap:3px"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="var(--up)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7"/></svg> مشتری تأییدشده</span></div><div class="t2">۴ روز پیش</div></div><div class="sp"></div><div style="display:flex;gap:1.5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="#D9B071" stroke="none"><path d="m12 3 2.6 5.6 6 .8-4.4 4.3 1.1 6.1L12 17l-5.3 2.8 1.1-6.1L3.4 9.4l6-.8L12 3Z"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="#D9B071" stroke="none"><path d="m12 3 2.6 5.6 6 .8-4.4 4.3 1.1 6.1L12 17l-5.3 2.8 1.1-6.1L3.4 9.4l6-.8L12 3Z"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="#D9B071" stroke="none"><path d="m12 3 2.6 5.6 6 .8-4.4 4.3 1.1 6.1L12 17l-5.3 2.8 1.1-6.1L3.4 9.4l6-.8L12 3Z"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="#D9B071" stroke="none"><path d="m12 3 2.6 5.6 6 .8-4.4 4.3 1.1 6.1L12 17l-5.3 2.8 1.1-6.1L3.4 9.4l6-.8L12 3Z"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="#D9B071" stroke="none"><path d="m12 3 2.6 5.6 6 .8-4.4 4.3 1.1 6.1L12 17l-5.3 2.8 1.1-6.1L3.4 9.4l6-.8L12 3Z"/></svg></div></div><div style="font-size:12.5px;color:var(--ink2);line-height:1.8;margin-top:8px">برداشت تتر در کمتر از ۱۰ دقیقه انجام شد. اسپرد طلا موقع خبر باز می‌شود ولی در حد معقول.</div><div class="t2" style="margin-top:5px">حساب استاندارد · ۸ ماه</div></div><div style="padding:12px 0;border-bottom:1px solid var(--ln)"><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;background:#8A6BD9;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none">ن</div><div><div style="display:flex;align-items:center;gap:5px"><span class="t1">نیما ک.</span><span class="tg g" style="display:inline-flex;align-items:center;gap:3px"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="var(--up)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7"/></svg> مشتری تأییدشده</span></div><div class="t2">۲ هفته پیش</div></div><div class="sp"></div><div style="display:flex;gap:1.5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="#D9B071" stroke="none"><path d="m12 3 2.6 5.6 6 .8-4.4 4.3 1.1 6.1L12 17l-5.3 2.8 1.1-6.1L3.4 9.4l6-.8L12 3Z"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="#D9B071" stroke="none"><path d="m12 3 2.6 5.6 6 .8-4.4 4.3 1.1 6.1L12 17l-5.3 2.8 1.1-6.1L3.4 9.4l6-.8L12 3Z"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="#D9B071" stroke="none"><path d="m12 3 2.6 5.6 6 .8-4.4 4.3 1.1 6.1L12 17l-5.3 2.8 1.1-6.1L3.4 9.4l6-.8L12 3Z"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="#2A3342" stroke="none"><path d="m12 3 2.6 5.6 6 .8-4.4 4.3 1.1 6.1L12 17l-5.3 2.8 1.1-6.1L3.4 9.4l6-.8L12 3Z"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="#2A3342" stroke="none"><path d="m12 3 2.6 5.6 6 .8-4.4 4.3 1.1 6.1L12 17l-5.3 2.8 1.1-6.1L3.4 9.4l6-.8L12 3Z"/></svg></div></div><div style="font-size:12.5px;color:var(--ink2);line-height:1.8;margin-top:8px">اجرا سریع است اما در NFP اسلیپیج زیادی داشتم. پشتیبانی فارسی جواب داد ولی کند.</div><div class="t2" style="margin-top:5px">حساب سنت · ۳ ماه</div><div style="margin-top:9px;padding:9px 11px;background:var(--sf2);border-right:2px solid var(--br);border-radius:0 9px 9px 0"><div style="display:flex;align-items:center;gap:5px;margin-bottom:3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--br)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v6c0 4.4 3 7.7 7 9 4-1.3 7-4.6 7-9V6l-7-3Z"/><path d="m9.2 12 2 2 3.6-3.8"/></svg><span style="font-size:11px;font-weight:700;color:var(--br)">پاسخ رسمی Exness</span></div><div class="t2" style="color:var(--ink2);line-height:1.7">ممنون از بازخوردتان. در زمان انتشار اخبار، اسپرد شناور است؛ پیشنهاد می‌کنیم از حساب Raw استفاده کنید.</div></div></div></div>
+
+    <div class="cd" style="padding-bottom:6px"><div class="ch"><b>جایگزین‌ها</b></div><div class="rw"><div class="av" style="background:#2E3A4D">IC</div><div style="min-width:0"><div class="t1 n">IC Markets</div><div class="t2">اسپرد کمتر (0.1) · حداقل $200</div></div><div class="sp"></div><span class="sc">8.7</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--mut)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></div><div class="rw"><div class="av" style="background:#4A7BD9">AM</div><div style="min-width:0"><div class="t1 n">Amarkets</div><div class="t2">واریز ریالی مستقیم</div></div><div class="sp"></div><span class="sc">8.1</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--mut)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></div><div class="rw"><div class="av" style="background:#8A6BD9">RB</div><div style="min-width:0"><div class="t1 n">RoboForex</div><div class="t2">اهرم بالاتر · بدون FCA</div></div><div class="sp"></div><span class="sc">7.9</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--mut)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></div></div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

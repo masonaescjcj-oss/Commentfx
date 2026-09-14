@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap">
+  <style>
+:root{--bg:#0B0E14;--sf:#141922;--sf2:#1C222D;--sf3:#232B38;--ln:#242C3A;--ink:#EEF1F6;--ink2:#A8B2C4;--mut:#6E7A8F;
+--br:#D9B071;--br2:#8F6F3C;--brs:#2A2117;--tl:#5FC9C0;--tls:#13292A;
+--up:#3DD68C;--ups:#0F2A20;--dn:#FF6B6B;--dns:#2C1719;--wn:#F5B942;--wns:#2E2513;--r:14px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,system-ui,sans-serif;direction:rtl;font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:var(--br);text-decoration:none}
+a:hover{color:#EBC88F}
+.n{font-family:Manrope,system-ui,sans-serif;direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+.ph{background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.hd{display:flex;align-items:center;gap:10px;padding:16px 16px 10px;flex:none}
+.lg{display:flex;align-items:center;gap:7px;font-family:Manrope;font-weight:800;font-size:16px;letter-spacing:-.025em;direction:ltr}
+.lgm{width:25px;height:25px;border-radius:9px 9px 3px 9px;background:linear-gradient(145deg,#E8C489,var(--br2));display:grid;place-items:center;color:#0B0E14;font-size:10px;font-weight:800;flex:none}
+.sp{flex:1}
+.ic{width:34px;height:34px;border-radius:11px;background:var(--sf);border:1px solid var(--ln);display:grid;place-items:center;color:var(--ink2);flex:none}
+.bd{flex:1;padding:0 16px;display:flex;flex-direction:column;gap:11px;overflow:hidden}
+.cd{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:13px 14px}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.ch b{font-size:13.5px;font-weight:700}
+.ch span.lv{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--mut)}
+.ch span.lv i{width:6px;height:6px;border-radius:50%;background:var(--up);display:block}
+.rw{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--ln)}
+.rw:last-child{border-bottom:0;padding-bottom:0}
+.av{width:31px;height:31px;border-radius:10px;display:grid;place-items:center;font-family:Manrope;font-weight:800;font-size:11px;flex:none;color:#0B0E14}
+.t1{font-size:13px;font-weight:600;line-height:1.35}
+.t2{font-size:10.5px;color:var(--mut);line-height:1.45}
+.up{color:var(--up)}
+.dn{color:var(--dn)}
+.pl{font-family:Manrope;font-size:11px;font-weight:700;padding:2px 7px;border-radius:7px;direction:ltr;display:inline-block;line-height:1.5}
+.pl.u{background:var(--ups);color:var(--up)}
+.pl.d{background:var(--dns);color:var(--dn)}
+.tg{font-size:10px;padding:1px 6px;border-radius:5px;border:1px solid var(--ln);color:var(--ink2);font-family:Manrope;direction:ltr;display:inline-block;line-height:1.6}
+.tg.g{border-color:#2E4A3C;color:var(--up);background:var(--ups)}
+.sc{font-family:Manrope;font-weight:800;font-size:15px;color:var(--br);direction:ltr;letter-spacing:-.02em}
+.tb{display:flex;border-top:1px solid var(--ln);background:var(--sf);padding:9px 4px 12px;flex:none}
+.tbi{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9.5px;color:var(--mut)}
+.tbi.on{color:var(--br)}
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(145deg,#E8C489,var(--br2));color:#0B0E14;font-weight:800;font-size:14px;padding:13px;border-radius:12px}
+.btn2{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--sf2);border:1px solid var(--ln);color:var(--ink);font-weight:600;font-size:13px;padding:11px;border-radius:11px}
+.seg{display:flex;gap:4px;background:var(--sf2);border:1px solid var(--ln);border-radius:11px;padding:3px}
+.seg div{flex:1;text-align:center;font-size:11.5px;padding:5px 4px;border-radius:8px;color:var(--mut)}
+.seg div.on{background:var(--sf3);color:var(--ink);font-weight:600}
+.fl{display:flex;gap:6px;overflow:hidden}
+.fl span{font-size:11.5px;padding:5px 11px;border-radius:9px;background:var(--sf);border:1px solid var(--ln);color:var(--ink2);white-space:nowrap;flex:none}
+.fl span.on{background:var(--brs);border-color:var(--br2);color:var(--br);font-weight:600}
+.kv{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--ln);font-size:12.5px}
+.kv:last-child{border-bottom:0}
+.kv span{color:var(--mut)}
+.kv b{font-weight:600}
+  </style>
+</helmet>
+<div style="width:1440px;height:1180px;background:var(--bg);display:flex;flex-direction:column;overflow:hidden">
+  <div style="display:flex;gap:26px;padding:9px 36px;border-bottom:1px solid var(--ln);background:var(--sf);overflow:hidden;flex:none"><span style="display:inline-flex;gap:6px;align-items:center;font-size:11.5px;color:var(--ink2);flex:none">BTC <b class="n up" style="font-weight:700">$67,412 ▲1.8%</b></span><span style="display:inline-flex;gap:6px;align-items:center;font-size:11.5px;color:var(--ink2);flex:none">ETH <b class="n dn" style="font-weight:700">$3,204 ▼0.6%</b></span><span style="display:inline-flex;gap:6px;align-items:center;font-size:11.5px;color:var(--ink2);flex:none">XAUUSD <b class="n up" style="font-weight:700">2,412.30 ▲0.4%</b></span><span style="display:inline-flex;gap:6px;align-items:center;font-size:11.5px;color:var(--ink2);flex:none">EURUSD <b class="n dn" style="font-weight:700">1.0842 ▼0.1%</b></span><span style="display:inline-flex;gap:6px;align-items:center;font-size:11.5px;color:var(--ink2);flex:none">DXY <b class="n up" style="font-weight:700">104.62 ▲0.2%</b></span><span style="display:inline-flex;gap:6px;align-items:center;font-size:11.5px;color:var(--ink2);flex:none">SOL <b class="n up" style="font-weight:700">$158.9 ▲4.1%</b></span><span style="display:inline-flex;gap:6px;align-items:center;font-size:11.5px;color:var(--ink2);flex:none">USDT/IRR <b class="n up" style="font-weight:700">62,410 ▲0.4%</b></span><span style="display:inline-flex;gap:6px;align-items:center;font-size:11.5px;color:var(--ink2);flex:none">US30 <b class="n dn" style="font-weight:700">38,942 ▼0.3%</b></span></div>
+  <div style="display:flex;align-items:center;gap:26px;padding:16px 36px;border-bottom:1px solid var(--ln);flex:none">
+    <div class="lg" style="font-size:19px"><span class="lgm" style="width:30px;height:30px;border-radius:10px 10px 3px 10px;font-size:11px">FX</span>CommentFX</div>
+    <div style="display:flex;gap:22px;align-items:center"><span style="font-size:13.5px;color:var(--ink);font-weight:700">هوم</span><span style="font-size:13.5px;color:var(--ink2);font-weight:500">بروکرها</span><span style="font-size:13.5px;color:var(--ink2);font-weight:500">پراپ‌ها</span><span style="font-size:13.5px;color:var(--ink2);font-weight:500">صرافی‌ها</span><span style="font-size:13.5px;color:var(--ink2);font-weight:500">کوین‌ها</span><span style="font-size:13.5px;color:var(--ink2);font-weight:500">سیگنال‌ها</span><span style="font-size:13.5px;color:var(--ink2);font-weight:500">تقویم</span><span style="font-size:13.5px;color:var(--ink2);font-weight:500">مقالات</span></div>
+    <div class="sp"></div>
+    <div style="display:flex;align-items:center;gap:9px;background:var(--sf);border:1px solid var(--ln);border-radius:11px;padding:8px 14px;width:250px;color:var(--mut)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-3.5-3.5"/></svg><span style="font-size:12.5px">جستجوی بروکر، کوین، تریدر…</span></div>
+    <span style="font-size:13px;color:var(--ink2)">ورود</span>
+    <div class="btn" style="padding:9px 20px;font-size:13px;border-radius:10px">ثبت‌نام</div>
+  </div>
+  <div style="flex:1;padding:22px 36px;display:flex;flex-direction:column;gap:14px;overflow:hidden">
+
+    <div style="display:flex;gap:14px">
+      <div class="cd" style="flex:2.1;background:linear-gradient(120deg,#1B2331,#12171F);border-color:#2C3648;padding:18px 20px">
+        <div class="ch"><b style="font-size:15px">رادار ریسک امروز</b><span class="lv"><i></i>زنده · ۲۲ شهریور</span></div>
+        <div style="display:flex;align-items:flex-end;gap:16px">
+          <div class="n" style="font-size:62px;font-weight:800;letter-spacing:-.05em;line-height:.85">72</div>
+          <div style="padding-bottom:8px"><div class="t2">/100</div><div style="font-size:15px;font-weight:800;color:var(--dn)">ریسک بالا</div></div>
+          <div style="flex:1;padding-bottom:6px">
+            <div style="height:7px;border-radius:99px;background:linear-gradient(to left,var(--up),var(--wn),var(--dn));position:relative">
+              <i style="position:absolute;top:-5px;right:72%;width:17px;height:17px;border-radius:50%;background:var(--ink);border:4px solid #161D28;transform:translateX(50%)"></i></div>
+            <div style="display:flex;gap:6px;margin-top:13px">
+              <span class="tg" style="border-color:#4A2B2B;color:var(--dn);background:var(--dns)">NFP · 16:00</span>
+              <span class="tg" style="border-color:#4A3E22;color:var(--wn);background:var(--wns)">آنلاک ARB $420M</span>
+              <span class="tg">انقضای آپشن BTC $4.2B</span><span class="tg">فاندینگ SOL غیرعادی</span></div></div>
+          <div style="text-align:left;padding-bottom:6px"><div class="t2">تا NFP</div>
+            <div class="n" style="font-size:26px;font-weight:800;color:var(--br);letter-spacing:-.03em">01:28</div></div>
+        </div>
+      </div>
+      <div class="cd" style="flex:.62"><div class="t2">ترس و طمع</div>
+        <div class="n up" style="font-size:34px;font-weight:800;letter-spacing:-.04em;margin:4px 0 2px">64</div>
+        <div class="t2">طمع · دیروز ۵۸</div></div>
+      <div class="cd" style="flex:.62"><div class="t2">تتر / تومان</div>
+        <div class="n" style="font-size:34px;font-weight:800;letter-spacing:-.04em;margin:4px 0 2px">62,410</div>
+        <div class="t2 up">+0.4% · میانگین ۶ صرافی</div></div>
+      <div class="cd" style="flex:.62"><div class="t2">جلسهٔ فعال</div>
+        <div style="font-size:26px;font-weight:800;margin:6px 0 2px;color:var(--up)">لندن</div>
+        <div class="t2">نیویورک ۱:۲۸ دیگر</div></div>
+    </div>
+
+    <div style="display:flex;gap:14px;flex:1">
+      <div class="cd" style="flex:1;padding-bottom:8px"><div class="ch"><b>بازار</b><a>همه ›</a></div><div class="rw"><div class="av" style="background:#F7931A">B</div><div style="min-width:0"><div class="t1">Bitcoin</div><div class="t2 n">BTC</div></div><div class="sp"></div><svg width="58" height="24" viewBox="0 0 58 24" fill="none" style="flex:none"><defs><linearGradient id="sg83191" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3DD68C" stop-opacity=".30"/><stop offset="1" stop-color="#3DD68C" stop-opacity="0"/></linearGradient></defs><path d="M0.0,18.0 L6.4,21.5 L12.9,16.3 L19.3,19.8 L25.8,12.9 L32.2,9.4 L38.7,11.1 L45.1,6.0 L51.6,7.7 L58.0,2.5 L58,24 L0,24 Z" fill="url(#sg83191)"/><path d="M0.0,18.0 L6.4,21.5 L12.9,16.3 L19.3,19.8 L25.8,12.9 L32.2,9.4 L38.7,11.1 L45.1,6.0 L51.6,7.7 L58.0,2.5" stroke="#3DD68C" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" fill="none"/></svg><div style="text-align:left"><div class="n t1" style="font-weight:700">$67,412</div><div class="n t2 up" style="font-weight:600">+1.82%</div></div></div><div class="rw"><div class="av" style="background:#627EEA">E</div><div style="min-width:0"><div class="t1">Ethereum</div><div class="t2 n">ETH</div></div><div class="sp"></div><svg width="58" height="24" viewBox="0 0 58 24" fill="none" style="flex:none"><defs><linearGradient id="sg58567" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF6B6B" stop-opacity=".30"/><stop offset="1" stop-color="#FF6B6B" stop-opacity="0"/></linearGradient></defs><path d="M0.0,5.2 L6.4,7.9 L12.9,2.5 L19.3,10.6 L25.8,13.4 L32.2,10.6 L38.7,16.1 L45.1,18.8 L51.6,16.1 L58.0,21.5 L58,24 L0,24 Z" fill="url(#sg58567)"/><path d="M0.0,5.2 L6.4,7.9 L12.9,2.5 L19.3,10.6 L25.8,13.4 L32.2,10.6 L38.7,16.1 L45.1,18.8 L51.6,16.1 L58.0,21.5" stroke="#FF6B6B" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" fill="none"/></svg><div style="text-align:left"><div class="n t1" style="font-weight:700">$3,204</div><div class="n t2 dn" style="font-weight:600">−0.61%</div></div></div><div class="rw"><div class="av" style="background:#D9B071">X</div><div style="min-width:0"><div class="t1">Gold</div><div class="t2 n">XAUUSD</div></div><div class="sp"></div><svg width="58" height="24" viewBox="0 0 58 24" fill="none" style="flex:none"><defs><linearGradient id="sg89619" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3DD68C" stop-opacity=".30"/><stop offset="1" stop-color="#3DD68C" stop-opacity="0"/></linearGradient></defs><path d="M0.0,21.5 L6.4,18.3 L12.9,21.5 L19.3,15.2 L25.8,12.0 L32.2,15.2 L38.7,8.8 L45.1,12.0 L51.6,5.7 L58.0,2.5 L58,24 L0,24 Z" fill="url(#sg89619)"/><path d="M0.0,21.5 L6.4,18.3 L12.9,21.5 L19.3,15.2 L25.8,12.0 L32.2,15.2 L38.7,8.8 L45.1,12.0 L51.6,5.7 L58.0,2.5" stroke="#3DD68C" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" fill="none"/></svg><div style="text-align:left"><div class="n t1" style="font-weight:700">2,412.30</div><div class="n t2 up" style="font-weight:600">+0.41%</div></div></div><div class="rw"><div class="av" style="background:#9945FF">S</div><div style="min-width:0"><div class="t1">Solana</div><div class="t2 n">SOL</div></div><div class="sp"></div><svg width="58" height="24" viewBox="0 0 58 24" fill="none" style="flex:none"><defs><linearGradient id="sg52418" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3DD68C" stop-opacity=".30"/><stop offset="1" stop-color="#3DD68C" stop-opacity="0"/></linearGradient></defs><path d="M0.0,21.5 L6.4,19.1 L12.9,20.3 L19.3,15.6 L25.8,13.2 L32.2,14.4 L38.7,9.6 L45.1,6.1 L51.6,7.2 L58.0,2.5 L58,24 L0,24 Z" fill="url(#sg52418)"/><path d="M0.0,21.5 L6.4,19.1 L12.9,20.3 L19.3,15.6 L25.8,13.2 L32.2,14.4 L38.7,9.6 L45.1,6.1 L51.6,7.2 L58.0,2.5" stroke="#3DD68C" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" fill="none"/></svg><div style="text-align:left"><div class="n t1" style="font-weight:700">$158.9</div><div class="n t2 up" style="font-weight:600">+4.10%</div></div></div><div class="rw"><div class="av" style="background:#5FC9C0">E</div><div style="min-width:0"><div class="t1">EUR/USD</div><div class="t2 n">EUR</div></div><div class="sp"></div><svg width="58" height="24" viewBox="0 0 58 24" fill="none" style="flex:none"><defs><linearGradient id="sg24695" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF6B6B" stop-opacity=".30"/><stop offset="1" stop-color="#FF6B6B" stop-opacity="0"/></linearGradient></defs><path d="M0.0,5.2 L6.4,7.9 L12.9,2.5 L19.3,10.6 L25.8,13.4 L32.2,10.6 L38.7,16.1 L45.1,18.8 L51.6,16.1 L58.0,21.5 L58,24 L0,24 Z" fill="url(#sg24695)"/><path d="M0.0,5.2 L6.4,7.9 L12.9,2.5 L19.3,10.6 L25.8,13.4 L32.2,10.6 L38.7,16.1 L45.1,18.8 L51.6,16.1 L58.0,21.5" stroke="#FF6B6B" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" fill="none"/></svg><div style="text-align:left"><div class="n t1" style="font-weight:700">1.0842</div><div class="n t2 dn" style="font-weight:600">−0.12%</div></div></div></div>
+      <div class="cd" style="flex:1"><div class="ch"><b>تقویم امروز</b><a>هفته ›</a></div><div class="rw" style="background:var(--dns);margin:0 -8px;padding:9px 8px;border-radius:9px;border-bottom:0"><span class="n t2" style="width:40px;flex:none;color:var(--dn);font-weight:700">16:00</span><span class="n t2" style="width:32px;flex:none;font-weight:700">USD</span><div style="display:flex;gap:2px;flex:none"><i style="width:4px;height:10px;border-radius:1px;background:var(--dn);display:block"></i><i style="width:4px;height:10px;border-radius:1px;background:var(--dn);display:block"></i><i style="width:4px;height:10px;border-radius:1px;background:var(--dn);display:block"></i></div><span style="font-size:12.5px;flex:1;font-weight:700">NFP · اشتغال غیرکشاورزی</span><span class="n t2">185K / 216K</span></div><div class="rw" style=""><span class="n t2" style="width:40px;flex:none;">16:00</span><span class="n t2" style="width:32px;flex:none;font-weight:700">USD</span><div style="display:flex;gap:2px;flex:none"><i style="width:4px;height:10px;border-radius:1px;background:var(--dn);display:block"></i><i style="width:4px;height:10px;border-radius:1px;background:var(--dn);display:block"></i><i style="width:4px;height:10px;border-radius:1px;background:var(--dn);display:block"></i></div><span style="font-size:12.5px;flex:1;font-weight:500">نرخ بیکاری</span><span class="n t2">3.9% / 3.9%</span></div><div class="rw" style=""><span class="n t2" style="width:40px;flex:none;">17:45</span><span class="n t2" style="width:32px;flex:none;font-weight:700">USD</span><div style="display:flex;gap:2px;flex:none"><i style="width:4px;height:10px;border-radius:1px;background:var(--wn);display:block"></i><i style="width:4px;height:10px;border-radius:1px;background:var(--wn);display:block"></i><i style="width:4px;height:10px;border-radius:1px;background:var(--ln);display:block"></i></div><span style="font-size:12.5px;flex:1;font-weight:500">PMI خدمات</span><span class="n t2">51.2 / 51.7</span></div><div class="rw" style=""><span class="n t2" style="width:40px;flex:none;">21:00</span><span class="n t2" style="width:32px;flex:none;font-weight:700">USD</span><div style="display:flex;gap:2px;flex:none"><i style="width:4px;height:10px;border-radius:1px;background:var(--mut);display:block"></i><i style="width:4px;height:10px;border-radius:1px;background:var(--ln);display:block"></i><i style="width:4px;height:10px;border-radius:1px;background:var(--ln);display:block"></i></div><span style="font-size:12.5px;flex:1;font-weight:500">دکل‌های نفتی</span><span class="n t2">486 / 484</span></div>
+        <div style="margin-top:11px;padding:10px 12px;background:var(--sf2);border-radius:10px;font-size:11.5px;color:var(--ink2);line-height:1.75">
+          <b style="color:var(--br)">یعنی چه:</b> زیر ۱۵۰K یعنی بازار قطع نرخ سپتامبر را قیمت‌گذاری می‌کند — دلار ضعیف، طلا بالا.</div></div>
+      <div class="cd" style="flex:1;padding-bottom:8px"><div class="ch"><b>اخبار</b><a>همه ›</a></div><div class="rw" style="align-items:flex-start"><div style="width:62px;height:48px;border-radius:9px;background:#2A3446;flex:none"></div><div><div style="font-size:12.5px;font-weight:600;line-height:1.6">CySEC لایسنس یک بروکر بزرگ را تعلیق کرد؛ برداشت‌ها متوقف شد</div><div class="t2" style="margin-top:3px">رگولاتوری · ۱۲ دقیقه پیش</div></div></div><div class="rw" style="align-items:flex-start"><div style="width:62px;height:48px;border-radius:9px;background:#14332A;flex:none"></div><div><div style="font-size:12.5px;font-weight:600;line-height:1.6">ورودی ETF بیت‌کوین سومین روز متوالی مثبت شد</div><div class="t2" style="margin-top:3px">کریپتو · ۱ ساعت پیش</div></div></div><div class="rw" style="align-items:flex-start"><div style="width:62px;height:48px;border-radius:9px;background:#332914;flex:none"></div><div><div style="font-size:12.5px;font-weight:600;line-height:1.6">FTMO قانون consistency را تغییر داد — چه کسانی متأثر می‌شوند</div><div class="t2" style="margin-top:3px">پراپ · ۳ ساعت پیش</div></div></div></div>
+    </div>
+
+    <div style="display:flex;gap:14px;flex:1">
+      <div class="cd" style="flex:1.9;padding-bottom:8px"><div class="ch"><b>بروکرها · اسپرد زنده</b><a>مقایسه و فیلتر ›</a></div><div class="rw"><div class="av" style="background:#FFD84D">E</div><div style="min-width:0"><div class="t1 n">Exness</div><div style="display:flex;gap:4px;margin-top:3px"><span class="tg">FCA</span> <span class="tg">CySEC</span> <span class="tg">FSA</span></div></div><div class="sp"></div><div style="display:flex;align-items:center;gap:5px;margin-left:18px"><i style="width:6px;height:6px;border-radius:50%;background:var(--up)"></i><span class="t2">عادی</span></div><div style="text-align:left;margin-left:18px"><div class="n t1" style="font-weight:700">0.7</div><div class="t2">EURUSD</div></div><span class="sc">8.9</span></div><div class="rw"><div class="av" style="background:#2E3A4D">IC</div><div style="min-width:0"><div class="t1 n">IC Markets</div><div style="display:flex;gap:4px;margin-top:3px"><span class="tg">ASIC</span> <span class="tg">CySEC</span></div></div><div class="sp"></div><div style="display:flex;align-items:center;gap:5px;margin-left:18px"><i style="width:6px;height:6px;border-radius:50%;background:var(--up)"></i><span class="t2">عادی</span></div><div style="text-align:left;margin-left:18px"><div class="n t1" style="font-weight:700">0.1</div><div class="t2">EURUSD</div></div><span class="sc">8.7</span></div><div class="rw"><div class="av" style="background:#4A7BD9">AM</div><div style="min-width:0"><div class="t1 n">Amarkets</div><div style="display:flex;gap:4px;margin-top:3px"><span class="tg">FSC-MU</span></div></div><div class="sp"></div><div style="display:flex;align-items:center;gap:5px;margin-left:18px"><i style="width:6px;height:6px;border-radius:50%;background:var(--up)"></i><span class="t2">عادی</span></div><div style="text-align:left;margin-left:18px"><div class="n t1" style="font-weight:700">0.9</div><div class="t2">EURUSD</div></div><span class="sc">8.1</span></div><div class="rw"><div class="av" style="background:#D94A5C">AL</div><div style="min-width:0"><div class="t1 n">Alpari</div><div style="display:flex;gap:4px;margin-top:3px"><span class="tg">FSC-MU</span></div></div><div class="sp"></div><div style="display:flex;align-items:center;gap:5px;margin-left:18px"><i style="width:6px;height:6px;border-radius:50%;background:var(--wn)"></i><span class="t2">۱۲ گزارش تأخیر</span></div><div style="text-align:left;margin-left:18px"><div class="n t1" style="font-weight:700">1.2</div><div class="t2">EURUSD</div></div><span class="sc">7.4</span></div><div class="rw"><div class="av" style="background:#3FA98C">LF</div><div style="min-width:0"><div class="t1 n">LiteFinance</div><div style="display:flex;gap:4px;margin-top:3px"><span class="tg">CySEC</span></div></div><div class="sp"></div><div style="display:flex;align-items:center;gap:5px;margin-left:18px"><i style="width:6px;height:6px;border-radius:50%;background:var(--dn)"></i><span class="t2">اختلال MT5</span></div><div style="text-align:left;margin-left:18px"><div class="n t1" style="font-weight:700">1.4</div><div class="t2">EURUSD</div></div><span class="sc">6.8</span></div>
+        <div class="t2" style="margin-top:9px">امتیاز از ۶ مؤلفهٔ عمومی — هیچ‌وقت با پول تغییر نمی‌کند. <a style="font-size:11px">روش‌شناسی</a></div></div>
+      <div class="cd" style="flex:1">
+        <div class="ch"><b>سیگنال‌های زنده</b><a>لیدربورد ›</a></div>
+        <div style="border:1px solid var(--ln);border-radius:11px;padding:11px 12px;margin-bottom:9px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+            <span class="n" style="font-size:13px;font-weight:800">XAUUSD</span>
+            <span style="font-size:10.5px;font-weight:800;padding:1px 8px;border-radius:6px;background:var(--ups);color:var(--up)">خرید</span>
+            <div class="sp"></div><span class="n t2" style="font-weight:600">@mehran_fx</span>
+            <span class="tg g">۶۸٪ · ۱۴۲</span></div>
+          <div style="display:flex;gap:14px" class="t2">ورود <b class="n" style="color:var(--ink2)">2,408</b> · SL <b class="n dn">2,396</b> · TP <b class="n up">2,431</b> · R <b class="n" style="color:var(--br)">1.9</b></div></div>
+        <div style="border:1px solid var(--ln);border-radius:11px;padding:11px 12px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+            <span class="n" style="font-size:13px;font-weight:800">BTCUSDT</span>
+            <span style="font-size:10.5px;font-weight:800;padding:1px 8px;border-radius:6px;background:var(--dns);color:var(--dn)">فروش</span>
+            <div class="sp"></div><span class="n t2" style="font-weight:600">@sara.trades</span>
+            <span class="tg g">۶۱٪ · ۸۹</span></div>
+          <div style="display:flex;gap:14px" class="t2">ورود <b class="n" style="color:var(--ink2)">67,900</b> · SL <b class="n dn">68,600</b> · TP <b class="n up">66,100</b> · R <b class="n" style="color:var(--br)">2.6</b></div></div>
+        <div class="t2" style="margin-top:9px">هر سیگنال بعد از ثبت قفل می‌شود و با فید قیمت امتیاز می‌گیرد.</div></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

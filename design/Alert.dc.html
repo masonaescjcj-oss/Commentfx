@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap">
+  <style>
+:root{--bg:#0B0E14;--sf:#141922;--sf2:#1C222D;--sf3:#232B38;--ln:#242C3A;--ink:#EEF1F6;--ink2:#A8B2C4;--mut:#6E7A8F;
+--br:#D9B071;--br2:#8F6F3C;--brs:#2A2117;--tl:#5FC9C0;--tls:#13292A;
+--up:#3DD68C;--ups:#0F2A20;--dn:#FF6B6B;--dns:#2C1719;--wn:#F5B942;--wns:#2E2513;--r:14px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,system-ui,sans-serif;direction:rtl;font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:var(--br);text-decoration:none}
+a:hover{color:#EBC88F}
+.n{font-family:Manrope,system-ui,sans-serif;direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+.ph{background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.hd{display:flex;align-items:center;gap:10px;padding:16px 16px 10px;flex:none}
+.lg{display:flex;align-items:center;gap:7px;font-family:Manrope;font-weight:800;font-size:16px;letter-spacing:-.025em;direction:ltr}
+.lgm{width:25px;height:25px;border-radius:9px 9px 3px 9px;background:linear-gradient(145deg,#E8C489,var(--br2));display:grid;place-items:center;color:#0B0E14;font-size:10px;font-weight:800;flex:none}
+.sp{flex:1}
+.ic{width:34px;height:34px;border-radius:11px;background:var(--sf);border:1px solid var(--ln);display:grid;place-items:center;color:var(--ink2);flex:none}
+.bd{flex:1;padding:0 16px;display:flex;flex-direction:column;gap:11px;overflow:hidden}
+.cd{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:13px 14px}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.ch b{font-size:13.5px;font-weight:700}
+.ch span.lv{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--mut)}
+.ch span.lv i{width:6px;height:6px;border-radius:50%;background:var(--up);display:block}
+.rw{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--ln)}
+.rw:last-child{border-bottom:0;padding-bottom:0}
+.av{width:31px;height:31px;border-radius:10px;display:grid;place-items:center;font-family:Manrope;font-weight:800;font-size:11px;flex:none;color:#0B0E14}
+.t1{font-size:13px;font-weight:600;line-height:1.35}
+.t2{font-size:10.5px;color:var(--mut);line-height:1.45}
+.up{color:var(--up)}
+.dn{color:var(--dn)}
+.pl{font-family:Manrope;font-size:11px;font-weight:700;padding:2px 7px;border-radius:7px;direction:ltr;display:inline-block;line-height:1.5}
+.pl.u{background:var(--ups);color:var(--up)}
+.pl.d{background:var(--dns);color:var(--dn)}
+.tg{font-size:10px;padding:1px 6px;border-radius:5px;border:1px solid var(--ln);color:var(--ink2);font-family:Manrope;direction:ltr;display:inline-block;line-height:1.6}
+.tg.g{border-color:#2E4A3C;color:var(--up);background:var(--ups)}
+.sc{font-family:Manrope;font-weight:800;font-size:15px;color:var(--br);direction:ltr;letter-spacing:-.02em}
+.tb{display:flex;border-top:1px solid var(--ln);background:var(--sf);padding:9px 4px 12px;flex:none}
+.tbi{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9.5px;color:var(--mut)}
+.tbi.on{color:var(--br)}
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(145deg,#E8C489,var(--br2));color:#0B0E14;font-weight:800;font-size:14px;padding:13px;border-radius:12px}
+.btn2{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--sf2);border:1px solid var(--ln);color:var(--ink);font-weight:600;font-size:13px;padding:11px;border-radius:11px}
+.seg{display:flex;gap:4px;background:var(--sf2);border:1px solid var(--ln);border-radius:11px;padding:3px}
+.seg div{flex:1;text-align:center;font-size:11.5px;padding:5px 4px;border-radius:8px;color:var(--mut)}
+.seg div.on{background:var(--sf3);color:var(--ink);font-weight:600}
+.fl{display:flex;gap:6px;overflow:hidden}
+.fl span{font-size:11.5px;padding:5px 11px;border-radius:9px;background:var(--sf);border:1px solid var(--ln);color:var(--ink2);white-space:nowrap;flex:none}
+.fl span.on{background:var(--brs);border-color:var(--br2);color:var(--br);font-weight:600}
+.kv{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--ln);font-size:12.5px}
+.kv:last-child{border-bottom:0}
+.kv span{color:var(--mut)}
+.kv b{font-weight:600}
+  </style>
+</helmet>
+<div class="ph" style="width:390px;height:844px">
+  <div class="hd" style="padding-top:18px">
+    <div style="display:flex;align-items:center;gap:8px;margin:0 auto">
+      <div style="width:26px;height:26px;border-radius:50%;background:#D9B071;display:grid;place-items:center;font-size:12px;color:#0B0E14;font-weight:800">Au</div>
+      <span style="font-size:15px;font-weight:700">طلا · XAUUSD</span></div>
+    <div class="ic" style="position:absolute;left:16px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"/></svg></div></div>
+  <div style="padding:26px 16px 0;text-align:center;flex:none">
+    <div class="t2" style="font-size:13px">وقتی قیمت بالاتر رفت از</div>
+    <div class="n" style="font-size:50px;font-weight:800;letter-spacing:-.045em;margin:12px 0 14px;line-height:1">2,431.00</div>
+    <div style="display:inline-flex;background:var(--sf);border:1px solid var(--ln);border-radius:10px;padding:3px">
+      <div style="padding:5px 20px;border-radius:7px;background:var(--sf3);font-size:12.5px;font-weight:700">USD</div>
+      <div style="padding:5px 20px;font-size:12.5px;color:var(--mut)">تومان</div></div>
+    <div class="t2" style="margin-top:16px">قیمت فعلی <b class="n" style="color:var(--ink2)">2,412.30</b> · فاصله <b class="n up">+0.77%</b></div>
+  </div>
+  <div style="padding:22px 16px 0;flex:none">
+    <div class="t2" style="margin-bottom:8px">نوع هشدار</div>
+    <div class="seg"><div class="on">قیمت</div><div>اسپرد بروکر</div><div>خبر مهم</div><div>سیگنال</div></div>
+  </div>
+  <div style="padding:20px 16px 0;flex:none"><div class="btn">ثبت هشدار</div></div>
+  <div class="sp"></div>
+  <div style="display:flex;flex-wrap:wrap;padding:0 6px 18px;flex:none;border-top:1px solid var(--ln);padding-top:8px"><div style="flex:0 0 33.333%;text-align:center;padding:15px 0;font-family:Manrope;font-size:23px;font-weight:600;color:var(--ink)">۱</div><div style="flex:0 0 33.333%;text-align:center;padding:15px 0;font-family:Manrope;font-size:23px;font-weight:600;color:var(--ink)">۲</div><div style="flex:0 0 33.333%;text-align:center;padding:15px 0;font-family:Manrope;font-size:23px;font-weight:600;color:var(--ink)">۳</div><div style="flex:0 0 33.333%;text-align:center;padding:15px 0;font-family:Manrope;font-size:23px;font-weight:600;color:var(--ink)">۴</div><div style="flex:0 0 33.333%;text-align:center;padding:15px 0;font-family:Manrope;font-size:23px;font-weight:600;color:var(--ink)">۵</div><div style="flex:0 0 33.333%;text-align:center;padding:15px 0;font-family:Manrope;font-size:23px;font-weight:600;color:var(--ink)">۶</div><div style="flex:0 0 33.333%;text-align:center;padding:15px 0;font-family:Manrope;font-size:23px;font-weight:600;color:var(--ink)">۷</div><div style="flex:0 0 33.333%;text-align:center;padding:15px 0;font-family:Manrope;font-size:23px;font-weight:600;color:var(--ink)">۸</div><div style="flex:0 0 33.333%;text-align:center;padding:15px 0;font-family:Manrope;font-size:23px;font-weight:600;color:var(--ink)">۹</div><div style="flex:0 0 33.333%;text-align:center;padding:15px 0;font-family:Manrope;font-size:23px;font-weight:600;color:var(--ink)">٫</div><div style="flex:0 0 33.333%;text-align:center;padding:15px 0;font-family:Manrope;font-size:23px;font-weight:600;color:var(--ink)">۰</div><div style="flex:0 0 33.333%;text-align:center;padding:15px 0;font-family:Manrope;font-size:23px;font-weight:600;color:var(--mut)">⌫</div></div>
+</div>
+</x-dc>
+</body>
+</html>

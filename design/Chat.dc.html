@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap">
+  <style>
+:root{--bg:#0B0E14;--sf:#141922;--sf2:#1C222D;--sf3:#232B38;--ln:#242C3A;--ink:#EEF1F6;--ink2:#A8B2C4;--mut:#6E7A8F;
+--br:#D9B071;--br2:#8F6F3C;--brs:#2A2117;--tl:#5FC9C0;--tls:#13292A;
+--up:#3DD68C;--ups:#0F2A20;--dn:#FF6B6B;--dns:#2C1719;--wn:#F5B942;--wns:#2E2513;--r:14px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,system-ui,sans-serif;direction:rtl;font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:var(--br);text-decoration:none}
+a:hover{color:#EBC88F}
+.n{font-family:Manrope,system-ui,sans-serif;direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+.ph{background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.hd{display:flex;align-items:center;gap:10px;padding:16px 16px 10px;flex:none}
+.lg{display:flex;align-items:center;gap:7px;font-family:Manrope;font-weight:800;font-size:16px;letter-spacing:-.025em;direction:ltr}
+.lgm{width:25px;height:25px;border-radius:9px 9px 3px 9px;background:linear-gradient(145deg,#E8C489,var(--br2));display:grid;place-items:center;color:#0B0E14;font-size:10px;font-weight:800;flex:none}
+.sp{flex:1}
+.ic{width:34px;height:34px;border-radius:11px;background:var(--sf);border:1px solid var(--ln);display:grid;place-items:center;color:var(--ink2);flex:none}
+.bd{flex:1;padding:0 16px;display:flex;flex-direction:column;gap:11px;overflow:hidden}
+.cd{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:13px 14px}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.ch b{font-size:13.5px;font-weight:700}
+.ch span.lv{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--mut)}
+.ch span.lv i{width:6px;height:6px;border-radius:50%;background:var(--up);display:block}
+.rw{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--ln)}
+.rw:last-child{border-bottom:0;padding-bottom:0}
+.av{width:31px;height:31px;border-radius:10px;display:grid;place-items:center;font-family:Manrope;font-weight:800;font-size:11px;flex:none;color:#0B0E14}
+.t1{font-size:13px;font-weight:600;line-height:1.35}
+.t2{font-size:10.5px;color:var(--mut);line-height:1.45}
+.up{color:var(--up)}
+.dn{color:var(--dn)}
+.pl{font-family:Manrope;font-size:11px;font-weight:700;padding:2px 7px;border-radius:7px;direction:ltr;display:inline-block;line-height:1.5}
+.pl.u{background:var(--ups);color:var(--up)}
+.pl.d{background:var(--dns);color:var(--dn)}
+.tg{font-size:10px;padding:1px 6px;border-radius:5px;border:1px solid var(--ln);color:var(--ink2);font-family:Manrope;direction:ltr;display:inline-block;line-height:1.6}
+.tg.g{border-color:#2E4A3C;color:var(--up);background:var(--ups)}
+.sc{font-family:Manrope;font-weight:800;font-size:15px;color:var(--br);direction:ltr;letter-spacing:-.02em}
+.tb{display:flex;border-top:1px solid var(--ln);background:var(--sf);padding:9px 4px 12px;flex:none}
+.tbi{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9.5px;color:var(--mut)}
+.tbi.on{color:var(--br)}
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(145deg,#E8C489,var(--br2));color:#0B0E14;font-weight:800;font-size:14px;padding:13px;border-radius:12px}
+.btn2{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--sf2);border:1px solid var(--ln);color:var(--ink);font-weight:600;font-size:13px;padding:11px;border-radius:11px}
+.seg{display:flex;gap:4px;background:var(--sf2);border:1px solid var(--ln);border-radius:11px;padding:3px}
+.seg div{flex:1;text-align:center;font-size:11.5px;padding:5px 4px;border-radius:8px;color:var(--mut)}
+.seg div.on{background:var(--sf3);color:var(--ink);font-weight:600}
+.fl{display:flex;gap:6px;overflow:hidden}
+.fl span{font-size:11.5px;padding:5px 11px;border-radius:9px;background:var(--sf);border:1px solid var(--ln);color:var(--ink2);white-space:nowrap;flex:none}
+.fl span.on{background:var(--brs);border-color:var(--br2);color:var(--br);font-weight:600}
+.kv{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--ln);font-size:12.5px}
+.kv:last-child{border-bottom:0}
+.kv span{color:var(--mut)}
+.kv b{font-weight:600}
+  </style>
+</helmet>
+<div class="ph" style="width:390px;height:844px">
+  <div class="hd"><div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></div>
+    <div><div style="font-size:15px;font-weight:700">اتاق طلا</div>
+    <div class="t2" style="display:flex;align-items:center;gap:5px"><i style="width:6px;height:6px;border-radius:50%;background:var(--up);display:block"></i>۳۱۲ آنلاین</div></div>
+    <div class="sp"></div><div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.2 2.3 3.4 5.3 3.4 8.5S14.2 18.2 12 20.5c-2.2-2.3-3.4-5.3-3.4-8.5S9.8 5.8 12 3.5Z"/></svg></div></div>
+  <div style="margin:0 16px 6px;padding:9px 11px;background:var(--dns);border:1px solid #4A2B2B;border-radius:11px;display:flex;align-items:center;gap:8px;flex:none">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--dn)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5"/><path d="M12 16.5h.01"/><circle cx="12" cy="12" r="8.5"/></svg><span style="font-size:11.5px;color:var(--dn);font-weight:600">NFP تا ۱:۲۸ دیگر</span>
+    <div class="sp"></div><span class="t2" style="font-size:10px">اتاق رویداد باز می‌شود</span></div>
+  <div style="flex:1;padding:0 16px;overflow:hidden"><div style="display:flex;gap:9px;padding:9px 0;align-items:flex-start"><div style="width:28px;height:28px;border-radius:50%;background:#4A7BD9;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none">ع</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span class="n" style="font-size:12px;font-weight:700;color:var(--ink2)">ali.gold</span><span class="t2 n" style="font-size:9.5px">14:18</span></div><div style="font-size:13px;color:var(--ink2);line-height:1.75">قبل NFP کسی پوزیشن نگه می‌داره؟</div></div></div><div style="display:flex;gap:9px;padding:9px 0;align-items:flex-start"><div style="width:28px;height:28px;border-radius:50%;background:#2E7D6B;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none">م</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span class="n" style="font-size:12px;font-weight:700;color:var(--br)">mehran_fx</span><span class="tg g" style="display:inline-flex;gap:2px;align-items:center"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="var(--up)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7"/></svg> ۶۸٪</span><span class="t2 n" style="font-size:9.5px">14:21</span></div><div style="font-size:13px;color:var(--ink2);line-height:1.75">نصف حجم بستم، SL بقیه رو بردم روی نقطهٔ ورود</div></div></div><div style="display:flex;gap:9px;padding:9px 0;align-items:flex-start"><div style="width:28px;height:28px;border-radius:50%;background:#8A6BD9;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none">ن</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span class="n" style="font-size:12px;font-weight:700;color:var(--ink2)">nina.t</span><span class="t2 n" style="font-size:9.5px">14:24</span></div><div style="font-size:13px;color:var(--ink2);line-height:1.75">۲۴۰۰ حمایت خیلی قویه. زیرش بره من شورت می‌گیرم</div></div></div><div style="display:flex;gap:9px;padding:9px 0;align-items:flex-start"><div style="width:28px;height:28px;border-radius:50%;background:#2E7D6B;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none">م</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span class="n" style="font-size:12px;font-weight:700;color:var(--br)">mehran_fx</span><span class="tg g" style="display:inline-flex;gap:2px;align-items:center"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="var(--up)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7"/></svg> ۶۸٪</span><span class="t2 n" style="font-size:9.5px">14:29</span></div><div style="background:var(--sf2);border:1px solid var(--br2);border-radius:11px;padding:10px 11px;margin-top:2px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px"><span class="n" style="font-size:13px;font-weight:800">XAUUSD</span><span style="font-size:10px;font-weight:800;padding:1px 8px;border-radius:6px;background:var(--ups);color:var(--up)">خرید</span><div class="sp"></div><span class="t2" style="font-size:9.5px">سنجاق‌شده</span></div><div style="display:flex;gap:12px" class="t2">ورود <b class="n" style="color:var(--ink2)">2,408</b> · SL <b class="n dn">2,396</b> · TP <b class="n up">2,431</b></div></div></div></div><div style="display:flex;gap:9px;padding:9px 0;align-items:flex-start"><div style="width:28px;height:28px;border-radius:50%;background:#D97A4A;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none">س</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span class="n" style="font-size:12px;font-weight:700;color:var(--ink2)">sara.trades</span><span class="t2 n" style="font-size:9.5px">14:31</span></div><div style="font-size:13px;color:var(--ink2);line-height:1.75">R خوبیه ولی تا خبر ۹۰ دقیقه مونده، ریسکش بالاست</div></div></div></div>
+  <div style="padding:10px 16px 12px;flex:none;border-top:1px solid var(--ln)">
+    <div style="display:flex;align-items:center;gap:9px;background:var(--sf);border:1px solid var(--ln);border-radius:13px;padding:9px 13px">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg><span class="t2" style="flex:1;font-size:12.5px">پیام بنویس…</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--br)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4 3 11l7 2.5L12.5 21 21 4Z"/></svg></div>
+    <div class="t2" style="text-align:center;margin-top:7px;font-size:10px">حالت آهسته فعال است — هر ۱۵ ثانیه یک پیام</div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>
