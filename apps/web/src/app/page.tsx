@@ -7,7 +7,8 @@ import { Header, Footer } from '@/components/chrome';
 import { Card, CardHead } from '@/components/primitives';
 import { BrokerRow } from '@/components/BrokerRow';
 import { RankRow } from '@/components/ranking';
-import { describeDrawdown, volumeBand } from '@commentfx/core';
+import { describeDrawdown, volumeBand, utcDay, releaseForTitle } from '@commentfx/core';
+import { calendarData, upcomingHigh } from '@/lib/calendar';
 
 export const metadata: Metadata = pageMetadata({
   title: `${SITE.name} — ${SITE.tagline}`,
@@ -17,10 +18,17 @@ export const metadata: Metadata = pageMetadata({
 
 export const revalidate = 3600;
 
-export default function HomePage() {
+export default async function HomePage() {
   const top = rankedBrokers().slice(0, 5);
   const topProps = rankedProps().slice(0, 3);
   const topExchanges = rankedExchanges().slice(0, 3);
+
+  // The calendar is what brings someone back between broker decisions, so it
+  // belongs here. It never throws: a source that did not answer simply means
+  // fewer rows, and an empty list drops the card rather than showing an
+  // apologetic empty state on the front page.
+  const { events } = await calendarData();
+  const ahead = upcomingHigh(events, utcDay(new Date()), 4);
 
   return (
     <>
@@ -73,6 +81,36 @@ export default function HomePage() {
               ]} />
           ))}
         </Card>
+
+        {ahead.length > 0 && (
+          <Card className="p-4">
+            <CardHead title="Next, worth planning around" href="/calendar" hrefLabel="Calendar" />
+            <ul className="flex flex-col">
+              {ahead.map((e) => {
+                const release = releaseForTitle(e.title);
+                return (
+                  <li key={e.id} className="flex items-baseline gap-2 py-[9px] border-b border-line-2 last:border-b-0">
+                    {release ? (
+                      <Link href={`/calendar/${release.slug}`} className="text-[13px] font-semibold hover:text-brass min-w-0 truncate">
+                        {e.title}
+                      </Link>
+                    ) : (
+                      <span className="text-[13px] font-semibold min-w-0 truncate">{e.title}</span>
+                    )}
+                    <span className="text-[10.5px] font-bold text-ink-3">{e.currency}</span>
+                    <div className="flex-1" />
+                    <time dateTime={e.at ?? e.date} className="text-[12px] tnum text-ink-2 shrink-0">
+                      {new Date(`${e.date}T00:00:00Z`).toLocaleDateString('en-GB', {
+                        day: 'numeric', month: 'short', timeZone: 'UTC',
+                      })}
+                      {e.localTime ? ` · ${e.localTime}` : ''}
+                    </time>
+                  </li>
+                );
+              })}
+            </ul>
+          </Card>
+        )}
 
         <Card className="p-4">
           <CardHead title="Ranked by what you care about" />

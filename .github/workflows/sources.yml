@@ -35,8 +35,12 @@ jobs:
       - name: Probe every upstream
         id: probe
         continue-on-error: true
-        run: |
-          pnpm --filter @commentfx/ingest probe | tee probe.txt
+        # `shell: bash` is not redundant: the default shell runs without
+        # pipefail, so `tee` would report success no matter what the probe
+        # exited with -- and this job would have gone green through every
+        # broken parser it exists to catch. It did, once.
+        shell: bash
+        run: pnpm --filter @commentfx/ingest probe | tee probe.txt
 
       - name: Report
         uses: actions/github-script@v7
@@ -118,8 +122,10 @@ jobs:
       - name: Compare published licences against the registers
         id: registers
         continue-on-error: true
-        run: |
-          pnpm --filter @commentfx/ingest registers:report | tee registers.txt
+        # See the note on the probe step: without pipefail, tee swallows the
+        # exit code and no finding is ever reported.
+        shell: bash
+        run: pnpm --filter @commentfx/ingest registers:report | tee registers.txt
 
       - name: Report findings
         uses: actions/github-script@v7
