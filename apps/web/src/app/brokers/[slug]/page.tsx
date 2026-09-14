@@ -5,6 +5,8 @@ import { REGULATORS, effectiveCostPips, hours, leverage } from '@commentfx/core'
 import { pageMetadata, JsonLd, breadcrumbLd, financialServiceLd, faqLd } from '@/lib/seo';
 import { rankedBrokers, getRanked } from '@/lib/repo';
 import { coverage } from '@/lib/verify';
+import { brokerStatus } from '@/lib/status';
+import { StatusBlock } from '@/components/StatusBlock';
 import { VerificationPanel } from '@/components/VerificationPanel';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
 import { Card, CardHead, Logo, Score, Tag, Meter } from '@/components/primitives';
@@ -17,7 +19,7 @@ export function generateStaticParams(): Params[] {
   return rankedBrokers().map((r) => ({ slug: r.broker.slug }));
 }
 
-export const revalidate = 3600;
+export const revalidate = 300;
 export const dynamicParams = false;
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
@@ -42,7 +44,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
 
   const b = r.broker;
   const all = rankedBrokers();
-  const cov = await coverage('broker', b.slug);
+  const [cov, status] = await Promise.all([coverage('broker', b.slug), brokerStatus(b.slug)]);
   const alternatives = all.filter((x) => x.broker.slug !== b.slug).slice(0, 3);
   const trail = [
     { name: 'Home', path: '/' },
@@ -108,6 +110,8 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
           </dl>
 
         </Card>
+
+        <StatusBlock brokerSlug={b.slug} brokerName={b.name} status={status} />
 
         <VerificationPanel coverage={cov} />
 

@@ -194,3 +194,37 @@ export const auditLog = pgTable('audit_log', {
   after: text('after'),
   at: timestamp('at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [index('audit_log_target_idx').on(t.kind, t.slug), index('audit_log_at_idx').on(t.at)]);
+
+/* ─────────────────────── broker status reports ────────────────────── */
+
+export const incidentKind = pgEnum('incident_kind', [
+  'withdrawal-delay', 'platform-down', 'slippage', 'login-failure', 'deposit-failure', 'other',
+]);
+
+/**
+ * A "is it just me?" signal for brokers. Two rules shape this table:
+ *
+ *   1. No raw IP is ever stored. `reporterHash` is a salted digest of the
+ *      reporter's network address and user agent, and the salt rotates daily,
+ *      so yesterday's reports cannot be correlated with today's. It exists to
+ *      count DISTINCT reporters and to rate-limit, and it can do nothing else.
+ *   2. A report is evidence, not a verdict. The displayed status changes only
+ *      above a published threshold of distinct reporters inside a window, and
+ *      the reader is shown the count and the window either way.
+ */
+export const statusReports = pgTable('status_reports', {
+  id: serial('id').primaryKey(),
+  brokerSlug: text('broker_slug').notNull().references(() => brokers.slug, { onDelete: 'cascade' }),
+  kind: incidentKind('kind').notNull(),
+  /** Salted, daily-rotated digest. Never an address, never reversible to one. */
+  reporterHash: text('reporter_hash').notNull(),
+  /** Optional, short, and shown to no one until a moderator clears it. */
+  note: text('note'),
+  moderated: boolean('moderated').notNull().default(false),
+  hidden: boolean('hidden').notNull().default(false),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('status_reports_broker_idx').on(t.brokerSlug, t.createdAt),
+  // One reporter, one broker, one kind, one report per rotation of the salt.
+  uniqueIndex('status_reports_dedupe_idx').on(t.brokerSlug, t.kind, t.reporterHash),
+]);

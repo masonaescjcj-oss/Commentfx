@@ -116,6 +116,22 @@ export default function MethodologyPage() {
         </Card>
 
         <Card className="p-4" as="section">
+          <CardHead title="Incident reports are not part of any score" />
+          <p className="text-[12.5px] text-ink-2 leading-[1.85] mb-3">
+            The broker status signal on each page is unverified by design — that is what
+            makes it fast enough to be useful during an outage. It is counted by distinct
+            reporters over a rolling window, with the count and the threshold published
+            so you can weigh it yourself.
+          </p>
+          <p className="text-[12.5px] text-ink-2 leading-[1.85]">
+            It never enters a score. Scores move only on facts a person checked against
+            a primary source and recorded with that source. Mixing an unverified crowd
+            signal into a number we ask readers to trust would quietly destroy the
+            distinction the rest of this page is built on.
+          </p>
+        </Card>
+
+        <Card className="p-4" as="section">
           <CardHead title="Where the data comes from" />
           <p className="text-[12.5px] text-ink-2 leading-[1.85] mb-3">
             Every upstream is free and unauthenticated: CoinGecko for coin prices,

@@ -22,6 +22,17 @@ page renders an honest "unavailable" state with the reason. Nothing is ever serv
 as current that could not be confirmed, and every live page carries the timestamp
 of the fetch behind it.
 
+## Broker status
+
+`/status`, and a block on every broker page, answers the question a trader
+actually has during an outage: is it down, or is it just me? Reports need no
+account, store no address — they are counted by a salted digest rotated daily —
+and one person cannot move a broker's status, because the count is of *distinct*
+reporters and the threshold is published on the page.
+
+None of it touches a score. Unverified crowd signal beside a verified number is
+useful; unverified crowd signal *inside* it would destroy the number.
+
 ## Verification
 
 Nothing on this site claims to be checked unless a person checked it and

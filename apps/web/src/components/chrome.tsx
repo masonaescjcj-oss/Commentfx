@@ -64,6 +64,7 @@ export function Footer() {
     <footer className="mt-8 bg-card border-t border-line px-4 py-7 text-[12.5px] text-ink-2">
       <div className="flex flex-wrap gap-x-6 gap-y-2 mb-5">
         <Link href="/methodology" className="font-semibold text-ink">How we score</Link>
+        <Link href="/status" className="font-semibold text-ink">Broker status</Link>
         <Link href="/best/lowest-spread">Lowest cost</Link>
         <Link href="/best/tier-1-regulated">Tier-1 regulated</Link>
         <Link href="/best/low-minimum-deposit">Low minimum</Link>
