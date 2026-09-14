@@ -8,3 +8,5 @@ export * from './props.ts';
 export * from './exchanges.ts';
 export * from './data/props.ts';
 export * from './data/exchanges.ts';
+export * from './memecoins.ts';
+export * from './name-safety.ts';

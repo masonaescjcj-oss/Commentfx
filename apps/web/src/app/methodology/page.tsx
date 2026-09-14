@@ -3,6 +3,7 @@ import {
   WEIGHTS, LABELS, REGULATORS, type ScoreKey,
   PROP_WEIGHTS, PROP_LABELS, type PropKey,
   EXCHANGE_WEIGHTS, EXCHANGE_LABELS, type ExchangeKey,
+  MEME_WEIGHTS, MEME_LABELS, type MemeKey,
 } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd } from '@/lib/seo';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
@@ -39,6 +40,13 @@ const EXCHANGE_WHAT: Record<ExchangeKey, string> = {
   fees: 'The taker fee actually charged at the lowest tier.',
   liquidity: 'Reported spot volume, on a logarithmic scale and used only as a band. Volume is self-reported and has been inflated industry-wide for years, which is why it carries the least weight here.',
   transparency: 'Three disclosures: a public fee schedule, the legal entity, and incident reports.',
+};
+
+const MEME_WHAT: Record<MemeKey, string> = {
+  control: 'What the deployer can still do after launch: print supply, freeze balances, rewrite balances outright, change metadata, or tax transfers. Two findings cap the score no matter what else is true -- a blocked sell path and a mutable balance authority. A name carrying invisible bidi characters caps it too, because a name crafted to render as something it is not is a deliberate act.',
+  liquidity: 'Money actually sitting in the pool, on a logarithmic scale. It is the practical measure of whether you can exit at size.',
+  tax: 'Buy and sell tax on EVM chains; on Solana, whether a transfer fee or transfer hook is attached.',
+  activity: 'Whether trading is genuinely two-sided. A book that is all buys and no sells has not been tested for exit.',
 };
 
 function Weights<K extends string>({ keys, weights, labels, what, max }: {
@@ -96,6 +104,31 @@ export default function MethodologyPage() {
           <h2 className="text-[15px] font-bold mb-1">Exchanges</h2>
           <p className="text-[11.5px] text-ink-3 mb-4">Five components, weighted toward evidence that customer funds exist.</p>
           <Weights keys={Object.keys(EXCHANGE_WEIGHTS) as ExchangeKey[]} weights={EXCHANGE_WEIGHTS} labels={EXCHANGE_LABELS} what={EXCHANGE_WHAT} max={30} />
+        </Card>
+
+        <Card className="p-4" as="section">
+          <h2 className="text-[15px] font-bold mb-1">Memecoins</h2>
+          <p className="text-[11.5px] text-ink-3 mb-4">
+            Four components, all machine-checkable. This one is a safety floor, not a
+            ranking of prospects -- no part of it predicts price.
+          </p>
+          <Weights keys={Object.keys(MEME_WEIGHTS) as MemeKey[]} weights={MEME_WEIGHTS} labels={MEME_LABELS} what={MEME_WHAT} max={45} />
+        </Card>
+
+        <Card className="p-4" as="section">
+          <CardHead title="Where the data comes from" />
+          <p className="text-[12.5px] text-ink-2 leading-[1.85] mb-3">
+            Every upstream is free and unauthenticated: CoinGecko for coin prices,
+            GeckoTerminal for new pools, GoPlus for contract audits. Nothing here depends
+            on a paid plan, which is a deliberate constraint — it keeps the cost of
+            running this site near zero and means no ranking can quietly become a
+            function of what we could afford to license.
+          </p>
+          <p className="text-[12.5px] text-ink-2 leading-[1.85]">
+            Free tiers go quiet. When one does, the affected page says so plainly rather
+            than serving figures we could not confirm, and every live page carries the
+            timestamp of the fetch behind it.
+          </p>
         </Card>
 
         <Card className="p-4" as="section">

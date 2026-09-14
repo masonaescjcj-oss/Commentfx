@@ -7,6 +7,21 @@ check how it was built.** So the scoring weights are published, every input is
 traceable to a primary source, and commercial relationships are disclosed on
 every link that carries one — and never touch the score.
 
+## Data sources - all free, none authenticated
+
+| What | Source | Cost |
+|---|---|---|
+| Coin prices, market caps, 7-day trend | CoinGecko | free tier |
+| New DEX pools | GeckoTerminal | free |
+| Token contract audits | GoPlus | free |
+| Broker, prop and exchange records | curated, checked against regulators | free |
+
+No API key is needed to run or build the site. A free tier going quiet must never
+take the site down, so every fetch has a timeout, returns null on failure, and the
+page renders an honest "unavailable" state with the reason. Nothing is ever served
+as current that could not be confirmed, and every live page carries the timestamp
+of the fetch behind it.
+
 ## Running it
 
 ```sh
@@ -70,6 +85,14 @@ Three judgements are worth knowing before reading a number:
   An audit or a public listing scores higher.
 - **A breach is not a breach.** An exchange that was hacked and covered every
   loss scores materially above one that did not.
+- **Memecoin names are treated as hostile input.** Token names come from whoever
+  deployed the token. A name can carry an invisible right-to-left override that
+  makes it render as something it is not, or a Cyrillic letter standing in for a
+  Latin one to impersonate a known token. Names are stripped of invisible
+  characters before they reach the page, mixed alphabets are flagged, and a
+  hidden-character name caps the safety score outright. This turned up in live
+  data on the first run - it was not anticipated.
+
 
 ## SEO
 

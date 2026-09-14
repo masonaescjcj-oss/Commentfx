@@ -20,6 +20,9 @@ importers:
       '@commentfx/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@commentfx/ingest':
+        specifier: workspace:*
+        version: link:../../packages/ingest
       next:
         specifier: ^15.3.3
         version: 15.5.25(@types/node@22.20.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -50,6 +53,19 @@ importers:
         version: 5.9.3
 
   packages/core:
+    devDependencies:
+      '@types/node':
+        specifier: ^22.15.0
+        version: 22.20.2
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+
+  packages/ingest:
+    dependencies:
+      '@commentfx/core':
+        specifier: workspace:*
+        version: link:../core
     devDependencies:
       '@types/node':
         specifier: ^22.15.0

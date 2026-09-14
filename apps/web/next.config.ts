@@ -3,8 +3,8 @@ import type { NextConfig } from 'next';
 const config: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  transpilePackages: ['@commentfx/core'],
-  experimental: { optimizePackageImports: ['@commentfx/core'] },
+  transpilePackages: ['@commentfx/core', '@commentfx/ingest'],
+  experimental: { optimizePackageImports: ['@commentfx/core', '@commentfx/ingest'] },
   async headers() {
     return [
       {
