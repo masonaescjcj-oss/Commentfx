@@ -2,11 +2,14 @@
 
 import { useActionState, useState } from 'react';
 import {
-  REVIEW_TOPICS, TOPIC_LABELS, BODY_MIN, BODY_MAX, RATING_MIN, RATING_MAX,
+  TOPICS_FOR, TOPIC_LABELS, BODY_MIN, BODY_MAX, RATING_MIN, RATING_MAX,
+  reviewsAffectScore, type ReviewKind,
 } from '@commentfx/core';
 import { postReview, type ReviewResult } from '@/app/review-actions';
 
-export function ReviewForm({ brokerSlug, brokerName }: { brokerSlug: string; brokerName: string }) {
+export function ReviewForm({ kind, slug, name }: {
+  kind: ReviewKind; slug: string; name: string;
+}) {
   const [state, action, pending] = useActionState<ReviewResult | null, FormData>(postReview, null);
   const [rating, setRating] = useState(0);
   const [length, setLength] = useState(0);
@@ -33,12 +36,13 @@ export function ReviewForm({ brokerSlug, brokerName }: { brokerSlug: string; bro
 
   return (
     <form action={action} className="flex flex-col gap-3">
-      <input type="hidden" name="brokerSlug" value={brokerSlug} />
+      <input type="hidden" name="kind" value={kind} />
+      <input type="hidden" name="slug" value={slug} />
       <input type="hidden" name="rating" value={rating} />
 
       <fieldset>
         <legend className="text-[11.5px] text-ink-3 mb-[6px]">
-          How was dealing with {brokerName}?
+          How was dealing with {name}?
         </legend>
         <div className="flex gap-[6px]">
           {Array.from({ length: RATING_MAX - RATING_MIN + 1 }, (_, i) => RATING_MIN + i).map((n) => (
@@ -67,7 +71,7 @@ export function ReviewForm({ brokerSlug, brokerName }: { brokerSlug: string; bro
           className="w-full bg-card-2 border border-line rounded-[11px] px-3 py-[10px] text-[13px]"
         >
           <option value="" disabled>Choose one</option>
-          {REVIEW_TOPICS.map((t) => (
+          {TOPICS_FOR[kind].map((t) => (
             <option key={t} value={t}>{TOPIC_LABELS[t]}</option>
           ))}
         </select>
@@ -116,8 +120,10 @@ export function ReviewForm({ brokerSlug, brokerName }: { brokerSlug: string; bro
       </div>
 
       <p className="text-[11.5px] text-ink-3 leading-[1.75]">
-        Your review appears straight away, marked unverified. It changes the score only
-        once an editor has checked it — which is why buying reviews here buys nothing.
+        Your review appears straight away, marked unverified.{' '}
+        {reviewsAffectScore(kind)
+          ? 'It changes the score only once an editor has checked it — which is why buying reviews here buys nothing.'
+          : 'Reviews are not part of this ranking’s score at all yet: that model was published without a reviews component, and changing a published weight is a decision we make openly, not a side effect.'}{' '}
         No account, no email, and no address is stored.
       </p>
     </form>

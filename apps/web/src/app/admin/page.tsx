@@ -4,7 +4,7 @@ import { desc } from 'drizzle-orm';
 import { getDb, schema, STALE_AFTER_DAYS, type Kind } from '@commentfx/db';
 import { queue } from '@/lib/verify';
 import { sourceHealth, unconfirmed } from '@/lib/registers';
-import { pendingReviews } from '@/lib/reviews';
+import { pendingReviews, pathForKind, KIND_LABEL } from '@/lib/reviews';
 import { rankedBrokers, rankedProps, rankedExchanges } from '@/lib/repo';
 import { Card, CardHead, Meter, Tag } from '@/components/primitives';
 import { TOPIC_LABELS } from '@commentfx/core';
@@ -91,9 +91,10 @@ export default async function AdminPage() {
                   <span className="w-[24px] h-[22px] grid place-items-center rounded-[6px] bg-card-3 text-[12px] font-extrabold tnum shrink-0">
                     {q.rating}
                   </span>
-                  <Link href={`/brokers/${q.brokerSlug}#reviews`} className="text-[13px] font-semibold hover:text-brass">
-                    {q.brokerSlug}
+                  <Link href={`${pathForKind(q.kind, q.slug)}#reviews`} className="text-[13px] font-semibold hover:text-brass">
+                    {q.slug}
                   </Link>
+                  <span className="text-[10.5px] text-ink-3">{KIND_LABEL[q.kind]}</span>
                   <span className="text-[11.5px] text-ink-3">{TOPIC_LABELS[q.topic]}</span>
                   <div className="flex-1" />
                   <time className="text-[11px] text-ink-3 tnum" dateTime={q.createdAt.toISOString()}>
@@ -106,7 +107,7 @@ export default async function AdminPage() {
                     <b>Offered privately:</b> {q.evidenceNote}
                   </p>
                 )}
-                <ModerateReview id={q.id} brokerSlug={q.brokerSlug} />
+                <ModerateReview id={q.id} kind={q.kind} slug={q.slug} />
               </li>
             ))}
           </ul>

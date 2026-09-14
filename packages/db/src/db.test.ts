@@ -93,3 +93,37 @@ test('classify is a pure function of age', () => {
   assert.equal(classify(new Date()), 'verified');
   assert.equal(classify(new Date(Date.now() - (STALE_AFTER_DAYS + 1) * 86_400_000)), 'stale');
 });
+
+test('a second start does not replay migrations that already ran', async () => {
+  // The case this protects: one migration drops a column an earlier one adds a
+  // constraint to. Replaying the directory would fail on the second start, and
+  // a file-backed database would start once and never again.
+  const { PGlite } = await import('@electric-sql/pglite');
+  const { applyMigrations } = await import('./client.ts');
+  const client = new PGlite();
+
+  await applyMigrations(client);
+  const first = await client.query<{ n: number }>('SELECT count(*)::int AS n FROM _migrations');
+
+  await applyMigrations(client);
+  const second = await client.query<{ n: number }>('SELECT count(*)::int AS n FROM _migrations');
+
+  assert.ok((first.rows[0]?.n ?? 0) > 0, 'the ledger records what it applied');
+  assert.equal(second.rows[0]?.n, first.rows[0]?.n, 'a second pass applies nothing');
+  await client.close();
+});
+
+test('the reviews table survives the migration that dropped broker_slug', async () => {
+  const { PGlite } = await import('@electric-sql/pglite');
+  const { applyMigrations } = await import('./client.ts');
+  const client = new PGlite();
+  await applyMigrations(client);
+
+  const cols = await client.query<{ column_name: string }>(
+    `SELECT column_name FROM information_schema.columns WHERE table_name = 'reviews'`,
+  );
+  const names = cols.rows.map((c) => c.column_name);
+  assert.ok(names.includes('kind') && names.includes('slug'));
+  assert.equal(names.includes('broker_slug'), false, 'the old column is gone, not shadowed');
+  await client.close();
+});

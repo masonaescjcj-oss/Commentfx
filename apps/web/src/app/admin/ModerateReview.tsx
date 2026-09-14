@@ -4,14 +4,15 @@ import { useActionState, useState } from 'react';
 import { moderateReview } from './actions';
 import type { RecordResult } from './actions';
 
-export function ModerateReview({ id, brokerSlug }: { id: number; brokerSlug: string }) {
+export function ModerateReview({ id, kind, slug }: { id: number; kind: string; slug: string }) {
   const [state, action, pending] = useActionState<RecordResult | null, FormData>(moderateReview, null);
   const [mode, setMode] = useState<'verify' | 'hide'>('verify');
 
   return (
     <form action={action} className="flex flex-wrap items-center gap-2 mt-[10px]">
       <input type="hidden" name="id" value={id} />
-      <input type="hidden" name="brokerSlug" value={brokerSlug} />
+      <input type="hidden" name="kind" value={kind} />
+      <input type="hidden" name="slug" value={slug} />
       <input type="hidden" name="action" value={mode} />
 
       <input

@@ -89,7 +89,8 @@ export async function recordVerification(
  */
 export async function moderateReview(_prev: RecordResult | null, form: FormData): Promise<RecordResult> {
   const id = Number(form.get('id'));
-  const brokerSlug = String(form.get('brokerSlug') ?? '').trim();
+  const kind = String(form.get('kind') ?? 'broker').trim() as Kind;
+  const slug = String(form.get('slug') ?? '').trim();
   const action = String(form.get('action') ?? '');
   const actor = String(form.get('actor') ?? '').trim();
   const reason = String(form.get('reason') ?? '').trim();
@@ -103,14 +104,14 @@ export async function moderateReview(_prev: RecordResult | null, form: FormData)
     if (action === 'verify') {
       await verifyReview(db, id, actor);
       await db.insert(schema.auditLog).values({
-        kind: 'broker', slug: brokerSlug, field: `review:${id}`,
+        kind, slug, field: `review:${id}`,
         action: 'verified review', actor, after: 'verified',
       });
     } else if (action === 'hide') {
       if (!reason) return { ok: false, message: 'A review is only taken down with a reason.' };
       await hideReview(db, id, reason);
       await db.insert(schema.auditLog).values({
-        kind: 'broker', slug: brokerSlug, field: `review:${id}`,
+        kind, slug, field: `review:${id}`,
         action: 'hid review', actor, after: reason,
       });
     } else {
@@ -118,7 +119,8 @@ export async function moderateReview(_prev: RecordResult | null, form: FormData)
     }
 
     revalidatePath('/admin');
-    revalidatePath(`/brokers/${brokerSlug}`);
+    revalidatePath(publicPath(kind, slug));
+    revalidatePath('/reviews');
     return { ok: true, message: action === 'verify' ? 'Checked. It counts now.' : 'Taken down.' };
   } catch (err) {
     console.error('[admin] review moderation failed:', err);

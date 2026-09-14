@@ -271,6 +271,7 @@ export const registerRuns = pgTable('register_runs', {
 
 export const reviewTopic = pgEnum('review_topic', [
   'withdrawals', 'execution', 'costs', 'support', 'platform', 'account-opening',
+  'payout', 'rules', 'evaluation', 'security', 'listings',
 ]);
 
 /**
@@ -298,7 +299,14 @@ export const reviewTopic = pgEnum('review_topic', [
  */
 export const reviews = pgTable('reviews', {
   id: serial('id').primaryKey(),
-  brokerSlug: text('broker_slug').notNull().references(() => brokers.slug, { onDelete: 'cascade' }),
+  /**
+   * Which directory the slug belongs to. Polymorphic like `verifications`,
+   * and for the same reason: prop firms and exchanges live in their own
+   * tables, and one review table beats three identical ones. The cost is no
+   * foreign key, so a slug is only as valid as the code that wrote it.
+   */
+  kind: entityKind('kind').notNull(),
+  slug: text('slug').notNull(),
   rating: integer('rating').notNull(),
   topic: reviewTopic('topic').notNull(),
   body: text('body').notNull(),
@@ -316,8 +324,8 @@ export const reviews = pgTable('reviews', {
   hiddenReason: text('hidden_reason'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
-  index('reviews_broker_idx').on(t.brokerSlug, t.createdAt),
-  // One author, one broker, one topic, per rotation of the salt. Someone with
+  index('reviews_target_idx').on(t.kind, t.slug, t.createdAt),
+  // One author, one company, one topic, per rotation of the salt. Someone with
   // a genuine second experience can write it tomorrow; a flood cannot.
-  uniqueIndex('reviews_dedupe_idx').on(t.brokerSlug, t.topic, t.authorHash),
+  uniqueIndex('reviews_dedupe_idx').on(t.kind, t.slug, t.topic, t.authorHash),
 ]);

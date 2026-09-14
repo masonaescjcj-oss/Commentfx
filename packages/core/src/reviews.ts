@@ -18,8 +18,19 @@ export const RATING_MAX = 5;
 /** Below this many verified reviews the component is excluded, not scored low. */
 export const MIN_FOR_SCORE = 5;
 
+export type ReviewKind = 'broker' | 'prop' | 'exchange';
+
+/**
+ * One vocabulary per vertical, because the thing that goes wrong is different.
+ * A trader's complaint about a broker is a withdrawal; about a prop firm it is
+ * a denied payout or a rule applied after the fact; about an exchange it is a
+ * frozen account. A single shared list would push every one of those into
+ * "other" and lose the only structure a reader could filter by.
+ */
 export const REVIEW_TOPICS = [
   'withdrawals', 'execution', 'costs', 'support', 'platform', 'account-opening',
+  'payout', 'rules', 'evaluation',
+  'security', 'listings',
 ] as const;
 
 export type ReviewTopic = (typeof REVIEW_TOPICS)[number];
@@ -31,12 +42,27 @@ export const TOPIC_LABELS: Record<ReviewTopic, string> = {
   support: 'Support',
   platform: 'Platform and app',
   'account-opening': 'Opening an account',
+  payout: 'Getting paid',
+  rules: 'Rules and how they were applied',
+  evaluation: 'The challenge or evaluation',
+  security: 'Security and account safety',
+  listings: 'Listings and liquidity',
 };
+
+export const TOPICS_FOR: Record<ReviewKind, readonly ReviewTopic[]> = {
+  broker: ['withdrawals', 'execution', 'costs', 'support', 'platform', 'account-opening'],
+  prop: ['payout', 'rules', 'evaluation', 'costs', 'support', 'platform'],
+  exchange: ['withdrawals', 'costs', 'security', 'listings', 'support', 'platform'],
+};
+
+export const isTopicFor = (kind: ReviewKind, topic: string) =>
+  (TOPICS_FOR[kind] as readonly string[]).includes(topic);
 
 export const BODY_MIN = 80;
 export const BODY_MAX = 2000;
 
 export interface ReviewInput {
+  kind: ReviewKind;
   rating: number;
   topic: string;
   body: string;
@@ -62,7 +88,7 @@ export function checkReview(input: ReviewInput): ReviewProblem[] {
     problems.push({ field: 'rating', message: `Give a rating from ${RATING_MIN} to ${RATING_MAX}.` });
   }
 
-  if (!REVIEW_TOPICS.includes(input.topic as ReviewTopic)) {
+  if (!isTopicFor(input.kind, input.topic)) {
     problems.push({ field: 'topic', message: 'Choose what this review is about.' });
   }
 
@@ -98,6 +124,19 @@ export interface ReviewSummaryStats {
  * depends on, and it should be greppable.
  */
 export const countsTowardScore = (verified: number) => verified >= MIN_FOR_SCORE;
+
+/**
+ * Which rankings a review can move.
+ *
+ * Only the broker model has a reviews component; the prop firm and exchange
+ * models were written without one, and adding it means re-weighting a published
+ * model — an editorial decision, not a side effect of shipping a feature. Until
+ * that decision is taken and published, reviews on those two verticals are
+ * shown and say plainly that they change no number.
+ */
+export const SCORED_KINDS: readonly ReviewKind[] = ['broker'];
+
+export const reviewsAffectScore = (kind: ReviewKind) => SCORED_KINDS.includes(kind);
 
 export function summarise(
   reviews: Array<{ rating: number; verifiedAt: Date | string | null }>,

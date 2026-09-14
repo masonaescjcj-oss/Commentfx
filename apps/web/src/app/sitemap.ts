@@ -23,6 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: absoluteUrl('/status'), lastModified: now, changeFrequency: 'hourly', priority: 0.8 },
     { url: absoluteUrl('/calendar'), lastModified: now, changeFrequency: 'daily', priority: 0.8 },
     { url: absoluteUrl('/methodology'), lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
+    { url: absoluteUrl('/reviews'), lastModified: now, changeFrequency: 'daily', priority: 0.8 },
     { url: absoluteUrl('/search'), lastModified: now, changeFrequency: 'weekly', priority: 0.5 },
 
     ...brokers.map((r) => ({

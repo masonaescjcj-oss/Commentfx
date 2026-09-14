@@ -5,6 +5,9 @@ import { volumeBand } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { rankedExchanges, getRankedExchange } from '@/lib/repo';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
+import { ReviewForm } from '@/components/ReviewForm';
+import { ReviewList, ReviewSummary } from '@/components/ReviewList';
+import { recordReviews } from '@/lib/reviews';
 import { OfficialSite } from '@/components/OfficialSite';
 import { Card, CardHead, Logo, Score, Tag } from '@/components/primitives';
 import { coverage } from '@/lib/verify';
@@ -41,7 +44,10 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
 
   const e = r.exchange;
   const all = rankedExchanges();
-  const cov = await coverage('exchange', e.slug);
+  const [cov, reviews] = await Promise.all([
+    coverage('exchange', e.slug),
+    recordReviews('exchange', e.slug),
+  ]);
   const trail = [
     { name: 'Home', path: '/' },
     { name: 'Exchanges', path: '/exchanges' },
@@ -135,6 +141,20 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
 
         <Card className="p-4" as="section">
           <OfficialSite name={e.name} url={e.website} />
+        </Card>
+
+        <Card className="p-4" as="section" id="reviews">
+          <CardHead
+            title="What customers say"
+            aside={<span className="text-[11.5px] text-ink-3 tnum">{reviews.stats.total} published</span>}
+          />
+          <ReviewSummary stats={reviews.stats} kind="exchange" />
+          <div className="mt-3"><ReviewList reviews={reviews.list} /></div>
+        </Card>
+
+        <Card className="p-4" as="section">
+          <CardHead title={`Write about ${e.name}`} />
+          <ReviewForm kind="exchange" slug={e.slug} name={e.name} />
         </Card>
 
         <Card className="p-4" as="section">

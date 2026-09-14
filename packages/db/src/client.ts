@@ -43,11 +43,41 @@ async function makeDb(): Promise<DbHandle> {
   return { db: drizzle(client, { schema }) as unknown as AppDb, kind: 'pglite', close: () => client.close() };
 }
 
-/** Applies every generated migration in order. Statements are idempotent-safe. */
-async function applyMigrations(client: { exec: (sql: string) => Promise<unknown> }) {
+export interface MigrationClient {
+  exec: (sql: string) => Promise<unknown>;
+  query: <T>(sql: string) => Promise<{ rows: T[] }>;
+}
+
+/**
+ * Applies each migration once, in order, and remembers which.
+ *
+ * The ledger is not ceremony. This used to simply re-run every file on every
+ * start and swallow "already exists", which works exactly as long as migrations
+ * only ever add things. The first migration that DROPPED a column broke it: on
+ * the second start, an earlier migration tried to add a constraint on a column
+ * a later one had removed, failed with an error that was not "already exists",
+ * and took the process down. A file-backed database would have started once and
+ * never again.
+ *
+ * The tolerance is kept for the first pass only, so a database created before
+ * this ledger existed can still adopt it without replaying into errors.
+ */
+export async function applyMigrations(client: MigrationClient) {
   const dir = join(dirname(fileURLToPath(import.meta.url)), '..', 'migrations');
   const files = readdirSync(dir).filter((f) => f.endsWith('.sql')).sort();
+
+  await client.exec(
+    `CREATE TABLE IF NOT EXISTS _migrations (
+       name text PRIMARY KEY,
+       applied_at timestamptz NOT NULL DEFAULT now()
+     )`,
+  );
+  const { rows } = await client.query<{ name: string }>('SELECT name FROM _migrations');
+  const applied = new Set(rows.map((r) => r.name));
+
   for (const f of files) {
+    if (applied.has(f)) continue;
+
     const sql = readFileSync(join(dir, f), 'utf8');
     for (const stmt of sql.split('--> statement-breakpoint')) {
       const trimmed = stmt.trim();
@@ -55,12 +85,12 @@ async function applyMigrations(client: { exec: (sql: string) => Promise<unknown>
       try {
         await client.exec(trimmed);
       } catch (err) {
-        // A file-backed database keeps its tables between runs; re-applying the
-        // same DDL is expected and not an error.
+        // A database that predates the ledger already holds these tables.
         const msg = err instanceof Error ? err.message : String(err);
         if (!/already exists/i.test(msg)) throw err;
       }
     }
+    await client.exec(`INSERT INTO _migrations (name) VALUES ('${f}') ON CONFLICT DO NOTHING`);
   }
 }
 

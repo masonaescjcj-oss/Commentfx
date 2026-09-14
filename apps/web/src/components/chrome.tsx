@@ -65,6 +65,7 @@ export function Footer() {
       <div className="flex flex-wrap gap-x-6 gap-y-2 mb-5">
         <Link href="/methodology" className="font-semibold text-ink">How we score</Link>
         <Link href="/status" className="font-semibold text-ink">Broker status</Link>
+        <Link href="/reviews" className="font-semibold text-ink">Reviews</Link>
         <Link href="/best/lowest-spread">Lowest cost</Link>
         <Link href="/best/tier-1-regulated">Tier-1 regulated</Link>
         <Link href="/best/low-minimum-deposit">Low minimum</Link>

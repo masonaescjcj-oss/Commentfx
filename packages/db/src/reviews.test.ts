@@ -5,7 +5,7 @@ import { seed } from './seed.ts';
 import {
   submitReview, withdrawReview, reviewsFor, reviewStatsFor, reviewQueue,
   verifyReview, hideReview, countsTowardScore, MIN_FOR_SCORE,
-  withdrawalCode, parseWithdrawalCode,
+  withdrawalCode, parseWithdrawalCode, recentReviews, reviewsAffectScore,
 } from './reviews.ts';
 
 const BODY =
@@ -13,7 +13,7 @@ const BODY =
   'matches what they publish. Support answered in about four hours both times I asked.';
 
 const review = (over: Record<string, unknown> = {}) => ({
-  brokerSlug: 'exness', rating: 4, topic: 'withdrawals', body: BODY,
+  kind: 'broker' as const, slug: 'exness', rating: 4, topic: 'withdrawals', body: BODY,
   authorHash: 'author-1', ...over,
 });
 
@@ -28,11 +28,11 @@ test('a review is published immediately and counts for nothing', async () => {
   const res = await submitReview(db, review());
   assert.ok(res.ok, 'accepted');
 
-  const shown = await reviewsFor(db, 'exness');
+  const shown = await reviewsFor(db, 'broker', 'exness');
   assert.equal(shown.length, 1, 'a reader sees it at once');
   assert.equal(shown[0]!.verified, false);
 
-  const stats = await reviewStatsFor(db, 'exness');
+  const stats = await reviewStatsFor(db, 'broker', 'exness');
   assert.equal(stats.total, 1);
   assert.equal(stats.verified, 0, 'publishing is not counting');
   assert.equal(stats.verifiedAverage, null, 'nothing reaches the score until a person checks it');
@@ -44,7 +44,7 @@ test('buying a hundred reviews buys a hundred unverified paragraphs', async () =
   for (let i = 0; i < 100; i++) {
     await submitReview(db, review({ authorHash: `bought-${i}`, rating: 5 }));
   }
-  const stats = await reviewStatsFor(db, 'exness');
+  const stats = await reviewStatsFor(db, 'broker', 'exness');
   assert.equal(stats.total, 100);
   assert.equal(stats.verified, 0);
   assert.equal(countsTowardScore(stats.verified), false, 'the score has not moved at all');
@@ -59,7 +59,7 @@ test('one author cannot flood one broker on one topic', async () => {
   assert.ok(first.ok);
   assert.equal(second.ok, false);
   assert.equal((second as { duplicate?: true }).duplicate, true);
-  assert.equal((await reviewsFor(db, 'exness')).length, 1);
+  assert.equal((await reviewsFor(db, 'broker', 'exness')).length, 1);
   await close();
 });
 
@@ -68,7 +68,7 @@ test('the same author may write about a different experience', async () => {
   await submitReview(db, review());
   const other = await submitReview(db, review({ topic: 'support' }));
   assert.ok(other.ok, 'a different topic is a different experience, not a flood');
-  assert.equal((await reviewsFor(db, 'exness')).length, 2);
+  assert.equal((await reviewsFor(db, 'broker', 'exness')).length, 2);
   await close();
 });
 
@@ -78,7 +78,7 @@ test('a one-line review is refused with a reason, not silently dropped', async (
   assert.equal(res.ok, false);
   const problems = (res as { problems?: Array<{ field: string }> }).problems ?? [];
   assert.equal(problems[0]!.field, 'body');
-  assert.equal((await reviewsFor(db, 'exness')).length, 0);
+  assert.equal((await reviewsFor(db, 'broker', 'exness')).length, 0);
   await close();
 });
 
@@ -101,7 +101,7 @@ test('verifying takes a name and is what moves the score', async () => {
 
   for (const q of queue) await verifyReview(db, q.id, 'editor@commentfx');
 
-  const stats = await reviewStatsFor(db, 'exness');
+  const stats = await reviewStatsFor(db, 'broker', 'exness');
   assert.equal(stats.verified, MIN_FOR_SCORE);
   assert.equal(stats.verifiedAverage, 4);
   assert.equal(countsTowardScore(stats.verified), true);
@@ -115,9 +115,9 @@ test('verifying twice does not re-stamp the first check', async () => {
   assert.ok(res.ok);
   const [q] = await reviewQueue(db);
   await verifyReview(db, q!.id, 'first@commentfx');
-  const stats = await reviewStatsFor(db, 'exness');
+  const stats = await reviewStatsFor(db, 'broker', 'exness');
   await verifyReview(db, q!.id, 'second@commentfx');
-  assert.deepEqual(await reviewStatsFor(db, 'exness'), stats, 'the record of who checked it stands');
+  assert.deepEqual(await reviewStatsFor(db, 'broker', 'exness'), stats, 'the record of who checked it stands');
   await close();
 });
 
@@ -125,14 +125,14 @@ test('an author can withdraw what they wrote, with the token they were given', a
   const { db, close } = await fresh();
   const res = await submitReview(db, review());
   assert.ok(res.ok);
-  const [r] = await reviewsFor(db, 'exness');
+  const [r] = await reviewsFor(db, 'broker', 'exness');
 
   assert.equal(await withdrawReview(db, r!.id, 'not-the-token'), false, 'a guess must not work');
   assert.equal(await withdrawReview(db, r!.id, ''), false, 'an empty token must not work');
-  assert.equal((await reviewsFor(db, 'exness')).length, 1);
+  assert.equal((await reviewsFor(db, 'broker', 'exness')).length, 1);
 
   assert.equal(await withdrawReview(db, r!.id, res.deleteToken), true);
-  assert.equal((await reviewsFor(db, 'exness')).length, 0, 'withdrawn means gone from the page');
+  assert.equal((await reviewsFor(db, 'broker', 'exness')).length, 0, 'withdrawn means gone from the page');
   await close();
 });
 
@@ -140,11 +140,11 @@ test('a withdrawn review is kept, not deleted, and stops counting', async () => 
   const { db, close } = await fresh();
   const res = await submitReview(db, review());
   assert.ok(res.ok);
-  const [r] = await reviewsFor(db, 'exness');
+  const [r] = await reviewsFor(db, 'broker', 'exness');
   await verifyReview(db, r!.id, 'editor@commentfx');
   await withdrawReview(db, r!.id, res.deleteToken);
 
-  const stats = await reviewStatsFor(db, 'exness');
+  const stats = await reviewStatsFor(db, 'broker', 'exness');
   assert.equal(stats.total, 0);
   assert.equal(stats.verified, 0, 'a verified review that is withdrawn stops counting');
   await close();
@@ -153,16 +153,16 @@ test('a withdrawn review is kept, not deleted, and stops counting', async () => 
 test('an editor removing a review records why', async () => {
   const { db, close } = await fresh();
   await submitReview(db, review());
-  const [r] = await reviewsFor(db, 'exness');
+  const [r] = await reviewsFor(db, 'broker', 'exness');
   await hideReview(db, r!.id, 'names a support agent personally');
-  assert.equal((await reviewsFor(db, 'exness')).length, 0);
+  assert.equal((await reviewsFor(db, 'broker', 'exness')).length, 0);
   await close();
 });
 
 test('the evidence a reviewer offers privately is never in what a reader gets', async () => {
   const { db, close } = await fresh();
   await submitReview(db, review({ evidenceNote: 'ticket #44192, statement attached by email' }));
-  const shown = await reviewsFor(db, 'exness');
+  const shown = await reviewsFor(db, 'broker', 'exness');
   assert.equal(JSON.stringify(shown).includes('44192'), false, 'private evidence must not reach the page');
   const queue = await reviewQueue(db);
   assert.match(queue[0]!.evidenceNote!, /44192/, 'but an editor must see it');
@@ -172,9 +172,9 @@ test('the evidence a reviewer offers privately is never in what a reader gets', 
 test('reviews of one broker do not appear under another', async () => {
   const { db, close } = await fresh();
   await submitReview(db, review());
-  await submitReview(db, review({ brokerSlug: 'ic-markets', rating: 2 }));
-  assert.equal((await reviewsFor(db, 'exness')).length, 1);
-  assert.equal((await reviewStatsFor(db, 'ic-markets')).total, 1);
+  await submitReview(db, review({ slug: 'ic-markets', rating: 2 }));
+  assert.equal((await reviewsFor(db, 'broker', 'exness')).length, 1);
+  assert.equal((await reviewStatsFor(db, 'broker', 'ic-markets')).total, 1);
   await close();
 });
 
@@ -199,6 +199,59 @@ test('a withdrawal code cannot be reused to withdraw a different review', async 
 
   assert.equal(await withdrawReview(db, theirs.id, mine.deleteToken), false,
     'holding one code must not let you delete someone else\'s review');
-  assert.equal((await reviewsFor(db, 'exness')).length, 2);
+  assert.equal((await reviewsFor(db, 'broker', 'exness')).length, 2);
+  await close();
+});
+
+test('each vertical has its own vocabulary and will not take another\'s', async () => {
+  const { db, close } = await fresh();
+  // "payout" is what a prop firm review is about; a broker review is not.
+  const wrong = await submitReview(db, review({ topic: 'payout' }));
+  assert.equal(wrong.ok, false, 'a broker review cannot be about a prop firm topic');
+
+  const right = await submitReview(db, review({
+    kind: 'prop', slug: 'ftmo', topic: 'payout', authorHash: 'prop-reviewer',
+  }));
+  assert.ok(right.ok);
+  assert.equal((await reviewsFor(db, 'prop', 'ftmo')).length, 1);
+  await close();
+});
+
+test('a slug shared across verticals does not merge their reviews', async () => {
+  const { db, close } = await fresh();
+  await submitReview(db, review({ kind: 'prop', slug: 'shared', topic: 'payout', authorHash: 'p' }));
+  await submitReview(db, review({ kind: 'exchange', slug: 'shared', topic: 'security', authorHash: 'e' }));
+
+  assert.equal((await reviewsFor(db, 'prop', 'shared')).length, 1);
+  assert.equal((await reviewsFor(db, 'exchange', 'shared')).length, 1);
+  assert.equal((await reviewStatsFor(db, 'prop', 'shared')).total, 1);
+  await close();
+});
+
+test('reviews say which rankings they can move, and only brokers can be moved', () => {
+  assert.equal(reviewsAffectScore('broker'), true);
+  assert.equal(reviewsAffectScore('prop'), false, 'the prop model has no reviews component yet');
+  assert.equal(reviewsAffectScore('exchange'), false);
+});
+
+test('the site-wide feed carries every vertical, newest first', async () => {
+  const { db, close } = await fresh();
+  await submitReview(db, review());
+  await new Promise((r) => setTimeout(r, 5));
+  await submitReview(db, review({ kind: 'prop', slug: 'ftmo', topic: 'rules', authorHash: 'p2' }));
+
+  const feed = await recentReviews(db);
+  assert.equal(feed.length, 2);
+  assert.equal(feed[0]!.kind, 'prop', 'newest first');
+  assert.equal(feed[1]!.slug, 'exness');
+  await close();
+});
+
+test('a withdrawn review is gone from the site-wide feed too', async () => {
+  const { db, close } = await fresh();
+  const res = await submitReview(db, review());
+  assert.ok(res.ok);
+  await withdrawReview(db, res.id, res.deleteToken);
+  assert.equal((await recentReviews(db)).length, 0);
   await close();
 });

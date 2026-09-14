@@ -1,17 +1,20 @@
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import { and, desc, eq, isNull, isNotNull, sql } from 'drizzle-orm';
 import {
-  checkReview, summarise, countsTowardScore, MIN_FOR_SCORE,
-  type ReviewInput, type ReviewProblem, type ReviewSummaryStats, type ReviewTopic,
+  checkReview, summarise, countsTowardScore, reviewsAffectScore, MIN_FOR_SCORE,
+  type ReviewInput, type ReviewKind, type ReviewProblem, type ReviewSummaryStats,
+  type ReviewTopic,
 } from '@commentfx/core';
 import type { AppDb } from './client.ts';
 import { reviews } from './schema.ts';
 
-export { checkReview, summarise, countsTowardScore, MIN_FOR_SCORE };
-export type { ReviewInput, ReviewProblem, ReviewSummaryStats, ReviewTopic };
+export { checkReview, summarise, countsTowardScore, reviewsAffectScore, MIN_FOR_SCORE };
+export type { ReviewInput, ReviewKind, ReviewProblem, ReviewSummaryStats, ReviewTopic };
 
 export interface PublishedReview {
   id: number;
+  kind: ReviewKind;
+  slug: string;
   rating: number;
   topic: ReviewTopic;
   body: string;
@@ -51,7 +54,7 @@ export type ReviewSubmitResult =
 
 export async function submitReview(
   db: AppDb,
-  input: ReviewInput & { brokerSlug: string; authorHash: string; evidenceNote?: string | null },
+  input: ReviewInput & { slug: string; authorHash: string; evidenceNote?: string | null },
 ): Promise<ReviewSubmitResult> {
   const problems = checkReview(input);
   if (problems.length > 0) return { ok: false, problems };
@@ -60,7 +63,8 @@ export async function submitReview(
   const inserted = await db
     .insert(reviews)
     .values({
-      brokerSlug: input.brokerSlug,
+      kind: input.kind,
+      slug: input.slug,
       rating: input.rating,
       topic: input.topic as ReviewTopic,
       body: input.body.trim(),
@@ -100,38 +104,56 @@ export async function withdrawReview(db: AppDb, id: number, token: string): Prom
   return true;
 }
 
+const published = (r: typeof reviews.$inferSelect): PublishedReview => ({
+  id: r.id,
+  kind: r.kind as ReviewKind,
+  slug: r.slug,
+  rating: r.rating,
+  topic: r.topic as ReviewTopic,
+  body: r.body,
+  verified: r.verifiedAt !== null,
+  createdAt: r.createdAt,
+});
+
 /** What a reader sees: everything published and not withdrawn, newest first. */
-export async function reviewsFor(db: AppDb, brokerSlug: string): Promise<PublishedReview[]> {
+export async function reviewsFor(db: AppDb, kind: ReviewKind, slug: string): Promise<PublishedReview[]> {
   const rows = await db
     .select()
     .from(reviews)
-    .where(and(eq(reviews.brokerSlug, brokerSlug), eq(reviews.hidden, false)))
+    .where(and(eq(reviews.kind, kind), eq(reviews.slug, slug), eq(reviews.hidden, false)))
     .orderBy(desc(reviews.verifiedAt), desc(reviews.createdAt));
-
-  return rows.map((r) => ({
-    id: r.id,
-    rating: r.rating,
-    topic: r.topic as ReviewTopic,
-    body: r.body,
-    verified: r.verifiedAt !== null,
-    createdAt: r.createdAt,
-  }));
+  return rows.map(published);
 }
 
-export async function reviewStatsFor(db: AppDb, brokerSlug: string): Promise<ReviewSummaryStats> {
+/** Everything published anywhere, newest first — the /reviews page. */
+export async function recentReviews(db: AppDb, limit = 120): Promise<PublishedReview[]> {
+  const rows = await db
+    .select()
+    .from(reviews)
+    .where(eq(reviews.hidden, false))
+    .orderBy(desc(reviews.createdAt))
+    .limit(limit);
+  return rows.map(published);
+}
+
+export async function reviewStatsFor(
+  db: AppDb, kind: ReviewKind, slug: string,
+): Promise<ReviewSummaryStats> {
   const rows = await db
     .select({ rating: reviews.rating, verifiedAt: reviews.verifiedAt })
     .from(reviews)
-    .where(and(eq(reviews.brokerSlug, brokerSlug), eq(reviews.hidden, false)));
+    .where(and(eq(reviews.kind, kind), eq(reviews.slug, slug), eq(reviews.hidden, false)));
   return summarise(rows);
 }
 
-/** Stats for many brokers at once, so a ranking page is one query not thirty. */
-export async function reviewStatsForAll(db: AppDb): Promise<Map<string, ReviewSummaryStats>> {
+/** Stats for a whole vertical at once, so a ranking page is one query not thirty. */
+export async function reviewStatsForAll(
+  db: AppDb, kind: ReviewKind,
+): Promise<Map<string, ReviewSummaryStats>> {
   const rows = await db
-    .select({ slug: reviews.brokerSlug, rating: reviews.rating, verifiedAt: reviews.verifiedAt })
+    .select({ slug: reviews.slug, rating: reviews.rating, verifiedAt: reviews.verifiedAt })
     .from(reviews)
-    .where(eq(reviews.hidden, false));
+    .where(and(eq(reviews.kind, kind), eq(reviews.hidden, false)));
 
   const bySlug = new Map<string, Array<{ rating: number; verifiedAt: Date | null }>>();
   for (const r of rows) {
@@ -145,7 +167,6 @@ export async function reviewStatsForAll(db: AppDb): Promise<Map<string, ReviewSu
 /* ── the editor's side ─────────────────────────────────────────────── */
 
 export interface PendingReview extends PublishedReview {
-  brokerSlug: string;
   evidenceNote: string | null;
 }
 
@@ -158,10 +179,7 @@ export async function reviewQueue(db: AppDb, limit = 50): Promise<PendingReview[
     .orderBy(reviews.createdAt)
     .limit(limit);
 
-  return rows.map((r) => ({
-    id: r.id, brokerSlug: r.brokerSlug, rating: r.rating, topic: r.topic as ReviewTopic,
-    body: r.body, verified: false, createdAt: r.createdAt, evidenceNote: r.evidenceNote,
-  }));
+  return rows.map((r) => ({ ...published(r), evidenceNote: r.evidenceNote }));
 }
 
 /**

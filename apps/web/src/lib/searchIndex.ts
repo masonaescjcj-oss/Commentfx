@@ -99,6 +99,7 @@ export function searchIndex(stats?: ReviewStats): SearchEntry[] {
   entries.push(
     { path: '/calendar', title: 'Economic calendar', note: 'Release dates and rate decisions from the BLS, the Fed and the ECB', group: 'Site', terms: 'nfp cpi fomc ecb jobs inflation rates news', score: null },
     { path: '/status', title: 'Broker status', note: 'Withdrawal delays and outages reported in the last 24 hours', group: 'Site', terms: 'down outage withdrawal problem incident', score: null },
+    { path: '/reviews', title: 'Reviews', note: 'What customers say about every company we rank', group: 'Site', terms: 'reviews complaints experience customers ratings', score: null },
     { path: '/reviews/withdraw', title: 'Withdraw a review', note: 'Take down a review you wrote, with the code you were given', group: 'Site', terms: 'delete remove my review takedown', score: null },
     { path: '/methodology', title: 'How we score', note: 'Every weight, every input, and what we refuse to score', group: 'Site', terms: 'method weights scoring transparency', score: null },
     { path: '/brokers', title: 'All brokers', note: 'The full broker ranking', group: 'Site', terms: 'forex directory list', score: null },

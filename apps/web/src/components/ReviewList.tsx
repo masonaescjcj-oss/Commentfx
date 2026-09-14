@@ -1,4 +1,7 @@
-import { TOPIC_LABELS, MIN_FOR_SCORE, type ReviewSummaryStats } from '@commentfx/core';
+import {
+  TOPIC_LABELS, MIN_FOR_SCORE, reviewsAffectScore,
+  type ReviewKind, type ReviewSummaryStats,
+} from '@commentfx/core';
 import type { PublishedReview } from '@/lib/reviews';
 import { Tag } from './primitives';
 
@@ -15,13 +18,16 @@ const dayOf = (d: Date) =>
  * showing only the second hands the score to whoever writes most. Showing both,
  * labelled, is the only version that survives someone trying to game it.
  */
-export function ReviewSummary({ stats }: { stats: ReviewSummaryStats }) {
+export function ReviewSummary({ stats, kind }: { stats: ReviewSummaryStats; kind: ReviewKind }) {
+  const scored = reviewsAffectScore(kind);
+
   if (stats.total === 0) {
     return (
       <p className="text-[12.5px] text-ink-2 leading-[1.8]">
-        Nobody has written about this broker yet. The reviews component of the score is
-        excluded until {MIN_FOR_SCORE} reviews have been checked by an editor — excluded,
-        not scored zero, because no reviews is not the same as bad reviews.
+        Nobody has written about this one yet.{' '}
+        {scored
+          ? `The reviews component of the score is excluded until ${MIN_FOR_SCORE} reviews have been checked by an editor — excluded, not scored zero, because no reviews is not the same as bad reviews.`
+          : 'Reviews here are read, not counted: this ranking’s model was published without a reviews component.'}
       </p>
     );
   }
@@ -66,9 +72,11 @@ export function ReviewSummary({ stats }: { stats: ReviewSummaryStats }) {
       )}
 
       <p className="text-[11.5px] text-ink-3 leading-[1.75]">
-        {stats.verified === 0
-          ? `None of the ${stats.total} reviews here has been checked yet, so none of them touches the score.`
-          : `${stats.verified} of ${stats.total} checked by an editor. Only those count, and only above ${MIN_FOR_SCORE}.`}
+        {!scored
+          ? `${stats.verified} of ${stats.total} checked by an editor. None of them moves this ranking — its model has no reviews component.`
+          : stats.verified === 0
+            ? `None of the ${stats.total} reviews here has been checked yet, so none of them touches the score.`
+            : `${stats.verified} of ${stats.total} checked by an editor. Only those count, and only above ${MIN_FOR_SCORE}.`}
       </p>
     </>
   );

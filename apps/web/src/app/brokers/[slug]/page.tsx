@@ -7,7 +7,7 @@ import { rankedBrokers, getRanked, alternativesFor } from '@/lib/repo';
 import { coverage } from '@/lib/verify';
 import { brokerStatus } from '@/lib/status';
 import { registerChecksFor } from '@/lib/registers';
-import { brokerReviews, reviewStats } from '@/lib/reviews';
+import { recordReviews, reviewStats } from '@/lib/reviews';
 import { StatusBlock } from '@/components/StatusBlock';
 import { VerificationPanel } from '@/components/VerificationPanel';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
@@ -56,7 +56,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
     coverage('broker', b.slug),
     brokerStatus(b.slug),
     registerChecksFor(b.slug),
-    brokerReviews(b.slug),
+    recordReviews('broker', b.slug),
   ]);
   const alternatives = alternativesFor(b.slug, stats);
   const trail = [
@@ -200,13 +200,13 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
             title="What customers say"
             aside={<span className="text-[11.5px] text-ink-3 tnum">{reviews.stats.total} published</span>}
           />
-          <ReviewSummary stats={reviews.stats} />
+          <ReviewSummary stats={reviews.stats} kind="broker" />
           <div className="mt-3"><ReviewList reviews={reviews.list} /></div>
         </Card>
 
         <Card className="p-4" as="section">
           <CardHead title={`Write about ${b.name}`} />
-          <ReviewForm brokerSlug={b.slug} brokerName={b.name} />
+          <ReviewForm kind="broker" slug={b.slug} name={b.name} />
         </Card>
 
         <Card className="p-4" as="section">

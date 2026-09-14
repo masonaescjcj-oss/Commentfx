@@ -106,6 +106,18 @@ The evidence a reviewer offers an editor privately — a ticket number, a transf
 date — is never published. Publishing it would expose exactly the people acting
 in good faith.
 
+Reviews cover all three verticals, each with its own vocabulary — a complaint
+about a broker is a withdrawal, about a prop firm a denied payout or a rule
+applied after the fact, about an exchange a frozen account. A single shared list
+would push most of those into "other" and lose the only structure a reader could
+filter by. `/reviews` is every one of them, newest first, filterable.
+
+They move the broker ranking and no other. The prop firm and exchange models
+were published without a reviews component, and adding one means changing
+weights that are already public — a decision to make openly, not a side effect
+of shipping a feature. Until then those reviews are read and not counted, and
+every one of those pages says so.
+
 One structural rule keeps the numbers honest across the site: **anything that
 shows a score reads the live review counts; anything that only needs the set of
 slugs does not.** That includes `generateMetadata`, because a title advertising

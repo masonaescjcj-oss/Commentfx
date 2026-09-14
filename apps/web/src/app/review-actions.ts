@@ -2,7 +2,7 @@
 
 import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
-import { REVIEW_TOPICS, BODY_MAX, type ReviewTopic } from '@commentfx/core';
+import { isTopicFor, BODY_MAX, type ReviewKind, type ReviewTopic } from '@commentfx/core';
 import {
   getDb, reporterHash, submitReview, withdrawReview, withdrawalCode, parseWithdrawalCode,
 } from '@commentfx/db';
@@ -14,7 +14,7 @@ export interface ReviewResult {
   deleteToken?: string;
 }
 
-const TOPICS = new Set<string>(REVIEW_TOPICS);
+const KINDS = new Set<string>(['broker', 'prop', 'exchange']);
 
 /** Same derivation as the incident reports: see the note there on the fallback. */
 async function addressOf(): Promise<string> {
@@ -23,15 +23,21 @@ async function addressOf(): Promise<string> {
   return h.get('x-real-ip') ?? forwarded ?? 'unknown';
 }
 
+const pathFor = (kind: string, slug: string) =>
+  `/${kind === 'broker' ? 'brokers' : kind === 'prop' ? 'props' : 'exchanges'}/${slug}`;
+
 export async function postReview(_prev: ReviewResult | null, form: FormData): Promise<ReviewResult> {
-  const brokerSlug = String(form.get('brokerSlug') ?? '').trim();
+  const kind = String(form.get('kind') ?? '').trim();
+  const slug = String(form.get('slug') ?? '').trim();
   const topic = String(form.get('topic') ?? '').trim();
   const rating = Number(form.get('rating'));
   const body = String(form.get('body') ?? '');
   const evidenceNote = String(form.get('evidenceNote') ?? '').trim() || null;
 
-  if (!brokerSlug) return { ok: false, message: 'Missing broker.' };
-  if (!TOPICS.has(topic)) return { ok: false, message: 'Choose what this review is about.' };
+  if (!slug || !KINDS.has(kind)) return { ok: false, message: 'Missing company.' };
+  if (!isTopicFor(kind as ReviewKind, topic)) {
+    return { ok: false, message: 'Choose what this review is about.' };
+  }
   if (evidenceNote && evidenceNote.length > BODY_MAX) {
     return { ok: false, message: 'Keep the note to an editor shorter.' };
   }
@@ -42,7 +48,8 @@ export async function postReview(_prev: ReviewResult | null, form: FormData): Pr
   try {
     const { db } = await getDb();
     const res = await submitReview(db, {
-      brokerSlug, rating, topic: topic as ReviewTopic, body, authorHash, evidenceNote,
+      kind: kind as ReviewKind, slug, rating, topic: topic as ReviewTopic,
+      body, authorHash, evidenceNote,
     });
 
     if (!res.ok) {
@@ -55,7 +62,8 @@ export async function postReview(_prev: ReviewResult | null, form: FormData): Pr
       return { ok: false, message: res.problems.map((p) => p.message).join(' ') };
     }
 
-    revalidatePath(`/brokers/${brokerSlug}`);
+    revalidatePath(pathFor(kind, slug));
+    revalidatePath('/reviews');
     return {
       ok: true,
       deleteToken: withdrawalCode(res.id, res.deleteToken),
@@ -85,6 +93,9 @@ export async function removeReview(_prev: ReviewResult | null, form: FormData): 
     // Which broker it belonged to is not in the code, and asking for it would
     // make the reader prove something twice. The pages carry it within minutes.
     revalidatePath('/brokers', 'layout');
+    revalidatePath('/props', 'layout');
+    revalidatePath('/exchanges', 'layout');
+    revalidatePath('/reviews');
     return { ok: true, message: 'Withdrawn. It is off the page and counts towards nothing.' };
   } catch (err) {
     console.error('[review] withdraw failed:', err);

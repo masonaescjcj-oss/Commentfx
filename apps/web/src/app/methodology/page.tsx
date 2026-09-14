@@ -4,7 +4,7 @@ import {
   PROP_WEIGHTS, PROP_LABELS, type PropKey,
   EXCHANGE_WEIGHTS, EXCHANGE_LABELS, type ExchangeKey,
   MEME_WEIGHTS, MEME_LABELS, type MemeKey,
-  IMPACT_RULE, IMPACT_LABEL,
+  IMPACT_RULE, IMPACT_LABEL, MIN_FOR_SCORE,
 } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd } from '@/lib/seo';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
@@ -114,6 +114,33 @@ export default function MethodologyPage() {
             ranking of prospects -- no part of it predicts price.
           </p>
           <Weights keys={Object.keys(MEME_WEIGHTS) as MemeKey[]} weights={MEME_WEIGHTS} labels={MEME_LABELS} what={MEME_WHAT} max={45} />
+        </Card>
+
+        <Card className="p-4" as="section">
+          <CardHead title="Reviews count only after a person checks them" />
+          <p className="text-[12.5px] text-ink-2 leading-[1.85] mb-3">
+            Reviews are the most attacked surface a ranking site has: the company wants
+            good ones, its competitors want bad ones, and from the server&rsquo;s side both
+            look exactly like a real customer. So publishing and counting are separate
+            acts. A review is live the moment it is written, marked unverified, and
+            reaches a score only once an editor has checked the evidence behind it —
+            which means buying a hundred five-star reviews buys a hundred unverified
+            paragraphs and moves nothing.
+          </p>
+          <p className="text-[12.5px] text-ink-2 leading-[1.85] mb-3">
+            Below {MIN_FOR_SCORE} checked reviews the component is excluded rather than
+            scored low, like every other component here. Both averages are shown — the
+            checked one the score uses, and the one covering everything anyone wrote —
+            because showing only the first hides what people are saying and showing only
+            the second hands the score to whoever writes most.
+          </p>
+          <p className="text-[12.5px] text-ink-2 leading-[1.85]">
+            Reviews move the broker ranking and no other. The prop firm and exchange
+            models were published without a reviews component, and adding one means
+            changing weights that are already public — a decision to make openly, not a
+            side effect of shipping a feature. Until then their reviews are read and not
+            counted, and every one of those pages says so.
+          </p>
         </Card>
 
         <Card className="p-4" as="section">
