@@ -6,12 +6,13 @@ import { pageMetadata, JsonLd, breadcrumbLd, financialServiceLd, faqLd } from '@
 import { rankedBrokers, getRanked } from '@/lib/repo';
 import { coverage } from '@/lib/verify';
 import { brokerStatus } from '@/lib/status';
+import { registerChecksFor } from '@/lib/registers';
 import { StatusBlock } from '@/components/StatusBlock';
 import { VerificationPanel } from '@/components/VerificationPanel';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
 import { Card, CardHead, Logo, Score, Tag, Meter } from '@/components/primitives';
-import { Flag } from '@/components/Flag';
 import { EntityMap } from '@/components/EntityMap';
+import { LicenceList } from '@/components/LicenceList';
 
 type Params = { slug: string };
 
@@ -44,7 +45,11 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
 
   const b = r.broker;
   const all = rankedBrokers();
-  const [cov, status] = await Promise.all([coverage('broker', b.slug), brokerStatus(b.slug)]);
+  const [cov, status, checks] = await Promise.all([
+    coverage('broker', b.slug),
+    brokerStatus(b.slug),
+    registerChecksFor(b.slug),
+  ]);
   const alternatives = all.filter((x) => x.broker.slug !== b.slug).slice(0, 3);
   const trail = [
     { name: 'Home', path: '/' },
@@ -154,31 +159,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
 
         <Card className="p-4" as="section">
           <CardHead title="Licences" aside={<span className="text-[11.5px] text-ink-3">{b.entities.length} on record</span>} />
-          <ul>
-            {b.entities.map((e) => {
-              const reg = REGULATORS[e.licence.regulator];
-              const tone = reg?.tier === 'A' ? 'good' : reg?.tier === 'B' ? 'warn' : 'neutral';
-              return (
-                <li key={e.legalName} className="flex items-center gap-[10px] py-[11px] border-b border-line-2 last:border-b-0">
-                  <span className={`w-[22px] h-5 grid place-items-center rounded-[5px] text-[10.5px] font-extrabold shrink-0 ${
-                    reg?.tier === 'A' ? 'bg-up-bg text-up' : reg?.tier === 'B' ? 'bg-warn-bg text-warn' : 'bg-card-3 text-ink-2'}`}>
-                    {reg?.tier ?? '?'}
-                  </span>
-                  <Flag code={e.country} w={20} title={e.country} />
-                  <span className="min-w-0">
-                    <span className="text-[13.5px] font-bold">{e.licence.regulator}</span>{' '}
-                    <span className="text-[11.5px] text-ink-3 tnum">{e.licence.number}</span>
-                  </span>
-                  <div className="flex-1" />
-                  <Tag tone={tone}>{e.licence.status}</Tag>
-                </li>
-              );
-            })}
-          </ul>
-          <p className="text-[11.5px] text-ink-3 mt-[10px] leading-[1.75]">
-            Tier A runs a statutory compensation scheme and a public register. Tier C is
-            registration only — in practice, no recourse.
-          </p>
+          <LicenceList broker={b} checks={checks} />
         </Card>
 
         <Card className="p-4" as="section">

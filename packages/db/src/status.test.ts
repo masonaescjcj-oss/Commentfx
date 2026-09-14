@@ -6,6 +6,7 @@ import { seed } from './seed.ts';
 import {
   statusFor, submitReport, reporterHash, levelFor, THRESHOLD, WINDOW_HOURS,
 } from './status.ts';
+import type { IncidentKind } from '@commentfx/core';
 
 async function fresh() {
   const h = await makeTestDb();
@@ -13,7 +14,7 @@ async function fresh() {
   return h;
 }
 
-const report = (db: never, n: number, kind = 'withdrawal-delay' as const, slug = 'exness') =>
+const report = (db: never, n: number, kind: IncidentKind = 'withdrawal-delay', slug = 'exness') =>
   Promise.all(
     Array.from({ length: n }, (_, i) =>
       submitReport(db, { brokerSlug: slug, kind, hash: `reporter-${i}` }),

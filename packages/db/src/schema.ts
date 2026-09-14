@@ -228,3 +228,41 @@ export const statusReports = pgTable('status_reports', {
   // One reporter, one broker, one kind, one report per rotation of the salt.
   uniqueIndex('status_reports_dedupe_idx').on(t.brokerSlug, t.kind, t.reporterHash),
 ]);
+
+/* ────────────────────── automated register checks ─────────────────── */
+
+export const findingKind = pgEnum('finding_kind', [
+  'confirmed', 'name-mismatch', 'not-found', 'source-unavailable',
+]);
+
+/**
+ * A machine check against a regulator's public register. Deliberately a
+ * separate table from `verifications`, because the two are different claims:
+ * a verification is a person who read a page once and recorded what they saw;
+ * this is a scraper that re-runs daily and overwrites. The site labels them
+ * differently for the same reason.
+ */
+export const registerChecks = pgTable('register_checks', {
+  id: serial('id').primaryKey(),
+  brokerSlug: text('broker_slug').notNull().references(() => brokers.slug, { onDelete: 'cascade' }),
+  regulatorCode: text('regulator_code').notNull(),
+  licenceNumber: text('licence_number').notNull(),
+  kind: findingKind('kind').notNull(),
+  /** The name the register carries, when the licence was found there. */
+  registerName: text('register_name'),
+  detail: text('detail').notNull(),
+  sourceUrl: text('source_url').notNull(),
+  checkedAt: timestamp('checked_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('register_checks_target_idx').on(t.brokerSlug, t.regulatorCode, t.licenceNumber),
+]);
+
+/** One row per source per run, so a silently broken scraper is visible. */
+export const registerRuns = pgTable('register_runs', {
+  id: serial('id').primaryKey(),
+  regulatorCode: text('regulator_code').notNull(),
+  ok: boolean('ok').notNull(),
+  entryCount: integer('entry_count'),
+  reason: text('reason'),
+  ranAt: timestamp('ran_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [index('register_runs_code_idx').on(t.regulatorCode, t.ranAt)]);

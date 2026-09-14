@@ -69,3 +69,21 @@ someone reporting both a withdrawal delay and a login failure is one person, and
 summing the per-kind counts would let them count twice.
 
 Incident reports never enter any score. Scores move only on verified facts.
+
+## Register checks
+
+`register_checks` holds one row per (broker, regulator, licence): what the
+regulator's own public register said the last time it was read. `register_runs`
+holds one row per source per run, so a scraper that silently stops working is
+visible rather than looking like a register that stopped confirming things.
+
+Two rules are enforced in `registers.ts` and covered by tests:
+
+- A `source-unavailable` finding never overwrites a real answer. The last thing
+  the register actually said is more useful than "we could not reach it today",
+  and overwriting would erase a confirmation every time the network hiccupped.
+- Nothing here edits a broker record. A register disagreeing with us is a
+  finding for an editor, never an automatic correction.
+
+Run the readers with `pnpm --filter @commentfx/web check-registers` (needs
+`DATABASE_URL` or `PGLITE_DIR`). It exits 2 when something needs a human.

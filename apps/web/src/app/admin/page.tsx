@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { desc } from 'drizzle-orm';
 import { getDb, schema, STALE_AFTER_DAYS, type Kind } from '@commentfx/db';
 import { queue } from '@/lib/verify';
+import { sourceHealth, unconfirmed } from '@/lib/registers';
 import { rankedBrokers, rankedProps, rankedExchanges } from '@/lib/repo';
 import { Card, CardHead, Meter, Tag } from '@/components/primitives';
 
@@ -21,6 +22,7 @@ export default async function AdminPage() {
   );
   const { db } = await getDb();
   const recent = await db.select().from(schema.auditLog).orderBy(desc(schema.auditLog.at)).limit(12);
+  const [sources, findings] = await Promise.all([sourceHealth(), unconfirmed()]);
 
   const outstanding = sections.reduce((n, s) => n + s.rows.length, 0);
 
@@ -68,6 +70,78 @@ export default async function AdminPage() {
           )}
         </Card>
       ))}
+
+      <Card className="p-4" as="section">
+        <CardHead
+          title="Register findings"
+          aside={<span className="text-[11.5px] text-ink-3 tnum">{findings.length} unconfirmed</span>}
+        />
+        {findings.length === 0 ? (
+          <p className="text-[12.5px] text-ink-3">
+            Nothing outstanding. Every licence the readable registers cover was confirmed on the last run.
+          </p>
+        ) : (
+          <ul>
+            {findings.map((f) => (
+              <li key={`${f.brokerSlug}-${f.regulatorCode}-${f.licenceNumber}`} className="py-[10px] border-b border-line-2 last:border-b-0">
+                <div className="flex items-baseline gap-2">
+                  <Link href={`/admin/broker/${f.brokerSlug}`} className="text-[13px] font-semibold hover:text-brass">
+                    {f.brokerSlug}
+                  </Link>
+                  <span className="text-[11.5px] text-ink-3 tnum">{f.regulatorCode} {f.licenceNumber}</span>
+                  <div className="flex-1" />
+                  <Tag tone={f.kind === 'not-found' ? 'bad' : f.kind === 'name-mismatch' ? 'warn' : 'neutral'}>
+                    {f.kind}
+                  </Tag>
+                </div>
+                <p className="text-[11.5px] text-ink-3 mt-[3px] leading-[1.7]">{f.detail}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+        <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.75]">
+          A finding is a machine reading a public register, never a correction. Nothing here
+          changes a published record until an editor checks it.
+        </p>
+      </Card>
+
+      <Card className="p-4" as="section">
+        <CardHead
+          title="Register sources"
+          aside={<span className="text-[11.5px] text-ink-3 tnum">{sources.filter((s) => s.state === 'live').length} of {sources.length} readable</span>}
+        />
+        <ul>
+          {sources.map((s) => (
+            <li key={s.code} className="py-[10px] border-b border-line-2 last:border-b-0">
+              <div className="flex items-baseline gap-2">
+                <span className="text-[13px] font-semibold">{s.code}</span>
+                <div className="flex-1" />
+                {s.state === 'blocked' ? (
+                  <Tag tone="neutral">no reader</Tag>
+                ) : s.lastOk === null ? (
+                  <Tag tone="warn">never run</Tag>
+                ) : s.lastOk ? (
+                  <Tag tone="good">{s.lastEntryCount} entries</Tag>
+                ) : (
+                  <Tag tone="bad">failed</Tag>
+                )}
+              </div>
+              <p className="text-[11.5px] text-ink-3 mt-[3px] leading-[1.7]">
+                {s.state === 'blocked'
+                  ? s.reason
+                  : s.lastRanAt
+                    ? `Last run ${s.lastRanAt.slice(0, 16).replace('T', ' ')}${s.lastReason ? ` — ${s.lastReason}` : ''}`
+                    : 'No run recorded yet.'}
+              </p>
+            </li>
+          ))}
+        </ul>
+        <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.75]">
+          A source with no reader is listed rather than hidden, so register coverage never
+          looks wider than it is. Run the readers with{' '}
+          <code className="text-[11px]">pnpm --filter @commentfx/web check-registers</code>.
+        </p>
+      </Card>
 
       <Card className="p-4" as="section">
         <CardHead title="Recent activity" aside={<span className="text-[11px] text-ink-3">append-only</span>} />

@@ -15,6 +15,13 @@
       "when": 1789395722522,
       "tag": "0001_productive_skin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789397833631,
+      "tag": "0002_lively_bullseye",
+      "breakpoints": true
     }
   ]
 }

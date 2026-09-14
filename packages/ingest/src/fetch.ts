@@ -17,6 +17,13 @@ export interface FetchOptions {
   headers?: Record<string, string>;
 }
 
+/**
+ * Next augments RequestInit with its own cache controls. This package is typed
+ * without Next's globals so it stays usable from a plain node script, so the
+ * extension is declared here rather than inherited.
+ */
+export type NextRequestInit = RequestInit & { next?: { revalidate: number } };
+
 export type Fetched<T> = { ok: true; data: T; at: string } | { ok: false; reason: string };
 
 export async function safeJson<T>(url: string, opts: FetchOptions): Promise<Fetched<T>> {
@@ -24,11 +31,12 @@ export async function safeJson<T>(url: string, opts: FetchOptions): Promise<Fetc
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const res = await fetch(url, {
+    const init: NextRequestInit = {
       signal: controller.signal,
       headers: { accept: 'application/json', 'user-agent': 'CommentFX/0.1 (+https://commentfx.com)', ...headers },
       next: { revalidate },
-    });
+    };
+    const res = await fetch(url, init);
     if (!res.ok) return { ok: false, reason: `HTTP ${res.status}` };
     return { ok: true, data: (await res.json()) as T, at: new Date().toISOString() };
   } catch (err) {
