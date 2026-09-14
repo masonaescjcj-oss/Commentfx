@@ -102,7 +102,10 @@ export const itemListLd = (
 });
 
 export const financialServiceLd = (b: {
-  name: string; slug: string; founded: number; score: number; reviewCount: number;
+  name: string; slug: string; founded: number;
+  /** The mean of verified reviews, on the 1-5 scale readers actually gave. */
+  reviewAverage: number | null;
+  reviewCount: number;
 }): Json => ({
   '@type': 'FinancialService',
   '@id': absoluteUrl(`/brokers/${b.slug}#service`),
@@ -110,15 +113,21 @@ export const financialServiceLd = (b: {
   url: absoluteUrl(`/brokers/${b.slug}`),
   foundingDate: String(b.founded),
   serviceType: 'Online forex and CFD brokerage',
-  // Only emit a rating when it is backed by reviews — an AggregateRating with
+  // Only emit a rating when it is backed by reviews -- an AggregateRating with
   // no reviews behind it is exactly what gets a site's rich results revoked.
-  ...(b.reviewCount > 0
+  //
+  // And it is the REVIEW average, not our composite score. Those are different
+  // numbers measuring different things: the composite is our editorial model out
+  // of ten, the rating is what customers gave out of five. Publishing the
+  // composite under a ratingCount of reviews would claim five people awarded a
+  // number none of them chose.
+  ...(b.reviewCount > 0 && b.reviewAverage !== null
     ? {
         aggregateRating: {
           '@type': 'AggregateRating',
-          ratingValue: b.score,
-          bestRating: 10,
-          worstRating: 0,
+          ratingValue: b.reviewAverage,
+          bestRating: 5,
+          worstRating: 1,
           ratingCount: b.reviewCount,
         },
       }

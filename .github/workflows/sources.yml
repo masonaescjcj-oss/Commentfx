@@ -24,9 +24,9 @@ jobs:
     outputs:
       broken: ${{ steps.probe.outcome == 'failure' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: pnpm
@@ -45,7 +45,7 @@ jobs:
         run: node --experimental-strip-types packages/ingest/src/probe.ts | tee probe.txt
 
       - name: Report
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
@@ -113,9 +113,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: pnpm
@@ -129,7 +129,7 @@ jobs:
         run: node --experimental-strip-types packages/ingest/src/registers/report.ts | tee registers.txt
 
       - name: Report findings
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
@@ -178,9 +178,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: pnpm
@@ -194,21 +194,25 @@ jobs:
         run: node --experimental-strip-types packages/ingest/src/sites-report.ts | tee sites.txt
 
       - name: Report dead links
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
             const output = fs.readFileSync('sites.txt', 'utf8');
             const dead = '${{ steps.sites.outcome }}' === 'failure';
+            // A site that moved is not broken, so it does not fail the run --
+            // but it still means the address we hold is stale, and a finding
+            // that only reaches the job summary reaches nobody.
+            const moved = /redirecting elsewhere/.test(output) && !/0 redirecting elsewhere/.test(output);
 
             await core.summary
               .addHeading(dead ? 'A company site we link to has gone' : 'Every company site still resolves')
               .addCodeBlock(output)
               .write();
 
-            if (!dead) return;
+            if (!dead && !moved) return;
 
-            const title = 'A company site we link to has gone';
+            const title = 'Company sites that have gone or moved';
             const { data: open } = await github.rest.issues.listForRepo({
               owner: context.repo.owner, repo: context.repo.repo,
               state: 'open', labels: 'links',
@@ -216,9 +220,14 @@ jobs:
             const existing = open.find((i) => i.title === title);
 
             const body = [
-              'A site on one of our records no longer answers. A dead company site is',
-              'usually a rebrand or an exit — either way the record behind it is stale and',
-              'needs a person, not an automatic edit.',
+              dead
+                ? 'A site on one of our records no longer answers.'
+                : 'A site on one of our records now redirects somewhere else. It still works,',
+              dead
+                ? 'A dead company site is usually a rebrand or an exit.'
+                : 'so nothing is broken — but a company that moved address usually renamed too.',
+              'Either way the record behind it is stale and needs a person, not an',
+              'automatic edit.',
               '',
               '```',
               output.trim(),

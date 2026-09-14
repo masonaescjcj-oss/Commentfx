@@ -4,6 +4,7 @@ import { THRESHOLD, WINDOW_HOURS, INCIDENT_LABELS } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { allStatus } from '@/lib/status';
 import { rankedBrokers } from '@/lib/repo';
+import { reviewStats } from '@/lib/reviews';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
 import { Card, CardHead, Logo, Tag } from '@/components/primitives';
 import { StatusChip } from '@/components/StatusBlock';
@@ -35,7 +36,7 @@ const FAQ = [
 ];
 
 export default async function StatusPage() {
-  const brokers = rankedBrokers();
+  const brokers = rankedBrokers(await reviewStats());
   const statuses = await allStatus(brokers.map((b) => b.broker.slug));
   const trail = [{ name: 'Home', path: '/' }, { name: 'Broker status', path: '/status' }];
 

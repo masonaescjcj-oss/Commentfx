@@ -7,6 +7,7 @@ import { rankedBrokers, getRanked, alternativesFor } from '@/lib/repo';
 import { coverage } from '@/lib/verify';
 import { brokerStatus } from '@/lib/status';
 import { registerChecksFor } from '@/lib/registers';
+import { brokerReviews, reviewStats } from '@/lib/reviews';
 import { StatusBlock } from '@/components/StatusBlock';
 import { VerificationPanel } from '@/components/VerificationPanel';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
@@ -14,6 +15,8 @@ import { OfficialSite } from '@/components/OfficialSite';
 import { Card, CardHead, Logo, Score, Tag, Meter } from '@/components/primitives';
 import { EntityMap } from '@/components/EntityMap';
 import { LicenceList } from '@/components/LicenceList';
+import { ReviewForm } from '@/components/ReviewForm';
+import { ReviewList, ReviewSummary } from '@/components/ReviewList';
 
 type Params = { slug: string };
 
@@ -26,7 +29,9 @@ export const dynamicParams = false;
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params;
-  const r = getRanked(slug);
+  // The same live review counts the page body uses. A title that advertises a
+  // score the page does not show is the kind of drift nobody notices for weeks.
+  const r = getRanked(slug, await reviewStats());
   if (!r) return {};
   const b = r.broker;
   return pageMetadata({
@@ -41,17 +46,19 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 
 export default async function BrokerPage({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
-  const r = getRanked(slug);
+  const stats = await reviewStats();
+  const r = getRanked(slug, stats);
   if (!r) notFound();
 
   const b = r.broker;
-  const all = rankedBrokers();
-  const [cov, status, checks] = await Promise.all([
+  const all = rankedBrokers(stats);
+  const [cov, status, checks, reviews] = await Promise.all([
     coverage('broker', b.slug),
     brokerStatus(b.slug),
     registerChecksFor(b.slug),
+    brokerReviews(b.slug),
   ]);
-  const alternatives = alternativesFor(b.slug);
+  const alternatives = alternativesFor(b.slug, stats);
   const trail = [
     { name: 'Home', path: '/' },
     { name: 'Brokers', path: '/brokers' },
@@ -188,6 +195,20 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
           </dl>
         </Card>
 
+        <Card className="p-4" as="section" id="reviews">
+          <CardHead
+            title="What customers say"
+            aside={<span className="text-[11.5px] text-ink-3 tnum">{reviews.stats.total} published</span>}
+          />
+          <ReviewSummary stats={reviews.stats} />
+          <div className="mt-3"><ReviewList reviews={reviews.list} /></div>
+        </Card>
+
+        <Card className="p-4" as="section">
+          <CardHead title={`Write about ${b.name}`} />
+          <ReviewForm brokerSlug={b.slug} brokerName={b.name} />
+        </Card>
+
         <Card className="p-4" as="section">
           <CardHead title="Compare" />
           <ul className="flex flex-col">
@@ -223,7 +244,8 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
         breadcrumbLd(trail),
         financialServiceLd({
           name: b.name, slug: b.slug, founded: b.founded,
-          score: r.score.total, reviewCount: b.reviews.verifiedCount,
+          reviewAverage: reviews.stats.verifiedAverage,
+          reviewCount: reviews.stats.verified,
         }),
         faqLd(faq),
       ]} />

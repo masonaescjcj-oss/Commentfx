@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { pageMetadata, JsonLd, breadcrumbLd, itemListLd } from '@/lib/seo';
 import { searchIndex } from '@/lib/searchIndex';
+import { reviewStats } from '@/lib/reviews';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
 import { SiteSearch } from '@/components/SiteSearch';
 
@@ -11,8 +12,8 @@ const DESC =
 
 export const metadata: Metadata = pageMetadata({ title: TITLE, description: DESC, path: '/search' });
 
-export default function SearchPage() {
-  const entries = searchIndex();
+export default async function SearchPage() {
+  const entries = searchIndex(await reviewStats());
   const trail = [{ name: 'Home', path: '/' }, { name: 'Search', path: '/search' }];
 
   return (

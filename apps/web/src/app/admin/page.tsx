@@ -4,8 +4,11 @@ import { desc } from 'drizzle-orm';
 import { getDb, schema, STALE_AFTER_DAYS, type Kind } from '@commentfx/db';
 import { queue } from '@/lib/verify';
 import { sourceHealth, unconfirmed } from '@/lib/registers';
+import { pendingReviews } from '@/lib/reviews';
 import { rankedBrokers, rankedProps, rankedExchanges } from '@/lib/repo';
 import { Card, CardHead, Meter, Tag } from '@/components/primitives';
+import { TOPIC_LABELS } from '@commentfx/core';
+import { ModerateReview } from './ModerateReview';
 
 export const metadata: Metadata = { title: 'Verification queue', robots: { index: false, follow: false } };
 export const dynamic = 'force-dynamic';
@@ -22,7 +25,7 @@ export default async function AdminPage() {
   );
   const { db } = await getDb();
   const recent = await db.select().from(schema.auditLog).orderBy(desc(schema.auditLog.at)).limit(12);
-  const [sources, findings] = await Promise.all([sourceHealth(), unconfirmed()]);
+  const [sources, findings, reviewQueue] = await Promise.all([sourceHealth(), unconfirmed(), pendingReviews()]);
 
   const outstanding = sections.reduce((n, s) => n + s.rows.length, 0);
 
@@ -70,6 +73,49 @@ export default async function AdminPage() {
           )}
         </Card>
       ))}
+
+      <Card className="p-4" as="section">
+        <CardHead
+          title="Reviews waiting to be checked"
+          aside={<span className="text-[11.5px] text-ink-3 tnum">{reviewQueue.length} in the queue</span>}
+        />
+        {reviewQueue.length === 0 ? (
+          <p className="text-[12.5px] text-ink-3">
+            Nothing waiting. Every published review has been looked at.
+          </p>
+        ) : (
+          <ul>
+            {reviewQueue.map((q) => (
+              <li key={q.id} className="py-[11px] border-b border-line-2 last:border-b-0">
+                <div className="flex items-baseline gap-2">
+                  <span className="w-[24px] h-[22px] grid place-items-center rounded-[6px] bg-card-3 text-[12px] font-extrabold tnum shrink-0">
+                    {q.rating}
+                  </span>
+                  <Link href={`/brokers/${q.brokerSlug}#reviews`} className="text-[13px] font-semibold hover:text-brass">
+                    {q.brokerSlug}
+                  </Link>
+                  <span className="text-[11.5px] text-ink-3">{TOPIC_LABELS[q.topic]}</span>
+                  <div className="flex-1" />
+                  <time className="text-[11px] text-ink-3 tnum" dateTime={q.createdAt.toISOString()}>
+                    {q.createdAt.toISOString().slice(0, 10)}
+                  </time>
+                </div>
+                <p className="text-[12px] text-ink-2 leading-[1.75] mt-[6px]">{q.body}</p>
+                {q.evidenceNote && (
+                  <p className="text-[11.5px] text-ink-2 mt-[6px] bg-card-2 border border-line rounded-lg p-2 leading-[1.7]">
+                    <b>Offered privately:</b> {q.evidenceNote}
+                  </p>
+                )}
+                <ModerateReview id={q.id} brokerSlug={q.brokerSlug} />
+              </li>
+            ))}
+          </ul>
+        )}
+        <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.75]">
+          A review is live on the site already, marked unverified. Checking it is what lets
+          it reach the score — so check the evidence, not the sentiment.
+        </p>
+      </Card>
 
       <Card className="p-4" as="section">
         <CardHead

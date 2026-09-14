@@ -1,0 +1,93 @@
+'use server';
+
+import { headers } from 'next/headers';
+import { revalidatePath } from 'next/cache';
+import { REVIEW_TOPICS, BODY_MAX, type ReviewTopic } from '@commentfx/core';
+import {
+  getDb, reporterHash, submitReview, withdrawReview, withdrawalCode, parseWithdrawalCode,
+} from '@commentfx/db';
+
+export interface ReviewResult {
+  ok: boolean;
+  message: string;
+  /** Shown once, never stored in a form, never recoverable. */
+  deleteToken?: string;
+}
+
+const TOPICS = new Set<string>(REVIEW_TOPICS);
+
+/** Same derivation as the incident reports: see the note there on the fallback. */
+async function addressOf(): Promise<string> {
+  const h = await headers();
+  const forwarded = h.get('x-forwarded-for')?.split(',')[0]?.trim();
+  return h.get('x-real-ip') ?? forwarded ?? 'unknown';
+}
+
+export async function postReview(_prev: ReviewResult | null, form: FormData): Promise<ReviewResult> {
+  const brokerSlug = String(form.get('brokerSlug') ?? '').trim();
+  const topic = String(form.get('topic') ?? '').trim();
+  const rating = Number(form.get('rating'));
+  const body = String(form.get('body') ?? '');
+  const evidenceNote = String(form.get('evidenceNote') ?? '').trim() || null;
+
+  if (!brokerSlug) return { ok: false, message: 'Missing broker.' };
+  if (!TOPICS.has(topic)) return { ok: false, message: 'Choose what this review is about.' };
+  if (evidenceNote && evidenceNote.length > BODY_MAX) {
+    return { ok: false, message: 'Keep the note to an editor shorter.' };
+  }
+
+  const h = await headers();
+  const authorHash = reporterHash(await addressOf(), h.get('user-agent') ?? '');
+
+  try {
+    const { db } = await getDb();
+    const res = await submitReview(db, {
+      brokerSlug, rating, topic: topic as ReviewTopic, body, authorHash, evidenceNote,
+    });
+
+    if (!res.ok) {
+      if ('duplicate' in res) {
+        return {
+          ok: false,
+          message: 'You have already written about this broker on this topic today. Come back tomorrow if you have something new.',
+        };
+      }
+      return { ok: false, message: res.problems.map((p) => p.message).join(' ') };
+    }
+
+    revalidatePath(`/brokers/${brokerSlug}`);
+    return {
+      ok: true,
+      deleteToken: withdrawalCode(res.id, res.deleteToken),
+      message: 'Published. It is live now, marked unverified — it reaches the score only after an editor checks it.',
+    };
+  } catch (err) {
+    console.error('[review] submit failed:', err);
+    return { ok: false, message: 'Could not publish that right now. Try again shortly.' };
+  }
+}
+
+export async function removeReview(_prev: ReviewResult | null, form: FormData): Promise<ReviewResult> {
+  const code = String(form.get('code') ?? '').trim();
+  const parsed = parseWithdrawalCode(code);
+
+  if (!parsed) return { ok: false, message: 'Paste the whole code you were given, including the number before the dot.' };
+
+  try {
+    const { db } = await getDb();
+    const done = await withdrawReview(db, parsed.id, parsed.token);
+    if (!done) {
+      // Deliberately the same answer either way: telling someone that a review
+      // exists but their token is wrong tells them something about a review
+      // that is not theirs.
+      return { ok: false, message: 'That link does not match a review we can withdraw.' };
+    }
+    // Which broker it belonged to is not in the code, and asking for it would
+    // make the reader prove something twice. The pages carry it within minutes.
+    revalidatePath('/brokers', 'layout');
+    return { ok: true, message: 'Withdrawn. It is off the page and counts towards nothing.' };
+  } catch (err) {
+    console.error('[review] withdraw failed:', err);
+    return { ok: false, message: 'Could not withdraw that right now. Try again shortly.' };
+  }
+}

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { and, eq } from 'drizzle-orm';
-import { getDb, schema, type Kind } from '@commentfx/db';
+import { getDb, schema, verifyReview, hideReview, type Kind } from '@commentfx/db';
 
 export interface RecordResult { ok: boolean; message: string }
 
@@ -77,4 +77,51 @@ export async function recordVerification(
     };
   }
   return { ok: true, message: 'Recorded.' };
+}
+
+/**
+ * Checking a review, or taking one down.
+ *
+ * Verifying is the only path by which a review reaches a score, so it takes a
+ * name: someone is accountable for having looked at the evidence. Hiding takes
+ * a reason for the same purpose — a moderation decision nobody has to justify
+ * is one nobody can be argued out of.
+ */
+export async function moderateReview(_prev: RecordResult | null, form: FormData): Promise<RecordResult> {
+  const id = Number(form.get('id'));
+  const brokerSlug = String(form.get('brokerSlug') ?? '').trim();
+  const action = String(form.get('action') ?? '');
+  const actor = String(form.get('actor') ?? '').trim();
+  const reason = String(form.get('reason') ?? '').trim();
+
+  if (!Number.isInteger(id)) return { ok: false, message: 'Missing review.' };
+  if (!actor) return { ok: false, message: 'Say who is making this call.' };
+
+  try {
+    const { db } = await getDb();
+
+    if (action === 'verify') {
+      await verifyReview(db, id, actor);
+      await db.insert(schema.auditLog).values({
+        kind: 'broker', slug: brokerSlug, field: `review:${id}`,
+        action: 'verified review', actor, after: 'verified',
+      });
+    } else if (action === 'hide') {
+      if (!reason) return { ok: false, message: 'A review is only taken down with a reason.' };
+      await hideReview(db, id, reason);
+      await db.insert(schema.auditLog).values({
+        kind: 'broker', slug: brokerSlug, field: `review:${id}`,
+        action: 'hid review', actor, after: reason,
+      });
+    } else {
+      return { ok: false, message: 'Unknown action.' };
+    }
+
+    revalidatePath('/admin');
+    revalidatePath(`/brokers/${brokerSlug}`);
+    return { ok: true, message: action === 'verify' ? 'Checked. It counts now.' : 'Taken down.' };
+  } catch (err) {
+    console.error('[admin] review moderation failed:', err);
+    return { ok: false, message: 'Could not record that. Try again.' };
+  }
 }

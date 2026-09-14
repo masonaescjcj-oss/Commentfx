@@ -1,4 +1,27 @@
-import { BROKERS, brokerBySlug, scoreBroker, effectiveCostPips, type Broker, type ScoreBreakdown } from '@commentfx/core';
+import {
+  BROKERS, brokerBySlug, scoreBroker, effectiveCostPips,
+  type Broker, type ScoreBreakdown, type ReviewSummaryStats,
+} from '@commentfx/core';
+
+/**
+ * Live verified-review counts, keyed by slug.
+ *
+ * The rule, so the two never drift: anything that shows a number takes this
+ * map; anything that only needs the set of slugs (the sitemap,
+ * generateStaticParams) does not, because review counts cannot change which
+ * brokers exist -- only where they sit.
+ */
+export type ReviewStats = Map<string, ReviewSummaryStats>;
+
+/** The record as scored: seed data with any live review counts folded in. */
+function withReviews(broker: Broker, stats?: ReviewStats): Broker {
+  const live = stats?.get(broker.slug);
+  if (!live) return broker;
+  return {
+    ...broker,
+    reviews: { verifiedCount: live.verified, verifiedAverage: live.verifiedAverage },
+  };
+}
 
 export interface RankedBroker {
   rank: number;
@@ -11,15 +34,16 @@ export interface RankedBroker {
  * home page, "best for" pages, the compare page — reads from here, so a broker
  * can never appear at a different rank in two places.
  */
-export function rankedBrokers(): RankedBroker[] {
+export function rankedBrokers(stats?: ReviewStats): RankedBroker[] {
   return BROKERS
+    .map((b) => withReviews(b, stats))
     .map((broker) => ({ broker, score: scoreBroker(broker) }))
     .sort((a, b) => b.score.total - a.score.total || a.broker.name.localeCompare(b.broker.name))
     .map((r, i) => ({ rank: i + 1, ...r }));
 }
 
-export function getRanked(slug: string): RankedBroker | undefined {
-  return rankedBrokers().find((r) => r.broker.slug === slug);
+export function getRanked(slug: string, stats?: ReviewStats): RankedBroker | undefined {
+  return rankedBrokers(stats).find((r) => r.broker.slug === slug);
 }
 
 export const getBroker = brokerBySlug;
@@ -100,8 +124,8 @@ export const BEST_CRITERIA: BestCriterion[] = [
 
 export const bestCriterion = (slug: string) => BEST_CRITERIA.find((c) => c.slug === slug);
 
-export function bestList(c: BestCriterion): RankedBroker[] {
-  return rankedBrokers()
+export function bestList(c: BestCriterion, stats?: ReviewStats): RankedBroker[] {
+  return rankedBrokers(stats)
     .filter((r) => c.rank(r.broker) !== null)
     .sort((a, b) => (c.rank(b.broker)! - c.rank(a.broker)!) || b.score.total - a.score.total)
     .map((r, i) => ({ ...r, rank: i + 1 }));
@@ -113,8 +137,8 @@ export function bestList(c: BestCriterion): RankedBroker[] {
 export const ALTERNATIVES = 3;
 
 /** The brokers a page suggests instead: the highest-ranked ones that are not it. */
-export function alternativesFor(slug: string): RankedBroker[] {
-  return rankedBrokers().filter((r) => r.broker.slug !== slug).slice(0, ALTERNATIVES);
+export function alternativesFor(slug: string, stats?: ReviewStats): RankedBroker[] {
+  return rankedBrokers(stats).filter((r) => r.broker.slug !== slug).slice(0, ALTERNATIVES);
 }
 
 /**

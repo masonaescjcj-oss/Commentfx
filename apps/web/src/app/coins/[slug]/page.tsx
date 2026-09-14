@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { coins, coin, fmtUsd, fmtPct } from '@/lib/market';
 import { rankedExchanges, rankedBrokers } from '@/lib/repo';
+import { reviewStats } from '@/lib/reviews';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
 import { Card, CardHead, Logo, Score, Tag } from '@/components/primitives';
 import { FactList } from '@/components/ranking';
@@ -46,7 +47,7 @@ export default async function CoinPage({ params }: { params: Promise<Params> }) 
 
   const up = (c.change24hPct ?? 0) >= 0;
   const exchanges = rankedExchanges().slice(0, 4);
-  const brokers = rankedBrokers().slice(0, 2);
+  const brokers = rankedBrokers(await reviewStats()).slice(0, 2);
   const trail = [
     { name: 'Home', path: '/' },
     { name: 'Coins', path: '/coins' },

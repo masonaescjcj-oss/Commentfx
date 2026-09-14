@@ -1,6 +1,7 @@
 import { RELEASES, scheduleNoun } from '@commentfx/core';
 import {
   rankedBrokers, rankedProps, rankedExchanges, BEST_CRITERIA, comparePairs, pairSlug, getBroker,
+  type ReviewStats,
 } from './repo';
 
 export interface SearchEntry {
@@ -22,10 +23,10 @@ export interface SearchEntry {
  * of everything we publish -- including the pages a reader would otherwise only
  * reach through three clicks of ranking tables.
  */
-export function searchIndex(): SearchEntry[] {
+export function searchIndex(stats?: ReviewStats): SearchEntry[] {
   const entries: SearchEntry[] = [];
 
-  for (const r of rankedBrokers()) {
+  for (const r of rankedBrokers(stats)) {
     const b = r.broker;
     entries.push({
       path: `/brokers/${b.slug}`,
@@ -98,6 +99,7 @@ export function searchIndex(): SearchEntry[] {
   entries.push(
     { path: '/calendar', title: 'Economic calendar', note: 'Release dates and rate decisions from the BLS, the Fed and the ECB', group: 'Site', terms: 'nfp cpi fomc ecb jobs inflation rates news', score: null },
     { path: '/status', title: 'Broker status', note: 'Withdrawal delays and outages reported in the last 24 hours', group: 'Site', terms: 'down outage withdrawal problem incident', score: null },
+    { path: '/reviews/withdraw', title: 'Withdraw a review', note: 'Take down a review you wrote, with the code you were given', group: 'Site', terms: 'delete remove my review takedown', score: null },
     { path: '/methodology', title: 'How we score', note: 'Every weight, every input, and what we refuse to score', group: 'Site', terms: 'method weights scoring transparency', score: null },
     { path: '/brokers', title: 'All brokers', note: 'The full broker ranking', group: 'Site', terms: 'forex directory list', score: null },
     { path: '/props', title: 'All prop firms', note: 'The full prop firm ranking', group: 'Site', terms: 'funded directory list', score: null },

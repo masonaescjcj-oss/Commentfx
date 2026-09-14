@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { effectiveCostPips, hours, leverage } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd } from '@/lib/seo';
 import { comparePairs, pairSlug, parsePair, getRanked, type RankedBroker } from '@/lib/repo';
+import { reviewStats } from '@/lib/reviews';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
 import { Card, Logo, Score } from '@/components/primitives';
 
@@ -38,7 +39,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const { pair } = await params;
   const parsed = parsePair(pair);
   if (!parsed) return {};
-  const [a, b] = [getRanked(parsed[0]), getRanked(parsed[1])];
+  const stats = await reviewStats();
+  const [a, b] = [getRanked(parsed[0], stats), getRanked(parsed[1], stats)];
   if (!a || !b) return {};
   return pageMetadata({
     title: `${a.broker.name} vs ${b.broker.name} — which is the better broker?`,
@@ -53,8 +55,9 @@ export default async function ComparePage({ params }: { params: Promise<Params> 
   const { pair } = await params;
   const parsed = parsePair(pair);
   if (!parsed) notFound();
-  const a = getRanked(parsed[0]);
-  const b = getRanked(parsed[1]);
+  const stats = await reviewStats();
+  const a = getRanked(parsed[0], stats);
+  const b = getRanked(parsed[1], stats);
   if (!a || !b) notFound();
 
   const table = rows(a, b);

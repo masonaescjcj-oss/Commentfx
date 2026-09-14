@@ -4,6 +4,7 @@ import { WEIGHTS, LABELS, type ScoreKey } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, itemListLd, faqLd } from '@/lib/seo';
 import { rankedBrokers } from '@/lib/repo';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
+import { reviewStats } from '@/lib/reviews';
 import { Card, CardHead, Meter } from '@/components/primitives';
 import { BrokerRow } from '@/components/BrokerRow';
 
@@ -30,8 +31,9 @@ const FAQ = [
   },
 ];
 
-export default function BrokersPage() {
-  const list = rankedBrokers();
+export default async function BrokersPage() {
+  const stats = await reviewStats();
+  const list = rankedBrokers(stats);
   const trail = [{ name: 'Home', path: '/' }, { name: 'Brokers', path: '/brokers' }];
 
   return (

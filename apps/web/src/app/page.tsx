@@ -9,6 +9,7 @@ import { BrokerRow } from '@/components/BrokerRow';
 import { RankRow } from '@/components/ranking';
 import { describeDrawdown, volumeBand, utcDay, releaseForTitle } from '@commentfx/core';
 import { calendarData, upcomingHigh } from '@/lib/calendar';
+import { reviewStats } from '@/lib/reviews';
 
 export const metadata: Metadata = pageMetadata({
   title: `${SITE.name} — ${SITE.tagline}`,
@@ -19,7 +20,8 @@ export const metadata: Metadata = pageMetadata({
 export const revalidate = 3600;
 
 export default async function HomePage() {
-  const top = rankedBrokers().slice(0, 5);
+  const stats = await reviewStats();
+  const top = rankedBrokers(stats).slice(0, 5);
   const topProps = rankedProps().slice(0, 3);
   const topExchanges = rankedExchanges().slice(0, 3);
 

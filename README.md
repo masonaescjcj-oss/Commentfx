@@ -79,6 +79,43 @@ time: a URL that appears and disappears with an upstream fetch is a URL nobody
 can link to. We publish the dates, never the figures — those are authoritative
 at the publisher and nowhere else.
 
+## Reviews
+
+Reviews are the most attacked surface a ranking site has: the broker wants good
+ones, its competitors want bad ones, and from the server's side both look
+exactly like a real customer. So publishing and counting are separate acts.
+
+A review appears the moment it is written, labelled unverified, and reaches the
+10% reviews component only when an editor has checked the evidence behind it.
+Buying a hundred reviews buys a hundred unverified paragraphs and moves nothing
+— that is asserted by a test, not just intended. Below five verified reviews the
+component is excluded rather than scored low, like every other component.
+
+No account, no email, no address stored: authorship is the same salted,
+daily-rotated digest the incident reports use, and the unique index on
+(broker, topic, author) is the rate limit. Someone with a genuine second
+experience can write it tomorrow; a flood cannot happen today.
+
+Because there are no accounts, the only honest way to let an author take a
+review down is a secret handed over once at submission, stored as a digest. It
+is said plainly on the form that losing it means losing the ability to withdraw,
+and `/reviews/withdraw` is where it is used. A site that could reconstruct that
+code would not be making a promise, it would be making a claim.
+
+The evidence a reviewer offers an editor privately — a ticket number, a transfer
+date — is never published. Publishing it would expose exactly the people acting
+in good faith.
+
+One structural rule keeps the numbers honest across the site: **anything that
+shows a score reads the live review counts; anything that only needs the set of
+slugs does not.** That includes `generateMetadata`, because a title advertising
+a score the page does not show is the kind of drift nobody notices for weeks.
+
+The `AggregateRating` in the structured data is the review average out of five,
+never our composite out of ten. Those measure different things, and publishing
+the composite under a count of reviews would claim five people awarded a number
+none of them chose.
+
 ## Verification
 
 Nothing on this site claims to be checked unless a person checked it and

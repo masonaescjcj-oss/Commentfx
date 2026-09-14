@@ -266,3 +266,58 @@ export const registerRuns = pgTable('register_runs', {
   reason: text('reason'),
   ranAt: timestamp('ran_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [index('register_runs_code_idx').on(t.regulatorCode, t.ranAt)]);
+
+/* ──────────────────────────── reviews ──────────────────────────────── */
+
+export const reviewTopic = pgEnum('review_topic', [
+  'withdrawals', 'execution', 'costs', 'support', 'platform', 'account-opening',
+]);
+
+/**
+ * A customer's account of dealing with a broker.
+ *
+ * Reviews are the most attacked surface a ranking site has: the broker wants
+ * good ones, its competitors want bad ones, and from the server's side both
+ * look exactly like a real customer. Four things follow, and all four are
+ * enforced here rather than left to the UI:
+ *
+ *   1. **Publishing and counting are different acts.** A review appears as soon
+ *      as it is written, labelled unverified. It reaches the score only when
+ *      `verifiedAt` is set, which happens when a person looked at the evidence.
+ *      Buying a hundred reviews buys a hundred unverified paragraphs.
+ *   2. **No identity is stored.** `authorHash` is the same salted, daily-rotated
+ *      digest the incident reports use. It cannot be reversed to an address and
+ *      cannot follow anyone across days.
+ *   3. **The author can withdraw what they wrote.** Without accounts the only
+ *      honest way is a secret handed over once at submission, stored here as a
+ *      digest. Losing it means losing the ability to delete -- which is said
+ *      plainly on the form, before anyone types anything.
+ *   4. **`evidenceNote` is never published.** It is what the reviewer offers an
+ *      editor privately -- a ticket number, a date, a screenshot's contents --
+ *      and publishing it would expose exactly the people acting in good faith.
+ */
+export const reviews = pgTable('reviews', {
+  id: serial('id').primaryKey(),
+  brokerSlug: text('broker_slug').notNull().references(() => brokers.slug, { onDelete: 'cascade' }),
+  rating: integer('rating').notNull(),
+  topic: reviewTopic('topic').notNull(),
+  body: text('body').notNull(),
+  /** Salted, daily-rotated digest of the author. Never an address. */
+  authorHash: text('author_hash').notNull(),
+  /** sha256 of the one-time secret shown to the author. Never the secret. */
+  deleteTokenHash: text('delete_token_hash').notNull(),
+  /** Private to editors. What the reviewer offers as proof, if anything. */
+  evidenceNote: text('evidence_note'),
+  /** Set only by a person, and only this makes a review count. */
+  verifiedAt: timestamp('verified_at', { withTimezone: true }),
+  verifiedBy: text('verified_by'),
+  /** Withdrawn by its author, or removed by an editor. Kept, never deleted. */
+  hidden: boolean('hidden').notNull().default(false),
+  hiddenReason: text('hidden_reason'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('reviews_broker_idx').on(t.brokerSlug, t.createdAt),
+  // One author, one broker, one topic, per rotation of the salt. Someone with
+  // a genuine second experience can write it tomorrow; a flood cannot.
+  uniqueIndex('reviews_dedupe_idx').on(t.brokerSlug, t.topic, t.authorHash),
+]);

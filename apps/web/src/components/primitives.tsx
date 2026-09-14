@@ -1,11 +1,15 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-export function Card({ children, className = '', as: As = 'div' }: {
+export function Card({ children, className = '', as: As = 'div', id }: {
   children: ReactNode; className?: string; as?: 'div' | 'section' | 'article';
+  /** Set only where the card is a link target, so #reviews lands on it. */
+  id?: string;
 }) {
   return (
-    <As className={`bg-card rounded-[16px] shadow-[var(--shadow-card)] ${className}`}>{children}</As>
+    <As id={id} className={`bg-card rounded-[16px] shadow-[var(--shadow-card)] ${className}`}>
+      {children}
+    </As>
   );
 }
 
