@@ -141,14 +141,30 @@ jobs:
               .addRaw(output)
               .write();
 
-            if (!problems) return;
-
             const title = 'Licence findings from the regulator registers';
             const { data: open } = await github.rest.issues.listForRepo({
               owner: context.repo.owner, repo: context.repo.repo,
               state: 'open', labels: 'registers',
             });
             const existing = open.find((i) => i.title === title);
+
+            // Closing matters as much as opening. A finding that gets resolved
+            // and leaves its issue open forever trains everyone to ignore the
+            // label, and an ignored issue is the same as no issue.
+            if (!problems) {
+              if (existing) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  issue_number: existing.number,
+                  body: `Every licence matches its register again as of ${new Date().toISOString()}.\n\n\`\`\`\n${output.trim()}\n\`\`\``,
+                });
+                await github.rest.issues.update({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  issue_number: existing.number, state: 'closed',
+                });
+              }
+              return;
+            }
 
             // The findings are the same every day until someone acts on one, so
             // this replaces the issue body rather than commenting daily. An
