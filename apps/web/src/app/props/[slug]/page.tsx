@@ -5,6 +5,7 @@ import { describeDrawdown } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { rankedProps, getRankedProp } from '@/lib/repo';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
+import { OfficialSite } from '@/components/OfficialSite';
 import { Card, CardHead, Logo, Score, Tag } from '@/components/primitives';
 import { coverage } from '@/lib/verify';
 import { VerificationPanel } from '@/components/VerificationPanel';
@@ -131,6 +132,10 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
             ['Markets', f.markets.join(', ')],
             ['Platforms', f.platforms.join(', ')],
           ]} />
+        </Card>
+
+        <Card className="p-4" as="section">
+          <OfficialSite name={f.name} url={f.website} />
         </Card>
 
         <Card className="p-4" as="section">

@@ -3,8 +3,10 @@
 import { useActionState } from 'react';
 import { recordVerification, type RecordResult } from './actions';
 
-export function VerifyForm({ kind, slug, field, current, lastValue }: {
+export function VerifyForm({ kind, slug, field, current, lastValue, suggestedSource }: {
   kind: string; slug: string; field: string; current: string; lastValue: string | null;
+  /** Prefilled so the checker edits a URL rather than typing one from memory. */
+  suggestedSource: string;
 }) {
   const [state, action, pending] = useActionState<RecordResult | null, FormData>(recordVerification, null);
 
@@ -36,11 +38,15 @@ export function VerifyForm({ kind, slug, field, current, lastValue }: {
       </div>
 
       <label>
-        <span className="block text-[11px] text-ink-3 mb-1">Source URL (https, the page you actually read)</span>
+        <span className="block text-[11px] text-ink-3 mb-1">
+          Source URL — the page you actually read. The suggestion is a starting
+          point, not a check.
+        </span>
         <input
           name="sourceUrl"
           type="url"
           required
+          defaultValue={suggestedSource}
           placeholder="https://register.fca.org.uk/..."
           className="w-full bg-card-2 border border-line rounded-lg px-3 py-2 text-[13px]"
         />

@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test": "node --test --experimental-strip-types \"src/**/*.test.ts\"",
     "probe": "node --experimental-strip-types src/probe.ts",
-    "registers:report": "node --experimental-strip-types src/registers/report.ts"
+    "registers:report": "node --experimental-strip-types src/registers/report.ts",
+    "sites:report": "node --experimental-strip-types src/sites-report.ts"
   },
   "dependencies": {
     "@commentfx/core": "workspace:*"

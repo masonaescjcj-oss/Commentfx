@@ -34,6 +34,8 @@ export interface PropFirm {
   name: string;
   founded: number;
   headquarters: string;
+  /** The company's own site — where an editor checks the figures on this record. */
+  website: string;
   markets: Array<'forex' | 'futures' | 'crypto' | 'indices' | 'stocks'>;
   rules: PropRules;
   payout: PropPayout;

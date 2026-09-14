@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { and, desc, eq } from 'drizzle-orm';
 import { getDb, schema, coverageFor, type Kind } from '@commentfx/db';
 import { getBroker, getProp, getExchange } from '@/lib/repo';
+import { whereToCheck } from '@/lib/whereToCheck';
 import { Card, CardHead, Tag, Meter } from '@/components/primitives';
 import { VerifyForm } from '../../VerifyForm';
 
@@ -80,7 +81,9 @@ export default async function AdminRecordPage({ params }: { params: Promise<{ ki
         <div className="mt-2"><Meter value={cov.ratio * 100} max={100} tone={cov.ratio >= 0.5 ? 'brass' : 'warn'} /></div>
       </header>
 
-      {cov.fields.map((f) => (
+      {cov.fields.map((f) => {
+        const sources = whereToCheck(kind, slug, f.field);
+        return (
         <Card key={f.field} className="p-4" as="section">
           <div className="flex items-center gap-2">
             <h2 className="text-[13.5px] font-bold flex-1">{LABEL[f.field] ?? f.field}</h2>
@@ -100,15 +103,29 @@ export default async function AdminRecordPage({ params }: { params: Promise<{ ki
             </p>
           )}
 
+          {sources.length > 0 && (
+            <p className="text-[11.5px] text-ink-3 mt-2">
+              Check it at:{' '}
+              {sources.map((s, i) => (
+                <span key={s.url}>
+                  {i > 0 && ' · '}
+                  <a href={s.url} target="_blank" rel="nofollow noopener" className="text-brass">{s.label}</a>
+                </span>
+              ))}
+            </p>
+          )}
+
           <VerifyForm
             kind={kind}
             slug={slug}
             field={f.field}
             current={currentValue(kind, slug, f.field)}
             lastValue={null}
+            suggestedSource={sources[0]?.url ?? ''}
           />
         </Card>
-      ))}
+        );
+      })}
 
       <Card className="p-4" as="section">
         <CardHead title="History" aside={<span className="text-[11px] text-ink-3">append-only</span>} />

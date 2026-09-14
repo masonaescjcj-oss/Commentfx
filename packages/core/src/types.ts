@@ -72,6 +72,12 @@ export interface Broker {
   name: string;
   founded: number;
   headquarters: string;    // ISO-3166 alpha-2
+  /**
+   * The company's own site — where an editor goes to check the published
+   * figures on this record. Checked for reachability by `check-sites`, never
+   * scraped: these numbers are read by a person.
+   */
+  website: string;
   entities: BrokerEntity[];
   cost: TradingCost;
   payments: Payments;

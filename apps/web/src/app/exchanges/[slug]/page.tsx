@@ -5,6 +5,7 @@ import { volumeBand } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { rankedExchanges, getRankedExchange } from '@/lib/repo';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
+import { OfficialSite } from '@/components/OfficialSite';
 import { Card, CardHead, Logo, Score, Tag } from '@/components/primitives';
 import { coverage } from '@/lib/verify';
 import { VerificationPanel } from '@/components/VerificationPanel';
@@ -130,6 +131,10 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
             much evidence exists — none of it makes holding balances on an exchange the
             same as holding your own keys.
           </p>
+        </Card>
+
+        <Card className="p-4" as="section">
+          <OfficialSite name={e.name} url={e.website} />
         </Card>
 
         <Card className="p-4" as="section">

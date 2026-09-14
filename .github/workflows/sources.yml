@@ -173,3 +173,68 @@ jobs:
                 title, body, labels: ['registers'],
               });
             }
+
+  sites:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Check every company site we link to
+        id: sites
+        continue-on-error: true
+        # See the note on the probe step for the shell and the bare node call.
+        shell: bash
+        run: node --experimental-strip-types packages/ingest/src/sites-report.ts | tee sites.txt
+
+      - name: Report dead links
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const output = fs.readFileSync('sites.txt', 'utf8');
+            const dead = '${{ steps.sites.outcome }}' === 'failure';
+
+            await core.summary
+              .addHeading(dead ? 'A company site we link to has gone' : 'Every company site still resolves')
+              .addCodeBlock(output)
+              .write();
+
+            if (!dead) return;
+
+            const title = 'A company site we link to has gone';
+            const { data: open } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'links',
+            });
+            const existing = open.find((i) => i.title === title);
+
+            const body = [
+              'A site on one of our records no longer answers. A dead company site is',
+              'usually a rebrand or an exit — either way the record behind it is stale and',
+              'needs a person, not an automatic edit.',
+              '',
+              '```',
+              output.trim(),
+              '```',
+              '',
+              `Last checked: ${new Date().toISOString()}`,
+            ].join('\n');
+
+            if (existing) {
+              await github.rest.issues.update({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: existing.number, body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title, body, labels: ['links'],
+              });
+            }

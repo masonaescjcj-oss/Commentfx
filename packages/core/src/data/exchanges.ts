@@ -9,6 +9,7 @@ import type { Exchange } from '../exchanges.ts';
 export const EXCHANGES: Exchange[] = [
   {
     slug: 'coinbase', name: 'Coinbase', founded: 2012, headquarters: 'US', kind: 'centralised',
+    website: 'https://www.coinbase.com/',
     takerFeePct: 0.6, makerFeePct: 0.4, spotVolumeUsd: 3.1e9,
     reserves: { proofOfReserves: false, thirdPartyAudit: true, publiclyListed: true },
     security: { lastBreachYear: null, insuranceFund: true, madeUsersWhole: null },
@@ -18,6 +19,7 @@ export const EXCHANGES: Exchange[] = [
   },
   {
     slug: 'kraken', name: 'Kraken', founded: 2011, headquarters: 'US', kind: 'centralised',
+    website: 'https://www.kraken.com/',
     takerFeePct: 0.26, makerFeePct: 0.16, spotVolumeUsd: 1.4e9,
     reserves: { proofOfReserves: true, thirdPartyAudit: true, publiclyListed: false },
     security: { lastBreachYear: null, insuranceFund: false, madeUsersWhole: null },
@@ -27,6 +29,7 @@ export const EXCHANGES: Exchange[] = [
   },
   {
     slug: 'binance', name: 'Binance', founded: 2017, headquarters: 'AE', kind: 'centralised',
+    website: 'https://www.binance.com/',
     takerFeePct: 0.1, makerFeePct: 0.1, spotVolumeUsd: 4.1e10,
     reserves: { proofOfReserves: true, thirdPartyAudit: false, publiclyListed: false },
     security: { lastBreachYear: 2019, insuranceFund: true, madeUsersWhole: true },
@@ -36,6 +39,7 @@ export const EXCHANGES: Exchange[] = [
   },
   {
     slug: 'okx', name: 'OKX', founded: 2017, headquarters: 'SC', kind: 'centralised',
+    website: 'https://www.okx.com/',
     takerFeePct: 0.08, makerFeePct: 0.08, spotVolumeUsd: 9.4e9,
     reserves: { proofOfReserves: true, thirdPartyAudit: false, publiclyListed: false },
     security: { lastBreachYear: null, insuranceFund: true, madeUsersWhole: null },
@@ -45,6 +49,7 @@ export const EXCHANGES: Exchange[] = [
   },
   {
     slug: 'bybit', name: 'Bybit', founded: 2018, headquarters: 'AE', kind: 'centralised',
+    website: 'https://www.bybit.com/',
     takerFeePct: 0.1, makerFeePct: 0.1, spotVolumeUsd: 1.28e10,
     reserves: { proofOfReserves: true, thirdPartyAudit: false, publiclyListed: false },
     security: { lastBreachYear: 2025, insuranceFund: true, madeUsersWhole: true },
@@ -54,6 +59,7 @@ export const EXCHANGES: Exchange[] = [
   },
   {
     slug: 'bitget', name: 'Bitget', founded: 2018, headquarters: 'SC', kind: 'centralised',
+    website: 'https://www.bitget.com/',
     takerFeePct: 0.1, makerFeePct: 0.1, spotVolumeUsd: 5.2e9,
     reserves: { proofOfReserves: true, thirdPartyAudit: false, publiclyListed: false },
     security: { lastBreachYear: null, insuranceFund: true, madeUsersWhole: null },
@@ -63,6 +69,7 @@ export const EXCHANGES: Exchange[] = [
   },
   {
     slug: 'kucoin', name: 'KuCoin', founded: 2017, headquarters: 'SC', kind: 'centralised',
+    website: 'https://www.kucoin.com/',
     takerFeePct: 0.1, makerFeePct: 0.1, spotVolumeUsd: 1.9e9,
     reserves: { proofOfReserves: true, thirdPartyAudit: false, publiclyListed: false },
     security: { lastBreachYear: 2020, insuranceFund: true, madeUsersWhole: true },
@@ -72,6 +79,7 @@ export const EXCHANGES: Exchange[] = [
   },
   {
     slug: 'mexc', name: 'MEXC', founded: 2018, headquarters: 'SC', kind: 'centralised',
+    website: 'https://www.mexc.com/',
     takerFeePct: 0.02, makerFeePct: 0, spotVolumeUsd: 4.6e9,
     reserves: { proofOfReserves: true, thirdPartyAudit: false, publiclyListed: false },
     security: { lastBreachYear: null, insuranceFund: false, madeUsersWhole: null },

@@ -90,6 +90,21 @@ by field, with a link to each source.
 A verification expires after 90 days. Expired and never-checked are shown as
 different states, because they are different facts.
 
+The slowest part of checking a record is not reading the number, it is finding
+the page that carries it, so every field in the admin carries a link to where it
+is published -- the regulator's register for licence numbers, the company's own
+site for everything else -- and the source box comes prefilled with it. Prefilled,
+and labelled as a starting point rather than a check, because the whole value of
+that field is that a person opened the page.
+
+`sites:report` keeps those links honest, and makes the same distinction the
+register readers do: a site that is **gone** is a fact about the company, a site
+that merely **refuses us** is a fact about our IP address. Trading venues answer
+datacentres with 403 all day while serving every real visitor, so only 404, 410
+and a name that does not resolve count as broken. On its first run it found
+octafx.com answering 410 Gone -- the company rebranded to Octa -- and two records
+whose stored address redirects to a different company name.
+
 The admin that records these **fails closed**: with no `ADMIN_TOKEN` configured,
 every `/admin` route 404s, so an accidental deploy exposes nothing. The token is
 a deliberate stopgap and not an auth system — it has no per-user identity and no
@@ -119,10 +134,11 @@ silence is turned into a notification:
 ```sh
 pnpm --filter @commentfx/ingest probe             # every upstream, exit 1 if a parser broke
 pnpm --filter @commentfx/ingest registers:report  # licence findings, no database, exit 2 if any
-pnpm --filter @commentfx/web check-registers      # the same check, written to the database
+pnpm --filter @commentfx/ingest sites:report      # company sites, exit 2 if one has gone
+pnpm --filter @commentfx/web check-registers      # the register check, written to the database
 ```
 
-`.github/workflows/sources.yml` runs the first two daily. A broken parser opens
+`.github/workflows/sources.yml` runs the first three daily. A broken parser opens
 an issue and closes it when the source recovers; licence findings update one
 issue in place rather than commenting daily, because an issue that grows a
 duplicate comment every morning gets muted, and a muted issue is the same as no

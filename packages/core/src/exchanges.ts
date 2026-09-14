@@ -5,6 +5,8 @@ export interface Exchange {
   name: string;
   founded: number;
   headquarters: string;
+  /** The company's own site — where an editor checks the figures on this record. */
+  website: string;
   kind: 'centralised' | 'decentralised';
   /** Taker fee at the lowest tier, as a percentage. */
   takerFeePct: number;

@@ -9,6 +9,7 @@ import type { PropFirm } from '../props.ts';
 export const PROPS: PropFirm[] = [
   {
     slug: 'ftmo', name: 'FTMO', founded: 2015, headquarters: 'CZ',
+    website: 'https://ftmo.com/',
     markets: ['forex', 'indices', 'crypto', 'stocks'],
     rules: { steps: 2, profitTargetPct: 10, dailyDrawdownPct: 5, maxDrawdownPct: 10, drawdownType: 'static', consistencyRule: false, timeLimitDays: null, newsTrading: true, weekendHolding: true, minTradingDays: 4 },
     payout: { splitPct: 90, frequencyDays: 14, firstPayoutDays: 14, verifiedProofs: 0 },
@@ -19,6 +20,7 @@ export const PROPS: PropFirm[] = [
   },
   {
     slug: 'fundingpips', name: 'FundingPips', founded: 2022, headquarters: 'AE',
+    website: 'https://fundingpips.com/',
     markets: ['forex', 'indices', 'crypto'],
     rules: { steps: 2, profitTargetPct: 8, dailyDrawdownPct: 4, maxDrawdownPct: 8, drawdownType: 'static', consistencyRule: false, timeLimitDays: null, newsTrading: true, weekendHolding: false, minTradingDays: 3 },
     payout: { splitPct: 90, frequencyDays: 14, firstPayoutDays: 14, verifiedProofs: 0 },
@@ -29,6 +31,7 @@ export const PROPS: PropFirm[] = [
   },
   {
     slug: 'fundednext', name: 'FundedNext', founded: 2022, headquarters: 'AE',
+    website: 'https://fundednext.com/',
     markets: ['forex', 'indices', 'crypto', 'stocks'],
     rules: { steps: 2, profitTargetPct: 8, dailyDrawdownPct: 5, maxDrawdownPct: 10, drawdownType: 'static', consistencyRule: true, timeLimitDays: null, newsTrading: true, weekendHolding: true, minTradingDays: 5 },
     payout: { splitPct: 95, frequencyDays: 14, firstPayoutDays: 21, verifiedProofs: 0 },
@@ -39,6 +42,7 @@ export const PROPS: PropFirm[] = [
   },
   {
     slug: 'alpha-capital-group', name: 'Alpha Capital Group', founded: 2021, headquarters: 'GB',
+    website: 'https://alphacapitalgroup.uk/',
     markets: ['forex', 'indices', 'crypto'],
     rules: { steps: 2, profitTargetPct: 8, dailyDrawdownPct: 4, maxDrawdownPct: 8, drawdownType: 'static', consistencyRule: false, timeLimitDays: null, newsTrading: true, weekendHolding: true, minTradingDays: 0 },
     payout: { splitPct: 90, frequencyDays: 14, firstPayoutDays: 14, verifiedProofs: 0 },
@@ -49,6 +53,7 @@ export const PROPS: PropFirm[] = [
   },
   {
     slug: 'topstep', name: 'Topstep', founded: 2012, headquarters: 'US',
+    website: 'https://www.topstep.com/',
     markets: ['futures'],
     rules: { steps: 1, profitTargetPct: 6, dailyDrawdownPct: 2, maxDrawdownPct: 4, drawdownType: 'eod-trailing', consistencyRule: true, timeLimitDays: null, newsTrading: true, weekendHolding: false, minTradingDays: 2 },
     payout: { splitPct: 90, frequencyDays: 7, firstPayoutDays: 7, verifiedProofs: 0 },
@@ -59,6 +64,7 @@ export const PROPS: PropFirm[] = [
   },
   {
     slug: 'e8-markets', name: 'E8 Markets', founded: 2021, headquarters: 'US',
+    website: 'https://e8markets.com/',
     markets: ['forex', 'indices', 'crypto'],
     rules: { steps: 2, profitTargetPct: 8, dailyDrawdownPct: 5, maxDrawdownPct: 8, drawdownType: 'eod-trailing', consistencyRule: false, timeLimitDays: null, newsTrading: true, weekendHolding: true, minTradingDays: 0 },
     payout: { splitPct: 80, frequencyDays: 14, firstPayoutDays: 14, verifiedProofs: 0 },
@@ -69,6 +75,7 @@ export const PROPS: PropFirm[] = [
   },
   {
     slug: 'the5ers', name: 'The5%ers', founded: 2016, headquarters: 'IL',
+    website: 'https://the5ers.com/',
     markets: ['forex', 'indices'],
     rules: { steps: 2, profitTargetPct: 6, dailyDrawdownPct: 4, maxDrawdownPct: 6, drawdownType: 'static', consistencyRule: true, timeLimitDays: null, newsTrading: false, weekendHolding: true, minTradingDays: 3 },
     payout: { splitPct: 100, frequencyDays: 14, firstPayoutDays: 14, verifiedProofs: 0 },
@@ -79,6 +86,7 @@ export const PROPS: PropFirm[] = [
   },
   {
     slug: 'breakout', name: 'Breakout', founded: 2023, headquarters: 'AE',
+    website: 'https://breakoutprop.com/',
     markets: ['crypto'],
     rules: { steps: 1, profitTargetPct: 10, dailyDrawdownPct: 6, maxDrawdownPct: 12, drawdownType: 'intraday-trailing', consistencyRule: false, timeLimitDays: null, newsTrading: true, weekendHolding: true, minTradingDays: 0 },
     payout: { splitPct: 80, frequencyDays: 14, firstPayoutDays: 14, verifiedProofs: 0 },

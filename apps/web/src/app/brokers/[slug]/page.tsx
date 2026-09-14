@@ -10,6 +10,7 @@ import { registerChecksFor } from '@/lib/registers';
 import { StatusBlock } from '@/components/StatusBlock';
 import { VerificationPanel } from '@/components/VerificationPanel';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
+import { OfficialSite } from '@/components/OfficialSite';
 import { Card, CardHead, Logo, Score, Tag, Meter } from '@/components/primitives';
 import { EntityMap } from '@/components/EntityMap';
 import { LicenceList } from '@/components/LicenceList';
@@ -163,7 +164,11 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
         </Card>
 
         <Card className="p-4" as="section">
-          <CardHead title="Costs and terms" />
+          <Card className="p-4" as="section">
+          <OfficialSite name={b.name} url={b.website} />
+        </Card>
+
+        <CardHead title="Costs and terms" />
           <dl>
             {[
               ['EUR/USD spread', `${b.cost.eurusdSpread.toFixed(1)} pips`],
