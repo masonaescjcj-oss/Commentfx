@@ -16,7 +16,22 @@ export interface DbHandle {
   close: () => Promise<void>;
 }
 
-let cached: Promise<DbHandle> | null = null;
+/**
+ * The handle is kept on globalThis, not in a module variable.
+ *
+ * This is not the usual hot-reload workaround. A bundler splits the server
+ * into chunks, and a module-level `let` is per chunk — so the chunk holding a
+ * server action and the chunk holding a page each built their own handle. With
+ * real Postgres that is two connection pools and nobody notices. With a
+ * file-backed PGlite it is two embedded databases over one directory, and they
+ * cannot see each other's writes: a review was published, the row was really
+ * there, and every page — including a force-dynamic one — rendered as though
+ * nothing had been written. Days of "revalidation is flaky" were this.
+ */
+const HANDLE = Symbol.for('commentfx.db.handle');
+
+interface GlobalWithDb { [HANDLE]?: Promise<DbHandle> }
+const globalForDb = globalThis as unknown as GlobalWithDb;
 
 /**
  * One schema, two backends. With DATABASE_URL set this is real Postgres; with
@@ -95,8 +110,8 @@ export async function applyMigrations(client: MigrationClient) {
 }
 
 export function getDb(): Promise<DbHandle> {
-  if (!cached) cached = makeDb();
-  return cached;
+  globalForDb[HANDLE] ??= makeDb();
+  return globalForDb[HANDLE];
 }
 
 /** Test helper: a fresh in-memory database per call, never cached. */

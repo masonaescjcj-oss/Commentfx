@@ -89,6 +89,28 @@ Run the readers with `pnpm --filter @commentfx/web check-registers` (needs
 `DATABASE_URL` or `PGLITE_DIR`). It exits 2 when something needs a human.
 
 
+## One handle, on globalThis
+
+`getDb()` keeps its handle on `globalThis`, not in a module-level `let`. That is
+not the usual hot-reload workaround — it is load-bearing.
+
+A bundler splits the server into chunks, and a module-level variable is per
+chunk. The chunk holding a server action and the chunk holding a page each
+built their own handle. Against real Postgres that is two connection pools and
+nobody notices. Against a file-backed PGlite it is **two embedded databases over
+one directory**, and they cannot see each other's writes.
+
+What that looked like from outside: a reader publishes a review, is told it is
+live, and it never appears — not on the broker page, not on the site feed, not
+even on `/admin`, which is force-dynamic and re-renders every request. The row
+was really in the database the whole time. Measured after the fix, the same
+review is on both pages on the **first** request.
+
+It cost a long detour into Next's revalidation, which was innocent. The lesson
+is cheap to state and was expensive to learn: when a write is invisible to a
+read, check that they are talking to the same database before blaming the cache
+in front of it.
+
 ## Two ways to break a file-backed PGlite
 
 Both were hit while driving the real site, and both are dev-only — production

@@ -25,10 +25,10 @@ const check = (label, ok, detail = '') => {
 };
 
 /**
- * Revalidation is not instant and is not meant to be: a purge marks the entry
- * stale, the next request serves the stale copy and triggers the rebuild, and
- * the one after that is fresh. A reader who reloads sees it. A check that
- * looks once does not, which is a race in the check rather than a bug.
+ * A published review reaches its pages on the very next request. The retries
+ * below are slack for a slow machine, not a race being papered over — when
+ * this looked flaky it was not revalidation at all, it was two database
+ * handles (see the note on getDb).
  */
 async function settlesTo(page, path, text, present, tries = 20) {
   for (let i = 0; i < tries; i++) {
@@ -44,11 +44,11 @@ const browser = await chromium.launch({ executablePath: process.env.SMOKE_CHROMI
 const page = await (await browser.newContext({ viewport: { width: 390, height: 900 } })).newPage();
 page.on('pageerror', (e) => check('no uncaught page errors', false, String(e).split('\n')[0]));
 
-// A unique topic per run, because one author may write once per company per
-// topic per day and this script is its own author.
-const TOPIC = ['withdrawals', 'execution', 'costs', 'support', 'platform', 'account-opening'][
-  Math.floor(Math.random() * 6)
-];
+// One author may write once per company per topic per day, and this script is
+// its own author, so a re-run finds its earlier topics taken. Working through
+// them until one is free keeps the run deterministic whatever the database
+// already holds -- and exercises the duplicate refusal on the way.
+const TOPICS = ['withdrawals', 'execution', 'costs', 'support', 'platform', 'account-opening'];
 const MARK = `SMOKE-${Date.now()}`;
 const BODY = `${MARK} Funded by card and withdrew two weeks later. The money arrived inside the window the broker publishes and nothing extra was asked for.`;
 
@@ -56,19 +56,26 @@ await page.goto(`${BASE}/brokers/${SLUG}`, { waitUntil: 'domcontentloaded' });
 await page.waitForTimeout(800);
 check('the review form is on the broker page', await page.locator('textarea[name="body"]').count() > 0);
 
-await page.getByRole('button', { name: '4 out of 5' }).click();
-await page.locator('select[name="topic"]').selectOption(TOPIC);
-await page.locator('textarea[name="body"]').fill(BODY);
-await page.getByRole('button', { name: /Publish review/ }).click();
-
 let code = null;
-try {
-  await page.waitForSelector('code', { timeout: 15_000 });
-  code = (await page.locator('code').first().innerText()).trim();
-} catch {
-  const msg = await page.locator('[role="status"]').first().innerText().catch(() => '(none)');
-  check('publishing a review succeeds', false, msg.trim());
+let lastMessage = '(never submitted)';
+for (const topic of TOPICS) {
+  await page.goto(`${BASE}/brokers/${SLUG}`, { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(600);
+  await page.getByRole('button', { name: '4 out of 5' }).click();
+  await page.locator('select[name="topic"]').selectOption(topic);
+  await page.locator('textarea[name="body"]').fill(BODY);
+  await page.getByRole('button', { name: /Publish review/ }).click();
+
+  try {
+    await page.waitForSelector('code', { timeout: 12_000 });
+    code = (await page.locator('code').first().innerText()).trim();
+    break;
+  } catch {
+    lastMessage = (await page.locator('[role="status"]').first().innerText().catch(() => '(none)')).trim();
+    if (!/already written/i.test(lastMessage)) break;   // a real failure, not a taken topic
+  }
 }
+if (!code) check('publishing a review succeeds', false, lastMessage);
 
 if (code) {
   check('publishing a review returns a withdrawal code', /^\d+\./.test(code));

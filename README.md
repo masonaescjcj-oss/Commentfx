@@ -228,6 +228,27 @@ The audit is also what showed the skip link works: first Tab lands on it at
 122×39, Enter moves focus to `#main`. Worth checking rather than assuming, since
 `sr-only` renders it 1×1 until focused and it is easy to mistake that for a bug.
 
+## Writing flows
+
+`pnpm --filter @commentfx/web smoke` drives publishing a review, seeing it
+appear, refusing a wrong withdrawal code, accepting the right one, seeing it go,
+and reporting an outage — through the real forms, in a real browser, against a
+real database. CI runs it on every push.
+
+It exists because the two worst bugs this project has had were both invisible to
+the unit suite, and both took about a minute to find by clicking the button:
+
+- Every record page had `dynamicParams = false` while every write called
+  `revalidatePath()`. Purging a prerendered entry Next may not regenerate does
+  not refresh it — it 404s it permanently. Publishing one review took that
+  broker off the site.
+- `getDb()` cached its handle in a module-level variable, which a bundler gives
+  to each chunk separately. Two PGlite instances over one directory meant every
+  write was invisible to every page, including force-dynamic ones.
+
+Neither is a bug in our logic, which is why 122 unit tests had nothing to say
+about them. Both are properties of the runtime the code lives in.
+
 ## Scheduled jobs
 
 Every parser here fails safe: when a page's markup changes it reports the source

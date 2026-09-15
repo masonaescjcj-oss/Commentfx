@@ -57,3 +57,28 @@ jobs:
             sleep 1
           done
           AUDIT_BASE=http://127.0.0.1:3000 pnpm --filter @commentfx/web audit:a11y
+
+      # Writing flows, through the real forms, against a real database. This is
+      # the only check that could have caught either of the two worst bugs this
+      # project has had: publishing a review 404ing the broker's page, and two
+      # database handles making every write invisible to every page. Both were
+      # green in the unit suite.
+      #
+      # The database is seeded fresh and handed only to `start`, never to
+      # `build` — Next prerenders in parallel workers and a file-backed PGlite
+      # is single-process.
+      - name: Writing flows
+        shell: bash
+        env:
+          PGLITE_DIR: ${{ github.workspace }}/.pglite-ci
+          REPORT_HASH_SECRET: ci-fixed-secret-so-dedupe-is-deterministic
+        # Its own port: the audit above leaves a server on 3000, and that one
+        # has no database.
+        run: |
+          node --experimental-strip-types packages/db/src/seed.ts
+          PORT=3001 pnpm --filter @commentfx/web start &
+          for i in $(seq 1 40); do
+            curl -sf -o /dev/null http://127.0.0.1:3001/ && break
+            sleep 1
+          done
+          SMOKE_BASE=http://127.0.0.1:3001 pnpm --filter @commentfx/web smoke
