@@ -389,6 +389,29 @@ one. Discovery was never the argument either — every entry is already a real
 link in the HTML, which is what a crawler follows. Removed; the page went from
 191 KB to 150 KB.
 
+## When there is no page, and when the page breaks
+
+Three files the site had none of, so every failure a reader could reach was
+Next's own black-on-white default with no header and no way back — and this site
+404s on purpose, for an unknown coin slug or a company it does not rank.
+
+`not-found.tsx` says what happened, in the site's own chrome, with four doors
+out: search, the broker ranking, the coin list, the calendar. It answers 404 and
+asks not to be indexed while staying followable — the links out are worth
+following, the apology is not worth indexing. `check:seo` asserts all of that,
+because answering 200 with "not found" on it is a soft 404 and search engines
+index the apology.
+
+`error.tsx` is for a render that threw, and says so rather than implying the
+reader asked for something that does not exist. `global-error.tsx` is the last
+resort, for the root layout itself. Both are plain elements and inline styles on
+purpose: what broke may be the stylesheet, the fonts, or the chrome.
+
+Both were seen rather than assumed, by making a page throw and then the layout
+throw, and reverting. The first attempt taught something worth writing down: a
+static page that throws fails the build instead, so the boundary can only be
+reached from a route rendered at request time.
+
 ## Layout stability
 
 `pnpm --filter @commentfx/web check:vitals` measures CLS on every page shape

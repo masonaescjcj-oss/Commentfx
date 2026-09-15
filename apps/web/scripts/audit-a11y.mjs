@@ -27,6 +27,10 @@ const DEFAULT_PAGES = [
   '/calendar', '/calendar/us-jobs-report', '/reviews', '/reviews/withdraw',
   '/search', '/status', '/methodology', '/best/lowest-spread',
   '/compare/exness-vs-ic-markets',
+  // The page a reader gets for a coin or company we do not have. It answers 404
+  // on purpose, so its expected status is stated rather than letting the guard
+  // below read it as a page that failed to load.
+  { path: '/a-url-this-site-does-not-have', status: 404 },
 ];
 
 /**
@@ -50,7 +54,9 @@ const page = await ctx.newPage();
 const found = new Map();
 let audited = 0;
 
-for (const path of PAGES) {
+for (const entry of PAGES) {
+  const path = typeof entry === 'string' ? entry : entry.path;
+  const expect = typeof entry === 'string' ? 200 : entry.status;
   let res;
   try {
     res = await page.goto(BASE + path, { waitUntil: 'domcontentloaded', timeout: 30_000 });
@@ -59,8 +65,8 @@ for (const path of PAGES) {
     console.log(`?? ${path} did not load: ${String(err).split('\n')[0]}`);
     continue;
   }
-  if (!res || res.status() >= 400) {
-    console.log(`?? ${path} answered ${res?.status()}`);
+  if (!res || res.status() !== expect) {
+    console.log(`?? ${path} answered ${res?.status()}, expected ${expect}`);
     continue;
   }
   audited++;

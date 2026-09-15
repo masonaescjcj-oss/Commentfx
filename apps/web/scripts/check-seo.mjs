@@ -115,6 +115,21 @@ for (const [to, from] of linkedFrom) {
 if (dangling.length) listed('every internal link goes somewhere', dangling);
 else check('every internal link goes somewhere', true, `${linkedFrom.size} distinct targets`);
 
+// ── And the page for everything else ─────────────────────────────────────────
+// A URL we do not have must answer 404 and still be a page. Answering 200 with
+// "not found" on it is a soft 404: a search engine indexes the apology, and a
+// reader gets no way back. Both halves are asserted because both were once
+// wrong — the status was right and the page was Next's own black-on-white
+// default, with no header on it.
+{
+  const res = await fetch(`${BASE}/a-url-this-site-does-not-have-9f2a`);
+  const html = await res.text();
+  check('an unknown URL answers 404', res.status === 404, `HTTP ${res.status}`);
+  check('and is still a page of this site', html.includes('CommentFX') && /<header/.test(html));
+  check('and offers a way out', (html.match(/href="\/[a-z]/g) ?? []).length >= 4);
+  check('and asks not to be indexed', /<meta name="robots" content="[^"]*noindex/.test(html));
+}
+
 // ── What each page says about itself ─────────────────────────────────────────
 const titles = new Map();
 const descriptions = new Map();
