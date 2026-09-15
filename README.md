@@ -68,10 +68,28 @@ because the file is renamed every month — `afs_lic_202609.csv` — and a URL w
 a date in it is a link that breaks on a schedule.
 
 Adding it found something on the first run, which is the point of the exercise:
-AFS licence 443670 is held, per ASIC, by **Trading.com Markets Pty Ltd**, and
-this site publishes it under **Trading Point of Financial Instruments Pty Ltd**.
-Nothing was changed automatically. A register disagreeing with us is a question
-for an editor, and it is in their queue.
+AFS licence 443670 was held, per ASIC, by **Trading.com Markets Pty Ltd**, while
+this site published it under **Trading Point of Financial Instruments Pty Ltd**.
+
+That is now settled, and how it was settled is the part worth keeping. A
+register disagreeing on a name is one of two things — a company we have got
+wrong, or a company that changed its name — and the two need opposite responses.
+The Australian Business Register publishes an entity's name history, and for ABN
+32 164 367 113 it reads:
+
+    TRADING.COM MARKETS PTY LTD                     27 Nov 2024 → current
+    TRADING POINT OF FINANCIAL INSTRUMENTS PTY LTD  01 Jul 2013 → 27 Nov 2024
+
+Same company, renamed. Our record carried the pre-2024 name, and now carries the
+current one with both sources cited beside it. Nine of nine checked licences
+confirm.
+
+What that does **not** settle, and is not claimed: whether XM still onboards
+Australian clients through that entity. A name history answers who the company
+is, not who it serves.
+
+Nothing was changed automatically and nothing will be. The register produced the
+question; two government records answered it; a person decided.
 
 Two rules hold, and both are tested:
 

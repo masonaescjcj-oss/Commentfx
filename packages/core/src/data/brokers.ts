@@ -70,7 +70,14 @@ export const BROKERS: Broker[] = [
     website: 'https://www.xm.com/',
     entities: [
       { legalName: 'Trading Point of Financial Instruments Ltd', country: 'CY', licence: { regulator: 'CySEC', number: '120/10', status: 'authorised' }, serves: ['CY', 'DE', 'FR', 'IT', 'ES', 'NL', 'PL'] },
-      { legalName: 'Trading Point of Financial Instruments Pty Ltd', country: 'AU', licence: { regulator: 'ASIC', number: '443670', status: 'authorised' }, serves: ['AU'] },
+      // Renamed, not replaced. The ASIC register holds AFS licence 443670 under
+      // Trading.com Markets Pty Ltd, and the Australian Business Register's name
+      // history for ABN 32 164 367 113 shows the same company was Trading Point of
+      // Financial Instruments Pty Ltd from 01 Jul 2013 until 27 Nov 2024. Two
+      // government records, one company, one licence. What is NOT settled by
+      // either, and is not claimed here beyond the `serves` field this row
+      // already carried: whether XM still onboards Australian clients through it.
+      { legalName: 'Trading.com Markets Pty Ltd', country: 'AU', licence: { regulator: 'ASIC', number: '443670', status: 'authorised' }, serves: ['AU'] },
       { legalName: 'XM Global Limited', country: 'BZ', licence: { regulator: 'IFSC-BZ', number: '000261/397', status: 'registered' }, serves: ['*'] },
     ],
     cost: { eurusdSpread: 0.6, commissionPerLot: 0, swapFreeAvailable: true, verifiedAt: null },
