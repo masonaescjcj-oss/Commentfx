@@ -28,6 +28,12 @@ export interface Release {
   what: string;
   /** Why it is worth a trader's attention, in one sentence. */
   why: string;
+  /**
+   * What a trader actually types. Nobody searches "Employment Situation" — they
+   * type "nfp", and until this existed the site's own search answered that with
+   * the calendar index rather than the page about it.
+   */
+  aka: string[];
 }
 
 export const RELEASES: Release[] = [
@@ -47,6 +53,7 @@ export const RELEASES: Release[] = [
     why:
       'It is the single largest scheduled source of volatility in dollar pairs, and ' +
       'the payroll figure is revised in the two reports that follow it.',
+    aka: ['nfp', 'non farm payrolls', 'nonfarm', 'payrolls', 'jobs report', 'unemployment rate', 'average hourly earnings'],
   },
   {
     slug: 'us-inflation-cpi',
@@ -63,6 +70,7 @@ export const RELEASES: Release[] = [
     why:
       'It is the release that most directly shapes expectations for the next Fed ' +
       'decision, which is why it moves rates and the dollar together.',
+    aka: ['cpi', 'inflation', 'consumer prices', 'core cpi', 'headline inflation'],
   },
   {
     slug: 'us-producer-prices-ppi',
@@ -79,6 +87,7 @@ export const RELEASES: Release[] = [
     why:
       'It arrives close to the CPI and is read as a check on it, so a large divergence ' +
       'between the two gets attention.',
+    aka: ['ppi', 'producer prices', 'wholesale inflation', 'factory gate prices'],
   },
   {
     slug: 'us-job-openings-jolts',
@@ -94,6 +103,7 @@ export const RELEASES: Release[] = [
     why:
       'It is the clearest monthly read on labour demand between jobs reports, and it ' +
       'covers a month already past — the lag is part of how it should be read.',
+    aka: ['jolts', 'job openings', 'quits rate', 'labour turnover', 'labor turnover'],
   },
   {
     slug: 'us-employment-cost-index',
@@ -110,6 +120,7 @@ export const RELEASES: Release[] = [
     why:
       'Because it controls for job mix, it is the wage measure central bankers cite ' +
       'most often when they talk about inflation persistence.',
+    aka: ['eci', 'employment cost', 'wage growth', 'labour costs', 'labor costs'],
   },
   {
     slug: 'fed-rate-decision',
@@ -127,6 +138,7 @@ export const RELEASES: Release[] = [
     why:
       'It sets the price of dollars. The statement wording and the projections ' +
       'usually matter more to the market than the rate itself.',
+    aka: ['fomc', 'fed', 'federal reserve', 'interest rate decision', 'rate hike', 'rate cut', 'dot plot', 'powell'],
   },
   {
     slug: 'ecb-rate-decision',
@@ -143,6 +155,7 @@ export const RELEASES: Release[] = [
     why:
       'It is the euro’s equivalent of the FOMC, and the press conference routinely ' +
       'moves the currency more than the decision.',
+    aka: ['ecb', 'governing council', 'euro rates', 'deposit rate', 'refi rate', 'lagarde'],
   },
 ];
 

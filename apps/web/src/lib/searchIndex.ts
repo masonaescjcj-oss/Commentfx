@@ -1,4 +1,4 @@
-import { RELEASES, scheduleNoun } from '@commentfx/core';
+import { COIN_INDEX, RELEASES, scheduleNoun } from '@commentfx/core';
 import {
   rankedBrokers, rankedProps, rankedExchanges, BEST_CRITERIA, comparePairs, pairSlug, getBroker,
   type ReviewStats,
@@ -9,7 +9,7 @@ export interface SearchEntry {
   title: string;
   /** One line of what the reader gets on that page. */
   note: string;
-  group: 'Brokers' | 'Prop firms' | 'Exchanges' | 'Comparisons' | 'Shortlists' | 'Releases' | 'Site';
+  group: 'Brokers' | 'Prop firms' | 'Exchanges' | 'Coins' | 'Comparisons' | 'Shortlists' | 'Releases' | 'Site';
   /** Extra words worth matching that are not in the title. */
   terms: string;
   score: number | null;
@@ -60,6 +60,26 @@ export function searchIndex(stats?: ReviewStats): SearchEntry[] {
     });
   }
 
+  /**
+   * A hundred coin pages that the site's own search could not find, for the
+   * same reason the sitemap could not list them: ids only existed behind a
+   * fetch and this function is synchronous. Searching "bitcoin" returned the
+   * /coins list and nothing else.
+   *
+   * Names and tickers only — no price, because this list is rendered into the
+   * page and a number in it would be as old as the last deploy.
+   */
+  for (const c of COIN_INDEX) {
+    entries.push({
+      path: `/coins/${c.id}`,
+      title: c.name,
+      note: `${c.symbol} · price, market cap and where to trade it`,
+      group: 'Coins',
+      terms: `coin crypto token ${c.symbol} ${c.id.replace(/-/g, ' ')} price chart`,
+      score: null,
+    });
+  }
+
   for (const c of BEST_CRITERIA) {
     entries.push({
       path: `/best/${c.slug}`,
@@ -91,7 +111,7 @@ export function searchIndex(stats?: ReviewStats): SearchEntry[] {
       title: `${r.name} ${scheduleNoun(r)}`,
       note: `Every scheduled date, from the ${r.publisher}`,
       group: 'Releases',
-      terms: `calendar release schedule ${r.title} ${r.currency}`,
+      terms: `calendar release schedule ${r.title} ${r.currency} ${r.aka.join(' ')}`,
       score: null,
     });
   }
@@ -113,4 +133,4 @@ export function searchIndex(stats?: ReviewStats): SearchEntry[] {
 }
 
 export const GROUP_ORDER: SearchEntry['group'][] =
-  ['Brokers', 'Prop firms', 'Exchanges', 'Comparisons', 'Shortlists', 'Releases', 'Site'];
+  ['Brokers', 'Prop firms', 'Exchanges', 'Coins', 'Comparisons', 'Shortlists', 'Releases', 'Site'];

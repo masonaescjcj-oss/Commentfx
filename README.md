@@ -353,6 +353,32 @@ That page is served as 200 rather than the 503 the situation deserves, because
 Next's App Router gives a page no way to set a status — and standing in a 404 for
 a 503 is what caused this. The body says plainly that the data is missing.
 
+## Search
+
+`/search` renders the whole directory into the page, so what a reader types
+never leaves their browser — there is no search request and nothing to log.
+`pnpm --filter @commentfx/web smoke:search` drives it in CI.
+
+Nothing had ever driven it, and it was missing a hundred pages. Searching
+"bitcoin" on a site that publishes a Bitcoin page returned the `/coins` list and
+stopped — the same cause as the sitemap gap, since coin ids only existed behind
+a fetch and the index is built synchronously. And searching "nfp", which is what
+a trader types, returned the calendar index rather than the release's own page;
+nobody searches "Employment Situation". Releases now carry an `aka` list in the
+data, with a test on it, because forgetting one fails silently: the page exists,
+it is in the sitemap, and the only name anyone knows does not find it.
+
+The first block of the smoke is coverage — one query per kind of page the site
+publishes, asserting search reaches that kind at all. That is the check that
+would have caught both.
+
+The page also used to emit an `ItemList` of all 178 entries, twenty kilobytes on
+every load, and it earned nothing: `ItemList` is for a carousel of one content
+type, and a mixed list of brokers, coins, comparisons and utility pages is not
+one. Discovery was never the argument either — every entry is already a real
+link in the HTML, which is what a crawler follows. Removed; the page went from
+191 KB to 150 KB.
+
 ## Sitemap
 
 `pnpm --filter @commentfx/web check:sitemap` holds the sitemap to the site, in

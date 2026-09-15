@@ -14,7 +14,8 @@
     "smoke": "node scripts/smoke-flows.mjs",
     "smoke:admin": "node scripts/smoke-admin.mjs",
     "smoke:degraded": "node scripts/smoke-degraded.mjs",
-    "check:sitemap": "node scripts/check-sitemap.mjs"
+    "check:sitemap": "node scripts/check-sitemap.mjs",
+    "smoke:search": "node scripts/smoke-search.mjs"
   },
   "dependencies": {
     "@commentfx/core": "workspace:*",

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { pageMetadata, JsonLd, breadcrumbLd, itemListLd } from '@/lib/seo';
+import { pageMetadata, JsonLd, breadcrumbLd } from '@/lib/seo';
 import { searchIndex } from '@/lib/searchIndex';
 import { reviewStats } from '@/lib/reviews';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
@@ -35,12 +35,18 @@ export default async function SearchPage() {
       </main>
       <Footer />
 
-      <JsonLd
-        graph={[
-          breadcrumbLd(trail),
-          itemListLd(TITLE, entries.map((e) => ({ name: e.title, path: e.path }))),
-        ]}
-      />
+      {/*
+        Breadcrumbs only. This page used to also emit an ItemList of the whole
+        directory — 178 entries, twenty kilobytes on every load — and it earned
+        nothing. ItemList is for a carousel of one content type; a mixed list of
+        brokers, coins, comparisons and utility pages is not one, so no search
+        engine has a rich result to give it. And discovery was never the
+        argument: every entry is already a real <a href> in the HTML below,
+        which is what a crawler actually follows. A structured-data blob is not
+        a substitute for a link, and a page that ships one for free is just
+        heavier.
+      */}
+      <JsonLd graph={[breadcrumbLd(trail)]} />
     </>
   );
 }

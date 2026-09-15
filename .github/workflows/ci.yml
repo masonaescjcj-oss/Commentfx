@@ -64,6 +64,12 @@ jobs:
       - name: Sitemap
         run: CHECK_BASE=http://127.0.0.1:3000 pnpm --filter @commentfx/web check:sitemap
 
+      # The site's own search. It had never been driven by anything and was
+      # missing a hundred pages. The coverage block in it is the check that
+      # would have caught that: one query per kind of page the site publishes.
+      - name: Search
+        run: SMOKE_BASE=http://127.0.0.1:3000 pnpm --filter @commentfx/web smoke:search
+
       # Writing flows, through the real forms, against a real database. This is
       # the only check that could have caught either of the two worst bugs this
       # project has had: publishing a review 404ing the broker's page, and two
