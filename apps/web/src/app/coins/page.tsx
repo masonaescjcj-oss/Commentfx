@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { pageMetadata, JsonLd, breadcrumbLd, itemListLd } from '@/lib/seo';
 import { coins, fmtUsd, fmtPct } from '@/lib/market';
+import { COIN_INDEX } from '@commentfx/core';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
 import { Card } from '@/components/primitives';
 import { RankingIntro } from '@/components/ranking';
@@ -27,8 +28,25 @@ export default async function CoinsPage() {
         <Breadcrumbs trail={trail} />
         {'error' in data ? (
           <>
-            <RankingIntro title={TITLE} lead={DESC} count={0} unit="coins" />
+            <RankingIntro title={TITLE} lead={DESC} count={COIN_INDEX.length} unit="coins" sortedBy="market cap at our last refresh" />
             <Unavailable what="Market data" reason={data.error} />
+            {/* The prices are gone; the coverage is not. Without this the page
+                loses every link to a coin during an outage, which would make
+                the honest coin pages behind them unreachable by anyone who was
+                browsing rather than arriving from a search result. Names only —
+                there is no number here to be stale about. */}
+            <Card className="px-4">
+              {COIN_INDEX.map((c) => (
+                <article key={c.id} className="flex items-center gap-[10px] py-[11px] border-b border-line-2 last:border-b-0">
+                  <div className="min-w-0">
+                    <h2 className="text-[13.5px] font-semibold leading-tight">
+                      <Link href={`/coins/${c.id}`} className="hover:text-brass">{c.name}</Link>
+                    </h2>
+                    <p className="text-[11px] text-ink-3 tnum">{c.symbol}</p>
+                  </div>
+                </article>
+              ))}
+            </Card>
           </>
         ) : (
           <>

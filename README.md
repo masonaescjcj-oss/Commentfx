@@ -24,6 +24,10 @@ page renders an honest "unavailable" state with the reason. Nothing is ever serv
 as current that could not be confirmed, and every live page carries the timestamp
 of the fetch behind it.
 
+That claim is now checked rather than asserted — see [Degraded flows](#degraded-flows).
+The first time anyone looked, it was false: an unanswered CoinGecko call took
+every coin page on the site to 404.
+
 ## Broker status
 
 `/status`, and a block on every broker page, answers the question a trader
@@ -293,7 +297,7 @@ the unit suite, and both took about a minute to find by clicking the button:
   to each chunk separately. Two PGlite instances over one directory meant every
   write was invisible to every page, including force-dynamic ones.
 
-Neither is a bug in our logic, which is why 122 unit tests had nothing to say
+Neither is a bug in our logic, which is why the unit suite had nothing to say
 about them. Both are properties of the runtime the code lives in.
 
 `smoke:admin` does the same for the editor's side, which matters more than it
@@ -303,6 +307,44 @@ It drives the token gate, checking a review and watching the public page relabel
 it, recording a field verification and watching the count move, and renewing an
 expired one — a verification lapses after 90 days, so renewing has to update
 rather than add.
+
+## Degraded flows
+
+`pnpm --filter @commentfx/web smoke:degraded` walks the site with its three
+market upstreams unreachable, and CI runs it as its own job on every push.
+
+The job breaks them at the host level *before* the build, which is the only
+arrangement that tests anything. Next caches a successful fetch for the
+revalidate window and prerenders the top coins, so a site built against a working
+network keeps serving real prices through the first minutes of an outage —
+correct behaviour, and the reason a check run against that build is theatre.
+Broken first, every page renders live against nothing. The script also asserts
+the upstreams really are unreachable before it asserts anything else: a
+degradation test that runs against a working network passes every time.
+
+It found the third bug of the kind above. `/coins/[slug]` called `notFound()`
+whenever the market data did not arrive, and a free tier not answering is a
+Tuesday. Every coin page went to 404, Bitcoin's included — and because a
+prerendered page that revalidates mid-outage writes its result back to the cache,
+the 404 stuck there. Same shape as the `dynamicParams` bug: a transient condition
+deleting a permanent page.
+
+A 404 has to mean "there is no such page", not "the network is quiet this
+minute", and telling those apart needs an answer we already have. That is
+`packages/core/src/data/coins.ts` — the ids, tickers and names of the coins we
+cover, checked in, no numbers. A slug it does not know is still a 404. A coin it
+knows renders its page with the numbers missing and a sentence saying why,
+keeping the half that never needed the feed. `/coins` does the same: during an
+outage it still lists what it covers, so the pages behind it stay reachable by
+anyone browsing rather than arriving from a search result.
+
+Refresh it with `node --experimental-strip-types packages/ingest/src/refresh-coins.ts`.
+It is deliberately not generated at build time: a file whose whole job is to be
+an answer we already have when the network has none cannot be fetched.
+
+That page is served as 200 rather than the 503 the situation deserves, because
+Next's App Router gives a page no way to set a status — and standing in a 404 for
+a 503 is what caused this. The body says plainly that the data is missing.
 
 ## Scheduled jobs
 

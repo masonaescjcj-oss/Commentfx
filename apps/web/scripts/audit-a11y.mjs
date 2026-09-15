@@ -21,13 +21,20 @@ const axeSource = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
 const BASE = process.env.AUDIT_BASE ?? 'http://127.0.0.1:3000';
 
 /** One of every page shape, not every page: the templates are what differ. */
-const PAGES = [
+const DEFAULT_PAGES = [
   '/', '/brokers', '/brokers/exness', '/props', '/props/ftmo',
-  '/exchanges', '/exchanges/kraken', '/coins', '/memecoins',
+  '/exchanges', '/exchanges/kraken', '/coins', '/coins/bitcoin', '/memecoins',
   '/calendar', '/calendar/us-jobs-report', '/reviews', '/reviews/withdraw',
   '/search', '/status', '/methodology', '/best/lowest-spread',
   '/compare/exness-vs-ic-markets',
 ];
+
+/**
+ * A subset, for auditing a build whose shapes differ — the degraded run walks
+ * the three market pages with their upstreams unreachable, and those carry copy
+ * no other run renders.
+ */
+const PAGES = process.env.AUDIT_PAGES ? process.env.AUDIT_PAGES.split(',') : DEFAULT_PAGES;
 
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'];
 

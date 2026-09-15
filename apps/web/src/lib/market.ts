@@ -1,7 +1,7 @@
 import { fetchMarkets, fetchNewPools, fetchSecurity, type CoinMarket, type Network } from '@commentfx/ingest';
-import { scoreMemecoin, type MemeBreakdown, type MemecoinInput } from '@commentfx/core';
+import { coinRef, scoreMemecoin, type CoinRef, type MemeBreakdown, type MemecoinInput } from '@commentfx/core';
 
-export type { CoinMarket };
+export type { CoinMarket, CoinRef };
 
 /** One upstream call serves both the /coins list and every /coins/[slug] page. */
 export async function coins(): Promise<{ list: CoinMarket[]; at: string } | { error: string }> {
@@ -9,9 +9,27 @@ export async function coins(): Promise<{ list: CoinMarket[]; at: string } | { er
   return res.ok ? { list: res.data, at: res.at } : { error: res.reason };
 }
 
-export async function coin(id: string): Promise<CoinMarket | null> {
+/**
+ * Three answers, because two are not enough. A page needs to tell "no such
+ * coin" apart from "this coin exists and the upstream is quiet", and only the
+ * first of those is a 404 — see the comment in coins/[slug]/page.tsx.
+ */
+export type CoinView =
+  | { state: 'live'; coin: CoinMarket; at: string }
+  | { state: 'unavailable'; ref: CoinRef; reason: string }
+  | { state: 'unknown' };
+
+export async function coin(id: string): Promise<CoinView> {
   const res = await fetchMarkets(100);
-  return res.ok ? (res.data.find((c) => c.id === id) ?? null) : null;
+  if (res.ok) {
+    const c = res.data.find((x) => x.id === id);
+    // Live data and not in it: either a typo, or a coin that has since dropped
+    // out of the top 100. Both get a 404, because we have nothing to show and
+    // the second is not something the checked-in index can tell us either.
+    return c ? { state: 'live', coin: c, at: res.at } : { state: 'unknown' };
+  }
+  const ref = coinRef(id);
+  return ref ? { state: 'unavailable', ref, reason: res.reason } : { state: 'unknown' };
 }
 
 export interface RadarToken {

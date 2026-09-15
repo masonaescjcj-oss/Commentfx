@@ -102,3 +102,58 @@ jobs:
           done
           SMOKE_BASE=http://127.0.0.1:3002 SMOKE_ADMIN_TOKEN=ci-admin-token \
             pnpm --filter @commentfx/web smoke:admin
+
+  # What the site looks like when the free APIs it does not pay for go quiet.
+  #
+  # Its own job, because the point is a build made while they are unreachable.
+  # Next caches a successful fetch for the revalidate window and prerenders the
+  # top coins, so a site built against a working network keeps serving real
+  # prices through the first minutes of an outage — correct, and the reason a
+  # check run against that build proves nothing. Broken first, every page has to
+  # render live against nothing.
+  #
+  # This was not a theoretical exercise. /coins/[slug] called notFound()
+  # whenever CoinGecko did not answer, and a free tier not answering is a
+  # Tuesday: every coin page on the site went to 404, Bitcoin's included.
+  degraded:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      # At the host level, the way an outage breaks them, so no product code
+      # has a test-only branch in it. smoke:degraded asserts these are really
+      # unreachable before it asserts anything else.
+      - name: Take the market upstreams away
+        run: |
+          sudo tee -a /etc/hosts <<'EOF'
+          127.0.0.1 api.coingecko.com
+          127.0.0.1 api.geckoterminal.com
+          127.0.0.1 api.gopluslabs.io
+          EOF
+
+      - name: Build without them
+        run: pnpm build
+
+      - run: pnpm --filter @commentfx/web exec playwright install --with-deps chromium
+
+      - name: Degraded flows
+        shell: bash
+        run: |
+          PORT=3003 pnpm --filter @commentfx/web start &
+          for i in $(seq 1 40); do
+            curl -sf -o /dev/null http://127.0.0.1:3003/ && break
+            sleep 1
+          done
+          SMOKE_BASE=http://127.0.0.1:3003 pnpm --filter @commentfx/web smoke:degraded
+
+      # The three market pages carry copy that no other run renders, so this is
+      # the only place axe ever sees it.
+      - name: Accessibility of the degraded pages
+        run: AUDIT_BASE=http://127.0.0.1:3003 AUDIT_PAGES=/coins,/coins/bitcoin,/memecoins pnpm --filter @commentfx/web audit:a11y
