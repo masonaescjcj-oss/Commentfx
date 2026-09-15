@@ -310,8 +310,10 @@ rather than add.
 
 ## Degraded flows
 
-`pnpm --filter @commentfx/web smoke:degraded` walks the site with its three
-market upstreams unreachable, and CI runs it as its own job on every push.
+`pnpm --filter @commentfx/web smoke:degraded` walks the site with every upstream
+it reads unreachable — the three market APIs and the three official calendars,
+which is the whole of what it fetches — and CI runs it as its own job on every
+push.
 
 The job breaks them at the host level *before* the build, which is the only
 arrangement that tests anything. Next caches a successful fetch for the
@@ -341,6 +343,11 @@ anyone browsing rather than arriving from a search result.
 Refresh it with `node --experimental-strip-types packages/ingest/src/refresh-coins.ts`.
 It is deliberately not generated at build time: a file whose whole job is to be
 an answer we already have when the network has none cannot be fetched.
+
+The calendar had this shape before the coin pages did — a release page keys off
+checked-in data and reports its source's silence separately, naming the
+publisher and linking to it rather than showing a date it could not confirm. The
+job asserts that too, so it stays that way.
 
 That page is served as 200 rather than the 503 the situation deserves, because
 Next's App Router gives a page no way to set a status — and standing in a 404 for

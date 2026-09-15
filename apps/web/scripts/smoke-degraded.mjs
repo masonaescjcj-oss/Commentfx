@@ -1,10 +1,14 @@
 /**
- * Walks the site with its three free market upstreams unreachable.
+ * Walks the site with every upstream it reads unreachable — the market APIs
+ * and the three official calendars — which is the whole of what it fetches.
  *
  *   sudo tee -a /etc/hosts <<'EOF'
  *   127.0.0.1 api.coingecko.com
  *   127.0.0.1 api.geckoterminal.com
  *   127.0.0.1 api.gopluslabs.io
+ *   127.0.0.1 www.bls.gov
+ *   127.0.0.1 www.federalreserve.gov
+ *   127.0.0.1 www.ecb.europa.eu
  *   EOF
  *   pnpm --filter @commentfx/web build && pnpm --filter @commentfx/web start &
  *   pnpm --filter @commentfx/web smoke:degraded
@@ -29,7 +33,12 @@
  * working network passes every time and means nothing.
  */
 const BASE = process.env.SMOKE_BASE ?? 'http://127.0.0.1:3000';
-const UPSTREAMS = ['https://api.coingecko.com/api/v3/ping', 'https://api.geckoterminal.com/api/v2/networks'];
+const UPSTREAMS = [
+  'https://api.coingecko.com/api/v3/ping',
+  'https://api.geckoterminal.com/api/v2/networks',
+  'https://www.bls.gov/schedule/news_release/2026_sched.htm',
+  'https://www.ecb.europa.eu/press/calendars/mgcgc/html/index.en.html',
+];
 const failures = [];
 
 const check = (label, ok, detail = '') => {
@@ -90,8 +99,23 @@ check('/memecoins serves', meme.status === 200, `HTTP ${meme.status}`);
 check('/memecoins says the radar is unavailable', /The radar is unavailable right now/.test(meme.body));
 check('/memecoins scores no token it could not check', !/\/memecoins\/0x/.test(meme.html));
 
+// ── The calendar, which had this right before the coin pages did ─────────────
+// Its release pages key off checked-in data and report the source separately,
+// which is the shape /coins/[slug] has only just been given. Asserted here so
+// it stays that way.
+const cal = await get('/calendar');
+check('/calendar serves', cal.status === 200, `HTTP ${cal.status}`);
+check('/calendar says the schedules could not be read', /calendars could not be read|economic calendar is unavailable right now/.test(cal.body));
+
+const release = await get('/calendar/us-jobs-report');
+check('a release page is still a page', release.status === 200, `HTTP ${release.status}`);
+check('it says which calendar could not be read', /calendar could not be read/.test(release.body));
+check('it sends the reader to the publisher', release.body.includes('check the publisher directly'));
+check('it shows no date it could not confirm', release.body.includes('No dates are shown rather than dates we could not confirm'));
+check('it keeps what it can explain without the feed', release.body.includes('Why it matters'));
+
 // ── The rest of the site does not care ───────────────────────────────────────
-for (const path of ['/', '/brokers', '/props', '/exchanges', '/calendar', '/reviews', '/status', '/methodology']) {
+for (const path of ['/', '/brokers', '/props', '/exchanges', '/reviews', '/status', '/methodology']) {
   const res = await get(path);
   check(`${path} is unaffected`, res.status === 200, `HTTP ${res.status}`);
 }
