@@ -29,6 +29,25 @@ async function settlesTo(page, path, text, present, tries = 20) {
   return false;
 }
 
+/**
+ * Eventually, and says what it saw instead if it never does.
+ *
+ * A public page reflecting an editor's check is eventual by construction, not
+ * immediate: revalidatePath() invalidates the cache of the instance that ran
+ * the action and nothing else. On one machine that is usually the next request;
+ * on a deployment with two instances the other one serves its prerender until
+ * its own window expires. So a tight wait here is asserting something the
+ * architecture does not offer, and this asserts the thing it does — with the
+ * page's own words on failure, because "it did not appear" is not a finding.
+ */
+async function eventually(page, path, text, tries = 60) {
+  if (await settlesTo(page, path, text, true, tries)) return true;
+  const seen = await page.locator('main').innerText().catch(() => '');
+  const tags = seen.match(/checked by an editor|unverified/g) ?? [];
+  console.log(`      after ${tries * 0.5}s ${path} showed: ${tags.join(', ') || 'no review label at all'}`);
+  return false;
+}
+
 const browser = await chromium.launch({ executablePath: process.env.SMOKE_CHROMIUM || undefined });
 
 /* ── the gate ──────────────────────────────────────────────────────── */
@@ -98,8 +117,8 @@ if (published) {
    * happened to win the race and went red in CI the day it did not. A wait has
    * to be for the thing that is supposed to change.
    */
-  check('the public page now calls it checked',
-    await settlesTo(page, `/brokers/${SLUG}`, 'checked by an editor', true));
+  check('the public page comes to call it checked',
+    await eventually(page, `/brokers/${SLUG}`, 'checked by an editor'));
 
   const published = page.locator('li', { hasText: MARK }).last();
   check('the review is labelled as checked by an editor, not unverified',

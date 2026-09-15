@@ -300,6 +300,16 @@ the unit suite, and both took about a minute to find by clicking the button:
 Neither is a bug in our logic, which is why the unit suite had nothing to say
 about them. Both are properties of the runtime the code lives in.
 
+**What a check costs in time.** A public page reflecting an editor's check is
+eventual, not immediate, and that is a property of the architecture rather than
+a bug to chase: `revalidatePath()` invalidates the cache of the instance that
+ran the action and no other. On one machine the next request usually has it; on
+a deployment with two instances, the other serves its prerender until the page's
+own window expires — an hour for a record page. The direction of the error is
+the safe one: the page says "unverified" for a while about something that has
+been verified, never the reverse. A test that waits ten seconds for it is
+asserting something nothing promised, which is how this turned up.
+
 `smoke:admin` does the same for the editor's side, which matters more than it
 sounds: the whole product rests on the claim that a number counts only once a
 person checked it, and that claim is only as good as the screen the person uses.
