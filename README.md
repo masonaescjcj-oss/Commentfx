@@ -424,6 +424,27 @@ issue in place rather than commenting daily, because an issue that grows a
 duplicate comment every morning gets muted, and a muted issue is the same as no
 issue.
 
+The probe's dividing line is not API against scraper, it is **transient against
+structural**. A rate-limited free tier warns: it is expected, temporary, and the
+page already says so. An upstream that answers with something we can no longer
+read fails, because nothing else would ever find out. So an API probe checks the
+fields the site actually reads rather than only that the call returned —
+CoinGecko renaming `current_price` would leave every price on the site rendering
+a dash while a probe that counted the array called it healthy. That check is a
+pure function with a test on it, because the case worth being sure about is one
+nobody can produce on demand.
+
+It also refuses to cry wolf. When every probe fails the same way on the same run
+— a scraped register, three central bank calendars and three unrelated APIs —
+that is a runner with no network, not seven upstreams breaking at once. The job
+still goes red, and it says so instead of opening "a parser is broken".
+
+`index: coins` is in there too, and is not an upstream: it compares the
+checked-in coin index against the live top 100. Drift is expected and mostly
+harmless. A coin in the live **top 25** that the index does not know is not: that
+is a page people land on, missing from the sitemap and from the site's own
+search, and 404ing during an outage. That one fails.
+
 In production `check-registers` is the one that matters — it needs `DATABASE_URL`
 and should run on the same daily schedule.
 

@@ -50,12 +50,24 @@ jobs:
           script: |
             const fs = require('fs');
             const output = fs.readFileSync('probe.txt', 'utf8');
-            const broken = '${{ steps.probe.outcome }}' === 'failure';
+            const failed = '${{ steps.probe.outcome }}' === 'failure';
+
+            // Every probe failing the same way is one broken thing, not eight:
+            // a runner with no network out. The job still goes red so somebody
+            // sees it, but opening "a parser is broken" would be a lie, and an
+            // issue nobody trusts is worse than no issue.
+            const inconclusive = output.includes('INCONCLUSIVE:');
+            const broken = failed && !inconclusive;
 
             await core.summary
-              .addHeading(broken ? 'A parsed source is broken' : 'Every parsed source is readable')
+              .addHeading(
+                inconclusive ? 'The probe could not reach anything'
+                  : broken ? 'A parsed source is broken'
+                    : 'Every parsed source is readable')
               .addCodeBlock(output)
               .write();
+
+            if (inconclusive) return;
 
             const title = 'Upstream source is unreadable';
             const { data: open } = await github.rest.issues.listForRepo({
