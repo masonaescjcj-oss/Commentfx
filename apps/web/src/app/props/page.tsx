@@ -5,11 +5,14 @@ import { rankedProps } from '@/lib/repo';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
 import { Card, CardHead, Meter } from '@/components/primitives';
 import { RankingIntro, RankRow, SeedNotice } from '@/components/ranking';
+import { TopTiles, Tabset, StrengthList, CompareTable } from '@/components/rankings';
+import Link from 'next/link';
 
 const TITLE = 'Prop firm rankings';
 const DESC =
   'Funded-trader challenges ranked on the rules you actually have to survive, ' +
   'what the payout terms really are, and what the challenge costs per $100k.';
+const LEAD = 'Ranked on rules, payout terms and challenge cost.';
 
 export const metadata: Metadata = pageMetadata({ title: TITLE, description: DESC, path: '/props' });
 export const revalidate = 3600;
@@ -17,11 +20,11 @@ export const revalidate = 3600;
 const FAQ = [
   {
     q: 'What matters most when choosing a prop firm?',
-    a: 'How drawdown is measured. Static drawdown is fixed against your starting balance. Trailing drawdown follows your equity upward, so an unrealised spike permanently raises the floor you must stay above — which is why the same trader can pass one firm and fail another on identical trades. It carries the heaviest weight in our rule-fairness score.',
+    a: 'How drawdown is measured. Static is fixed against your starting balance; trailing follows equity upward, so an unrealised spike permanently raises the floor. It carries the heaviest weight in rule fairness.',
   },
   {
     q: 'What is a consistency rule?',
-    a: 'A cap on how much of your total profit any single day may contribute, often 25 to 40 percent. One good day can therefore disqualify an otherwise passing account. Firms that impose one score lower on rule fairness.',
+    a: 'A cap on how much of your total profit one day may contribute, often 25 to 40 percent — so a single good day can disqualify a passing account. Firms that impose one score lower.',
   },
   {
     q: 'Why compare challenge fees per $100k?',
@@ -29,8 +32,18 @@ const FAQ = [
   },
 ];
 
+/** Transparency is in the score but is three booleans — a thin list of its own. */
+const TAB_KEYS = ['rules', 'payout', 'cost', 'platform'] as const;
+const SHORT: Record<(typeof TAB_KEYS)[number], string> = {
+  rules: 'Rule fairness',
+  payout: 'Payout terms',
+  cost: 'Challenge cost',
+  platform: 'Platforms',
+};
+
 export default function PropsPage() {
   const list = rankedProps();
+  const byFee = [...list].sort((a, b) => a.firm.feeUsdPer100k - b.firm.feeUsdPer100k);
   const trail = [{ name: 'Home', path: '/' }, { name: 'Prop Firms', path: '/props' }];
 
   return (
@@ -38,10 +51,43 @@ export default function PropsPage() {
       <Header active="/props" />
       <main id="main" className="px-4 pt-3 pb-6 flex flex-col gap-[13px]">
         <Breadcrumbs trail={trail} />
-        <RankingIntro title={TITLE} lead={DESC} count={list.length} unit="firms" />
+        <RankingIntro title={TITLE} lead={LEAD} count={list.length} unit="firms" />
         <SeedNotice what="Prop firms change their rules often and rarely announce it." />
 
-        <Card className="px-4">
+        <Card className="p-4" as="section">
+          <CardHead title="The top eight" href="#all" hrefLabel="Every firm" />
+          <TopTiles base="/props" items={list.slice(0, 8).map((r) => ({ ...r.firm }))} />
+        </Card>
+
+        <Card className="p-4" as="section">
+          <CardHead title="Strongest on each thing" href="/methodology" hrefLabel="How each is scored" />
+          <Tabset
+            id="prop-strength"
+            label="Rank prop firms by"
+            tabs={TAB_KEYS.map((key) => ({
+              label: SHORT[key],
+              panel: (
+                <StrengthList
+                  base="/props"
+                  rows={list
+                    .map((r) => ({ r, c: r.score.components.find((x) => x.key === key) }))
+                    .filter((x): x is { r: typeof list[number]; c: NonNullable<typeof x.c> } => Boolean(x.c?.value !== null && x.c))
+                    .sort((a, b) => (b.c.value ?? 0) - (a.c.value ?? 0))
+                    .slice(0, 6)
+                    .map(({ r, c }) => ({
+                      slug: r.firm.slug,
+                      name: r.firm.name,
+                      logo: r.firm.logo,
+                      value: c.value ?? 0,
+                      note: c.note ?? c.label,
+                    }))}
+                />
+              ),
+            }))}
+          />
+        </Card>
+
+        <Card className="px-4" id="all">
           {list.map((r) => (
             <RankRow
               headingLevel={2}
@@ -64,6 +110,28 @@ export default function PropsPage() {
             />
           ))}
         </Card>
+
+        <Card className="p-4" as="section">
+          <CardHead title="What the challenge costs, and what you keep" href="/props" hrefLabel="Full ranking" />
+          <CompareTable
+            head={['Firm', 'Fee / $100k', 'Split']}
+            rows={byFee.map((r) => ({
+              slug: r.firm.slug,
+              cells: [
+                <span key="n" className="block">
+                  <Link href={`/props/${r.firm.slug}`} className="hover:text-brass">{r.firm.name}</Link>
+                  <span className="block text-[10.5px] font-normal text-ink-3">
+                    {describeDrawdown(r.firm.rules.drawdownType)} drawdown
+                  </span>
+                </span>,
+                `$${r.firm.feeUsdPer100k}`,
+                `${r.firm.payout.splitPct}%`,
+              ],
+            }))}
+            note="Fees normalised to a $100k account. Split is the trader’s share."
+          />
+        </Card>
+
 
         <Card className="p-4">
           <CardHead title="How the score is built" href="/methodology" hrefLabel="Full method" />

@@ -59,3 +59,71 @@
   p a, dd a, li > p a { text-decoration: underline; text-underline-offset: 2px; }
   ::selection { background: var(--color-brass-bg); }
 }
+
+/* Tabbed rankings, with no JavaScript.
+   
+   The panels are real radio inputs and labels, not a scripted widget. Three
+   reasons, in order: the whole site is statically generated and nothing else on
+   a ranking page needs hydration, so shipping a component for this would cost
+   every reader a bundle for one control; a radio group is already keyboard
+   operable and already announced correctly, where a hand-rolled tablist has to
+   re-implement arrow keys and aria-selected and usually gets it wrong; and it
+   keeps working before — and without — JavaScript, which is the same promise
+   /search makes. */
+@layer components {
+  .tabset > input { position: absolute; width: 1px; height: 1px; opacity: 0; margin: 0; }
+
+  /* Wraps rather than scrolls. It scrolled first, and the accessibility audit
+     was right to fail it: the focusable element in this control is the radio,
+     which is off-screen, so a keyboard user moving through the group could not
+     bring an overflowing chip into view — the strip never scrolled with them.
+     The header nav gets away with overflow because its focusable elements are
+     the visible links themselves. Four chips on two lines costs nothing and
+     hides nothing. */
+  .tabset > .tablist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 13px;
+  }
+  .tabset > .tablist label {
+    flex-shrink: 0;
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: 12.5px;
+    padding: 5px 12px;
+    border-radius: 9px;
+    border: 1px solid var(--color-line);
+    background: var(--color-card-2);
+    color: var(--color-ink-2);
+  }
+
+  .tabset > .panels > .panel { display: none; }
+
+  .tabset > input:nth-of-type(1):checked ~ .panels > .panel:nth-of-type(1),
+  .tabset > input:nth-of-type(2):checked ~ .panels > .panel:nth-of-type(2),
+  .tabset > input:nth-of-type(3):checked ~ .panels > .panel:nth-of-type(3),
+  .tabset > input:nth-of-type(4):checked ~ .panels > .panel:nth-of-type(4),
+  .tabset > input:nth-of-type(5):checked ~ .panels > .panel:nth-of-type(5) { display: block; }
+
+  .tabset > input:nth-of-type(1):checked ~ .tablist label:nth-of-type(1),
+  .tabset > input:nth-of-type(2):checked ~ .tablist label:nth-of-type(2),
+  .tabset > input:nth-of-type(3):checked ~ .tablist label:nth-of-type(3),
+  .tabset > input:nth-of-type(4):checked ~ .tablist label:nth-of-type(4),
+  .tabset > input:nth-of-type(5):checked ~ .tablist label:nth-of-type(5) {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: #FFFFFF;
+    font-weight: 600;
+  }
+
+  /* The input is off-screen, so the focus ring has to land on its label. */
+  .tabset > input:nth-of-type(1):focus-visible ~ .tablist label:nth-of-type(1),
+  .tabset > input:nth-of-type(2):focus-visible ~ .tablist label:nth-of-type(2),
+  .tabset > input:nth-of-type(3):focus-visible ~ .tablist label:nth-of-type(3),
+  .tabset > input:nth-of-type(4):focus-visible ~ .tablist label:nth-of-type(4),
+  .tabset > input:nth-of-type(5):focus-visible ~ .tablist label:nth-of-type(5) {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+}
