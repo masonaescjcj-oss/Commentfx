@@ -92,6 +92,29 @@ else check('every listed page serves', true, `${paths.length} checked`);
 if (mismatched.length) listed('every listed page is its own canonical', mismatched);
 else check('every listed page is its own canonical', true);
 
+// ── Every internal link goes somewhere ───────────────────────────────────────
+// Two dead ones shipped once — /news and /search, neither of which existed —
+// and they were found by a person clicking them. Nothing stopped the next pair.
+// A sitemap entry that 404s and a link that 404s are different failures: the
+// first wastes a crawl, the second is a reader hitting a wall.
+const linkedFrom = new Map();
+for (const path of built) {
+  const html = await (await fetch(BASE + path)).text();
+  for (const [, href] of html.matchAll(/href="(\/[^"#]*)"/g)) {
+    const to = href.replace(/\?.*$/, '') || '/';
+    if (/^\/_next\//.test(to)) continue;
+    if (!linkedFrom.has(to)) linkedFrom.set(to, path);
+  }
+}
+
+const dangling = [];
+for (const [to, from] of linkedFrom) {
+  const res = await fetch(BASE + to, { redirect: 'manual' });
+  if (res.status !== 200) dangling.push(`${to} → HTTP ${res.status}, linked from ${from}`);
+}
+if (dangling.length) listed('every internal link goes somewhere', dangling);
+else check('every internal link goes somewhere', true, `${linkedFrom.size} distinct targets`);
+
 // ── What each page says about itself ─────────────────────────────────────────
 const titles = new Map();
 const descriptions = new Map();

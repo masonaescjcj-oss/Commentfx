@@ -414,6 +414,12 @@ page declares whether it wants to be indexed, and the sitemap has to agree.
     indexable  →  in the sitemap
     noindex    →  not in the sitemap
     listed     →  serves 200, and its canonical points at itself
+    linked     →  serves 200
+
+That last one is separate on purpose. A sitemap entry that 404s wastes a crawl;
+a link that 404s is a reader hitting a wall. Two dead ones shipped once, `/news`
+and `/search`, neither of which existed, and they were found by a person
+clicking them. On its first run this caught a third.
 
 The sitemap is generated from the data rather than hand-maintained, which makes
 it feel self-maintaining and is exactly why nobody looked at it. It was missing
@@ -466,10 +472,18 @@ that is a runner with no network, not seven upstreams breaking at once. The job
 still goes red, and it says so instead of opening "a parser is broken".
 
 `index: coins` is in there too, and is not an upstream: it compares the
-checked-in coin index against the live top 100. Drift is expected and mostly
-harmless. A coin in the live **top 25** that the index does not know is not: that
-is a page people land on, missing from the sitemap and from the site's own
-search, and 404ing during an outage. That one fails.
+checked-in coin index against the live top 100. Drift is expected. A coin in the
+live **top 25** that the index does not know still fails the job: that is a page
+people land on, missing from the sitemap and from the site's own search, and
+404ing during an outage.
+
+I first wrote here that drift the other way — a coin in the index that has
+slipped out of the live top 100 — was harmless. It was not, and `check:seo`
+caught it four hours later: `/coins/usual-usd` was in the sitemap, offered by
+the site's own search, and returned 404. The index says which pages this site
+publishes, so a coin in it now gets one more call by id when it is not in
+today's hundred, using the same endpoint and the same parser. Advertising a URL
+and then 404ing it is the worst of both.
 
 In production `check-registers` is the one that matters — it needs `DATABASE_URL`
 and should run on the same daily schedule.

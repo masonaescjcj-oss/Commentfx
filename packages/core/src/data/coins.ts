@@ -13,10 +13,13 @@
  * Regenerate with:
  *   node --experimental-strip-types packages/ingest/src/refresh-coins.ts
  *
- * Going stale costs little and costs it in the right direction: a coin listed
- * after the last refresh 404s during an outage instead of showing an honest
- * "prices unavailable", and one that has since left the top 100 is a name we
- * can still spell. Neither publishes anything untrue.
+ * This list decides which coin pages exist: the sitemap lists it, the site's
+ * own search offers it, and /coins/[slug] serves anything in it. A coin that
+ * has since slipped out of the live top 100 therefore costs one extra call by
+ * id rather than a 404 — see coin() in apps/web/src/lib/market.ts. Going stale
+ * the other way, a coin listed after the last refresh, 404s during an outage
+ * instead of degrading politely, which is the one direction still worth
+ * refreshing for.
  */
 export interface CoinRef {
   id: string;

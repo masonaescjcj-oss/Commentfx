@@ -1,4 +1,4 @@
-import { fetchMarkets, fetchNewPools, fetchSecurity, type CoinMarket, type Network } from '@commentfx/ingest';
+import { fetchMarkets, fetchMarketsByIds, fetchNewPools, fetchSecurity, type CoinMarket, type Network } from '@commentfx/ingest';
 import { coinRef, scoreMemecoin, type CoinRef, type MemeBreakdown, type MemecoinInput } from '@commentfx/core';
 
 export type { CoinMarket, CoinRef };
@@ -23,10 +23,32 @@ export async function coin(id: string): Promise<CoinView> {
   const res = await fetchMarkets(100);
   if (res.ok) {
     const c = res.data.find((x) => x.id === id);
-    // Live data and not in it: either a typo, or a coin that has since dropped
-    // out of the top 100. Both get a 404, because we have nothing to show and
-    // the second is not something the checked-in index can tell us either.
-    return c ? { state: 'live', coin: c, at: res.at } : { state: 'unknown' };
+    if (c) return { state: 'live', coin: c, at: res.at };
+
+    /**
+     * Not in today's top 100. If we have never heard of the slug it is a typo
+     * and a 404 is the answer. If it is in the index it is a page we publish —
+     * the sitemap lists it and the site's own search offers it — and it slipped
+     * down the ranking since the index was last refreshed. Serving a 404 for a
+     * URL we advertise is the worst of both, and that is exactly what happened:
+     * check:seo caught /coins/usual-usd four hours after the index was written.
+     *
+     * One more call, for the handful of coins in that gap, using the same
+     * endpoint and the same parser.
+     */
+    const ref = coinRef(id);
+    if (!ref) return { state: 'unknown' };
+
+    const one = await fetchMarketsByIds([id]);
+    if (one.ok) {
+      const found = one.data.find((x) => x.id === id);
+      if (found) return { state: 'live', coin: found, at: one.at };
+    }
+
+    // Known to us, unknown to the upstream: delisted, renamed, or merged. The
+    // page says what it can rather than vanishing, and the index refresh will
+    // drop it next time it runs.
+    return { state: 'unavailable', ref, reason: one.ok ? 'no longer listed upstream' : one.reason };
   }
   const ref = coinRef(id);
   return ref ? { state: 'unavailable', ref, reason: res.reason } : { state: 'unknown' };

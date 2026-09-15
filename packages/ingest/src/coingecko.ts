@@ -41,37 +41,47 @@ function thin(series: number[], points = 24): number[] {
   return Array.from({ length: points }, (_, i) => series[Math.round(i * step)] ?? 0);
 }
 
+function toCoin(r: RawMarket): CoinMarket {
+  const raw = Array.isArray(r.sparkline_in_7d?.price)
+    ? (r.sparkline_in_7d.price as unknown[]).map(num).filter((n): n is number => n !== null)
+    : [];
+  return {
+    id: r.id, symbol: (r.symbol ?? '').toUpperCase(), name: r.name, image: r.image,
+    rank: num(r.market_cap_rank), price: num(r.current_price), marketCap: num(r.market_cap),
+    volume24h: num(r.total_volume),
+    change24hPct: num(r.price_change_percentage_24h),
+    change7dPct: num(r.price_change_percentage_7d_in_currency),
+    high24h: num(r.high_24h), low24h: num(r.low_24h),
+    circulating: num(r.circulating_supply), maxSupply: num(r.max_supply),
+    ath: num(r.ath), athChangePct: num(r.ath_change_percentage),
+    athDate: typeof r.ath_date === 'string' ? r.ath_date : null,
+    spark: thin(raw),
+    lastUpdated: typeof r.last_updated === 'string' ? r.last_updated : null,
+  };
+}
+
+async function markets(query: string): Promise<Fetched<CoinMarket[]>> {
+  const url = `${BASE}/coins/markets?vs_currency=usd&${query}&sparkline=true&price_change_percentage=24h,7d`;
+  const res = await safeJson<RawMarket[]>(url, { revalidate: 300 });
+  if (!res.ok) return res;
+  if (!Array.isArray(res.data)) return { ok: false, reason: 'unexpected payload' };
+  return { ok: true, data: res.data.map(toCoin), at: res.at };
+}
+
 /**
  * One call returns up to 250 coins with everything the list AND the detail
  * pages need, so the whole /coins section costs a single upstream request.
  */
-export async function fetchMarkets(perPage = 100): Promise<Fetched<CoinMarket[]>> {
-  const url =
-    `${BASE}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${perPage}` +
-    `&page=1&sparkline=true&price_change_percentage=24h,7d`;
+export const fetchMarkets = (perPage = 100): Promise<Fetched<CoinMarket[]>> =>
+  markets(`order=market_cap_desc&per_page=${perPage}&page=1`);
 
-  const res = await safeJson<RawMarket[]>(url, { revalidate: 300 });
-  if (!res.ok) return res;
-  if (!Array.isArray(res.data)) return { ok: false, reason: 'unexpected payload' };
-
-  const coins: CoinMarket[] = res.data.map((r) => {
-    const raw = Array.isArray(r.sparkline_in_7d?.price)
-      ? (r.sparkline_in_7d.price as unknown[]).map(num).filter((n): n is number => n !== null)
-      : [];
-    return {
-      id: r.id, symbol: (r.symbol ?? '').toUpperCase(), name: r.name, image: r.image,
-      rank: num(r.market_cap_rank), price: num(r.current_price), marketCap: num(r.market_cap),
-      volume24h: num(r.total_volume),
-      change24hPct: num(r.price_change_percentage_24h),
-      change7dPct: num(r.price_change_percentage_7d_in_currency),
-      high24h: num(r.high_24h), low24h: num(r.low_24h),
-      circulating: num(r.circulating_supply), maxSupply: num(r.max_supply),
-      ath: num(r.ath), athChangePct: num(r.ath_change_percentage),
-      athDate: typeof r.ath_date === 'string' ? r.ath_date : null,
-      spark: thin(raw),
-      lastUpdated: typeof r.last_updated === 'string' ? r.last_updated : null,
-    };
-  });
-
-  return { ok: true, data: coins, at: res.at };
-}
+/**
+ * The same shape for named coins, which is how a coin that has slipped out of
+ * the top 100 since the index was last refreshed keeps its page instead of
+ * 404ing a URL the sitemap advertises. Same endpoint, same parser — nothing
+ * here is a second way of reading a price.
+ */
+export const fetchMarketsByIds = (ids: string[]): Promise<Fetched<CoinMarket[]>> =>
+  ids.length === 0
+    ? Promise.resolve({ ok: true, data: [], at: new Date().toISOString() })
+    : markets(`ids=${ids.map(encodeURIComponent).join(',')}&per_page=${ids.length}&page=1`);
