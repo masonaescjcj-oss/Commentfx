@@ -249,6 +249,14 @@ the unit suite, and both took about a minute to find by clicking the button:
 Neither is a bug in our logic, which is why 122 unit tests had nothing to say
 about them. Both are properties of the runtime the code lives in.
 
+`smoke:admin` does the same for the editor's side, which matters more than it
+sounds: the whole product rests on the claim that a number counts only once a
+person checked it, and that claim is only as good as the screen the person uses.
+It drives the token gate, checking a review and watching the public page relabel
+it, recording a field verification and watching the count move, and renewing an
+expired one — a verification lapses after 90 days, so renewing has to update
+rather than add.
+
 ## Scheduled jobs
 
 Every parser here fails safe: when a page's markup changes it reports the source

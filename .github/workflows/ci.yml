@@ -82,3 +82,23 @@ jobs:
             sleep 1
           done
           SMOKE_BASE=http://127.0.0.1:3001 pnpm --filter @commentfx/web smoke
+
+      # The editor's side. The whole product rests on one claim — a number
+      # counts only once a person checked it — and that claim is only as good
+      # as the screen the person uses. Until this existed, verify and hide had
+      # been exercised at the database layer and nowhere else.
+      - name: Editor flows
+        shell: bash
+        env:
+          PGLITE_DIR: ${{ github.workspace }}/.pglite-admin-ci
+          REPORT_HASH_SECRET: ci-fixed-secret-so-dedupe-is-deterministic
+          ADMIN_TOKEN: ci-admin-token
+        run: |
+          node --experimental-strip-types packages/db/src/seed.ts
+          PORT=3002 pnpm --filter @commentfx/web start &
+          for i in $(seq 1 40); do
+            curl -sf -o /dev/null http://127.0.0.1:3002/ && break
+            sleep 1
+          done
+          SMOKE_BASE=http://127.0.0.1:3002 SMOKE_ADMIN_TOKEN=ci-admin-token \
+            pnpm --filter @commentfx/web smoke:admin
