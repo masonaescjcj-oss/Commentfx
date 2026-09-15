@@ -86,12 +86,25 @@ if (published) {
   await page.waitForTimeout(2500);
 
   check('verifying takes it out of the queue', await settlesTo(page, '/admin', MARK, false));
-  check('the public page now calls it checked',
-    await settlesTo(page, `/brokers/${SLUG}`, MARK, true));
 
-  const html = await page.content();
+  /**
+   * Poll for the label, not for the review.
+   *
+   * This used to wait for the review's body to appear on the broker page and
+   * then read the label off whatever that request returned. The body was
+   * already there — it has been on the page since it was published — so the
+   * wait returned on the first request and the label was read from a render
+   * that predated the verification. It passed for as long as revalidation
+   * happened to win the race and went red in CI the day it did not. A wait has
+   * to be for the thing that is supposed to change.
+   */
+  check('the public page now calls it checked',
+    await settlesTo(page, `/brokers/${SLUG}`, 'checked by an editor', true));
+
+  const published = page.locator('li', { hasText: MARK }).last();
   check('the review is labelled as checked by an editor, not unverified',
-    /checked by an editor/.test(html));
+    await published.getByText('checked by an editor').count() > 0
+      && await published.getByText('unverified').count() === 0);
 
   check('the check lands in the audit log',
     await settlesTo(page, '/admin', 'verified review', true));
