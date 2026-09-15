@@ -379,11 +379,27 @@ one. Discovery was never the argument either — every entry is already a real
 link in the HTML, which is what a crawler follows. Removed; the page went from
 191 KB to 150 KB.
 
-## Sitemap
+## What a page says about itself
 
-`pnpm --filter @commentfx/web check:sitemap` holds the sitemap to the site, in
-both CI jobs. The rule needs no allowlist, which is what makes it worth running:
-a page declares whether it wants to be indexed, and the sitemap has to agree.
+`pnpm --filter @commentfx/web check:seo` holds every machine-readable claim a
+page makes to the truth, in both CI jobs. These are the parts nobody looks at,
+which is exactly why they rot: a title nobody reads twice, a canonical pointing
+at the wrong URL, a structured-data block that stopped parsing. Invisible in a
+browser, load-bearing everywhere else.
+
+Per page: exactly one `h1`; a title and a description, neither shared with
+another page; and every JSON-LD block parses, carries an `@context`, and every
+node a `@type`. Breadcrumb positions run 1..n with absolute URLs. An FAQ answer
+may not be empty, and may not contain `undefined`, `NaN` or `null` — a
+structured answer is a claim in a format built to be quoted back verbatim, so
+publishing a missing value there is worse than publishing no FAQ.
+
+Each of those was checked by breaking it on purpose and watching the check go
+red, because a check that passes the first time it is run has not yet shown it
+can do anything else.
+
+The sitemap rule needs no allowlist, which is what makes it worth running: a
+page declares whether it wants to be indexed, and the sitemap has to agree.
 
     indexable  →  in the sitemap
     noindex    →  not in the sitemap

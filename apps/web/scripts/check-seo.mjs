@@ -1,8 +1,13 @@
 /**
- * Holds the sitemap to the site.
+ * Holds every machine-readable claim a page makes about itself to the truth.
  *
  *   pnpm --filter @commentfx/web build && pnpm --filter @commentfx/web start &
- *   pnpm --filter @commentfx/web check:sitemap
+ *   pnpm --filter @commentfx/web check:seo
+ *
+ * These are the parts of a page nobody looks at, which is the whole reason they
+ * rot: a title nobody reads twice, a canonical pointing at the wrong URL, a
+ * structured-data block that stopped parsing. Each one is invisible in a
+ * browser and load-bearing everywhere else.
  *
  * The sitemap is generated from the data rather than hand-maintained, which
  * makes it feel self-maintaining and is exactly why nobody looked at it. It was
@@ -86,6 +91,79 @@ if (dead.length) listed('every listed page serves', dead);
 else check('every listed page serves', true, `${paths.length} checked`);
 if (mismatched.length) listed('every listed page is its own canonical', mismatched);
 else check('every listed page is its own canonical', true);
+
+// ── What each page says about itself ─────────────────────────────────────────
+const titles = new Map();
+const descriptions = new Map();
+const problems = { h1: [], title: [], description: [], ld: [] };
+
+/** Nodes in a JSON-LD block, whether it uses @graph or not. */
+const nodes = (parsed) => (Array.isArray(parsed['@graph']) ? parsed['@graph'] : [parsed]);
+
+for (const path of built) {
+  const html = await (await fetch(BASE + path)).text();
+
+  const h1s = [...html.matchAll(/<h1[\s>]/g)].length;
+  if (h1s !== 1) problems.h1.push(`${path} has ${h1s}`);
+
+  const title = /<title>([^<]*)<\/title>/.exec(html)?.[1]?.trim();
+  if (!title) problems.title.push(`${path} has none`);
+  else (titles.get(title) ?? titles.set(title, []).get(title)).push(path);
+
+  const desc = /<meta name="description" content="([^"]*)"/.exec(html)?.[1]?.trim();
+  if (!desc) problems.description.push(`${path} has none`);
+  else (descriptions.get(desc) ?? descriptions.set(desc, []).get(desc)).push(path);
+
+  for (const [, raw] of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+    let parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch (err) {
+      problems.ld.push(`${path}: does not parse — ${err.message}`);
+      continue;
+    }
+    if (!parsed['@context']) problems.ld.push(`${path}: a block with no @context`);
+
+    for (const node of nodes(parsed)) {
+      if (!node['@type']) { problems.ld.push(`${path}: a node with no @type`); continue; }
+
+      // A breadcrumb with a gap in its positions is not a breadcrumb.
+      if (node['@type'] === 'BreadcrumbList') {
+        const items = node.itemListElement ?? [];
+        const positions = items.map((i) => i.position);
+        if (positions.some((pos, n) => pos !== n + 1))
+          problems.ld.push(`${path}: breadcrumb positions are ${positions.join(',')}`);
+        for (const i of items) {
+          if (!i.name) problems.ld.push(`${path}: a breadcrumb step with no name`);
+          if (!String(i.item ?? '').startsWith('http'))
+            problems.ld.push(`${path}: breadcrumb "${i.name}" points at "${i.item}"`);
+        }
+      }
+
+      // An answer that renders as "undefined" is worse than no FAQ at all: it
+      // is a claim, published, in a format built to be quoted back verbatim.
+      if (node['@type'] === 'FAQPage') {
+        for (const q of node.mainEntity ?? []) {
+          const a = q.acceptedAnswer?.text ?? '';
+          if (!q.name) problems.ld.push(`${path}: a question with no text`);
+          if (!a) problems.ld.push(`${path}: "${q.name}" has no answer`);
+          if (/\bundefined\b|\bNaN\b|\bnull\b/.test(`${q.name} ${a}`))
+            problems.ld.push(`${path}: "${q.name}" answers with a missing value`);
+        }
+      }
+    }
+  }
+}
+
+const dupes = (m) => [...m.entries()].filter(([, paths]) => paths.length > 1);
+const listProblems = (label, items) => (items.length ? listed(label, items) : check(label, true));
+
+listProblems('every page has exactly one h1', problems.h1);
+listProblems('every page has a title', problems.title);
+listProblems('every page has a description', problems.description);
+listProblems('no two pages share a title', dupes(titles).map(([t, p]) => `${p.length}× "${t.slice(0, 60)}"`));
+listProblems('no two pages share a description', dupes(descriptions).map(([d, p]) => `${p.length}× "${d.slice(0, 60)}…"`));
+listProblems('every structured-data block is well formed', problems.ld);
 
 console.log(failures.length ? `\n${failures.length} failed` : '\nall clear');
 process.exit(failures.length ? 1 : 0);
