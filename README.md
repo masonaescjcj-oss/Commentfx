@@ -15,7 +15,7 @@ every link that carries one — and never touch the score.
 | New DEX pools | GeckoTerminal | free |
 | Token contract audits | GoPlus | free |
 | Broker, prop and exchange records | curated, checked against regulators | free |
-| Licence verification | CySEC public register (scraped) | free |
+| Licence verification | CySEC public register (scraped), ASIC AFS licensees (data.gov.au) | free |
 | Economic calendar | BLS release schedule, FOMC calendar, ECB calendar | free |
 
 No API key is needed to run or build the site. A free tier going quiet must never
@@ -46,9 +46,27 @@ regulator that issued it. The result is stored per licence and shown on the
 broker page: confirmed and under what name, not on the register, or explicitly
 not machine-checked with the reason.
 
-Only CySEC is readable from a datacentre today. The FCA, ASIC, the Mauritius FSC
-and the NFA were each probed and are **declared as blocked with the reason**
-rather than omitted, so register coverage never looks wider than it is.
+Two registers are readable from a datacentre today, covering 9 of the 19
+licences this site publishes. The FCA, the Mauritius FSC and the NFA were each
+probed and are **declared as blocked with the reason** rather than omitted, so
+register coverage never looks wider than it is.
+
+ASIC was on that blocked list until the assumption behind it was re-examined.
+Its interactive search does refuse datacentre traffic, and that is a fact about
+one page, not about the regulator: ASIC publishes the same register as an open
+dataset on data.gov.au, no key, updated monthly. "The page a person would click
+is blocked" and "this regulator cannot be checked" are different claims and the
+first had been standing in for the second. Worth re-asking of the other three.
+
+The adapter asks the catalogue for the current resource before reading it,
+because the file is renamed every month — `afs_lic_202609.csv` — and a URL with
+a date in it is a link that breaks on a schedule.
+
+Adding it found something on the first run, which is the point of the exercise:
+AFS licence 443670 is held, per ASIC, by **Trading.com Markets Pty Ltd**, and
+this site publishes it under **Trading Point of Financial Instruments Pty Ltd**.
+Nothing was changed automatically. A register disagreeing with us is a question
+for an editor, and it is in their queue.
 
 Two rules hold, and both are tested:
 

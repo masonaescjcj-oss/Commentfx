@@ -1,9 +1,11 @@
 import { BROKERS } from '@commentfx/core';
 import { compareLicence, type Finding, type RegisterResult, type RegisterSource } from './types.ts';
 import { cysec } from './cysec.ts';
+import { asic } from './asic.ts';
 
 export * from './types.ts';
 export { cysec, parseCysec } from './cysec.ts';
+export { asic, toEntries as asicEntries } from './asic.ts';
 
 /**
  * Sources that exist but could not be read from our infrastructure. They are
@@ -11,23 +13,26 @@ export { cysec, parseCysec } from './cysec.ts';
  * reason, instead of the register coverage looking complete when it is not.
  *
  * Each was probed directly: the FCA's API requires a registered key and its
- * search page is a JavaScript shell; ASIC and the Mauritius FSC refuse
- * datacentre traffic outright; the NFA's BASIC search renders client-side.
- * These may well succeed from a different host, which is why they stay here as
- * adapters waiting to be implemented rather than being deleted.
+ * search page is a JavaScript shell; the Mauritius FSC refuses datacentre
+ * traffic outright; the NFA's BASIC search renders client-side. These may well
+ * succeed from a different host, which is why they stay here as adapters
+ * waiting to be implemented rather than being deleted.
+ *
+ * ASIC was on this list and is not any more. Its interactive search does refuse
+ * us, but the same regulator publishes the same register as an open dataset,
+ * and "the page a person would click is blocked" is not the same fact as "this
+ * regulator cannot be checked". Worth re-asking of the other three.
  */
 export const BLOCKED_SOURCES: Array<{ code: string; name: string; sourceUrl: string; reason: string }> = [
   { code: 'FCA', name: 'Financial Conduct Authority', sourceUrl: 'https://register.fca.org.uk/',
     reason: 'API requires a registered key; the public search page renders client-side' },
-  { code: 'ASIC', name: 'Australian Securities & Investments Commission', sourceUrl: 'https://connectonline.asic.gov.au/',
-    reason: 'refuses requests from datacentre addresses (HTTP 403)' },
   { code: 'FSC-MU', name: 'Financial Services Commission Mauritius', sourceUrl: 'https://www.fscmauritius.org/en/supervision/register-of-licensees',
     reason: 'refuses requests from datacentre addresses (HTTP 403)' },
   { code: 'NFA', name: 'National Futures Association', sourceUrl: 'https://www.nfa.futures.org/basicnet/',
     reason: 'BASIC search renders client-side' },
 ];
 
-export const SOURCES: RegisterSource[] = [cysec];
+export const SOURCES: RegisterSource[] = [cysec, asic];
 
 export const sourceFor = (code: string) => SOURCES.find((s) => s.code === code);
 
