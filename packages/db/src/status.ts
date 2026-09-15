@@ -17,7 +17,29 @@ export type { IncidentKind, StatusLevel, StatusSummary };
  * A process-lifetime secret is mixed in as well, so a hash cannot be
  * brute-forced back to an address from the table alone.
  */
-const SECRET = process.env.REPORT_HASH_SECRET ?? randomBytes(32).toString('hex');
+/**
+ * Unset, this falls back to a per-process random value — which is right for a
+ * test and wrong everywhere else, because the salt IS the rate limit. A second
+ * instance, or the same instance after a restart, derives different hashes for
+ * the same person, and "one report per person per day" quietly becomes "one per
+ * person per process". The fallback stays so a fresh checkout runs with no
+ * configuration, but it says so out loud rather than degrading in silence.
+ */
+function hashSecret(): string {
+  const configured = process.env.REPORT_HASH_SECRET;
+  if (configured) return configured;
+
+  if (process.env.NODE_ENV === 'production') {
+    console.warn(
+      '[status] REPORT_HASH_SECRET is not set. Reporter hashes will not survive a ' +
+      'restart and will differ between instances, so the once-per-day limit on ' +
+      'reports and reviews is per process. Set it before taking traffic.',
+    );
+  }
+  return randomBytes(32).toString('hex');
+}
+
+const SECRET = hashSecret();
 
 export function reporterHash(ip: string, userAgent: string, now = new Date()): string {
   const day = now.toISOString().slice(0, 10);

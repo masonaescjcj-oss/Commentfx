@@ -38,13 +38,25 @@ export function StatusChip({ status }: { status: StatusSummary | null }) {
 export function StatusBlock({ brokerSlug, brokerName, status }: {
   brokerSlug: string; brokerName: string; status: StatusSummary | null;
 }) {
+  // A null status is "we do not have the count here", not "this feature is
+  // off". These pages are prerendered, and a build runs without a database —
+  // so on a fresh deploy every broker page had a null status and told the
+  // reader that reporting was unavailable, which was untrue and left nobody
+  // able to report until the page happened to revalidate. The form is what
+  // matters and it works regardless: the action runs on the server, where the
+  // database is.
   if (!status) {
     return (
       <Card className="p-4" as="section">
         <CardHead title="Is it just you?" />
         <p className="text-[12.5px] text-ink-2 leading-[1.8]">
-          Incident reporting is not available on this deployment.
+          The live count for {brokerName} is not loaded on this copy of the page yet.
+          You can still report a problem — it is recorded straight away and shows up
+          here shortly.
         </p>
+        <div className="mt-3 pt-3 border-t border-line-2">
+          <ReportForm brokerSlug={brokerSlug} />
+        </div>
       </Card>
     );
   }

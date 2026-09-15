@@ -128,6 +128,38 @@ never our composite out of ten. Those measure different things, and publishing
 the composite under a count of reviews would claim five people awarded a number
 none of them chose.
 
+## Security posture
+
+The site publishes what strangers write, so the surface is worth stating
+plainly rather than implying it was considered.
+
+**What protects the reviews.** React escapes everything it renders, and no user
+text reaches `dangerouslySetInnerHTML` — the two places that use it take our own
+data, and the JSON-LD one escapes `<` so a string can never close the script
+tag. A test asserts the evidence a reviewer offers an editor privately never
+appears in what a reader gets.
+
+**Content-Security-Policy**, with its limit first: `script-src` carries
+`'unsafe-inline'`, because Next inlines its own bootstrap and the alternative —
+a nonce per response — means rendering every page dynamically, which would cost
+the static generation this site is built on. So it does not stop injected inline
+script. It does stop script from any other origin, plugins, framing, form posts
+elsewhere, and `<base>` rewriting every relative URL. Verified against a real
+browser across twelve pages: no violations, and hydration still works.
+
+**The admin token is the weakest part** and is meant to be replaced by real
+accounts. It fails closed (no `ADMIN_TOKEN` and every `/admin` route 404s),
+compares in constant time, and every write records an actor into an append-only
+audit log.
+
+**What is not solved.** The once-per-day limit on reports and reviews is a
+salted digest of address and user agent; someone rotating both can write more.
+The 80-character floor raises the cost, the score is unmoved either way because
+nothing counts until an editor checks it, and there is no CAPTCHA. If
+`REPORT_HASH_SECRET` is unset the salt is per process, so the limit resets on
+restart — the app now says so loudly in production instead of degrading
+quietly.
+
 ## Verification
 
 Nothing on this site claims to be checked unless a person checked it and

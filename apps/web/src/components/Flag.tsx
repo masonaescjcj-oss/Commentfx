@@ -19,7 +19,9 @@ const SHAPES: Record<string, string> = {
 };
 
 export function Flag({ code, w = 16, title }: { code: string; w?: number; title?: string }) {
-  const shape = SHAPES[code];
+  // hasOwn, not a bare lookup: a code of "constructor" would otherwise reach
+  // dangerouslySetInnerHTML with something off Object.prototype.
+  const shape = Object.hasOwn(SHAPES, code) ? SHAPES[code] : undefined;
   const h = Math.round((w / 20) * 14);
   return (
     <svg
