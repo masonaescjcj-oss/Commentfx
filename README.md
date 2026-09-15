@@ -389,6 +389,29 @@ one. Discovery was never the argument either — every entry is already a real
 link in the HTML, which is what a crawler follows. Removed; the page went from
 191 KB to 150 KB.
 
+## Layout stability
+
+`pnpm --filter @commentfx/web check:vitals` measures CLS on every page shape
+under Chrome's Slow 4G profile with a 4× CPU throttle — a mid-range phone on a
+bad connection — and fails over Google's 0.1. LCP is printed and never fails the
+run: it is genuinely noisy on a shared runner, and a gate that cries wolf is
+worse than no gate.
+
+The comment beside the font declarations used to say "no layout shift". It was
+not true. Six page shapes were over the threshold, the memecoin radar at 0.174,
+and the cause was not the display font — which is what I assumed and spent a
+build proving wrong — but the body one. `next/font` builds a metric-adjusted
+fallback that matches x-height and line box, and cannot match advance widths, so
+text wrapped differently until Manrope arrived and then every card on the page
+jumped up: the h1 lost a line, each broker's stat row went from two rows to one,
+the footer lost 33px. A second into the visit, exactly as somebody starts
+reading.
+
+`font-display: optional` settles it at 0.0000 everywhere. A slow first visit
+keeps the metric-adjusted fallback for the whole page rather than being
+rearranged mid-read, and every visit after has the font from the first paint.
+LCP is under a second on every shape at that throttle.
+
 ## What a page says about itself
 
 `pnpm --filter @commentfx/web check:seo` holds every machine-readable claim a

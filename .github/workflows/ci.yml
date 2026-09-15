@@ -70,6 +70,13 @@ jobs:
       - name: Search
         run: SMOKE_BASE=http://127.0.0.1:3000 pnpm --filter @commentfx/web smoke:search
 
+      # Layout stability on Chrome's Slow 4G with a 4x CPU throttle. Six page
+      # shapes were over Google's 0.1 and nothing would have said so: it is a
+      # defect you can only see by measuring, because it happens a second in
+      # and leaves no trace.
+      - name: Layout stability
+        run: CHECK_BASE=http://127.0.0.1:3000 pnpm --filter @commentfx/web check:vitals
+
       # Writing flows, through the real forms, against a real database. This is
       # the only check that could have caught either of the two worst bugs this
       # project has had: publishing a review 404ing the broker's page, and two
