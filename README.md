@@ -42,12 +42,17 @@ useful; unverified crowd signal *inside* it would destroy the number.
 ## Register checks
 
 Once a day every licence we publish is compared against the register of the
-regulator that issued it. The result is stored per licence and shown on the
+regulator that issued it — where that register can be read. `/methodology` lists
+which ones can and which cannot, per regulator and with the licence count,
+generated from the same lists the readers are registered in so the claim cannot
+drift from the code. The result is stored per licence and shown on the
 broker page: confirmed and under what name, not on the register, or explicitly
 not machine-checked with the reason.
 
-Two registers are readable from a datacentre today, covering 9 of the 19
-licences this site publishes. The FCA, the Mauritius FSC and the NFA were each
+Two registers are readable from a datacentre today, covering 9 of the 24
+licences this site publishes. (I wrote nineteen in the commit that added the
+second reader. It was twenty-four; I added the per-regulator counts up wrong,
+and the number on the page is generated, which is how it got caught.) The FCA, the Mauritius FSC and the NFA were each
 probed and are **declared as blocked with the reason** rather than omitted, so
 register coverage never looks wider than it is.
 
@@ -406,6 +411,23 @@ type, and a mixed list of brokers, coins, comparisons and utility pages is not
 one. Discovery was never the argument either — every entry is already a real
 link in the HTML, which is what a crawler follows. Removed; the page went from
 191 KB to 150 KB.
+
+## Two claims that were too wide
+
+The footer on every page said the inputs "are checked against each regulator's
+own register". Two things wrong with that at once: ten of the twenty-four
+licences have no reader at all, and a register carries licences, not spreads or
+withdrawal terms. The meta description of every broker page — the line that
+shows in a search result — made the same mistake more strongly, offering
+"published spreads and withdrawal terms — checked against the regulator's
+register".
+
+Both now say what is true: every licence is checked against its regulator's
+register, or the page says why it could not be.
+
+The page-level truth was never wrong. A broker page has always shown each
+licence as confirmed, not on the register, or not machine-checked with the
+reason. It was the summary sentences, repeated site-wide, that rounded it up.
 
 ## When there is no page, and when the page breaks
 

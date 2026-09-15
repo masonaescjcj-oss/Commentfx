@@ -95,8 +95,8 @@ export function Footer() {
       <p className="leading-[1.8] max-w-[60ch] mb-3">
         {SITE.name} earns commission from some brokers when a reader opens an account.
         That is disclosed on every link. It has no effect on the score or the order of
-        any list — the weights are published and the inputs are checked against each
-        regulator’s own register.
+        any list — the weights are published, and every licence is checked against its
+        regulator’s register or the page says why it could not be.
       </p>
       <p className="leading-[1.8] max-w-[60ch] text-ink-3">
         Nothing here is investment advice. Trading leveraged products carries a high

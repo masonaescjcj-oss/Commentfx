@@ -49,8 +49,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
     title: `${b.name} review — score ${r.score.total.toFixed(1)}, licences and real costs`,
     description:
       `${b.name} scores ${r.score.total.toFixed(1)} out of 10 and ranks #${r.rank} of ` +
-      `${rankedBrokers().length}. Licences, which legal entity you are onboarded to, ` +
-      `published spreads and withdrawal terms — checked against the regulator's register.`,
+      `${rankedBrokers().length}. Which legal entity you are onboarded to, its licence ` +
+      `checked against the regulator's own register, and the published cost of trading.`,
     path: `/brokers/${b.slug}`,
   });
 }

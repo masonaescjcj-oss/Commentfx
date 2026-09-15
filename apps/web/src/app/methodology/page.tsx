@@ -6,6 +6,7 @@ import {
   MEME_WEIGHTS, MEME_LABELS, type MemeKey,
   IMPACT_RULE, IMPACT_LABEL, MIN_FOR_SCORE,
 } from '@commentfx/core';
+import { registerCoverage } from '@/lib/register-coverage';
 import { pageMetadata, JsonLd, breadcrumbLd } from '@/lib/seo';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
 import { Card, CardHead, Meter, Tag } from '@/components/primitives';
@@ -71,6 +72,7 @@ function Weights<K extends string>({ keys, weights, labels, what, max }: {
 }
 
 export default function MethodologyPage() {
+  const coverage = registerCoverage();
   const trail = [{ name: 'Home', path: '/' }, { name: 'How we score', path: '/methodology' }];
   const tiers = (['A', 'B', 'C'] as const).map((t) => ({
     tier: t,
@@ -173,6 +175,35 @@ export default function MethodologyPage() {
             than serving figures we could not confirm, and every live page carries the
             timestamp of the fetch behind it.
           </p>
+        </Card>
+
+        <Card className="p-4" as="section">
+          <CardHead title="Which registers we can actually read" />
+          <p className="text-[12.5px] text-ink-2 leading-[1.85] mb-3">
+            Every regulator publishes a register precisely so anyone can check a firm
+            before dealing with it. Not every one of them can be read by a machine in a
+            datacentre: some need a registered key, some render their search in the
+            browser, some refuse our address outright. {coverage.licencesChecked} of the{' '}
+            {coverage.licencesTotal} licences on this site are compared against the issuing
+            regulator’s own register once a day. The rest are not, and every page that
+            carries one says so rather than letting it pass as checked.
+          </p>
+          <ul className="flex flex-col">
+            {coverage.rows.map((r) => (
+              <li key={r.code} className="py-[9px] border-b border-line-2 last:border-b-0 flex items-start gap-3">
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[13px] font-semibold">
+                    {r.code}
+                    <span className="text-ink-3 font-normal"> · {r.licences} licence{r.licences === 1 ? '' : 's'}</span>
+                  </span>
+                  <span className="block text-[11.5px] text-ink-3 leading-[1.6] mt-[2px]">
+                    {r.blocked ? r.blocked : `${r.name} — read once a day`}
+                  </span>
+                </span>
+                <Tag tone={r.blocked ? 'neutral' : 'good'}>{r.blocked ? 'not machine-checked' : 'checked'}</Tag>
+              </li>
+            ))}
+          </ul>
         </Card>
 
         <Card className="p-4" as="section">
