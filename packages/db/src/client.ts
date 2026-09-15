@@ -46,6 +46,7 @@ async function makeDb(): Promise<DbHandle> {
     const { drizzle } = await import('drizzle-orm/node-postgres');
     const { Pool } = await import('pg');
     const pool = new Pool({ connectionString: url, max: 10 });
+    await migratePostgres(pool);
     return { db: drizzle(pool, { schema }) as unknown as AppDb, kind: 'postgres', close: () => pool.end() };
   }
 
@@ -56,6 +57,46 @@ async function makeDb(): Promise<DbHandle> {
   const client = new PGlite(dir);
   await applyMigrations(client);
   return { db: drizzle(client, { schema }) as unknown as AppDb, kind: 'pglite', close: () => client.close() };
+}
+
+/**
+ * An arbitrary but fixed number, so every instance of this application asks for
+ * the same lock and no other application is likely to collide with it. The
+ * ASCII of "cmfx".
+ */
+const MIGRATION_LOCK = 0x636d6678;
+
+/**
+ * Real Postgres gets its schema the same way the embedded one does.
+ *
+ * It did not until a deploy was attempted, and the shape of the mistake is
+ * worth keeping: the branch that only ever runs in development migrated itself
+ * on every start, and the branch that only ever runs in production did not.
+ * Nothing caught it, because nothing here had ever pointed at a real Postgres.
+ * A fresh database answered the first query with `relation "regulators" does
+ * not exist` — a deployment that installs cleanly, builds cleanly, serves every
+ * read-only page, and fails the moment anybody writes.
+ *
+ * Under an advisory lock, because on a serverless host a cold start is not one
+ * process: a dozen instances can reach this line in the same second, and
+ * concurrent DDL is how a deploy deadlocks. The ledger makes it idempotent, the
+ * lock makes it orderly, and both are needed. The lock is held on one dedicated
+ * connection and released in a finally, so a migration that throws does not
+ * leave the next instance waiting.
+ */
+async function migratePostgres(pool: import('pg').Pool): Promise<void> {
+  const client = await pool.connect();
+  try {
+    await client.query('SELECT pg_advisory_lock($1)', [MIGRATION_LOCK]);
+    await applyMigrations({
+      exec: (sql) => client.query(sql),
+      query: <T>(sql: string) => client.query(sql) as unknown as Promise<{ rows: T[] }>,
+    });
+  } finally {
+    // Best effort: if the connection is already gone the lock went with it.
+    await client.query('SELECT pg_advisory_unlock($1)', [MIGRATION_LOCK]).catch(() => {});
+    client.release();
+  }
 }
 
 export interface MigrationClient {

@@ -185,3 +185,64 @@ jobs:
       # and every URL in it still has to serve.
       - name: Sitemap holds up without them
         run: CHECK_BASE=http://127.0.0.1:3003 pnpm --filter @commentfx/web check:seo
+
+  # The production database path, against a real Postgres.
+  #
+  # It had never been run. Everything in the job above uses PGlite, which is what
+  # a developer gets, and the two branches of makeDb() are not the same code: the
+  # embedded one applied its migrations on connect and the Postgres one did not.
+  # A deployment with DATABASE_URL set installed cleanly, built cleanly, served
+  # every read-only page, and answered the first write with `relation
+  # "regulators" does not exist`. Nothing could have caught that except pointing
+  # at a real server, so now something does, on every push.
+  postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+      REPORT_HASH_SECRET: ci-fixed-secret-so-dedupe-is-deterministic
+      ADMIN_TOKEN: ci-admin-token
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      # No DATABASE_URL here on purpose: Next prerenders in parallel workers, and
+      # the build has no business writing to the production database anyway.
+      - name: Build
+        env:
+          DATABASE_URL: ''
+        run: pnpm build
+
+      - run: pnpm --filter @commentfx/web exec playwright install --with-deps chromium
+
+      # The schema is created by the app itself on its first connection. Seeding
+      # without a migrate step first is the assertion: if that ever stops
+      # happening, this line fails with the error the deploy would have given.
+      - name: Seed, which is also the migration test
+        run: node --experimental-strip-types packages/db/src/seed.ts
+
+      - name: Writing and editor flows on Postgres
+        shell: bash
+        run: |
+          PORT=3005 pnpm --filter @commentfx/web start &
+          for i in $(seq 1 40); do
+            curl -sf -o /dev/null http://127.0.0.1:3005/ && break
+            sleep 1
+          done
+          SMOKE_BASE=http://127.0.0.1:3005 pnpm --filter @commentfx/web smoke
+          SMOKE_BASE=http://127.0.0.1:3005 SMOKE_ADMIN_TOKEN=ci-admin-token \
+            pnpm --filter @commentfx/web smoke:admin

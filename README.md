@@ -589,6 +589,26 @@ publishes, so a coin in it now gets one more call by id when it is not in
 today's hundred, using the same endpoint and the same parser. Advertising a URL
 and then 404ing it is the worst of both.
 
+## The production database path
+
+`getDb()` has two branches: real Postgres when `DATABASE_URL` is set, and an
+embedded PGlite when it is not. They are not the same code, and only one of them
+had ever run. The embedded branch applied its migrations on connect; the
+Postgres branch did not. A deployment with a database configured would install
+cleanly, build cleanly, serve every read-only page, and answer the first write
+with `relation "regulators" does not exist`.
+
+It was found by trying to deploy, and reproduced against a real Postgres in a
+minute. Both branches migrate on connect now, the Postgres one under an advisory
+lock: on a serverless host a cold start is not one process, a dozen instances can
+reach that line in the same second, and concurrent DDL is how a deploy
+deadlocks. The ledger makes it idempotent; the lock makes it orderly.
+
+CI runs a `postgres` job against a real Postgres 16 service on every push —
+build, seed, writing flows, editor flows. Seeding without a separate migrate
+step **is** the assertion: if the app ever stops creating its own schema, that
+step fails with the exact error the deployment would have given.
+
 In production `check-registers` is the one that matters — it needs `DATABASE_URL`
 and should run on the same daily schedule.
 
