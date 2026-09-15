@@ -29,7 +29,11 @@ export default async function CoinsPage() {
         {'error' in data ? (
           <>
             <RankingIntro title={TITLE} lead={DESC} count={COIN_INDEX.length} unit="coins" sortedBy="market cap at our last refresh" />
-            <Unavailable what="Market data" reason={data.error} />
+            <Unavailable
+              what="Market data"
+              reason={data.error}
+              elsewhere={{ href: 'https://www.coingecko.com/', label: 'Check CoinGecko directly' }}
+            />
             {/* The prices are gone; the coverage is not. Without this the page
                 loses every link to a coin during an outage, which would make
                 the honest coin pages behind them unreachable by anyone who was

@@ -147,7 +147,14 @@ export default async function CoinPage({ params }: { params: Promise<Params> }) 
             </h1>
             <p className="text-[12px] text-ink-3 tnum">{ref.symbol}</p>
           </Card>
-          <Unavailable what={`Live data for ${ref.name}`} reason={view.reason} />
+          <Unavailable
+            what={`Live data for ${ref.name}`}
+            reason={view.reason}
+            elsewhere={{
+              href: `https://www.coingecko.com/en/coins/${ref.id}`,
+              label: `Check ${ref.name} on CoinGecko directly`,
+            }}
+          />
           <WhereToTrade symbol={ref.symbol} />
         </main>
         <Footer />

@@ -68,7 +68,14 @@ export default async function MemecoinsPage() {
         </Card>
 
         {'error' in data ? (
-          <Unavailable what="The radar" reason={data.error} />
+          <Unavailable
+            what="The radar"
+            reason={data.error}
+            /* No link elsewhere here, unlike the coin pages. The value of this
+               page is the screening, and the upstream's own list is every new
+               pool unscreened — sending a reader there during an outage would
+               be handing them exactly what this page exists to filter. */
+          />
         ) : data.tokens.length === 0 ? (
           <Card className="p-5 text-center">
             <p className="text-[14px] font-semibold mb-1">No token passed screening right now</p>

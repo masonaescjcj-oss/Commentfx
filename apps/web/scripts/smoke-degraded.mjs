@@ -81,6 +81,7 @@ check('it says the data is missing', /is unavailable right now/.test(coin.body))
 check('it keeps the part that does not need the feed', coin.body.includes('Where to trade BTC'));
 check('it publishes no price', !/\$[\d.]/.test(coin.body), 'a number reached the page with no source behind it');
 check('it claims no freshness', !coin.body.includes('Data from CoinGecko'));
+check('it sends the reader to the source', coin.body.includes('Check Bitcoin on CoinGecko directly'));
 check('it offers no FAQ answer it cannot fill', !coin.html.includes('"@type":"FAQPage"'));
 
 const junk = await get('/coins/not-a-real-coin-9f2a');
