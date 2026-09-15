@@ -13,7 +13,8 @@
     "audit:a11y": "node scripts/audit-a11y.mjs",
     "smoke": "node scripts/smoke-flows.mjs",
     "smoke:admin": "node scripts/smoke-admin.mjs",
-    "smoke:degraded": "node scripts/smoke-degraded.mjs"
+    "smoke:degraded": "node scripts/smoke-degraded.mjs",
+    "check:sitemap": "node scripts/check-sitemap.mjs"
   },
   "dependencies": {
     "@commentfx/core": "workspace:*",

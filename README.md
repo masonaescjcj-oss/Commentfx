@@ -353,6 +353,30 @@ That page is served as 200 rather than the 503 the situation deserves, because
 Next's App Router gives a page no way to set a status — and standing in a 404 for
 a 503 is what caused this. The body says plainly that the data is missing.
 
+## Sitemap
+
+`pnpm --filter @commentfx/web check:sitemap` holds the sitemap to the site, in
+both CI jobs. The rule needs no allowlist, which is what makes it worth running:
+a page declares whether it wants to be indexed, and the sitemap has to agree.
+
+    indexable  →  in the sitemap
+    noindex    →  not in the sitemap
+    listed     →  serves 200, and its canonical points at itself
+
+The sitemap is generated from the data rather than hand-maintained, which makes
+it feel self-maintaining and is exactly why nobody looked at it. It was missing
+every coin page — fifty built, a hundred served, all of them linked from
+`/coins`, none of them listed: the site's largest block of pages and its most
+searched-for ones. The generator is synchronous and coin ids only ever came from
+a fetch, so they could not be listed and quietly were not. They come from the
+checked-in index now, which also means the sitemap cannot shrink because an
+upstream was rate-limited the minute it regenerated — that would be the coin-page
+404s again, told to a crawler. The degraded job asserts exactly that.
+
+It also caught the homepage disagreeing with itself: the sitemap said
+`https://commentfx.com/` and the canonical said `https://commentfx.com`. Next
+renders canonicals with `trailingSlash` false, so `absoluteUrl` strips it too.
+
 ## Scheduled jobs
 
 Every parser here fails safe: when a page's markup changes it reports the source

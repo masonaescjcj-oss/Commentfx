@@ -58,6 +58,12 @@ jobs:
           done
           AUDIT_BASE=http://127.0.0.1:3000 pnpm --filter @commentfx/web audit:a11y
 
+      # The sitemap is generated from the data rather than hand-maintained, which
+      # makes it feel self-maintaining and is why nobody looked at it: it was
+      # missing every coin page. Reuses the server the audit left on 3000.
+      - name: Sitemap
+        run: CHECK_BASE=http://127.0.0.1:3000 pnpm --filter @commentfx/web check:sitemap
+
       # Writing flows, through the real forms, against a real database. This is
       # the only check that could have caught either of the two worst bugs this
       # project has had: publishing a review 404ing the broker's page, and two
@@ -160,3 +166,9 @@ jobs:
       # source-down notices — so this is the only place axe ever sees it.
       - name: Accessibility of the degraded pages
         run: AUDIT_BASE=http://127.0.0.1:3003 AUDIT_PAGES=/coins,/coins/bitcoin,/memecoins,/calendar,/calendar/us-jobs-report pnpm --filter @commentfx/web audit:a11y
+
+      # And the sitemap does not shrink because an upstream was quiet when it
+      # regenerated. It is built from checked-in data for exactly this reason,
+      # and every URL in it still has to serve.
+      - name: Sitemap holds up without them
+        run: CHECK_BASE=http://127.0.0.1:3003 pnpm --filter @commentfx/web check:sitemap

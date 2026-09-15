@@ -18,5 +18,13 @@ export const SITE = {
   ],
 } as const;
 
-export const absoluteUrl = (path = '/') =>
-  new URL(path, SITE.url).toString();
+export const absoluteUrl = (path = '/') => {
+  const url = new URL(path, SITE.url).toString();
+  /**
+   * Next renders canonicals with `trailingSlash` false, so it strips the slash
+   * the URL constructor adds to the root. Stripping it here too is what keeps
+   * the sitemap and the canonical saying the same thing about the one URL every
+   * crawler starts at. They disagreed until check:sitemap asked.
+   */
+  return url.endsWith('/') ? url.slice(0, -1) : url;
+};

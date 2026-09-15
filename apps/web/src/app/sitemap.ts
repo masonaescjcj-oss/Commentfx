@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { absoluteUrl } from '@/lib/site';
 import { rankedBrokers, rankedProps, rankedExchanges, BEST_CRITERIA, comparePairs, pairSlug } from '@/lib/repo';
-import { RELEASES } from '@commentfx/core';
+import { COIN_INDEX, RELEASES } from '@commentfx/core';
 
 /**
  * Generated from the data, never hand-maintained. Priority reflects how much
@@ -58,6 +58,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: absoluteUrl(`/best/${c.slug}`),
       lastModified: now,
       changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    })),
+
+    /**
+     * Every coin page, from the checked-in index rather than the live top 100,
+     * for two reasons. This function is synchronous, so it could never have
+     * awaited a fetch — which is why the site's largest block of pages, and its
+     * most searched-for ones, were missing from here entirely. And a sitemap
+     * that shrinks to nothing because an upstream was rate-limited the minute it
+     * regenerated would be the same bug as the 404s, told to a crawler.
+     */
+    ...COIN_INDEX.map((c) => ({
+      url: absoluteUrl(`/coins/${c.id}`),
+      lastModified: now,
+      changeFrequency: 'hourly' as const,
       priority: 0.7,
     })),
 
