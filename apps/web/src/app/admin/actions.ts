@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { and, eq } from 'drizzle-orm';
 import { getDb, schema, verifyReview, hideReview, type Kind } from '@commentfx/db';
+import { DB_ENABLED, NO_DB_MESSAGE } from '@/lib/db-available';
 
 export interface RecordResult { ok: boolean; message: string }
 
@@ -27,6 +28,7 @@ export async function recordVerification(
   const note = String(form.get('note') ?? '').trim() || null;
   const actor = String(form.get('actor') ?? '').trim();
 
+  if (!DB_ENABLED) return { ok: false, message: NO_DB_MESSAGE };
   if (!kind || !slug || !field) return { ok: false, message: 'Missing target.' };
   if (!actor) return { ok: false, message: 'Who is making this check?' };
   if (!valueSeen) return { ok: false, message: 'Record the value exactly as the source shows it.' };
@@ -95,6 +97,7 @@ export async function moderateReview(_prev: RecordResult | null, form: FormData)
   const actor = String(form.get('actor') ?? '').trim();
   const reason = String(form.get('reason') ?? '').trim();
 
+  if (!DB_ENABLED) return { ok: false, message: NO_DB_MESSAGE };
   if (!Number.isInteger(id)) return { ok: false, message: 'Missing review.' };
   if (!actor) return { ok: false, message: 'Say who is making this call.' };
 

@@ -6,7 +6,8 @@ import { getDb, coverageFor, verificationQueue, type Coverage, type Kind } from 
  * and deployed today. When there is no database, there are no verifications,
  * and every page says so rather than implying facts were checked.
  */
-export const DB_ENABLED = process.env.DATABASE_URL !== undefined || process.env.PGLITE_DIR !== undefined;
+import { DB_ENABLED } from './db-available';
+export { DB_ENABLED };
 
 export async function coverage(kind: Kind, slug: string): Promise<Coverage | null> {
   if (!DB_ENABLED) return null;

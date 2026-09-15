@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { INCIDENT_LABELS, type IncidentKind } from '@commentfx/core';
 import { getDb, reporterHash, submitReport } from '@commentfx/db';
+import { DB_ENABLED, NO_DB_MESSAGE } from '@/lib/db-available';
 
 export interface ReportResult { ok: boolean; message: string }
 
@@ -26,6 +27,7 @@ export async function reportStatus(_prev: ReportResult | null, form: FormData): 
   const kind = String(form.get('kind') ?? '').trim();
   const note = String(form.get('note') ?? '').trim() || null;
 
+  if (!DB_ENABLED) return { ok: false, message: NO_DB_MESSAGE };
   if (!brokerSlug) return { ok: false, message: 'Missing broker.' };
   if (!KINDS.has(kind)) return { ok: false, message: 'Pick what went wrong.' };
   if (note && note.length > 280) return { ok: false, message: 'Keep the note under 280 characters.' };

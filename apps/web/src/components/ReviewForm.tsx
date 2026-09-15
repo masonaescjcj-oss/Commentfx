@@ -7,9 +7,20 @@ import {
 } from '@commentfx/core';
 import { postReview, type ReviewResult } from '@/app/review-actions';
 
+/**
+ * The form is always offered, and the action is what knows whether there is
+ * anywhere to write.
+ *
+ * Gating the form on "is a database configured" looks tidier and is wrong: this
+ * page is prerendered, the build runs without a database, and that answer would
+ * be baked into the HTML for a server that has one. I tried it and hid the form
+ * on a working deployment. Whether a write can land is a runtime fact, so only
+ * something running at request time — the action — may answer it.
+ */
 export function ReviewForm({ kind, slug, name }: {
   kind: ReviewKind; slug: string; name: string;
 }) {
+
   const [state, action, pending] = useActionState<ReviewResult | null, FormData>(postReview, null);
   const [rating, setRating] = useState(0);
   const [length, setLength] = useState(0);

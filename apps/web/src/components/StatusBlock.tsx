@@ -38,13 +38,15 @@ export function StatusChip({ status }: { status: StatusSummary | null }) {
 export function StatusBlock({ brokerSlug, brokerName, status }: {
   brokerSlug: string; brokerName: string; status: StatusSummary | null;
 }) {
-  // A null status is "we do not have the count here", not "this feature is
-  // off". These pages are prerendered, and a build runs without a database —
-  // so on a fresh deploy every broker page had a null status and told the
-  // reader that reporting was unavailable, which was untrue and left nobody
-  // able to report until the page happened to revalidate. The form is what
-  // matters and it works regardless: the action runs on the server, where the
-  // database is.
+  // A missing count does not mean reporting is off, and this page could not
+  // tell the difference anyway: it is prerendered, and the build runs without
+  // a database, so any answer baked in here would describe the build machine
+  // rather than the server. Saying "not available on this deployment" meant
+  // that on a fresh deploy nobody could report anything until the page
+  // happened to revalidate. Gating the form on "is a database configured" has
+  // the same flaw for the same reason, and I tried it: it hid the form on a
+  // working deployment. Whether a write can land is a runtime fact, so the
+  // action answers it — it runs at request time, where the database is.
   if (!status) {
     return (
       <Card className="p-4" as="section">

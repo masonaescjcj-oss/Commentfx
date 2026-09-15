@@ -6,6 +6,7 @@ import { isTopicFor, BODY_MAX, type ReviewKind, type ReviewTopic } from '@commen
 import {
   getDb, reporterHash, submitReview, withdrawReview, withdrawalCode, parseWithdrawalCode,
 } from '@commentfx/db';
+import { DB_ENABLED, NO_DB_MESSAGE } from '@/lib/db-available';
 
 export interface ReviewResult {
   ok: boolean;
@@ -51,6 +52,7 @@ export async function postReview(_prev: ReviewResult | null, form: FormData): Pr
   const body = String(form.get('body') ?? '');
   const evidenceNote = String(form.get('evidenceNote') ?? '').trim() || null;
 
+  if (!DB_ENABLED) return { ok: false, message: NO_DB_MESSAGE };
   if (!slug || !KINDS.has(kind)) return { ok: false, message: 'Missing company.' };
   if (!isTopicFor(kind as ReviewKind, topic)) {
     return { ok: false, message: 'Choose what this review is about.' };
@@ -95,6 +97,7 @@ export async function removeReview(_prev: ReviewResult | null, form: FormData): 
   const code = String(form.get('code') ?? '').trim();
   const parsed = parseWithdrawalCode(code);
 
+  if (!DB_ENABLED) return { ok: false, message: NO_DB_MESSAGE };
   if (!parsed) return { ok: false, message: 'Paste the whole code you were given, including the number before the dot.' };
 
   try {

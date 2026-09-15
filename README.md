@@ -152,6 +152,21 @@ accounts. It fails closed (no `ADMIN_TOKEN` and every `/admin` route 404s),
 compares in constant time, and every write records an actor into an append-only
 audit log.
 
+**A write with nowhere to go says so.** The read paths always degraded politely
+when no database was configured; the write actions did not — they called
+`getDb()` regardless, which falls back to an embedded database in a local
+directory. On a deployment with nothing configured, the first report quietly
+created a database on the server's disk that nobody knew about and a redeploy
+would wipe, and the reader saw no error because from their side it had worked.
+Every write action now checks first and says plainly that there is nowhere to
+record it.
+
+The forms themselves are still always offered, and that is deliberate. Gating
+them on "is a database configured" is a build-time answer to a runtime question:
+these pages are prerendered and the build has no database, so the answer would
+describe the build machine. Tried it, and it hid the forms on a deployment that
+had one. Only something running at request time may answer it.
+
 **What is not solved.** The once-per-day limit on reports and reviews is a
 salted digest of address and user agent; someone rotating both can write more.
 The 80-character floor raises the cost, the score is unmoved either way because
