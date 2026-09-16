@@ -27,7 +27,19 @@ export interface Regulator {
 export interface Licence {
   regulator: string;       // Regulator.code
   number: string;
-  status: 'authorised' | 'registered' | 'suspended' | 'withdrawn';
+  /**
+   * `unregulated` is the one that is not a licence state at all, and it earns
+   * its place: a company can be part of a broker group, take clients, and hold
+   * no financial licence anywhere. Eightcap's group includes CLMarkets Limited
+   * in St Vincent, trading as Eightcap International, and the St Vincent FSA
+   * says in its own words that licensing forex business is not part of what it
+   * does. A company number from a registrar of companies is not supervision.
+   *
+   * Scoring ignores it, the entity map says so in words, and it is on the page
+   * rather than left off — a group entity a reader could end up with is part of
+   * the map whether or not anyone regulates it.
+   */
+  status: 'authorised' | 'registered' | 'suspended' | 'withdrawn' | 'unregulated';
 }
 
 /**

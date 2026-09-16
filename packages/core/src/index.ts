@@ -7,6 +7,7 @@ export * from './indexing.ts';
 export * from './data/articles.ts';
 export * from './data/profiles.ts';
 export * from './score.ts';
+export * from './verdict.ts';
 export * from './format.ts';
 export * from './data/brokers.ts';
 export * from './scoring-kit.ts';

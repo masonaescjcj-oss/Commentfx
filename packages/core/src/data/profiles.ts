@@ -657,7 +657,166 @@ const PEPPERSTONE: BrokerProfile = {
   ],
 };
 
-export const PROFILES: BrokerProfile[] = [EXNESS, IC_MARKETS, PEPPERSTONE];
+const EIGHTCAP: BrokerProfile = {
+  slug: 'eightcap',
+  checked: '2026-09-16',
+  verdict:
+    'Eightcap publishes its whole group structure on its own site, which is more than most brokers do — and '
+    + 'reading it is uncomfortable. Seven companies, three of them properly supervised, one of them holding no '
+    + 'financial licence anywhere. The British arm is real and audited and began taking clients in February '
+    + '2024, with net assets of £2.3m. This is a small, young, well-priced broker with a long offshore tail.',
+
+  sections: [
+    {
+      heading: 'Seven companies, and we had three of them',
+      paragraphs: [
+        'This page listed three entities until this research and two of them were wrong. The British company is '
+        + 'Eightcap Group Ltd, not "Eightcap (UK) Ltd". "Eightcap Global Ltd" was filed here as a Seychelles '
+        + 'company; Eightcap Global Limited is the Bahamas one, and the Seychelles company is a different entity '
+        + 'with a different number. A live CySEC licence was missing altogether.',
+
+        'None of that was hidden. Eightcap’s own legal-documents page lists the group, and it is a longer list '
+        + 'than the marketing suggests: Eightcap Pty Ltd under ASIC, Eightcap Group Ltd under the FCA, Eightcap '
+        + 'EU Ltd under CySEC, Eightcap Global Limited under the Securities Commission of The Bahamas, Eightcap '
+        + 'International Ltd in Seychelles, Eightcap International Trading in Mauritius, and CLMarkets Limited in '
+        + 'St Vincent [ec-legal]. We had simply never read it. The map on this page now matches theirs.',
+
+        'Publishing that list is genuinely to the broker’s credit. Plenty of groups keep the offshore companies '
+        + 'off the site entirely and let the client agreement do the disclosing after you have deposited.',
+      ],
+    },
+
+    {
+      heading: 'The company with no licence at all',
+      paragraphs: [
+        'One entry on that list is not like the others. CLMarkets Limited, registered in St Vincent and the '
+        + 'Grenadines as 24750 IBC 2018 and trading as Eightcap International, has a company number and no '
+        + 'financial licence [ec-legal].',
+
+        'That is not an oversight by anyone. St Vincent’s Financial Services Authority says in its own published '
+        + 'notices that licensing forex business is not part of what it does, and warns that firms claim '
+        + 'registration there as though it were regulation [svg-fsa]. A certificate of incorporation from a '
+        + 'registrar of companies is the same document a corner shop gets. It is not supervision, there is no '
+        + 'conduct rulebook behind it, and there is nobody to complain to.',
+
+        'So the entity map marks it with a dash instead of a tier and says "no financial licence anywhere" in '
+        + 'words. It scores nothing. That is a change to how this site works, not just to this page: any group '
+        + 'here that turns out to include an unlicensed company will now show it the same way.',
+
+        'What we do not know is who ends up as a client of it, and Eightcap does not say. Every other entity on '
+        + 'the list has a jurisdiction you can reason about. This one is on the page because a reader is entitled '
+        + 'to know it exists.',
+      ],
+    },
+
+    {
+      heading: 'The British arm is small, new, and does what it says',
+      paragraphs: [
+        'Eightcap Group Ltd was authorised by the FCA in December 2020 and, by its own account, only started '
+        + 'onboarding clients in late February 2024 [ch-accounts]. Its first profitable year followed: a profit '
+        + 'after tax of £638,355 in the period to 30 June 2025 against a loss of £107,957 the year before, and net '
+        + 'assets up from £1.71m to £2.35m.',
+
+        'The stated business is "the execution of FX and CFD trading offered to retail and professional clients '
+        + 'via an on-line trading platform", and the firm "operates as a Matched Principal broker and does not '
+        + 'hold market risk as all trades executed by clients are automatically hedged on a back-to-back basis '
+        + 'with our liquidity provider" [ch-accounts]. That is the same shape as Pepperstone’s British company '
+        + 'and the opposite of Exness’s, which is a B2B arm.',
+
+        'One line in the same accounts is worth flagging rather than smoothing over. The directors’ section 172 '
+        + 'statement describes a client base that "ranges from large institutional clients to professional '
+        + 'clients" [ch-accounts] — which is not what the principal activity says two pages earlier. It may be a '
+        + 'drafting leftover from before onboarding started. It may not. We are not going to guess, and it is in '
+        + 'the open questions below.',
+
+        'For scale: £2.3m of net assets is a small firm. Pepperstone’s British company held £26m of client money '
+        + 'alone. Small is not unsafe — it is audited, capitalised above requirement, and honestly reported — '
+        + 'but a reader choosing between them should know they are not the same size of thing.',
+      ],
+    },
+
+    {
+      heading: 'What checked out, and what is still just the broker’s word',
+      paragraphs: [
+        'The two registers we can read ourselves both confirm. ASIC returns Eightcap Pty Ltd under AFS licence '
+        + '391441, active. CySEC returns Eightcap EU Ltd under 246/14, active — the licence that was missing from '
+        + 'this page entirely [registers]. The FCA reference, 921296, is corroborated by the company’s own filed '
+        + 'accounts describing itself as FCA-regulated [ch-accounts].',
+
+        'The Bahamas, Seychelles, Mauritius and St Vincent entries come from Eightcap’s published list and have '
+        + 'not been read against those registers by anyone here, because we have no reader for them. The '
+        + 'verification panel on this page says which is which, and it is not decoration: a licence number we '
+        + 'copied from a broker’s website is a claim, and a licence number we found on a regulator’s register is '
+        + 'a fact.',
+
+        'The pricing is the broker’s published figure, as with everyone here. It is genuinely competitive — the '
+        + 'all-in cost puts it near the top of this directory at a quarter of IC Markets’ minimum deposit, which '
+        + 'is the reason it ranks where it does.',
+      ],
+    },
+  ],
+
+  facts: [
+    { label: 'Entities on the broker’s own legal page', value: 'Seven, across six jurisdictions', from: 'ec-legal' },
+    { label: 'Entities with no financial licence', value: 'One — CLMarkets Limited, St Vincent', from: 'ec-legal' },
+    { label: 'UK entity, FCA authorisation', value: 'Granted December 2020', from: 'ch-accounts' },
+    { label: 'UK entity, client onboarding began', value: 'Late February 2024', from: 'ch-accounts' },
+    { label: 'UK entity, profit after tax to 30 June 2025', value: '£638,355 (2024: loss of £107,957)', from: 'ch-accounts' },
+    { label: 'UK entity, net assets', value: '£2,346,228 (2024: £1,707,873)', from: 'ch-accounts' },
+    { label: 'UK entity, execution model', value: 'Matched principal, hedged back to back', from: 'ch-accounts' },
+    { label: 'ASIC register, AFS licence 391441', value: 'Active, read 16 September 2026', from: 'registers' },
+    { label: 'CySEC register, licence 246/14', value: 'Eightcap EU Ltd, active', from: 'registers' },
+    { label: 'St Vincent FSA on forex', value: 'Licensing forex business is not part of its remit', from: 'svg-fsa' },
+  ],
+
+  open: [
+    'The UK accounts describe the client base two different ways on two different pages — "retail and '
+    + 'professional" in the principal activity, "large institutional to professional" in the section 172 '
+    + 'statement. Which is current matters, and only the company can say.',
+    'Who is onboarded to CLMarkets Limited, the unlicensed St Vincent company, is not disclosed anywhere we '
+    + 'could find. It is on the group’s own legal page and that is all we know about it.',
+    'Four of the seven licences — Bahamas, Seychelles, Mauritius and St Vincent — come from the broker’s list '
+    + 'and not from a register we have read. We have no reader for any of those four.',
+  ],
+
+  sources: [
+    {
+      id: 'ec-legal',
+      publisher: 'Eightcap',
+      title: 'Legal documents and disclosures',
+      url: 'https://www.eightcap.com/en/legal-documents/',
+      read: '2026-09-16',
+      kind: 'broker',
+    },
+    {
+      id: 'ch-accounts',
+      publisher: 'Companies House',
+      title: 'Eightcap Group Ltd — full accounts for the period ended 30 June 2025, company 12448314',
+      url: 'https://find-and-update.company-information.service.gov.uk/company/12448314/filing-history',
+      published: '2025-10-16',
+      read: '2026-09-16',
+      kind: 'filing',
+    },
+    {
+      id: 'registers',
+      publisher: 'ASIC and CySEC',
+      title: 'AFS licensee register (391441) and the register of Cyprus Investment Firms (246/14)',
+      url: 'https://www.cysec.gov.cy/en-GB/entities/investment-firms/cypriot/',
+      read: '2026-09-16',
+      kind: 'register',
+    },
+    {
+      id: 'svg-fsa',
+      publisher: 'Financial Services Authority, St Vincent and the Grenadines',
+      title: 'Alerts and advisories — the regulation of forex business',
+      url: 'https://svgfsa.com/',
+      read: '2026-09-16',
+      kind: 'regulator',
+    },
+  ],
+};
+
+export const PROFILES: BrokerProfile[] = [EXNESS, IC_MARKETS, PEPPERSTONE, EIGHTCAP];
 
 export const profileFor = (slug: string) => PROFILES.find((p) => p.slug === slug);
 

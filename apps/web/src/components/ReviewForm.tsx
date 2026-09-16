@@ -35,7 +35,14 @@ export function ReviewForm({ kind, slug, name }: {
           this is the only thing that proves the review is yours. We store a digest of it,
           never the code itself — if you lose it, nobody can give it back to you.
         </p>
-        <code className="block bg-card border border-line rounded-lg p-3 text-[12px] break-all select-all">
+        {/* The id is a hook, and it is load-bearing rather than decorative: the
+            smoke scripts find this element to prove a review really published,
+            and they used to do it by taking the first <code> on the page. The
+            day a <code> appeared higher up — in the sources card, of all places
+            — every writing flow started passing against the wrong element and
+            the run went green while nothing published. A stable hook is cheaper
+            than that failure. */}
+        <code id="withdrawal-code" className="block bg-card border border-line rounded-lg p-3 text-[12px] break-all select-all">
           {state.deleteToken}
         </code>
         <p className="text-[11.5px] text-ink-3 mt-2 leading-[1.7]">

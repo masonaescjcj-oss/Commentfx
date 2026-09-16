@@ -188,6 +188,50 @@ export const articleLd = (a: {
   publisher: { '@id': absoluteUrl('/#organization') },
 });
 
+/**
+ * Our own editorial rating of somebody else's product, which is what a review
+ * node is for. `itemReviewed` points at the FinancialService node this page
+ * already emits, the author is us, and the date is the day a person last went
+ * through the record — so the rating always has a hand and a date behind it.
+ *
+ * The pros and cons are the generated ones, unchanged. Schema.org takes them as
+ * `positiveNotes` and `negativeNotes`, and whether or not a search engine draws
+ * them, they are an accurate machine-readable summary of what the page says. A
+ * node that repeated the marketing would not be.
+ *
+ * This is not `aggregateRating`, which stays reserved for what readers gave and
+ * has a floor of five ratings under it. One is the house view, the other is the
+ * crowd's, and merging them is how a directory launders an opinion into a
+ * statistic.
+ */
+export const reviewLd = (r: {
+  slug: string; name: string; score: number; body: string;
+  reviewed: string; pros: string[]; cons: string[];
+}): Json => ({
+  '@type': 'Review',
+  '@id': absoluteUrl(`/brokers/${r.slug}#review`),
+  itemReviewed: { '@id': absoluteUrl(`/brokers/${r.slug}#service`) },
+  name: `${r.name} review`,
+  reviewBody: r.body,
+  datePublished: r.reviewed,
+  author: { '@type': 'Organization', name: SITE.name, url: SITE.url },
+  publisher: { '@id': absoluteUrl('/#organization') },
+  reviewRating: {
+    '@type': 'Rating',
+    ratingValue: r.score,
+    bestRating: 10,
+    worstRating: 0,
+  },
+  positiveNotes: {
+    '@type': 'ItemList',
+    itemListElement: r.pros.map((name, i) => ({ '@type': 'ListItem', position: i + 1, name })),
+  },
+  negativeNotes: {
+    '@type': 'ItemList',
+    itemListElement: r.cons.map((name, i) => ({ '@type': 'ListItem', position: i + 1, name })),
+  },
+});
+
 export const faqLd = (qa: Array<{ q: string; a: string }>): Json => ({
   '@type': 'FAQPage',
   mainEntity: qa.map(({ q, a }) => ({

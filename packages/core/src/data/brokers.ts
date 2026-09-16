@@ -120,9 +120,29 @@ export const BROKERS: Broker[] = [
     slug: 'eightcap', name: 'Eightcap', founded: 2009, headquarters: 'AU',
     website: 'https://www.eightcap.com/',
     entities: [
+      /**
+       * Three entities were on this record and two of them were wrong.
+       *
+       * The British company is Eightcap Group Ltd, not "Eightcap (UK) Ltd".
+       * "Eightcap Global Ltd" was filed here as a Seychelles company under
+       * SD107; Eightcap Global Limited is the Bahamas one, SIA-F220, and the
+       * Seychelles company is a different entity called Eightcap International
+       * Ltd under SD100. A live CySEC licence was missing altogether, as were
+       * Mauritius and the St Vincent company.
+       *
+       * All seven are on Eightcap's own legal-documents page, which is where
+       * this came from — the group publishes the map, we had simply never read
+       * it.
+       */
       { legalName: 'Eightcap Pty Ltd', country: 'AU', licence: { regulator: 'ASIC', number: '391441', status: 'authorised' }, serves: ['AU'] },
-      { legalName: 'Eightcap (UK) Ltd', country: 'GB', licence: { regulator: 'FCA', number: '921296', status: 'authorised' }, serves: ['GB'] },
-      { legalName: 'Eightcap Global Ltd', country: 'SC', licence: { regulator: 'FSA-SC', number: 'SD107', status: 'registered' }, serves: ['*'] },
+      { legalName: 'Eightcap Group Ltd', country: 'GB', licence: { regulator: 'FCA', number: '921296', status: 'authorised' }, serves: ['GB'] },
+      { legalName: 'Eightcap EU Ltd', country: 'CY', licence: { regulator: 'CySEC', number: '246/14', status: 'authorised' }, serves: ['CY', 'DE', 'FR', 'IT', 'ES', 'NL'] },
+      { legalName: 'Eightcap Global Limited', country: 'BS', licence: { regulator: 'SCB-BS', number: 'SIA-F220', status: 'authorised' }, serves: ['*'] },
+      { legalName: 'Eightcap International Ltd', country: 'SC', licence: { regulator: 'FSA-SC', number: 'SD100', status: 'registered' }, serves: [] },
+      { legalName: 'Eightcap International Trading', country: 'MU', licence: { regulator: 'FSC-MU', number: 'GB25204603', status: 'registered' }, serves: [] },
+      // No financial licence anywhere. St Vincent's FSA does not license forex
+      // business and says so; this is a company number, not supervision.
+      { legalName: 'CLMarkets Limited, trading as Eightcap International', country: 'VC', licence: { regulator: 'FSA-SVG', number: '24750 IBC 2018', status: 'unregulated' }, serves: [] },
     ],
     cost: { eurusdSpread: 0.2, commissionPerLot: 7, swapFreeAvailable: true, verifiedAt: null },
     payments: { methods: ['bank', 'card', 'crypto', 'ewallet'], statedWithdrawalHours: 24, minDepositUsd: 100, verifiedAt: null },

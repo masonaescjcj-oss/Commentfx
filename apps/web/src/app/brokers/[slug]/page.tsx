@@ -2,9 +2,10 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import {
-  REGULATORS, countryName, brokerReview, effectiveCostPips, hours, leverage, profileFor, servesRetail,
+  REGULATORS, countryName, brokerReview, brokerVerdict, effectiveCostPips, hours, leverage, profileFor,
+  servesRetail, BROKERS,
 } from '@commentfx/core';
-import { pageMetadata, JsonLd, breadcrumbLd, financialServiceLd, faqLd } from '@/lib/seo';
+import { pageMetadata, JsonLd, breadcrumbLd, financialServiceLd, faqLd, reviewLd } from '@/lib/seo';
 import { rankedBrokers, getRanked, alternativesFor } from '@/lib/repo';
 import { coverage } from '@/lib/verify';
 import { brokerStatus } from '@/lib/status';
@@ -17,9 +18,10 @@ import { Faq } from '@/components/Faq';
 import { OfficialSite } from '@/components/OfficialSite';
 import { Card, CardHead, Logo, Score, Tag, Meter } from '@/components/primitives';
 import { RecordHero, QuickJump, StickyActions } from '@/components/RecordHero';
-import { IconScore, IconEntity, IconLicence, IconCost, IconStatus, IconReview, IconReviews, IconCompare, IconFaq, IconResearch } from '@/components/icons';
+import { IconScore, IconEntity, IconLicence, IconCost, IconStatus, IconReview, IconReviews, IconCompare, IconFaq, IconResearch, IconVerdict } from '@/components/icons';
 import { EntityMap } from '@/components/EntityMap';
 import { Profile } from '@/components/Profile';
+import { VerdictCard } from '@/components/Verdict';
 import { LicenceList } from '@/components/LicenceList';
 import { ReviewForm } from '@/components/ReviewForm';
 import { ReviewList, ReviewSummary } from '@/components/ReviewList';
@@ -99,6 +101,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
   // See broker-review.ts for why it is generated; the short version is that a
   // paragraph written by hand stops being true the first time a field changes.
   const profile = profileFor(b.slug);
+  const verdict = brokerVerdict(b, BROKERS);
   const review = brokerReview({
     broker: b,
     rank: r.rank,
@@ -195,6 +198,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
 
         <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
           <QuickJump items={[
+            { href: '#verdict', label: 'In short', icon: <IconVerdict /> },
             { href: '#score', label: 'Score', icon: <IconScore /> },
             { href: '#entity', label: 'Entity', icon: <IconEntity /> },
             { href: '#licences', label: 'Licences', icon: <IconLicence /> },
@@ -220,6 +224,8 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
             </div>
 
             <div>
+            <VerdictCard verdict={verdict} name={b.name} summary={profile?.verdict} />
+
             <Card className="p-4 lg:p-6" as="section" id="score">
               <CardHead title="Score breakdown" href="/methodology" hrefLabel="Method" />
               <ul className="flex flex-col gap-[11px]">
@@ -375,6 +381,19 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
           name: b.name, slug: b.slug, founded: b.founded,
           reviewAverage: reviews.stats.publishedAverage,
           reviewCount: reviews.stats.total,
+        }),
+        reviewLd({
+          slug: b.slug,
+          name: b.name,
+          score: r.score.total,
+          // The researched verdict where a person wrote one; otherwise the
+          // record's own one-line reason for the rank. Never a sentence written
+          // only for the structured data — a review body a reader cannot find
+          // on the page is a review nobody wrote.
+          body: profile?.verdict ?? b.why,
+          reviewed: profile?.checked ?? new Date().toISOString().slice(0, 10),
+          pros: verdict.pros,
+          cons: verdict.cons,
         }),
         faqLd(faq),
       ]} />

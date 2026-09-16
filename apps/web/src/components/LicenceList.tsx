@@ -32,7 +32,11 @@ export function LicenceList({ broker, checks }: { broker: Broker; checks: CheckM
       <ul>
         {broker.entities.map((e) => {
           const reg = REGULATORS[e.licence.regulator];
-          const tone = reg?.tier === 'A' ? 'good' : reg?.tier === 'B' ? 'warn' : 'neutral';
+          // An unlicensed company is not a tier-C licence. Showing it with the
+          // jurisdiction's tier badge would be crediting it with supervision
+          // that nobody is doing.
+          const none = e.licence.status === 'unregulated';
+          const tone = none ? 'bad' : reg?.tier === 'A' ? 'good' : reg?.tier === 'B' ? 'warn' : 'neutral';
           const check = checks[checkKey(e.licence.regulator, e.licence.number)];
           const meta = check ? CHECK[check.kind] : null;
 
@@ -40,13 +44,17 @@ export function LicenceList({ broker, checks }: { broker: Broker; checks: CheckM
             <li key={e.legalName} className="py-[11px] border-b border-line-2 last:border-b-0">
               <div className="flex items-center gap-[10px]">
                 <span className={`w-[22px] h-5 grid place-items-center rounded-[5px] text-[10.5px] font-extrabold shrink-0 ${
-                  reg?.tier === 'A' ? 'bg-up-bg text-up' : reg?.tier === 'B' ? 'bg-warn-bg text-warn' : 'bg-card-3 text-ink-2'}`}>
-                  {reg?.tier ?? '?'}
+                  none ? 'bg-down-bg text-down'
+                    : reg?.tier === 'A' ? 'bg-up-bg text-up'
+                      : reg?.tier === 'B' ? 'bg-warn-bg text-warn' : 'bg-card-3 text-ink-2'}`}>
+                  {none ? '—' : reg?.tier ?? '?'}
                 </span>
                 <Flag code={e.country} w={20} title={e.country} />
                 <span className="min-w-0">
-                  <span className="text-[13.5px] font-bold">{e.licence.regulator}</span>{' '}
-                  <span className="text-[11.5px] text-ink-3 tnum">{e.licence.number}</span>
+                  <span className="text-[13.5px] font-bold">{none ? 'No licence' : e.licence.regulator}</span>{' '}
+                  <span className="text-[11.5px] text-ink-3 tnum">
+                    {none ? `company ${e.licence.number}` : e.licence.number}
+                  </span>
                 </span>
                 <div className="flex-1" />
                 <Tag tone={tone}>{e.licence.status}</Tag>

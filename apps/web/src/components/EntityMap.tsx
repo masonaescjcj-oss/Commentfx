@@ -43,9 +43,12 @@ export function EntityMap({ broker }: { broker: Broker }) {
          * Exness (UK) Ltd told a British reader they were covered by a scheme
          * they can never claim on.
          */
-        const protection = !retail
-          ? 'Takes no retail clients — this licence is not yours'
-          : reg?.compensation ?? 'No investor compensation scheme';
+        const unlicensed = e.licence.status === 'unregulated';
+        const protection = unlicensed
+          ? 'No financial licence anywhere — a company number is not supervision'
+          : !retail
+            ? 'Takes no retail clients — this licence is not yours'
+            : reg?.compensation ?? 'No investor compensation scheme';
         const fallback = retail && e.serves.includes('*');
 
         return (
@@ -78,11 +81,14 @@ export function EntityMap({ broker }: { broker: Broker }) {
               )}
             </div>
 
-            <p className={`text-[11.5px] mt-2 ${fallback ? 'font-bold' : ''} ${retail && reg?.compensation ? 'text-up' : 'text-warn'}`}>
+            <p className={`text-[11.5px] mt-2 ${fallback ? 'font-bold' : ''} ${
+              unlicensed ? 'text-down font-bold' : retail && reg?.compensation ? 'text-up' : 'text-warn'}`}>
               {protection}
             </p>
             <p className="text-[11.5px] text-ink-3 mt-[3px]">
-              {reg?.name ?? e.licence.regulator} · licence {e.licence.number}
+              {unlicensed
+                ? `Registered in ${countryName(e.country)} as company ${e.licence.number}`
+                : `${reg?.name ?? e.licence.regulator} · licence ${e.licence.number}`}
             </p>
             <p className="text-[11.5px] text-ink-3 mt-[2px]">
               Takes: {serves(e)}

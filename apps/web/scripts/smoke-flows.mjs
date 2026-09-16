@@ -67,8 +67,8 @@ for (const topic of TOPICS) {
   await page.getByRole('button', { name: /^Post/ }).click();
 
   try {
-    await page.waitForSelector('code', { timeout: 12_000 });
-    code = (await page.locator('code').first().innerText()).trim();
+    await page.waitForSelector('#withdrawal-code', { timeout: 12_000 });
+    code = (await page.locator('#withdrawal-code').innerText()).trim();
     break;
   } catch {
     lastMessage = (await page.locator('[role="status"]').first().innerText().catch(() => '(none)')).trim();
@@ -99,7 +99,7 @@ if (!code) check('publishing a review succeeds', false, lastMessage);
     await page.locator('textarea[name="body"]').fill(bare);
     await page.getByRole('button', { name: /^Post/ }).click();
     try {
-      await page.waitForSelector('code', { timeout: 12_000 });
+      await page.waitForSelector('#withdrawal-code', { timeout: 12_000 });
       landed = true;
       break;
     } catch {

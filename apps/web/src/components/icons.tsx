@@ -25,3 +25,5 @@ export const IconReview = () => <S><path d="M6 3h9l4 4v14H6z" /><path d="M15 3v4
 // A magnifier over a page: the section where a person went and looked, as
 // against the one the record wrote itself.
 export const IconResearch = () => <S><path d="M6 3h8l4 4v5.5" /><path d="M14 3v4h4" /><path d="M6 3v18h5" /><circle cx="16.5" cy="17" r="3.5" /><path d="m19.2 19.6 2.3 2.3" /></S>;
+// A tick and a cross in one frame: the two lists the card holds.
+export const IconVerdict = () => <S><path d="M3 7.5 5 9.5 9 5" /><path d="M3 16l2 2 4-4.5" /><path d="M13 7.5h8M13 17h8" /></S>;

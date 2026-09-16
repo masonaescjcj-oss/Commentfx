@@ -53,7 +53,7 @@ export const brokers = pgTable('brokers', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
-export const licenceStatus = pgEnum('licence_status', ['authorised', 'registered', 'suspended', 'withdrawn']);
+export const licenceStatus = pgEnum('licence_status', ['authorised', 'registered', 'suspended', 'withdrawn', 'unregulated']);
 
 /**
  * A broker is several legal companies. Which one a reader is onboarded to is
