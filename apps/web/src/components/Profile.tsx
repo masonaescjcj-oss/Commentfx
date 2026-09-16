@@ -146,14 +146,22 @@ export function Profile({ profile, name }: { profile: BrokerProfile; name: strin
                   <span aria-hidden className="text-line">·</span>
                   <span>read {asDate(s.read)}</span>
                 </p>
+                {/* A source we are connected to says so here, in the list, at
+                    the size of the list. Not a footnote and not a hover. */}
+                {s.affiliated ? (
+                  <p className="text-[11.5px] leading-[1.7] text-ink-2 mt-[7px] border-l-[3px] border-warn pl-[10px] max-w-[62ch]">
+                    <strong className="font-bold">Connected to us.</strong> {s.affiliated}
+                  </p>
+                ) : null}
               </div>
             </li>
           ))}
         </ol>
         <p className="text-[11.5px] text-ink-3 leading-[1.75] mt-4 pt-3 border-t border-line-2 max-w-[66ch]">
-          Every link goes to the document, not to a summary of it. They carry <code>nofollow</code> like
-          every other outbound link here, and none of them is an affiliate link — a source you are paid
-          to cite is not a source.
+          Every link goes to the document, not to a summary of it, and where it does not we say so on the
+          entry. They carry <code>nofollow</code> like every other outbound link here, and none of them is
+          an affiliate link — a source you are paid to cite is not a source. Where we have any connection
+          to a publisher, it is printed above rather than left for you to find out.
         </p>
       </Card>
     </>

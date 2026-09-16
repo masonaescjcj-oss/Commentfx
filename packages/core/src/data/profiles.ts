@@ -49,6 +49,19 @@ export interface Source {
   /** The day we read it. Every source has one. */
   read: string;
   kind: SourceKind;
+  /**
+   * Set when the publisher is connected to whoever runs this site, and say how.
+   *
+   * The whole argument of this directory is that it has no stake in the answer,
+   * and a source that shares an owner with us is not independent corroboration
+   * however good its data is. It can still be cited — refusing to use a thing
+   * you own is superstition, not rigour — but it is cited with the connection
+   * printed next to it, in the same list, at the same size as everything else.
+   * `profiles.test.ts` fails the build if this is set to an empty string, and
+   * `Profile.tsx` renders it; there is no path that publishes the citation and
+   * drops the disclosure.
+   */
+  affiliated?: string;
 }
 
 /** A number we can point at, with the document it came from. */
@@ -160,17 +173,29 @@ const EXNESS: BrokerProfile = {
       heading: 'Where the cost figures on this page come from',
       paragraphs: [
         'Everything above was read from a document: a filing at Companies House, a regulator’s register, a '
-        + 'regulator’s own advisory. The trading figures could not be, because Exness blocks our servers — every '
-        + 'request to exness.com, to the regional sites and to the help centre comes back 403, a door closed to '
-        + 'datacentre traffic rather than a page we misread. So the cost, minimum deposit and withdrawal figures '
-        + 'here were read by a person off the broker’s published pages, and the date beside them says when.',
+        + 'regulator’s own warning list. The trading figures could not be, because Exness blocks our servers — '
+        + 'every request to exness.com, to the regional sites and to the help centre comes back 403, a door '
+        + 'closed to datacentre traffic rather than a page we misread. So the cost, minimum deposit and '
+        + 'withdrawal figures here were read by a person off the broker’s published pages, and the date beside '
+        + 'them says when.',
 
         'It matters because the published numbers are contested. A review desk that tests accounts rather than '
         + 'reading brochures puts the minimum on the professional account types at $1,000 and on Standard at '
-        + '$100 [fbrokers], where the figure Exness advertises in most markets is far lower. Both can be true '
-        + 'at once — the minimum is set per entity and per region, and the one you see depends on which company '
-        + 'you are being onboarded to, which is the same point as the rest of this page. Until someone here has '
-        + 'opened an account and looked, we publish the broker’s figure and say where it came from.',
+        + '$100 [fbrokers], where the figure Exness advertises in most markets is far lower. WikiFX, which '
+        + 'maintains its own listing and is the largest directory in this business, declines to give a single '
+        + 'number at all: it records that the minimum "may vary based on your payment method or geographical '
+        + 'location" [wikifx]. Three readings, no contradiction — the minimum is set per entity and per region, '
+        + 'and the one you see depends on which company is onboarding you, which is the point the rest of this '
+        + 'page has been making. Until someone here has opened an account and looked, we publish the broker’s '
+        + 'figure and say where it came from.',
+
+        'That WikiFX listing is worth reading for a second reason. It puts the same four licences against the '
+        + 'same four companies with the same four numbers we read off the registers ourselves [wikifx], which '
+        + 'is the check we wanted and could not get from the broker. It also scores the broker 8.29 out of 10, '
+        + 'and we have not adopted that figure or let it near ours — our number is built from the weights '
+        + 'published on the methodology page and from nothing else, which is the only way a score means '
+        + 'anything. Two organisations reading the same registers and reaching similar conclusions separately '
+        + 'is evidence. One copying the other is not.',
 
         'The same caution applies to the leverage headline. "Unlimited" is the group’s best-known claim and it '
         + 'is conditional — on the account type, the platform, how much equity is in the account, and what the '
@@ -180,17 +205,69 @@ const EXNESS: BrokerProfile = {
     },
 
     {
-      heading: 'The one regulatory finding, in proportion',
+      heading: 'Four more listings carry this broker’s name, and are not this broker',
       paragraphs: [
-        'The Philippine SEC issued an advisory in January 2026 naming Exness Global among platforms offering '
-        + 'CFDs without Philippine registration [sec-ph]. It is worth knowing and it is worth keeping in '
-        + 'proportion: it is a licensing advisory about serving a market the group is not licensed in, of the '
-        + 'kind that regulator issues in batches, and not a finding about client money or conduct.',
+        'Search the WikiFX directory for Exness and five records come back. One is the broker described on this '
+        + 'page, scored 8.29. The other four score between 1.27 and 1.83, hold no verified licence between '
+        + 'them, and are filed under other domains entirely — exness-chinese.com against a Canadian '
+        + 'registration, exchinaclub.com against another [wikifx]. They are not subsidiaries and they are not '
+        + 'the group; they are businesses using a known name, and a reader who lands on one of them has not '
+        + 'made a small mistake.',
 
-        'We looked for more and did not find it. No CySEC settlement or administrative penalty against Exness '
-        + '(Cy) Ltd came up in the searches we ran, and the FCA entity has filed clean audited accounts every '
-        + 'year since 2019 [ch-filings]. "We found nothing" is not the same as "there is nothing", and it is '
-        + 'the strongest thing we are willing to say.',
+        'This is the ordinary hazard of a large retail brand, and it is the reason every entity on this page is '
+        + 'named in full with its licence number attached. A licence number is checkable in ten seconds on a '
+        + 'register and a logo is not. If the company named on the agreement you are about to sign is not one '
+        + 'of the four in the map above, nothing on this page applies to it.',
+      ],
+    },
+
+    {
+      heading: 'Japan warned the company you are most likely to sign with',
+      paragraphs: [
+        'The Japanese Financial Services Agency publishes a list of firms it has sent a warning letter to for '
+        + 'doing regulated business in Japan without registration. On it, warned by the Kanto Local Finance '
+        + 'Bureau on 21 April 2023, is Nymstar Limited of F20, 1st floor, Eden Plaza, Eden Island, Seychelles, '
+        + 'for "soliciting over-the-counter derivative transactions through the internet". The entry carries a '
+        + 'note in the remarks column that removes any doubt about who is meant: 「当該業者が提供するサービスの名'
+        + '称は「Exness」である」 — the name of the service this operator provides is "Exness" [jfsa].',
+
+        'Nymstar Limited is Exness (SC) Ltd. The global legal entity register carries NYMSTAR LIMITED as the '
+        + 'previous legal name of EXNESS (SC) LTD, at the same F20, 1st Floor Eden Plaza address, under LEI '
+        + '8945006P9TS9D3LXTE70 [gleif]. That is the Seychelles company, licence SD025, that every reader '
+        + 'outside the EU and South Africa is onboarded to. Not a clone, not a lookalike, not a lapsed shell — '
+        + 'the company on the client agreement.',
+
+        'Now the proportion, because it cuts both ways. This is a market-access warning, not a finding about '
+        + 'client money, and the two should never be filed together. Japan caps retail forex leverage at 25:1 '
+        + 'and registers no offshore broker that will not live inside that cap, so almost every large offshore '
+        + 'CFD firm is either on this list or absent from Japan; the warning says the company solicited '
+        + 'Japanese residents without a Japanese licence and says nothing at all about whether it pays people '
+        + 'out. It is also not nothing. A regulator wrote the group’s trading name into a public warning and '
+        + 'left it there, which is more than most of this directory has against it, and it is on the record '
+        + 'here at the weight the methodology page sets rather than at the weight an argument would like.',
+
+        'One detail is worth stating precisely because of how easily it is misread. Four other warned firms on '
+        + 'that same list give the same Eden Plaza address, and the FSA writes beside each of them that '
+        + '「当該業者との関係性は不明」 — the relationship with that operator is unknown [jfsa]. So we say what the '
+        + 'regulator says. Eden Plaza is a company-formation address shared by a great many Seychelles '
+        + 'licensees, a shared registered agent is not a shared owner, and we are not going to imply one.',
+      ],
+    },
+
+    {
+      heading: 'And what else we looked for',
+      paragraphs: [
+        'The Philippine SEC named Exness Global Limited and its trading app among platforms letting Filipinos '
+        + '"create user accounts on their platform for the purpose of investing and trading unregistered '
+        + 'investment products", reported on 8 January 2026 [sec-ph]. The same shape as the Japanese warning '
+        + 'and the same weight: a licensing advisory about a market the group is not licensed in. We could not '
+        + 'read the SEC’s own document — its website refuses our requests as Exness’s does — so this one rests '
+        + 'on the reporting, and the sources list says so rather than dressing a newspaper up as a regulator.',
+
+        'Beyond those two we looked and did not find. No CySEC settlement or administrative penalty against '
+        + 'Exness (Cy) Ltd came up in the searches we ran, no FCA action against the British entity, and that '
+        + 'entity has filed clean audited accounts every year since 2019 [ch-filings]. "We found nothing" is '
+        + 'not the same as "there is nothing", and it is the strongest thing we are willing to say.',
       ],
     },
   ],
@@ -206,6 +283,10 @@ const EXNESS: BrokerProfile = {
     { label: 'Group monthly volume, March 2024', value: '$3.86 trillion', from: 'fm-volume' },
     { label: 'Group active traders, March 2024', value: '836,873', from: 'fm-volume' },
     { label: 'Company number, Exness (UK) Ltd', value: '08861481, incorporated 27 January 2014', from: 'ch-filings' },
+    { label: 'Exness (SC) Ltd, previous legal name', value: 'Nymstar Limited', from: 'gleif' },
+    { label: 'Exness (SC) Ltd, registered address', value: 'F20, 1st Floor Eden Plaza, Victoria, Seychelles', from: 'gleif' },
+    { label: 'Japan FSA warning letter to Nymstar Limited', value: '21 April 2023, Kanto Local Finance Bureau', from: 'jfsa' },
+    { label: 'Listings under the Exness name on one directory', value: '5 — one the broker, four unlicensed', from: 'wikifx' },
   ],
 
   open: [
@@ -216,6 +297,11 @@ const EXNESS: BrokerProfile = {
     + 'entities; nobody here has opened an account to find out which applies where.',
     'Exness refuses our infrastructure outright, so no cost or payment figure on this page has been read by a '
     + 'machine of ours. Every one of them needs a person, and the date says when one last did.',
+    'The Japanese warning is from April 2023 and the list is still current. Whether the group has since stopped '
+    + 'soliciting Japanese residents, or applied for registration, is not answerable from the list — the FSA '
+    + 'records warnings issued and does not record them being lifted.',
+    'The Philippine advisory rests on newspaper reporting because the SEC’s own site refuses us. Somebody with '
+    + 'a Philippine connection could pull the document and settle both its date and its advisory number.',
   ],
 
   sources: [
@@ -272,13 +358,46 @@ const EXNESS: BrokerProfile = {
       kind: 'press',
     },
     {
+      id: 'jfsa',
+      publisher: 'Financial Services Agency of Japan',
+      title:
+        '無登録で金融商品取引業を行う者の名称等について — the list of unregistered overseas operators sent a warning '
+        + 'letter, entry for Nymstar Limited',
+      url: 'https://www.fsa.go.jp/ordinary/chuui/mutouroku/03.pdf',
+      read: '2026-09-16',
+      kind: 'regulator',
+    },
+    {
+      id: 'gleif',
+      publisher: 'Global Legal Entity Identifier Foundation',
+      title: 'LEI record 8945006P9TS9D3LXTE70 — EXNESS (SC) LTD, previous legal name NYMSTAR LIMITED',
+      url: 'https://api.gleif.org/api/v1/lei-records/8945006P9TS9D3LXTE70',
+      read: '2026-09-16',
+      kind: 'register',
+    },
+    {
       id: 'sec-ph',
       publisher: 'BusinessWorld',
+      // Press, not 'regulator': the link goes to a newspaper's account of the
+      // advisory, because sec.gov.ph answers our requests with a 403. The
+      // regulator's own document would outrank this one and we have not read it.
       title: 'SEC warns public vs unregistered platforms',
       url: 'https://www.bworldonline.com/corporate/2026/01/08/722998/sec-warns-public-vs-unregistered-platforms/',
       published: '2026-01-08',
       read: '2026-09-16',
-      kind: 'regulator',
+      kind: 'press',
+    },
+    {
+      id: 'wikifx',
+      publisher: 'WikiFX',
+      title: 'Exness broker listing — licences, scores and related listings',
+      url: 'https://www.wikifx.com/en/dealer/0001390005.html',
+      read: '2026-09-16',
+      kind: 'press',
+      affiliated:
+        'WikiFX is connected to the team that runs this site. It is cited here for the licence detail it '
+        + 'publishes and for pointing us at the Japanese warning, both of which we then read at the register '
+        + 'and at the regulator. Its rating is not an input to ours.',
     },
   ],
 };

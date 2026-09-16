@@ -1,0 +1,18 @@
+-- A licence can name a body that is not a financial regulator, and the schema
+-- has to be able to say so.
+--
+-- `regulator_code` pointed at `regulators`, which asserted that every licence
+-- on file is issued by one of the bodies this site recognises. Researching
+-- Alpari disproved it: the group now trades as Parlance Trading Ltd in the
+-- Comoros on a "licence" numbered T2023236 from the Mwali International
+-- Services Authority, and the Banque Centrale des Comores describes that
+-- structure as fictitious. MISA is not in `regulators` and must not be added —
+-- absence from that table is exactly how the entity map decides to print
+-- "claims a licence from MISA, which is not a financial regulator". The
+-- constraint therefore made the true state of the world unstorable, and the
+-- seed failed on it.
+--
+-- Dropping the key loses nothing that is checked elsewhere: `regulators.test`
+-- and the entity map both work from the core package's own table, and a code
+-- that belongs there and is missing is a test failure rather than a silent one.
+ALTER TABLE "broker_entities" DROP CONSTRAINT IF EXISTS "broker_entities_regulator_code_regulators_code_fk";

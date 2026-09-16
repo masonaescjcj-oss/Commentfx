@@ -21,6 +21,8 @@ const SHAPES: Record<string, string> = {
   CH: '<rect width="20" height="14" fill="#D52B1E"/><rect x="8.4" y="3.4" width="3.2" height="7.2" fill="#fff"/><rect x="6.4" y="5.4" width="7.2" height="3.2" fill="#fff"/>',
   MT: '<rect width="20" height="14" fill="#fff"/><rect x="10" width="10" height="14" fill="#CF142B"/>',
   CZ: '<rect width="20" height="7" fill="#fff"/><rect y="7" width="20" height="7" fill="#D7141A"/><path d="M0 0l8.2 7L0 14z" fill="#11457E"/>',
+  JP: '<rect width="20" height="14" fill="#fff"/><circle cx="10" cy="7" r="4.2" fill="#BC002D"/>',
+  PH: '<rect width="20" height="14" fill="#0038A8"/><rect y="7" width="20" height="7" fill="#CE1126"/><path d="M0 0 8.2 7 0 14Z" fill="#fff"/><circle cx="2.6" cy="7" r="1.5" fill="#FCD116"/>',
   IL: '<rect width="20" height="14" fill="#fff"/><rect y="2" width="20" height="1.8" fill="#0038B8"/><rect y="10.2" width="20" height="1.8" fill="#0038B8"/><path d="M10 4.6l2.6 4.5H7.4z" fill="none" stroke="#0038B8" stroke-width=".9"/><path d="M10 9.9 7.4 5.4h5.2z" fill="none" stroke="#0038B8" stroke-width=".9"/>',
 };
 

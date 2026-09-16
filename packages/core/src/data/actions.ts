@@ -69,6 +69,50 @@ export interface EnforcementAction {
 }
 
 export const ACTIONS: EnforcementAction[] = [
+  /* ── Exness ──────────────────────────────────────────── */
+  {
+    brokerSlug: 'exness',
+    authority: 'Kanto Local Finance Bureau, Financial Services Agency of Japan',
+    country: 'JP',
+    kind: 'warning',
+    stage: 'decided',
+    date: '2023-04-21',
+    summary:
+      'Japan sent a warning letter to Nymstar Limited — the former name of Exness (SC) Ltd, the Seychelles '
+      + 'company most clients outside the EU and South Africa are onboarded to — for soliciting '
+      + 'over-the-counter derivative business in Japan without registration.',
+    detail:
+      'The entry on the FSA’s published list of warned overseas operators gives the address as F20, 1st '
+      + 'floor, Eden Plaza, Eden Island, Seychelles, and records in the remarks column that "the name of the '
+      + 'service this operator provides is ‘Exness’". The global LEI register confirms the identification: '
+      + 'NYMSTAR LIMITED is the previous legal name of EXNESS (SC) LTD at that same address. Keep it in '
+      + 'proportion — Japan caps retail forex leverage at 25:1 and registers no offshore firm that will not '
+      + 'live inside that cap, so this is about market access rather than about client money, and nothing in '
+      + 'it concerns payouts or conduct toward existing clients.',
+    sourcePublisher: 'Financial Services Agency of Japan',
+    sourceUrl: 'https://www.fsa.go.jp/ordinary/chuui/mutouroku/03.pdf',
+    primary: true,
+  },
+  {
+    brokerSlug: 'exness',
+    authority: 'Securities and Exchange Commission of the Philippines',
+    country: 'PH',
+    kind: 'warning',
+    stage: 'decided',
+    date: '2026-01-08',
+    summary:
+      'The Philippine SEC named Exness Global Limited and its trading app in an advisory about platforms '
+      + 'letting Filipinos trade unregistered investment products without a Philippine licence.',
+    detail:
+      'The same shape as the Japanese warning: a licensing advisory about serving a market the group is not '
+      + 'registered in, issued alongside one naming HF Markets, and not a finding about client money. The date '
+      + 'here is the date it was reported, because the SEC’s own site refuses our requests and nobody here has '
+      + 'read the advisory itself.',
+    sourcePublisher: 'BusinessWorld',
+    sourceUrl: 'https://www.bworldonline.com/corporate/2026/01/08/722998/sec-warns-public-vs-unregistered-platforms/',
+    primary: false,
+  },
+
   /* ── Octa ──────────────────────────────────────────────────────────── */
   {
     brokerSlug: 'octafx',

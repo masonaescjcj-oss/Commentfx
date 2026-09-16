@@ -65,7 +65,14 @@ export const brokerEntities = pgTable('broker_entities', {
   brokerSlug: text('broker_slug').notNull().references(() => brokers.slug, { onDelete: 'cascade' }),
   legalName: text('legal_name').notNull(),
   country: text('country').notNull(),
-  regulatorCode: text('regulator_code').notNull().references(() => regulators.code),
+  /**
+   * Not a foreign key into `regulators`, deliberately. A licence may name a
+   * body that is not a financial regulator at all — Alpari's Comoros entity
+   * cites the Mwali International Services Authority — and the entity map
+   * reads absence from `regulators` as precisely that claim. See migration
+   * 0008.
+   */
+  regulatorCode: text('regulator_code').notNull(),
   licenceNumber: text('licence_number').notNull(),
   status: licenceStatus('status').notNull(),
   /** ISO country codes onboarded here. '*' marks the fallback entity. */

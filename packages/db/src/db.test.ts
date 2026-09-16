@@ -4,6 +4,7 @@ import { eq, and } from 'drizzle-orm';
 import { makeTestDb, schema } from './client.ts';
 import { seed } from './seed.ts';
 import { coverageFor, verificationQueue, classify, STALE_AFTER_DAYS, REQUIRED_FIELDS } from './verification.ts';
+import { REGULATORS } from '@commentfx/core';
 
 test('migrations apply and the seed loads every curated record', async () => {
   const { db, close } = await makeTestDb();
@@ -13,6 +14,30 @@ test('migrations apply and the seed loads every curated record', async () => {
   assert.equal(counts.props, 8);
   assert.equal(counts.exchanges, 8);
   assert.ok(counts.entities >= 20, `entities: ${counts.entities}`);
+  await close();
+});
+
+/**
+ * The entity whose licence names a body that is not a regulator still seeds.
+ *
+ * `broker_entities.regulator_code` used to be a foreign key into `regulators`,
+ * which quietly asserted that every licence on file comes from a body this site
+ * recognises. Alpari's Comoros entity does not — it cites MISA, which is not in
+ * `regulators` and must not be, because the entity map reads that absence as
+ * "claims a licence from a body that is not a financial regulator". The
+ * constraint made a true fact unstorable and the seed died on it. Migration
+ * 0008 dropped it; this is what stops it coming back.
+ */
+test('a licence from a body that is not a regulator still stores', async () => {
+  const { db, close } = await makeTestDb();
+  await seed(db);
+  const codes = new Set(Object.keys(REGULATORS));
+  const entities = await db.select().from(schema.brokerEntities);
+  const outside = entities.filter((e) => !codes.has(e.regulatorCode));
+  assert.ok(outside.length > 0, 'no entity cites a body outside REGULATORS — has the finding been reverted?');
+  for (const e of outside) {
+    assert.ok(e.licenceNumber.trim(), `${e.legalName}: a claimed licence with no number`);
+  }
   await close();
 });
 

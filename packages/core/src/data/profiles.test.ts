@@ -119,3 +119,39 @@ test('a licence held by an entity that takes no retail client serves nobody', ()
   assert.equal(uk?.clients, 'professional', 'the Exness FCA entity is marked professional-only');
   assert.ok(profileFor('exness'), 'and the page says why');
 });
+
+/**
+ * The rule that makes citing our own side safe.
+ *
+ * A directory whose whole claim is independence may still cite a publisher it
+ * is connected to — refusing to read something because you own it is a pose,
+ * not a standard. What it may not do is let that citation look like outside
+ * corroboration. So the connection is a field on the source, the field is
+ * rendered next to the entry, and this fails the build if it is set to
+ * something that discloses nothing.
+ */
+test('a source we are connected to discloses the connection, and says enough to be one', () => {
+  for (const p of PROFILES) {
+    for (const s of p.sources) {
+      if (s.affiliated === undefined) continue;
+      assert.ok(s.affiliated.trim().length > 40, `${p.slug}/${s.id}: "${s.affiliated}" is not a disclosure`);
+      assert.ok(/\bus\b|\bour\b|\bwe\b|this site/i.test(s.affiliated), `${p.slug}/${s.id}: names no connection to us`);
+    }
+  }
+});
+
+/**
+ * A connected source is an input, never the verdict. Anything it tells us that
+ * matters has to be confirmed at a register, a filing or a regulator before it
+ * is published, so a profile that leans on one and cites no primary evidence
+ * beside it is a profile repeating its own side.
+ */
+test('a profile citing a connected source also cites primary evidence', () => {
+  const primary = new Set(['register', 'filing', 'regulator']);
+  for (const p of PROFILES) {
+    if (!p.sources.some((s) => s.affiliated !== undefined)) continue;
+    const cited = new Set([...profileCitations(p), ...p.facts.map((f) => f.from)]);
+    const backing = p.sources.filter((s) => s.affiliated === undefined && primary.has(s.kind) && cited.has(s.id));
+    assert.ok(backing.length >= 2, `${p.slug}: leans on a connected source with ${backing.length} primary sources behind it`);
+  }
+});
