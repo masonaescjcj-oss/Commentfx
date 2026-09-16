@@ -32,6 +32,7 @@ const DEFAULT_PAGES = [
   '/calendar', '/calendar/us-jobs-report', '/reviews', '/reviews/withdraw',
   '/search', '/status', '/methodology', '/best/lowest-spread',
   '/compare/exness-vs-ic-markets',
+  '/learn', '/learn/what-a-spread-really-costs',
   // The page a reader gets for a coin or company we do not have. It answers 404
   // on purpose, so its expected status is stated rather than letting the guard
   // below read it as a page that failed to load.

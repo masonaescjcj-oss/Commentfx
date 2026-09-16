@@ -32,13 +32,17 @@ import { Logotype, Mark } from './Mark';
  * Clicking a link closes it by navigating, and clicking the pill closes it.
  */
 const MORE = [
+  { href: '/learn', label: 'Guides' },
   { href: '/methodology', label: 'How we score' },
   { href: '/status', label: 'Broker status' },
   { href: '/reviews', label: 'Reviews' },
 ];
 
 export function Header({ active }: { active?: string }) {
-  const current = SITE.nav.find((n) => n.href === active);
+  // The pill names the page you are on, and the pages you can be on are not
+  // only the six in SITE.nav — /learn lives in MORE, and a header that goes
+  // blank on a section it links to is a header that has stopped being a map.
+  const current = [...SITE.nav, ...MORE].find((n) => n.href === active);
 
   return (
     <header className="site-header sticky top-0 z-20">
@@ -56,7 +60,11 @@ export function Header({ active }: { active?: string }) {
               key={n.href}
               href={n.href}
               aria-current={active === n.href ? 'page' : undefined}
-              className={`hdr-link px-[10px] py-[7px] rounded-[9px] text-[13.5px] ${
+              // nowrap, because "Prop Firms" was breaking across two lines at
+              // exactly 1024px — 59px of link inside a 56px bar, overflowing
+              // the header it sits in. Measured at the breakpoint; the row
+              // still fits on one line with every label whole.
+              className={`hdr-link whitespace-nowrap px-[10px] py-[7px] rounded-[9px] text-[13.5px] ${
                 active === n.href ? 'hdr-current' : ''
               }`}
             >
@@ -110,7 +118,13 @@ export function Header({ active }: { active?: string }) {
               <li aria-hidden className="my-[5px] mx-3 border-t border-line-2" />
               {MORE.map(({ href, label }) => (
                 <li key={href}>
-                  <Link href={href} className="block px-3 py-[7px] rounded-[9px] text-[13.5px] text-ink-2 hover:bg-card-2">
+                  <Link
+                    href={href}
+                    aria-current={active === href ? 'page' : undefined}
+                    className={`block px-3 py-[7px] rounded-[9px] text-[13.5px] text-ink-2 hover:bg-card-2 ${
+                      active === href ? 'bg-card-2 font-semibold' : ''
+                    }`}
+                  >
                     {label}
                   </Link>
                 </li>
@@ -128,7 +142,10 @@ export function Header({ active }: { active?: string }) {
             <Link
               key={href}
               href={href}
-              className="hdr-link px-[10px] py-[7px] rounded-[9px] text-[13px]"
+              aria-current={active === href ? 'page' : undefined}
+              className={`hdr-link whitespace-nowrap px-[10px] py-[7px] rounded-[9px] text-[13px] ${
+                active === href ? 'hdr-current' : ''
+              }`}
             >
               {label}
             </Link>
@@ -271,6 +288,7 @@ const FOOTER: Array<{ title: string; links: Array<{ href: string; label: string 
     title: 'About',
     links: [
       { href: '/methodology', label: 'How we score' },
+      { href: '/learn', label: 'Guides' },
       { href: '/reviews', label: 'Reviews' },
       { href: '/reviews/withdraw', label: 'Withdraw a review' },
       { href: '/best/crypto-funding', label: 'Crypto funding' },

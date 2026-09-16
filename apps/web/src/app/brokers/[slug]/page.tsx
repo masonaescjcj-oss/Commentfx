@@ -221,13 +221,22 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
               <CardHead title="Which entity will you be under?" />
               <EntityMap broker={b} />
               <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.8]">
-                Where you live decides the entity, and the entity decides the protection.
+                Where you live decides the entity, and the entity decides the protection.{' '}
+                <Link href="/learn/which-entity-are-you-signing-with" className="text-accent font-semibold">
+                  What changes between them
+                </Link>.
               </p>
             </Card>
 
             <Card className="p-4 lg:p-6" as="section" id="licences">
               <CardHead title="Licences" aside={<span className="text-[11.5px] text-ink-3">{b.entities.length} on record</span>} />
               <LicenceList broker={b} checks={checks} />
+              <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.8]">
+                Every number here is on a register you can search yourself, for free —{' '}
+                <Link href="/learn/check-a-broker-licence" className="text-accent font-semibold">
+                  here is where each register is
+                </Link>.
+              </p>
             </Card>
 
             <Card className="p-4 lg:p-6" as="section" id="costs">
@@ -250,6 +259,13 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
                   </div>
                 ))}
               </dl>
+              <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.8]">
+                All-in cost is the spread plus the commission converted to pips, so two accounts
+                charging in different ways can be put in one column —{' '}
+                <Link href="/learn/what-a-spread-really-costs" className="text-accent font-semibold">
+                  the arithmetic, in money
+                </Link>.
+              </p>
             </Card>
 
             {/* The body of the page for a reader who arrived from a search
@@ -325,8 +341,8 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
         breadcrumbLd(trail),
         financialServiceLd({
           name: b.name, slug: b.slug, founded: b.founded,
-          reviewAverage: reviews.stats.verifiedAverage,
-          reviewCount: reviews.stats.verified,
+          reviewAverage: reviews.stats.publishedAverage,
+          reviewCount: reviews.stats.total,
         }),
         faqLd(faq),
       ]} />

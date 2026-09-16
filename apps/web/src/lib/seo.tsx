@@ -84,15 +84,25 @@ export const breadcrumbLd = (trail: Array<{ name: string; path: string }>): Json
   })),
 });
 
-/** A ranking page is an ItemList — this is what earns the list rich result. */
+/**
+ * A ranking page is an ItemList — this is what earns the list rich result.
+ *
+ * `order` is a parameter because it is a claim. A ranking really is descending
+ * by score; a shelf of guides is in no order at all, and saying otherwise in
+ * structured data is telling a machine something untrue about the page for the
+ * sake of a slightly fuller node.
+ */
 export const itemListLd = (
   name: string,
   items: Array<{ name: string; path: string }>,
+  order: 'descending' | 'unordered' = 'descending',
 ): Json => ({
   '@type': 'ItemList',
   name,
   numberOfItems: items.length,
-  itemListOrder: 'https://schema.org/ItemListOrderDescending',
+  itemListOrder: order === 'descending'
+    ? 'https://schema.org/ItemListOrderDescending'
+    : 'https://schema.org/ItemListUnordered',
   itemListElement: items.map((it, i) => ({
     '@type': 'ListItem',
     position: i + 1,
@@ -101,9 +111,18 @@ export const itemListLd = (
   })),
 });
 
+/**
+ * The floor under a published aggregate rating.
+ *
+ * Google's review-snippet rules do not name a minimum, and one review averaging
+ * 5.0 is still both fragile and trivially gameable. Five is the same floor the
+ * score uses before a reviews component may enter it, for the same reason.
+ */
+export const MIN_RATINGS_TO_PUBLISH = 5;
+
 export const financialServiceLd = (b: {
   name: string; slug: string; founded: number;
-  /** The mean of verified reviews, on the 1-5 scale readers actually gave. */
+  /** The mean of EVERY published review, on the 1-5 scale readers gave. */
   reviewAverage: number | null;
   reviewCount: number;
 }): Json => ({
@@ -121,7 +140,14 @@ export const financialServiceLd = (b: {
   // of ten, the rating is what customers gave out of five. Publishing the
   // composite under a ratingCount of reviews would claim five people awarded a
   // number none of them chose.
-  ...(b.reviewCount > 0 && b.reviewAverage !== null
+  //
+  // And it is every published review, not the subset an editor has verified.
+  // Google's rule is that ratings "must originate directly from users" and that
+  // "human editors cannot curate local business ratings" -- publishing the mean
+  // of the ones we chose to check is curation, however well meant. The verified
+  // average is still what the score uses and still what the page shows; it is
+  // simply not what we hand to a rich result.
+  ...(b.reviewCount >= MIN_RATINGS_TO_PUBLISH && b.reviewAverage !== null
     ? {
         aggregateRating: {
           '@type': 'AggregateRating',
@@ -132,6 +158,34 @@ export const financialServiceLd = (b: {
         },
       }
     : {}),
+});
+
+/**
+ * An article, with the publisher named and the dates real.
+ *
+ * `author` is the Organization rather than a Person, and that is a decision
+ * rather than an omission. docs/SEO.md §5.3 asks every article for a named
+ * author; the honest way to satisfy it is to put a real person behind the work,
+ * and inventing one to fill the slot would be fabricating a credential on a
+ * page about where to put money — the exact thing this site is built to catch
+ * other people doing. Schema.org allows an Organization here and Google accepts
+ * it. When there are people to name, this becomes a Person and /about says who
+ * they are.
+ */
+export const articleLd = (a: {
+  slug: string; title: string; description: string;
+  published: string; updated: string; author: string;
+}): Json => ({
+  '@type': 'Article',
+  '@id': absoluteUrl(`/learn/${a.slug}#article`),
+  mainEntityOfPage: { '@type': 'WebPage', '@id': absoluteUrl(`/learn/${a.slug}`) },
+  headline: a.title,
+  description: a.description,
+  datePublished: a.published,
+  dateModified: a.updated,
+  inLanguage: 'en',
+  author: { '@type': 'Organization', name: a.author, url: SITE.url },
+  publisher: { '@id': absoluteUrl('/#organization') },
 });
 
 export const faqLd = (qa: Array<{ q: string; a: string }>): Json => ({

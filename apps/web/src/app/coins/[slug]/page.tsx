@@ -26,6 +26,17 @@ export async function generateStaticParams(): Promise<Params[]> {
 
 export const revalidate = 300;
 
+/**
+ * Both branches are noindex, and it is the same reason in both: a page whose
+ * value is a price cannot beat the source of the price, and a hundred of them
+ * is most of this site's crawl budget spent losing that fight. Still served,
+ * still linked, still crawled — `follow`, so the exchange and broker pages they
+ * point at keep the benefit. See indexing.ts and docs/SEO.md §3.
+ *
+ * It was on the unavailable branch alone at first, which is the branch nobody
+ * sees. check:seo caught it: fifty indexable pages missing from a sitemap that
+ * had already stopped listing them.
+ */
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params;
   const view = await coin(slug);
@@ -39,6 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
         `Where to buy and trade ${name} (${symbol}): ranked exchanges and brokers that ` +
         `list it. Live price and market cap are briefly unavailable from our data source.`,
       path: `/coins/${view.ref.id}`,
+      noindex: true,
     });
   }
 
@@ -49,6 +61,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
       `${c.name} trades at ${fmtUsd(c.price)}, ${fmtPct(c.change24hPct)} in 24 hours, ` +
       `with a market cap of ${fmtUsd(c.marketCap)}. Ranked exchanges and brokers that list ${c.symbol}.`,
     path: `/coins/${c.id}`,
+    noindex: true,
   });
 }
 

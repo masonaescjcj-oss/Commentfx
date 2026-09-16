@@ -10,7 +10,7 @@ const DESC =
   'Search the whole directory: brokers, prop firms, crypto exchanges, head-to-head ' +
   'comparisons and shortlists. The index is in the page, so nothing you type leaves your browser.';
 
-export const metadata: Metadata = pageMetadata({ title: TITLE, description: DESC, path: '/search' });
+export const metadata: Metadata = pageMetadata({ title: TITLE, description: DESC, path: '/search', noindex: true });
 
 export default async function SearchPage() {
   const entries = searchIndex(await reviewStats());

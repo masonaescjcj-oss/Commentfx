@@ -1,11 +1,23 @@
 import type { MetadataRoute } from 'next';
 import { absoluteUrl } from '@/lib/site';
 import { rankedBrokers, rankedProps, rankedExchanges, BEST_CRITERIA, comparePairs, pairSlug } from '@/lib/repo';
-import { COIN_INDEX, RELEASES } from '@commentfx/core';
+import { brokerBySlug, ARTICLES } from '@commentfx/core';
+import {
+  RELEASES, brokerIndexable, propIndexable, exchangeIndexable, compareIndexable, pathIndexable,
+} from '@commentfx/core';
 
 /**
- * Generated from the data, never hand-maintained. Priority reflects how much
- * of the product a page actually represents, not wishful thinking.
+ * Generated from the data, never hand-maintained, and gated by the same policy
+ * the pages themselves carry.
+ *
+ * A sitemap is a list of pages we are asking to have indexed, so a URL that
+ * carries noindex has no business being in it — Google reports that pair as an
+ * error, and rightly: it is us asking and refusing in the same breath. Both
+ * sides read indexing.ts, so they cannot come to disagree.
+ *
+ * The hundred coin pages are what left. They are still served and still linked;
+ * they are not asking to compete with the source of the prices they show. See
+ * docs/SEO.md §3.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -24,23 +36,34 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: absoluteUrl('/calendar'), lastModified: now, changeFrequency: 'daily', priority: 0.8 },
     { url: absoluteUrl('/methodology'), lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
     { url: absoluteUrl('/reviews'), lastModified: now, changeFrequency: 'daily', priority: 0.8 },
-    { url: absoluteUrl('/search'), lastModified: now, changeFrequency: 'weekly', priority: 0.5 },
+    { url: absoluteUrl('/learn'), lastModified: now, changeFrequency: 'weekly', priority: 0.7 },
 
-    ...brokers.map((r) => ({
+    // The one place on this site where lastModified is a real date rather than
+    // "now". An article changes when someone edits it, and the date is in the
+    // file; everything above is generated from data that moves on its own, so
+    // there is nothing truer than the build to point at yet. See docs/SEO.md §4.
+    ...ARTICLES.map((a) => ({
+      url: absoluteUrl(`/learn/${a.slug}`),
+      lastModified: new Date(`${a.updated}T00:00:00Z`),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    })),
+
+    ...brokers.filter((r) => brokerIndexable(r.broker).indexable).map((r) => ({
       url: absoluteUrl(`/brokers/${r.broker.slug}`),
       lastModified: now,
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     })),
 
-    ...props.map((r) => ({
+    ...props.filter((r) => propIndexable(r.firm).indexable).map((r) => ({
       url: absoluteUrl(`/props/${r.firm.slug}`),
       lastModified: now,
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     })),
 
-    ...exchanges.map((r) => ({
+    ...exchanges.filter((r) => exchangeIndexable(r.exchange).indexable).map((r) => ({
       url: absoluteUrl(`/exchanges/${r.exchange.slug}`),
       lastModified: now,
       changeFrequency: 'weekly' as const,
@@ -61,26 +84,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     })),
 
-    /**
-     * Every coin page, from the checked-in index rather than the live top 100,
-     * for two reasons. This function is synchronous, so it could never have
-     * awaited a fetch — which is why the site's largest block of pages, and its
-     * most searched-for ones, were missing from here entirely. And a sitemap
-     * that shrinks to nothing because an upstream was rate-limited the minute it
-     * regenerated would be the same bug as the 404s, told to a crawler.
-     */
-    ...COIN_INDEX.map((c) => ({
-      url: absoluteUrl(`/coins/${c.id}`),
-      lastModified: now,
-      changeFrequency: 'hourly' as const,
-      priority: 0.7,
-    })),
-
-    ...comparePairs().map(([a, b]) => ({
-      url: absoluteUrl(`/compare/${pairSlug(a, b)}`),
-      lastModified: now,
-      changeFrequency: 'weekly' as const,
-      priority: 0.6,
-    })),
+    ...comparePairs()
+      .filter(([a, b]) => {
+        const left = brokerBySlug(a);
+        const right = brokerBySlug(b);
+        return Boolean(left && right && compareIndexable(left, right).indexable);
+      })
+      .map(([a, b]) => ({
+        url: absoluteUrl(`/compare/${pairSlug(a, b)}`),
+        lastModified: now,
+        changeFrequency: 'weekly' as const,
+        priority: 0.6,
+      })),
   ];
 }

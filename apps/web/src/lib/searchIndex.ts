@@ -1,4 +1,4 @@
-import { COIN_INDEX, RELEASES, scheduleNoun } from '@commentfx/core';
+import { COIN_INDEX, RELEASES, scheduleNoun, ARTICLES } from '@commentfx/core';
 import {
   rankedBrokers, rankedProps, rankedExchanges, BEST_CRITERIA, comparePairs, pairSlug, getBroker,
   type ReviewStats,
@@ -9,7 +9,7 @@ export interface SearchEntry {
   title: string;
   /** One line of what the reader gets on that page. */
   note: string;
-  group: 'Brokers' | 'Prop firms' | 'Exchanges' | 'Coins' | 'Comparisons' | 'Shortlists' | 'Releases' | 'Site';
+  group: 'Brokers' | 'Prop firms' | 'Exchanges' | 'Coins' | 'Comparisons' | 'Shortlists' | 'Releases' | 'Guides' | 'Site';
   /** Extra words worth matching that are not in the title. */
   terms: string;
   score: number | null;
@@ -116,7 +116,25 @@ export function searchIndex(stats?: ReviewStats): SearchEntry[] {
     });
   }
 
+  /**
+   * The articles, matched on the question a reader would type rather than on
+   * the headline. Somebody searching "is my broker regulated" is not looking
+   * for the word in our title, and a directory whose own search cannot find its
+   * own answers has written them for nobody.
+   */
+  for (const a of ARTICLES) {
+    entries.push({
+      path: `/learn/${a.slug}`,
+      title: a.heading,
+      note: a.question,
+      group: 'Guides',
+      terms: `guide ${a.question} ${a.slug.replace(/-/g, ' ')}`,
+      score: null,
+    });
+  }
+
   entries.push(
+    { path: '/learn', title: 'Guides', note: 'How to check a licence, what a spread costs, which entity you sign with', group: 'Site', terms: 'guide learn how to explain article', score: null },
     { path: '/calendar', title: 'Economic calendar', note: 'Release dates and rate decisions from the BLS, the Fed and the ECB', group: 'Site', terms: 'nfp cpi fomc ecb jobs inflation rates news', score: null },
     { path: '/status', title: 'Broker status', note: 'Withdrawal delays and outages reported in the last 24 hours', group: 'Site', terms: 'down outage withdrawal problem incident', score: null },
     { path: '/reviews', title: 'Reviews', note: 'What customers say about every company we rank', group: 'Site', terms: 'reviews complaints experience customers ratings', score: null },
@@ -133,4 +151,4 @@ export function searchIndex(stats?: ReviewStats): SearchEntry[] {
 }
 
 export const GROUP_ORDER: SearchEntry['group'][] =
-  ['Brokers', 'Prop firms', 'Exchanges', 'Coins', 'Comparisons', 'Shortlists', 'Releases', 'Site'];
+  ['Brokers', 'Prop firms', 'Exchanges', 'Coins', 'Comparisons', 'Shortlists', 'Releases', 'Guides', 'Site'];

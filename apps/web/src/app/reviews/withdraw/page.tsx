@@ -9,10 +9,9 @@ const DESC =
   'Take down a review you published, using the code you were given at the time. ' +
   'No account, no email — the code is the only thing that proves it was yours.';
 
-export const metadata: Metadata = {
-  ...pageMetadata({ title: TITLE, description: DESC, path: '/reviews/withdraw' }),
-  robots: { index: false, follow: true },
-};
+export const metadata: Metadata = pageMetadata({
+  title: TITLE, description: DESC, path: '/reviews/withdraw', noindex: true,
+});
 
 export default function WithdrawPage() {
   const trail = [{ name: 'Home', path: '/' }, { name: 'Withdraw a review', path: '/reviews/withdraw' }];

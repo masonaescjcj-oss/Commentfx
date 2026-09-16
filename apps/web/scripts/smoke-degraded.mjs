@@ -61,10 +61,22 @@ const text = (html) => html
   .replace(/\s+/g, ' ')
   .trim();
 
+/**
+ * `main` as well as `body`, because "is this card gone" is a question about the
+ * content and the footer is not content.
+ *
+ * The footer became a directory of the site, and one of its links is called
+ * "Coin prices" — which is the name of the card this file asserts the front
+ * page drops when CoinGecko is quiet. The check read the whole page, so a
+ * navigation link four screens down was enough to fail it, and would have gone
+ * on failing for as long as that link kept its name. A card's absence has to be
+ * asked of the place cards live.
+ */
 async function get(path) {
   const res = await fetch(BASE + path, { redirect: 'manual' });
   const html = await res.text();
-  return { status: res.status, html, body: text(html) };
+  const inMain = /<main[^>]*>([\s\S]*?)<\/main>/.exec(html);
+  return { status: res.status, html, body: text(html), main: text(inMain?.[1] ?? html) };
 }
 
 // ── The precondition, asserted rather than assumed ───────────────────────────
@@ -128,11 +140,11 @@ check('it keeps what it can explain without the feed', release.body.includes('Wh
 // could not fetch. The rankings below them are checked-in data and stay.
 const home = await get('/');
 check('the front page serves', home.status === 200, `HTTP ${home.status}`);
-check('it keeps the rankings, which need no feed', home.body.includes('Top brokers'));
-check('it drops the price card rather than emptying it', !home.body.includes('Coin prices'));
-check('it drops the movers card', !home.body.includes('Biggest moves today'));
-check('it drops the news card', !home.body.includes('Crypto news'));
-check('it drops the calendar card', !home.body.includes('Next, worth planning around'));
+check('it keeps the rankings, which need no feed', home.main.includes('Top brokers'));
+check('it drops the price card rather than emptying it', !home.main.includes('Coin prices'));
+check('it drops the movers card', !home.main.includes('Biggest moves today'));
+check('it drops the news card', !home.main.includes('Crypto news'));
+check('it drops the calendar card', !home.main.includes('Next, worth planning around'));
 check('it links no story it could not read',
   !/href="https:\/\/(www\.coindesk|decrypt|www\.theblock|cointelegraph)/.test(home.html));
 check('it asks for no picture from a newsroom that is down',

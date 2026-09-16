@@ -51,6 +51,7 @@ const COVERAGE = [
   ['a comparison', 'exness vs', '/compare/'],
   ['a shortlist', 'lowest', '/best/'],
   ['a release', 'jobs report', '/calendar/'],
+  ['a guide', 'how to check', '/learn/'],
 ];
 for (const [what, query, prefix] of COVERAGE) {
   const hits = await results(query);
