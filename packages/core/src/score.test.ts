@@ -29,11 +29,31 @@ test('tier-1 regulation outranks offshore-only', () => {
 });
 
 test('entity map resolves by country, with a fallback', () => {
+  const pep = brokerBySlug('pepperstone')!;
+  assert.equal(entityForCountry(pep, 'GB')!.licence.regulator, 'FCA');
+  assert.match(protectionFor(pep, 'GB'), /FSCS/);
+
   const exness = brokerBySlug('exness')!;
-  assert.equal(entityForCountry(exness, 'GB')!.licence.regulator, 'FCA');
   assert.equal(entityForCountry(exness, 'SG')!.licence.regulator, 'FSA-SC');
-  assert.match(protectionFor(exness, 'GB'), /FSCS/);
   assert.match(protectionFor(exness, 'SG'), /No investor compensation/);
+});
+
+/**
+ * This used to assert that a British reader of the Exness page gets the FCA
+ * entity and the FSCS behind it. It passed, and it was wrong.
+ *
+ * Exness (UK) Ltd holds FCA 730729 and takes no retail clients: its own
+ * accounts for 2024 describe a B2B and liquidity-provision business holding
+ * $2.47m of client money. A reader in London signing up today is onboarded to
+ * Seychelles like almost everyone else. The record says so now, and this is
+ * here so nobody quietly puts ['GB'] back.
+ */
+test('a licence held for other firms is not offered to a reader as their own', () => {
+  const exness = brokerBySlug('exness')!;
+  const uk = exness.entities.find((e) => e.licence.regulator === 'FCA')!;
+  assert.equal(uk.clients, 'professional');
+  assert.equal(entityForCountry(exness, 'GB')!.licence.regulator, 'FSA-SC');
+  assert.match(protectionFor(exness, 'GB'), /No investor compensation/);
 });
 
 test('a broker with no fallback entity still resolves', () => {

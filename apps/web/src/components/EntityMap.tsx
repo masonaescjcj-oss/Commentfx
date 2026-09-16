@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { REGULATORS, type Broker } from '@commentfx/core';
+import { REGULATORS, servesRetail, type Broker } from '@commentfx/core';
 import { Flag } from './Flag';
 
 const COUNTRIES = [
@@ -41,7 +41,18 @@ export function EntityMap({ broker }: { broker: Broker }) {
         {broker.entities.map((e) => {
           const reg = REGULATORS[e.licence.regulator];
           const you = e === match;
-          const protection = reg?.compensation ?? 'No investor compensation scheme';
+          /**
+           * A compensation scheme belongs to the clients of the company that
+           * holds the licence. An entity that takes no retail client has one,
+           * and it is not the reader's — printing "FSCS up to £85,000" in green
+           * beside Exness (UK) Ltd told a British reader they were covered by a
+           * scheme they can never claim on. That was the worst line on this
+           * site. It says what is true instead.
+           */
+          const retail = servesRetail(e);
+          const protection = !retail
+            ? 'Takes no retail clients — this licence is not yours'
+            : reg?.compensation ?? 'No investor compensation scheme';
           return (
             <li
               key={e.legalName}
@@ -66,8 +77,13 @@ export function EntityMap({ broker }: { broker: Broker }) {
                     YOU
                   </span>
                 )}
+                {!retail && (
+                  <span className="text-[10.5px] font-bold text-ink-3 border border-line rounded-md px-[7px] py-[2px]">
+                    B2B
+                  </span>
+                )}
               </div>
-              <p className={`text-[11.5px] mt-2 font-${you ? 'bold' : 'normal'} ${reg?.compensation ? 'text-up' : 'text-warn'}`}>
+              <p className={`text-[11.5px] mt-2 font-${you ? 'bold' : 'normal'} ${retail && reg?.compensation ? 'text-up' : 'text-warn'}`}>
                 {protection}
               </p>
               <p className="text-[11.5px] text-ink-3 mt-[3px]">

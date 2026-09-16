@@ -119,3 +119,24 @@ test('the tier sentence agrees with itself in number', () => {
     assert.ok(!/is tier-A regulators/.test(t), b.name);
   }
 });
+
+/**
+ * Both of these were live on the Exness page the day a person went and read
+ * Exness (UK) Ltd's filed accounts, and both were produced by this file.
+ */
+const prose = (slug: string) => review(slug).flatMap((s) => s.paragraphs).join(' ');
+
+test('an entity that onboards nobody does not get a sentence with a hole in it', () => {
+  const p = prose('exness');
+  assert.ok(!/onboards clients in \./.test(p), 'a dangling country list');
+  assert.match(p, /takes no retail clients at all/);
+});
+
+test('a licence held for other firms is not counted as protection for the reader', () => {
+  const p = prose('exness');
+  // Exness holds FCA and CySEC. Only CySEC takes retail clients here, so the
+  // count is one, and the FSCS must not be offered as the reader's.
+  assert.match(p, /One of those is a tier-A regulator/);
+  assert.ok(!/FSCS/.test(p), 'the FSCS was offered to a reader who cannot claim on it');
+  assert.match(p, /adds nothing to the regulation score/);
+});

@@ -20,7 +20,7 @@ const DESC =
 export const metadata: Metadata = pageMetadata({ title: TITLE, description: DESC, path: '/methodology' });
 
 const WHAT: Record<ScoreKey, string> = {
-  regulation: 'The best licence a broker holds, plus a bounded bonus for holding several serious ones. Tier A regulators run a statutory compensation scheme and a public register; tier C is registration only.',
+  regulation: 'The best licence a broker holds, plus a bounded bonus for holding several serious ones — counting only the companies that would open a retail account. A group licence held by an arm that deals with other firms is a fact about the group, not a protection for you, and it scores nothing here. Tier A regulators run a statutory compensation scheme and a public register; tier C is registration only.',
   cost: 'Published EUR/USD spread and round-turn commission reduced to a single figure. A $7 commission per standard lot is worth about 0.7 pips, so the two are directly comparable.',
   payments: 'Breadth of funding methods, the broker’s own stated withdrawal processing time, and how much it takes to open an account.',
   platform: 'How many platforms are offered, the execution model, and whether copy trading is built in.',

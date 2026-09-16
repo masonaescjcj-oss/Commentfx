@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { REGULATORS, countryName, brokerReview, effectiveCostPips, hours, leverage } from '@commentfx/core';
+import {
+  REGULATORS, countryName, brokerReview, effectiveCostPips, hours, leverage, profileFor, servesRetail,
+} from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, financialServiceLd, faqLd } from '@/lib/seo';
 import { rankedBrokers, getRanked, alternativesFor } from '@/lib/repo';
 import { coverage } from '@/lib/verify';
@@ -15,8 +17,9 @@ import { Faq } from '@/components/Faq';
 import { OfficialSite } from '@/components/OfficialSite';
 import { Card, CardHead, Logo, Score, Tag, Meter } from '@/components/primitives';
 import { RecordHero, QuickJump, StickyActions } from '@/components/RecordHero';
-import { IconScore, IconEntity, IconLicence, IconCost, IconStatus, IconReview, IconReviews, IconCompare, IconFaq } from '@/components/icons';
+import { IconScore, IconEntity, IconLicence, IconCost, IconStatus, IconReview, IconReviews, IconCompare, IconFaq, IconResearch } from '@/components/icons';
 import { EntityMap } from '@/components/EntityMap';
+import { Profile } from '@/components/Profile';
 import { LicenceList } from '@/components/LicenceList';
 import { ReviewForm } from '@/components/ReviewForm';
 import { ReviewList, ReviewSummary } from '@/components/ReviewList';
@@ -95,6 +98,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
   // The long read, generated from the record above rather than typed about it.
   // See broker-review.ts for why it is generated; the short version is that a
   // paragraph written by hand stops being true the first time a field changes.
+  const profile = profileFor(b.slug);
   const review = brokerReview({
     broker: b,
     rank: r.rank,
@@ -103,12 +107,29 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
     components: r.score.components.map((c) => ({ key: c.key, label: c.label, value: c.value })),
   });
 
+  /**
+   * "Is X regulated" is the highest-intent question anyone types about a broker,
+   * and the honest answer is never yes or no — it is "which company, and does
+   * that company take clients like you". This used to list every entity flat,
+   * which read as four licences all equally yours. It names the ones that are
+   * not, because on at least one broker here that is the whole answer.
+   */
+  const retailEntities = b.entities.filter(servesRetail);
+  const b2b = b.entities.filter((e) => !servesRetail(e));
+  const describe = (e: typeof b.entities[number]) =>
+    `${e.legalName} (${REGULATORS[e.licence.regulator]?.name ?? e.licence.regulator}, licence ${e.licence.number})`;
+
   const faq = [
     {
       q: `Is ${b.name} regulated?`,
-      a: `${b.name} operates ${b.entities.length} legal ${b.entities.length === 1 ? 'entity' : 'entities'}: ${b.entities
-        .map((e) => `${e.legalName} (${REGULATORS[e.licence.regulator]?.name ?? e.licence.regulator}, licence ${e.licence.number})`)
-        .join('; ')}. Which one applies to you depends on your country of residence.`,
+      a: `${b.name} operates ${b.entities.length} legal ${b.entities.length === 1 ? 'entity' : 'entities'}. `
+        + `${retailEntities.length === 1 ? 'The one that takes retail clients is' : 'The ones that take retail clients are'} `
+        + `${retailEntities.map(describe).join('; ')}. `
+        + (b2b.length > 0
+          ? `${b2b.map(describe).join('; ')} ${b2b.length === 1 ? 'holds a licence but does not take retail clients' : 'hold licences but do not take retail clients'}, `
+            + `so ${b2b.length === 1 ? 'it is' : 'they are'} not the company you would be signing with. `
+          : '')
+        + 'Which of the rest applies to you depends on your country of residence.',
     },
     {
       q: `What is the minimum deposit at ${b.name}?`,
@@ -116,6 +137,14 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
         ? `${b.name} states no minimum deposit.`
         : `${b.name} states a minimum deposit of $${b.payments.minDepositUsd}.`,
     },
+    ...(b2b.length > 0 ? [{
+      q: `Does the ${REGULATORS[b2b[0]!.licence.regulator]?.name ?? b2b[0]!.licence.regulator} licence cover me at ${b.name}?`,
+      a: `No. ${b2b[0]!.legalName} holds licence ${b2b[0]!.licence.number}, and it does not onboard retail clients — `
+        + `${REGULATORS[b2b[0]!.licence.regulator]?.compensation
+            ? `the cover behind it (${REGULATORS[b2b[0]!.licence.regulator]!.compensation}) belongs to that company's clients, who are other firms`
+            : 'the protections behind it belong to that company\u2019s clients, who are other firms'}. `
+        + `A retail account at ${b.name} is opened with one of the other entities on this page, and the entity map shows which.`,
+    }] : []),
     {
       q: `How long do ${b.name} withdrawals take?`,
       a: `${b.name} states a processing time of ${hours(b.payments.statedWithdrawalHours)}. That is the broker's own claim; we publish measured times once enough verified user reports exist.`,
@@ -170,6 +199,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
             { href: '#entity', label: 'Entity', icon: <IconEntity /> },
             { href: '#licences', label: 'Licences', icon: <IconLicence /> },
             { href: '#costs', label: 'Costs', icon: <IconCost /> },
+            { href: '#research', label: 'Checked', icon: <IconResearch />, ready: Boolean(profile) },
             { href: '#review', label: 'Review', icon: <IconReview /> },
             { href: '#status', label: 'Outages', icon: <IconStatus /> },
             { href: '#reviews', label: 'Reviews', icon: <IconReviews /> },
@@ -267,6 +297,8 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
                 </Link>.
               </p>
             </Card>
+
+            {profile ? <Profile profile={profile} name={b.name} /> : null}
 
             {/* The body of the page for a reader who arrived from a search
                 result: eight headed sections, every sentence of them a reading

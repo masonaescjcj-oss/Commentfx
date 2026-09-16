@@ -1,4 +1,4 @@
-import type { Broker, ScoreBreakdown, ScoreKey } from './types.ts';
+import { servesRetail, type Broker, type ScoreBreakdown, type ScoreKey } from './types.ts';
 import { REGULATORS, TIER_SCORE } from './regulators.ts';
 import { composite, clamp, round1, type Input } from './scoring-kit.ts';
 
@@ -25,9 +25,19 @@ export const LABELS: Record<ScoreKey, string> = {
   transparency: 'Corporate transparency',
 };
 
-/** Best licence tier, plus a small bonus for holding several serious ones. */
+/**
+ * Best licence tier, plus a small bonus for holding several serious ones —
+ * counting only the entities that would take a retail client on.
+ *
+ * A group licence held by a company that onboards nobody reading this site is
+ * a fact about the group and not a protection for the reader, and a ranking for
+ * retail traders that scores it as one is measuring the wrong thing. It changes
+ * no rank today; it is here so that the day a broker leads with a licence its
+ * retail arm does not hold, the number says so.
+ */
 export function scoreRegulation(b: Broker): number {
   const tiers = b.entities
+    .filter(servesRetail)
     .filter((e) => e.licence.status === 'authorised' || e.licence.status === 'registered')
     .map((e) => REGULATORS[e.licence.regulator]?.tier)
     .filter((t): t is 'A' | 'B' | 'C' => Boolean(t));

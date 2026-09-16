@@ -19,9 +19,24 @@ export const BROKERS: Broker[] = [
     slug: 'exness', name: 'Exness', founded: 2008, headquarters: 'CY',
     website: 'https://www.exness.com/',
     entities: [
-      { legalName: 'Exness (UK) Ltd', country: 'GB', licence: { regulator: 'FCA', number: '730729', status: 'authorised' }, serves: ['GB'] },
-      { legalName: 'Exness (CY) Ltd', country: 'CY', licence: { regulator: 'CySEC', number: '178/12', status: 'authorised' }, serves: ['CY', 'DE', 'FR', 'IT', 'ES', 'NL', 'PL'] },
-      { legalName: 'Exness SA (Pty) Ltd', country: 'ZA', licence: { regulator: 'FSCA', number: '51024', status: 'authorised' }, serves: ['ZA'] },
+      /**
+       * The licence the group leads with, and the one no reader of this site
+       * gets. Exness (UK) Ltd is real, active and FCA-authorised; its own
+       * accounts for the year to 31 December 2024 describe "the growth of its
+       * B2B and liquidity provision business" and record $2,473,493 of client
+       * money in segregated accounts at the year end. A group reporting $3.86tn
+       * of volume in a single month does not keep retail balances in $2.4m.
+       *
+       * So it serves nobody on this list and says so, instead of sitting
+       * against ['GB'] beside "FSCS up to £85,000" as it did.
+       * Companies House 08861481, full accounts filed 24 July 2025.
+       */
+      { legalName: 'Exness (UK) Ltd', country: 'GB', licence: { regulator: 'FCA', number: '730729', status: 'authorised' }, serves: [], clients: 'professional' },
+      // "(Cy)", as the CySEC register spells it, read by our own adapter.
+      { legalName: 'Exness (Cy) Ltd', country: 'CY', licence: { regulator: 'CySEC', number: '178/12', status: 'authorised' }, serves: ['CY', 'DE', 'FR', 'IT', 'ES', 'NL', 'PL'] },
+      // "ZA", not "SA": FSP 51024 belongs to Exness ZA (Pty) Ltd. The record
+      // carried a legal name that is not on any register.
+      { legalName: 'Exness ZA (Pty) Ltd', country: 'ZA', licence: { regulator: 'FSCA', number: '51024', status: 'authorised' }, serves: ['ZA'] },
       { legalName: 'Exness (SC) Ltd', country: 'SC', licence: { regulator: 'FSA-SC', number: 'SD025', status: 'registered' }, serves: ['*'] },
     ],
     cost: { eurusdSpread: 0.7, commissionPerLot: 0, swapFreeAvailable: true, verifiedAt: null },

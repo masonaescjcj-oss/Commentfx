@@ -1,4 +1,4 @@
-import type { Broker } from './types.ts';
+import { servesRetail, type Broker } from './types.ts';
 import { REGULATORS } from './regulators.ts';
 import { countryName } from './countries.ts';
 import { effectiveCostPips } from './score.ts';
@@ -70,7 +70,18 @@ export function brokerReview({ broker: b, rank, of, peers, components }: {
   const year = new Date().getUTCFullYear();
   const age = year - b.founded;
   const tiers = b.entities.map((e) => REGULATORS[e.licence.regulator]?.tier);
-  const tierA = b.entities.filter((e) => REGULATORS[e.licence.regulator]?.tier === 'A');
+  /**
+   * Only the companies that would take you on.
+   *
+   * This counted every entity, which read "2 of those are tier-A regulators —
+   * a statutory compensation scheme behind each: FCA's FSCS up to £85,000" on
+   * a broker whose FCA arm deals with other firms and holds $2.5m of client
+   * money. The sentence was generated, so it was consistent, and it was still
+   * telling a reader they had a protection they cannot claim.
+   */
+  const tierA = b.entities
+    .filter(servesRetail)
+    .filter((e) => REGULATORS[e.licence.regulator]?.tier === 'A');
   const regs = [...new Set(b.entities.map((e) => e.licence.regulator))];
   const allIn = effectiveCostPips(b);
   const costs = peers.map((p) => effectiveCostPips(p));
@@ -81,7 +92,7 @@ export function brokerReview({ broker: b, rank, of, peers, components }: {
   const best = [...scored].sort((x, y) => y.value - x.value)[0];
   const worst = [...scored].sort((x, y) => x.value - y.value)[0];
   const fallback = b.entities.find((e) => e.serves.includes('*'));
-  const named = b.entities.filter((e) => !e.serves.includes('*'));
+  const named = b.entities.filter(servesRetail).filter((e) => !e.serves.includes('*'));
 
   const sections: ReviewSection[] = [];
 
@@ -106,14 +117,22 @@ export function brokerReview({ broker: b, rank, of, peers, components }: {
   });
 
   /* ── Regulation ────────────────────────────────────────────────────────── */
+  // "onboards clients in ." was what an empty `serves` produced — a sentence
+  // with a hole in it, which is how a reader learns the prose is a template.
+  // A company that onboards nobody has its own clause.
   const entityLines = b.entities.map((e) => {
-    const reg = REGULATORS[e.licence.regulator];
-    const where = e.serves.includes('*')
-      ? 'takes everyone else'
-      : `onboards clients in ${and(e.serves.map(countryName))}`;
+    const where = !servesRetail(e)
+      ? 'takes no retail clients at all'
+      : e.serves.includes('*')
+        ? 'takes everyone else'
+        : e.serves.length === 0
+          ? 'names no country it onboards'
+          : `onboards clients in ${and(e.serves.map(countryName))}`;
     return `${e.legalName}, incorporated in ${countryName(e.country)}, holds ${e.licence.regulator} ` +
       `licence ${e.licence.number} (${e.licence.status}) and ${where}.`;
   });
+
+  const b2b = b.entities.filter((e) => !servesRetail(e));
 
   const compensation = tierA
     .map((e) => REGULATORS[e.licence.regulator])
@@ -133,8 +152,18 @@ export function brokerReview({ broker: b, rank, of, peers, components }: {
             : `${tierA.length} of those are tier-A regulators — a public register you can search and a ` +
               `statutory compensation scheme behind each`) +
           (compensation.length > 0 ? `: ${and(compensation)}.` : '.')
-        : `None of those is a tier-A regulator. That does not make ${b.name} a scam, and it does mean ` +
-          `there is no statutory compensation scheme standing behind your balance if the company fails.`,
+        : `None of the companies that would take you on is under a tier-A regulator. That does not make ` +
+          `${b.name} a scam, and it does mean there is no statutory compensation scheme standing behind ` +
+          `your balance if the company fails.`,
+
+      ...(b2b.length > 0 ? [
+        `${and(b2b.map((e) => e.legalName))} ${b2b.length === 1 ? 'is' : 'are'} on that list and ` +
+        `${b2b.length === 1 ? 'is' : 'are'} not ${b2b.length === 1 ? 'a company' : 'companies'} you can ` +
+        `open an account with: ${b2b.length === 1 ? 'it deals' : 'they deal'} with other firms. ` +
+        `A licence counts here only if the company holding it would take you as a client, so ` +
+        `${b2b.length === 1 ? 'it adds' : 'they add'} nothing to the regulation score — and nothing to ` +
+        `your protection either.`,
+      ] : []),
 
       fallback && named.length > 0
         ? `The entity that matters most to a reader outside ` +

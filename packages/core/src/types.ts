@@ -40,7 +40,23 @@ export interface BrokerEntity {
   licence: Licence;
   /** ISO country codes onboarded to this entity. '*' is the fallback entity. */
   serves: string[];
+  /**
+   * Who this entity actually takes on. Absent means retail, which is the case
+   * for almost every entity here.
+   *
+   * It exists because of Exness. Exness (UK) Ltd holds FCA 730729, the licence
+   * the group leads with, and its own filed accounts describe a B2B and
+   * liquidity-provision business — it held $2.47m of client money at the end of
+   * 2024, against a group reporting trillions a month. Showing that licence to
+   * a retail reader beside "FSCS up to £85,000" would be telling them they have
+   * a protection they cannot have. A licence is only yours if the company
+   * holding it would open an account for you.
+   */
+  clients?: 'retail' | 'professional';
 }
+
+/** Retail unless the record says otherwise — the common case stays untyped. */
+export const servesRetail = (e: BrokerEntity) => (e.clients ?? 'retail') === 'retail';
 
 export interface TradingCost {
   /** Typical EUR/USD spread in pips, as published by the broker. */
