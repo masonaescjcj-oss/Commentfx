@@ -6,6 +6,11 @@ import type { Exchange } from '../exchanges.ts';
  * and reserve attestations must be checked against primary sources before
  * publication.
  */
+/**
+ * Logos come from CoinGecko's exchange list — the same free, unauthenticated
+ * API this site already reads coin prices from — down-sampled from its 250px
+ * copy to the 100px square every other logo on the site is.
+ */
 export const EXCHANGES: Exchange[] = [
   {
     slug: 'coinbase', name: 'Coinbase', founded: 2012, headquarters: 'US', kind: 'centralised',
@@ -15,7 +20,7 @@ export const EXCHANGES: Exchange[] = [
     security: { lastBreachYear: null, insuranceFund: true, madeUsersWhole: null },
     transparency: { publishesFeeSchedule: true, disclosesLegalEntity: true, publishesIncidentReports: true },
     why: 'A listed company filing audited accounts — the strongest solvency evidence here',
-    logo: { initials: 'CB', bg: '#1652F0', fg: '#FFFFFF' },
+    logo: { initials: 'CB', bg: '#1652F0', fg: '#FFFFFF', img: '/logos/coinbase.png' },
   },
   {
     slug: 'kraken', name: 'Kraken', founded: 2011, headquarters: 'US', kind: 'centralised',
@@ -25,7 +30,7 @@ export const EXCHANGES: Exchange[] = [
     security: { lastBreachYear: null, insuranceFund: false, madeUsersWhole: null },
     transparency: { publishesFeeSchedule: true, disclosesLegalEntity: true, publishesIncidentReports: true },
     why: 'Fourteen years with no customer-funds breach on record, plus a verifiable reserve proof',
-    logo: { initials: 'KR', bg: '#5741D9', fg: '#FFFFFF' },
+    logo: { initials: 'KR', bg: '#5741D9', fg: '#FFFFFF', img: '/logos/kraken.png' },
   },
   {
     slug: 'binance', name: 'Binance', founded: 2017, headquarters: 'AE', kind: 'centralised',
@@ -35,7 +40,7 @@ export const EXCHANGES: Exchange[] = [
     security: { lastBreachYear: 2019, insuranceFund: true, madeUsersWhole: true },
     transparency: { publishesFeeSchedule: true, disclosesLegalEntity: true, publishesIncidentReports: true },
     why: 'The deepest order books in almost every pair, on a reserve proof without an audit',
-    logo: { initials: 'BN', bg: '#F0B90B', fg: '#0D1421' },
+    logo: { initials: 'BN', bg: '#F0B90B', fg: '#0D1421', img: '/logos/binance.png' },
   },
   {
     slug: 'okx', name: 'OKX', founded: 2017, headquarters: 'SC', kind: 'centralised',
@@ -45,7 +50,7 @@ export const EXCHANGES: Exchange[] = [
     security: { lastBreachYear: null, insuranceFund: true, madeUsersWhole: null },
     transparency: { publishesFeeSchedule: true, disclosesLegalEntity: true, publishesIncidentReports: false },
     why: 'Lowest headline taker fee of the majors, with a monthly reserve attestation',
-    logo: { initials: 'OK', bg: '#1A1A1A', fg: '#FFFFFF' },
+    logo: { initials: 'OK', bg: '#1A1A1A', fg: '#FFFFFF', img: '/logos/okx.png' },
   },
   {
     slug: 'bybit', name: 'Bybit', founded: 2018, headquarters: 'AE', kind: 'centralised',
@@ -55,7 +60,7 @@ export const EXCHANGES: Exchange[] = [
     security: { lastBreachYear: 2025, insuranceFund: true, madeUsersWhole: true },
     transparency: { publishesFeeSchedule: true, disclosesLegalEntity: true, publishesIncidentReports: true },
     why: 'Covered every loss from its 2025 incident without halting withdrawals',
-    logo: { initials: 'BY', bg: '#F7A600', fg: '#0D1421' },
+    logo: { initials: 'BY', bg: '#F7A600', fg: '#0D1421', img: '/logos/bybit.png' },
   },
   {
     slug: 'bitget', name: 'Bitget', founded: 2018, headquarters: 'SC', kind: 'centralised',
@@ -65,7 +70,7 @@ export const EXCHANGES: Exchange[] = [
     security: { lastBreachYear: null, insuranceFund: true, madeUsersWhole: null },
     transparency: { publishesFeeSchedule: true, disclosesLegalEntity: false, publishesIncidentReports: false },
     why: 'A large protection fund, offset by the thinnest corporate disclosure of the majors',
-    logo: { initials: 'BG', bg: '#00C9A7', fg: '#0D1421' },
+    logo: { initials: 'BG', bg: '#00C9A7', fg: '#0D1421', img: '/logos/bitget.png' },
   },
   {
     slug: 'kucoin', name: 'KuCoin', founded: 2017, headquarters: 'SC', kind: 'centralised',
@@ -75,7 +80,7 @@ export const EXCHANGES: Exchange[] = [
     security: { lastBreachYear: 2020, insuranceFund: true, madeUsersWhole: true },
     transparency: { publishesFeeSchedule: true, disclosesLegalEntity: false, publishesIncidentReports: true },
     why: 'Recovered fully from its 2020 breach; widest altcoin listing of the mid-tier',
-    logo: { initials: 'KC', bg: '#23AF91', fg: '#FFFFFF' },
+    logo: { initials: 'KC', bg: '#23AF91', fg: '#FFFFFF', img: '/logos/kucoin.png' },
   },
   {
     slug: 'mexc', name: 'MEXC', founded: 2018, headquarters: 'SC', kind: 'centralised',
@@ -85,7 +90,7 @@ export const EXCHANGES: Exchange[] = [
     security: { lastBreachYear: null, insuranceFund: false, madeUsersWhole: null },
     transparency: { publishesFeeSchedule: true, disclosesLegalEntity: false, publishesIncidentReports: false },
     why: 'The cheapest fees on the list and the fastest new listings — with the least disclosure',
-    logo: { initials: 'MX', bg: '#00B897', fg: '#FFFFFF' },
+    logo: { initials: 'MX', bg: '#00B897', fg: '#FFFFFF', img: '/logos/mexc.png' },
   },
 ];
 

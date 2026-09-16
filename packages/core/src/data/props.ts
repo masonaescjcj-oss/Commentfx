@@ -6,6 +6,15 @@ import type { PropFirm } from '../props.ts';
  * must be re-read from the firm's own rules page before publication, and then
  * watched by the rule-change job.
  */
+/**
+ * Logos are each firm's own icon, taken from its own site at the largest square
+ * it publishes, then squared to 100px on white so one <img> rule fits every
+ * record. Four of the eight are missing on purpose: FundingPips, Alpha Capital
+ * Group, E8 Markets and Breakout all sit behind a bot check that refuses an
+ * automated request, and those four fall back to the initials tile — which is
+ * what the tile is for. Do not re-try them blind; if one is wanted, save the
+ * file by hand.
+ */
 export const PROPS: PropFirm[] = [
   {
     slug: 'ftmo', name: 'FTMO', founded: 2015, headquarters: 'CZ',
@@ -16,7 +25,7 @@ export const PROPS: PropFirm[] = [
     feeUsdPer100k: 540, platforms: ['MT4', 'MT5', 'cTrader', 'DXtrade'],
     transparency: { publishesRuleChanges: true, disclosesLegalEntity: true, disclosesExecutionBroker: true },
     why: 'Static drawdown and no time limit — the rules most traders can actually survive',
-    logo: { initials: 'FT', bg: '#1F6B5A', fg: '#FFFFFF' },
+    logo: { initials: 'FT', bg: '#1F6B5A', fg: '#FFFFFF', img: '/logos/ftmo.png' },
   },
   {
     slug: 'fundingpips', name: 'FundingPips', founded: 2022, headquarters: 'AE',
@@ -38,7 +47,7 @@ export const PROPS: PropFirm[] = [
     feeUsdPer100k: 549, platforms: ['MT4', 'MT5', 'cTrader'],
     transparency: { publishesRuleChanges: true, disclosesLegalEntity: true, disclosesExecutionBroker: false },
     why: 'Highest profit split, but a consistency rule applies from phase two',
-    logo: { initials: 'FN', bg: '#4A5FD9', fg: '#FFFFFF' },
+    logo: { initials: 'FN', bg: '#4A5FD9', fg: '#FFFFFF', img: '/logos/fundednext.png' },
   },
   {
     slug: 'alpha-capital-group', name: 'Alpha Capital Group', founded: 2021, headquarters: 'GB',
@@ -60,7 +69,7 @@ export const PROPS: PropFirm[] = [
     feeUsdPer100k: 1090, platforms: ['TradingView', 'NinjaTrader', 'Quantower'],
     transparency: { publishesRuleChanges: true, disclosesLegalEntity: true, disclosesExecutionBroker: true },
     why: 'The longest-running futures programme; weekly payouts from day seven',
-    logo: { initials: 'TS', bg: '#C4762C', fg: '#FFFFFF' },
+    logo: { initials: 'TS', bg: '#C4762C', fg: '#FFFFFF', img: '/logos/topstep.png' },
   },
   {
     slug: 'e8-markets', name: 'E8 Markets', founded: 2021, headquarters: 'US',
@@ -82,7 +91,7 @@ export const PROPS: PropFirm[] = [
     feeUsdPer100k: 1150, platforms: ['MT5'],
     transparency: { publishesRuleChanges: false, disclosesLegalEntity: true, disclosesExecutionBroker: false },
     why: 'A full 100% split, paid for with the tightest drawdown and no news trading',
-    logo: { initials: 'T5', bg: '#D4404F', fg: '#FFFFFF' },
+    logo: { initials: 'T5', bg: '#D4404F', fg: '#FFFFFF', img: '/logos/the5ers.png' },
   },
   {
     slug: 'breakout', name: 'Breakout', founded: 2023, headquarters: 'AE',
