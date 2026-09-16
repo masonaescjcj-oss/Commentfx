@@ -33,7 +33,7 @@ export const COUNTRIES: Record<string, string> = {
   NL: 'Netherlands',
   NZ: 'New Zealand',
   PL: 'Poland',
-  PH: 'the Philippines',
+  PH: 'Philippines',
   SC: 'Seychelles',
   SG: 'Singapore',
   US: 'United States',
