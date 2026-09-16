@@ -1,98 +1,95 @@
-'use client';
-
-import { useState } from 'react';
-import { REGULATORS, servesRetail, type Broker } from '@commentfx/core';
+import { REGULATORS, countryName, servesRetail, type Broker, type BrokerEntity } from '@commentfx/core';
 import { Flag } from './Flag';
 
-const COUNTRIES = [
-  { code: 'GB', name: 'United Kingdom' }, { code: 'DE', name: 'Germany' },
-  { code: 'AU', name: 'Australia' }, { code: 'ZA', name: 'South Africa' },
-  { code: 'AE', name: 'United Arab Emirates' }, { code: 'SG', name: 'Singapore' },
-  { code: 'BR', name: 'Brazil' }, { code: 'IN', name: 'India' },
-];
-
 /**
- * Every entity is rendered into the HTML whatever is selected — the picker only
- * changes which one is highlighted. Crawlers and readers with JS off still get
- * the whole map, which is the part that matters.
+ * The entity map, without the country picker it used to open with.
+ *
+ * The picker asked the reader where they lived and highlighted one row. It
+ * looked helpful and it was doing two things badly: the list of countries in it
+ * was eight, chosen by us, so most readers picked the nearest wrong one and got
+ * a confident answer about an entity that was not theirs. And it made this the
+ * only client component on the page — a select, a state hook and a hydration
+ * pass, to reorder information that was already all on the screen.
+ *
+ * What a reader actually needs is the shape: which companies exist, which
+ * regulator each one answers to, and what standing behind it. Who gets which is
+ * decided at sign-up by the country on the form, and the honest version of that
+ * is the row that says "everyone else" — not a dropdown pretending to know.
+ *
+ * So it renders on the server now, with no JavaScript at all.
  */
+function serves(e: BrokerEntity): string {
+  if (!servesRetail(e)) return 'Other firms, not retail clients';
+  if (e.serves.includes('*')) return 'Everyone not covered above';
+  if (e.serves.length === 0) return 'No country named';
+  // Four names and a count. The full list is seven countries on some entities,
+  // and a paragraph of country names is the thing nobody reads.
+  const names = e.serves.map(countryName);
+  return names.length <= 4
+    ? names.join(', ')
+    : `${names.slice(0, 4).join(', ')} and ${names.length - 4} more`;
+}
+
 export function EntityMap({ broker }: { broker: Broker }) {
-  const [country, setCountry] = useState('SG');
-  const match =
-    broker.entities.find((e) => e.serves.includes(country)) ??
-    broker.entities.find((e) => e.serves.includes('*')) ??
-    broker.entities[broker.entities.length - 1];
-
   return (
-    <>
-      <div className="flex items-center gap-[10px] mb-[13px]">
-        <label htmlFor="country" className="text-[11.5px] text-ink-3">Your country</label>
-        <select
-          id="country"
-          value={country}
-          onChange={(e) => setCountry(e.target.value)}
-          className="bg-card-2 border border-line rounded-[10px] px-3 py-[7px] text-[13px] font-semibold"
-        >
-          {COUNTRIES.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
-        </select>
-      </div>
+    <ul className="flex flex-col gap-2">
+      {broker.entities.map((e) => {
+        const reg = REGULATORS[e.licence.regulator];
+        const retail = servesRetail(e);
+        /**
+         * A compensation scheme belongs to the clients of the company holding
+         * the licence. An entity that takes no retail client has one, and it is
+         * not the reader's — "FSCS up to £85,000" printed in green beside
+         * Exness (UK) Ltd told a British reader they were covered by a scheme
+         * they can never claim on.
+         */
+        const protection = !retail
+          ? 'Takes no retail clients — this licence is not yours'
+          : reg?.compensation ?? 'No investor compensation scheme';
+        const fallback = retail && e.serves.includes('*');
 
-      <ul className="flex flex-col gap-2">
-        {broker.entities.map((e) => {
-          const reg = REGULATORS[e.licence.regulator];
-          const you = e === match;
-          /**
-           * A compensation scheme belongs to the clients of the company that
-           * holds the licence. An entity that takes no retail client has one,
-           * and it is not the reader's — printing "FSCS up to £85,000" in green
-           * beside Exness (UK) Ltd told a British reader they were covered by a
-           * scheme they can never claim on. That was the worst line on this
-           * site. It says what is true instead.
-           */
-          const retail = servesRetail(e);
-          const protection = !retail
-            ? 'Takes no retail clients — this licence is not yours'
-            : reg?.compensation ?? 'No investor compensation scheme';
-          return (
-            <li
-              key={e.legalName}
-              className={
-                you
-                  ? 'border-[1.5px] border-warn bg-[#FFFBF1] rounded-[13px] p-[12px_13px]'
-                  // De-emphasised by border and weight, never by opacity:
-                  // fading text composites it towards the background and takes
-                  // the contrast down with it, which is exactly what the
-                  // unselected entities need least.
-                  : 'border border-line bg-card-2 rounded-[13px] p-[12px_13px]'
-              }
-            >
-              <div className="flex items-center gap-2">
-                <Flag code={e.country} w={20} title={e.country} />
-                <span className={`text-[13.5px] ${you ? 'font-bold' : 'font-semibold text-ink-2'}`}>
-                  {e.legalName}
+        return (
+          <li
+            key={e.legalName}
+            className={
+              // The fallback entity is the one most readers end up with, so it
+              // is the one carrying the emphasis — a fact about the broker,
+              // not a guess about the reader.
+              fallback
+                ? 'border-[1.5px] border-warn bg-[#FFFBF1] rounded-[13px] p-[12px_13px]'
+                : 'border border-line bg-card-2 rounded-[13px] p-[12px_13px]'
+            }
+          >
+            <div className="flex items-center gap-2">
+              <Flag code={e.country} w={20} title={e.country} />
+              <span className={`text-[13.5px] ${fallback ? 'font-bold' : 'font-semibold text-ink-2'}`}>
+                {e.legalName}
+              </span>
+              <div className="flex-1" />
+              {!retail && (
+                <span className="text-[10.5px] font-bold text-ink-3 border border-line rounded-md px-[7px] py-[2px]">
+                  B2B
                 </span>
-                <div className="flex-1" />
-                {you && (
-                  <span className="text-[10.5px] font-extrabold text-white bg-warn px-[9px] py-[2px] rounded-md">
-                    YOU
-                  </span>
-                )}
-                {!retail && (
-                  <span className="text-[10.5px] font-bold text-ink-3 border border-line rounded-md px-[7px] py-[2px]">
-                    B2B
-                  </span>
-                )}
-              </div>
-              <p className={`text-[11.5px] mt-2 font-${you ? 'bold' : 'normal'} ${retail && reg?.compensation ? 'text-up' : 'text-warn'}`}>
-                {protection}
-              </p>
-              <p className="text-[11.5px] text-ink-3 mt-[3px]">
-                {reg?.name ?? e.licence.regulator} · licence {e.licence.number}
-              </p>
-            </li>
-          );
-        })}
-      </ul>
-    </>
+              )}
+              {fallback && (
+                <span className="text-[10.5px] font-extrabold text-white bg-warn px-[9px] py-[2px] rounded-md">
+                  MOST READERS
+                </span>
+              )}
+            </div>
+
+            <p className={`text-[11.5px] mt-2 ${fallback ? 'font-bold' : ''} ${retail && reg?.compensation ? 'text-up' : 'text-warn'}`}>
+              {protection}
+            </p>
+            <p className="text-[11.5px] text-ink-3 mt-[3px]">
+              {reg?.name ?? e.licence.regulator} · licence {e.licence.number}
+            </p>
+            <p className="text-[11.5px] text-ink-3 mt-[2px]">
+              Takes: {serves(e)}
+            </p>
+          </li>
+        );
+      })}
+    </ul>
   );
 }

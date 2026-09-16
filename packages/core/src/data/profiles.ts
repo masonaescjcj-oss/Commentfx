@@ -282,7 +282,198 @@ const EXNESS: BrokerProfile = {
   ],
 };
 
-export const PROFILES: BrokerProfile[] = [EXNESS];
+const IC_MARKETS: BrokerProfile = {
+  slug: 'ic-markets',
+  checked: '2026-09-16',
+  verdict:
+    'A regulator has already written down what this site keeps arguing. In July 2024 CySEC fined IC Markets’ '
+    + 'European arm €200,000 for taking part in arrangements that got around the EU’s margin rules for retail '
+    + 'clients — the offshore entity was not an accident of geography, it was the point. The broker rejects the '
+    + 'finding and is appealing. Separately it is defending a class action in Australia. Neither changes that '
+    + 'the raw pricing is the tightest in this directory.',
+
+  sections: [
+    {
+      heading: 'The fine, in the regulator’s own words',
+      paragraphs: [
+        'On 1 July 2024 the board of the Cyprus Securities and Exchange Commission decided to impose an '
+        + 'administrative fine of €200,000 on IC Markets (EU) Ltd. The announcement went out on 19 July and it is '
+        + 'published in English, which is unusual enough to be worth quoting rather than summarising: the firm '
+        + 'was fined for non-compliance with article 42 of Regulation (EU) 600/2014 "as it participated in '
+        + 'activities that resulted in the circumvention of the requirements of paragraph 4(1)(a) of DI87-09 and '
+        + 'specifically the requirements regarding the payment of initial margin protection" [cysec-fine].',
+
+        'DI87-09 is the Cypriot implementation of the EU’s CFD intervention — the rule that caps retail leverage '
+        + 'at 1:30 on major currency pairs and sets the margin a retail client must post. "Circumvention of the '
+        + 'requirements regarding initial margin protection" means clients ended up with leverage the EU does not '
+        + 'allow a retail client to have. Trade press covering the decision reported the figure as up to 1:1000, '
+        + 'reached through a third-country company in the same group, and reported that CySEC treated it as '
+        + 'repeat conduct after intervening over the same thing in 2021 [ia-fine].',
+
+        'That is the offshore entity described from the other side. Everywhere else on this site the argument is '
+        + 'that the company you sign with decides your protection, and readers are left to work out that a group '
+        + 'might prefer you signed with the loose one. Here a regulator has found that the tight entity took part '
+        + 'in moving people to the loose one, and fined it for doing so.',
+
+        'IC Markets does not accept it. The firm said it would appeal, said CySEC had disregarded "irrefutable '
+        + 'audited evidence" in favour of allegations from a terminated employee, and called the decision part of '
+        + '"a pattern of selective and disproportionate application of regulatory authority" [ff-appeal]. An '
+        + 'appeal is a real thing and this page will say so when it resolves. It has been open since July 2024.',
+      ],
+    },
+
+    {
+      heading: 'And a class action, on a different question',
+      paragraphs: [
+        'In Australia, International Capital Markets Pty Ltd is defending a class action brought by the law firm '
+        + 'Piper Alderman over the sale of CFDs to retail investors. The pleaded case is "unconscionable conduct '
+        + 'and misleading and deceptive conduct": that clients lost money in circumstances where their objectives '
+        + 'and financial situation were not adequately assessed and the risks were not adequately disclosed '
+        + '[fm-class]. It is the second such action against the firm, it is funded by a litigation funder, and '
+        + 'the same funder is behind a comparable case against another Australian CFD issuer.',
+
+        'The company’s answer is that the claims are "entirely meritless" and will be "vigorously defended", and '
+        + 'that its CFD products "have consistently complied with all regulations" [fm-class]. Nothing has been '
+        + 'decided. A filed claim is an allegation and this page treats it as one — it is here because a reader '
+        + 'deciding where to put money is entitled to know that the question is before a court, not because we '
+        + 'have a view on how it ends.',
+
+        'What both matters have in common is worth naming. Neither is about a missing withdrawal or a frozen '
+        + 'account, which is what most complaints against brokers are about. Both are about whether a retail '
+        + 'client was sold more risk than the rules intended them to carry. That is a different kind of finding '
+        + 'and, for a broker whose whole appeal is cheap access to leverage, a more central one.',
+      ],
+    },
+
+    {
+      heading: 'What the registers say, read today',
+      paragraphs: [
+        'Both of the supervised entities check out. Our own reading of ASIC’s published register finds '
+        + 'INTERNATIONAL CAPITAL MARKETS PTY. LTD. holding AFS licence 335692, active [asic]. CySEC’s register '
+        + 'lists IC Markets (EU) Ltd under licence 362/18, authorised on 25 June 2018, registered in Limassol '
+        + 'under company number 356877, with permission to passport into 29 member states [cysec-reg].',
+
+        'The third company is Raw Trading Ltd in Seychelles, licence SD018, and it is the one most readers here '
+        + 'will be onboarded to. The group has routed everything outside Australia and the EU through it since '
+        + 'mid-2019 [grok-note]. Seychelles registers firms rather than supervising them closely and runs no '
+        + 'compensation scheme, so a client there has the platform and the pricing and none of the recourse.',
+
+        'IC Markets was founded in Sydney in 2007 and remains private, with no published group accounts and no '
+        + 'outside shareholder to answer to. As with every private broker in this directory, the licences are the '
+        + 'only external check that exists — which is exactly why a fine against one of them is worth more than '
+        + 'a hundred reviews.',
+      ],
+    },
+
+    {
+      heading: 'The pricing, and the numbers we will not print',
+      paragraphs: [
+        'The raw pricing is genuinely the tightest here, and that is a fact about the record on this page rather '
+        + 'than an opinion: the all-in figure is computed from the published spread and commission the same way '
+        + 'for all ten brokers, and IC Markets comes out first. It is also why the minimum deposit is what it is. '
+        + 'This is not a broker built for someone funding an account with pocket money.',
+
+        'What we are not going to print is the execution benchmarks. Review sites publish IC Markets figures to '
+        + 'the millisecond — average fill times, the share of orders filled at the requested price, the balance '
+        + 'of positive to negative slippage — and not one of them publishes how it was measured, over what '
+        + 'period, on which account type, or on how many orders. Some of those numbers are almost certainly the '
+        + 'broker’s own marketing figures with a new frame around them.',
+
+        'A number you cannot check is not evidence, and repeating it would make this page look more authoritative '
+        + 'while making it less true. If someone here runs a measured execution test one day, the method will be '
+        + 'published with the result.',
+      ],
+    },
+  ],
+
+  facts: [
+    { label: 'CySEC fine, IC Markets (EU) Ltd', value: '€200,000', from: 'cysec-fine' },
+    { label: 'Board decision date', value: '1 July 2024, announced 19 July 2024', from: 'cysec-fine' },
+    { label: 'Rule breached', value: 'Art. 42, Regulation (EU) 600/2014, via DI87-09', from: 'cysec-fine' },
+    { label: 'LEI, IC Markets (EU) Ltd', value: '549300O8CKXT0AKIWS77', from: 'cysec-fine' },
+    { label: 'CySEC authorisation date', value: '25 June 2018', from: 'cysec-reg' },
+    { label: 'Cyprus company number', value: '356877, Limassol', from: 'cysec-reg' },
+    { label: 'ASIC register, AFS licence 335692', value: 'Active, read 16 September 2026', from: 'asic' },
+    { label: 'Class action, pleaded conduct', value: 'Unconscionable, misleading and deceptive conduct', from: 'fm-class' },
+    { label: 'Class action, period pleaded', value: 'September 2017 to March 2021', from: 'fm-class' },
+    { label: 'The broker’s position on both', value: 'Appealing the fine; defending the claim', from: 'ff-appeal' },
+  ],
+
+  open: [
+    'The CySEC appeal has been outstanding since July 2024 and we have found no ruling. Until there is one the '
+    + 'fine stands and is contested, which is exactly what this page says.',
+    'The record on this page caps leverage at 1:500. The conduct CySEC described reached 1:1000 through the '
+    + 'offshore company. Those may be different account types or different years; nobody here has established '
+    + 'which, and the figure has not been changed on one press report.',
+    'No group accounts are published anywhere, so unlike Exness there is no filing to read. Everything financial '
+    + 'about this business is either the broker’s own claim or a court document.',
+  ],
+
+  sources: [
+    {
+      id: 'cysec-fine',
+      publisher: 'Cyprus Securities and Exchange Commission',
+      title: 'CySEC board decision: administrative fine of €200,000 on IC Markets (EU) Ltd',
+      url: 'https://www.cysec.gov.cy/CMSPages/GetFile.aspx?guid=4a427854-2170-4c8b-ab6c-32bbdac0089e',
+      published: '2024-07-19',
+      read: '2026-09-16',
+      kind: 'regulator',
+    },
+    {
+      id: 'cysec-reg',
+      publisher: 'Cyprus Securities and Exchange Commission',
+      title: 'Register of Cyprus Investment Firms — IC Markets (EU) Ltd, licence 362/18',
+      url: 'https://www.cysec.gov.cy/en-GB/entities/investment-firms/cypriot/80418/',
+      read: '2026-09-16',
+      kind: 'register',
+    },
+    {
+      id: 'asic',
+      publisher: 'Australian Securities and Investments Commission',
+      title: 'Professional registers — AFS licensees, licence 335692',
+      url: 'https://asic.gov.au/online-services/search-asics-registers/',
+      read: '2026-09-16',
+      kind: 'register',
+    },
+    {
+      id: 'ia-fine',
+      publisher: 'International Adviser',
+      title: 'CySEC fines IC Markets €200,000 for leverage violations through a third country entity',
+      url: 'https://international-adviser.com/cysec-fines-ic-markets-e200000-for-leverage-violations-through-a-third-country-entity/',
+      published: '2024-07-23',
+      read: '2026-09-16',
+      kind: 'press',
+    },
+    {
+      id: 'ff-appeal',
+      publisher: 'FinanceFeeds',
+      title: 'IC Markets to appeal CySEC’s €200,000 fine over leverage lapses',
+      url: 'https://financefeeds.com/ic-markets-to-appeal-cysecs-e200000-fine-over-leverage-lapses/',
+      published: '2024-07-19',
+      read: '2026-09-16',
+      kind: 'press',
+    },
+    {
+      id: 'fm-class',
+      publisher: 'Finance Magnates',
+      title: 'CFDs on trial: IC Markets faces class-action lawsuit in Australia',
+      url: 'https://www.financemagnates.com/forex/brokers/cfds-at-trial-ic-markets-faces-class-action-lawsuit-in-australia/',
+      published: '2024-02-08',
+      read: '2026-09-16',
+      kind: 'press',
+    },
+    {
+      id: 'grok-note',
+      publisher: 'FinTelegram',
+      title: 'IC Markets group structure and the Seychelles entity',
+      url: 'https://fintelegram.com/tag/andrew-budzinski/',
+      read: '2026-09-16',
+      kind: 'press',
+    },
+  ],
+};
+
+export const PROFILES: BrokerProfile[] = [EXNESS, IC_MARKETS];
 
 export const profileFor = (slug: string) => PROFILES.find((p) => p.slug === slug);
 
