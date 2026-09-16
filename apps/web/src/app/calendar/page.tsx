@@ -74,11 +74,6 @@ export default async function CalendarPage() {
           <h1 className="font-[family-name:var(--font-display)] text-[26px] font-bold leading-[1.22] tracking-[-0.02em] text-balance">
             Economic calendar
           </h1>
-          <p className="text-[13.5px] text-ink-2 leading-[1.75] mt-2 max-w-[48ch]">
-            Every date below comes from the institution that sets it. Where the source
-            publishes a release time, it is here to the minute; where it does not, the
-            row says so rather than guessing.
-          </p>
         </header>
 
         {ahead.length > 0 && (

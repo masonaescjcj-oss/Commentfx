@@ -88,33 +88,25 @@ export default function MethodologyPage() {
           <h1 className="font-[family-name:var(--font-display)] text-[26px] font-bold leading-[1.22] tracking-[-0.02em] text-balance">
             {TITLE}
           </h1>
-          <p className="text-[13.5px] text-ink-2 leading-[1.75] mt-2 max-w-[50ch]">{DESC}</p>
         </header>
 
         <Card className="p-4" as="section">
-          <h2 className="text-[15px] font-bold mb-1">Brokers</h2>
-          <p className="text-[11.5px] text-ink-3 mb-4">Six components. Live spreads are deliberately not among them — see below.</p>
+          <h2 className="text-[15px] font-bold mb-4">Brokers</h2>
           <Weights keys={Object.keys(WEIGHTS) as ScoreKey[]} weights={WEIGHTS} labels={LABELS} what={WHAT} max={30} />
         </Card>
 
         <Card className="p-4" as="section">
-          <h2 className="text-[15px] font-bold mb-1">Prop firms</h2>
-          <p className="text-[11.5px] text-ink-3 mb-4">Five components, weighted toward the rules that decide whether you can pass at all.</p>
+          <h2 className="text-[15px] font-bold mb-4">Prop firms</h2>
           <Weights keys={Object.keys(PROP_WEIGHTS) as PropKey[]} weights={PROP_WEIGHTS} labels={PROP_LABELS} what={PROP_WHAT} max={30} />
         </Card>
 
         <Card className="p-4" as="section">
-          <h2 className="text-[15px] font-bold mb-1">Exchanges</h2>
-          <p className="text-[11.5px] text-ink-3 mb-4">Five components, weighted toward evidence that customer funds exist.</p>
+          <h2 className="text-[15px] font-bold mb-4">Exchanges</h2>
           <Weights keys={Object.keys(EXCHANGE_WEIGHTS) as ExchangeKey[]} weights={EXCHANGE_WEIGHTS} labels={EXCHANGE_LABELS} what={EXCHANGE_WHAT} max={30} />
         </Card>
 
         <Card className="p-4" as="section">
-          <h2 className="text-[15px] font-bold mb-1">Memecoins</h2>
-          <p className="text-[11.5px] text-ink-3 mb-4">
-            Four components, all machine-checkable. This one is a safety floor, not a
-            ranking of prospects -- no part of it predicts price.
-          </p>
+          <h2 className="text-[15px] font-bold mb-4">Memecoins</h2>
           <Weights keys={Object.keys(MEME_WEIGHTS) as MemeKey[]} weights={MEME_WEIGHTS} labels={MEME_LABELS} what={MEME_WHAT} max={45} />
         </Card>
 

@@ -49,21 +49,13 @@ export default async function MemecoinsPage() {
       <Header active="/memecoins" />
       <main id="main" className="px-4 pt-3 pb-6 flex flex-col gap-[13px]">
         <Breadcrumbs trail={trail} />
-        <RankingIntro
-          title={TITLE}
-          lead={DESC}
-          count={'error' in data ? 0 : data.tokens.length}
-          unit="tokens passed screening"
-          sortedBy="safety"
-        />
+        <RankingIntro title={TITLE} />
 
         <Card className="p-4 bg-warn-bg shadow-none border border-[#F3E3C2]">
           <h2 className="text-[14px] font-bold text-warn mb-[6px]">A safety score is not a buy signal</h2>
           <p className="text-[12.5px] text-[#8A6420] leading-[1.8]">
-            Everything below is an automated check of the contract and the pool. It
-            cannot see intent, and a token scoring well can still go to zero within
-            hours. Treat a high score as the absence of specific, checkable red flags —
-            nothing more.
+            An automated check of the contract and the pool. A token scoring well can
+            still go to zero within hours.
           </p>
         </Card>
 

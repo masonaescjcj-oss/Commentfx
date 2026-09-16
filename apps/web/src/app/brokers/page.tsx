@@ -13,8 +13,6 @@ const TITLE = 'Forex broker rankings';
 const DESC =
   'Every broker with an active licence, ranked on regulation, published trading cost, ' +
   'payments and platforms. Weights are published and the rank is not for sale.';
-/** The page shows the ranking; the description is for a search result, not a preamble. */
-const LEAD = 'Ranked on regulation, cost, payments and platforms.';
 
 export const metadata: Metadata = pageMetadata({ title: TITLE, description: DESC, path: '/brokers' });
 export const revalidate = 3600;
@@ -64,10 +62,6 @@ export default async function BrokersPage() {
           <h1 className="font-[family-name:var(--font-display)] text-[26px] font-bold leading-[1.22] tracking-[-0.02em] text-balance">
             {TITLE}
           </h1>
-          <p className="text-[13.5px] text-ink-2 leading-[1.75] mt-2 max-w-[48ch]">{LEAD}</p>
-          <p className="text-[11.5px] text-ink-3 mt-3">
-            <b className="text-ink tnum text-[13px]">{list.length}</b> brokers · updated daily
-          </p>
         </header>
 
         <Card className="p-4" as="section">

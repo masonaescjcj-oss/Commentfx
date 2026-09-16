@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { MIN_FOR_SCORE, SCORED_KINDS, type ReviewKind } from '@commentfx/core';
+import { MIN_FOR_SCORE, type ReviewKind } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { latestReviews, pathForKind } from '@/lib/reviews';
 import { getBroker, getProp, getExchange } from '@/lib/repo';
@@ -57,7 +57,6 @@ export default async function ReviewsPage() {
   });
 
   const trail = [{ name: 'Home', path: '/' }, { name: 'Reviews', path: '/reviews' }];
-  const checked = items.filter((i) => i.verified).length;
 
   return (
     <>
@@ -69,16 +68,6 @@ export default async function ReviewsPage() {
           <h1 className="font-[family-name:var(--font-display)] text-[26px] font-bold leading-[1.22] tracking-[-0.02em] text-balance">
             What customers actually say
           </h1>
-          <p className="text-[13.5px] text-ink-2 leading-[1.75] mt-2 max-w-[48ch]">
-            Published the moment they are written, and counted only after a person has
-            checked the evidence. Both states are on the page, because hiding the
-            unchecked ones would be a different kind of dishonesty.
-          </p>
-          {items.length > 0 && (
-            <p className="text-[11.5px] text-ink-3 mt-3 tnum">
-              {items.length} published · {checked} checked by an editor
-            </p>
-          )}
         </header>
 
         {items.length === 0 ? (
@@ -106,13 +95,10 @@ export default async function ReviewsPage() {
               </div>
             ))}
           </dl>
-          <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.75]">
-            Reviews currently move {SCORED_KINDS.length} of the three rankings. Wrote one
-            you want gone?{' '}
+          <p className="text-[11.5px] mt-3">
             <Link href="/reviews/withdraw" className="text-brass font-semibold">
-              Withdraw it here
+              Withdraw a review
             </Link>
-            .
           </p>
         </Card>
       </main>

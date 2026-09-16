@@ -38,21 +38,15 @@ export default async function HomePage() {
       <main id="main" className="px-4 pt-4 pb-6 flex flex-col gap-[13px]">
         <section className="px-1">
           <h1 className="font-[family-name:var(--font-display)] text-[27px] font-bold leading-[1.22] tracking-[-0.02em] text-balance">
-            Rankings you can check, for brokers, prop firms and exchanges
+            Brokers, prop firms and exchanges, ranked
           </h1>
-          <p className="text-[13.5px] text-ink-2 leading-[1.75] mt-[10px] max-w-[48ch]">
-            Every score below is built from published weights and licence data checked
-            against the regulator’s own register. We take commission from some brokers.
-            It does not move anyone up this list.
-          </p>
         </section>
 
         <Card className="p-4">
           <CardHead title="Top brokers" href="/brokers" hrefLabel="Full ranking" />
           {top.map((r) => <BrokerRow key={r.broker.slug} r={r} />)}
-          <p className="text-[11.5px] text-ink-3 leading-[1.6] mt-3 pt-[11px] border-t border-line-2">
-            Six components, published weights, renormalised when a component has no data
-            yet. <Link href="/methodology" className="text-brass font-semibold">How we score</Link>
+          <p className="mt-3 pt-[11px] border-t border-line-2">
+            <Link href="/methodology" className="text-[11.5px] text-brass font-semibold">How we score</Link>
           </p>
         </Card>
 

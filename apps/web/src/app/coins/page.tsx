@@ -28,7 +28,7 @@ export default async function CoinsPage() {
         <Breadcrumbs trail={trail} />
         {'error' in data ? (
           <>
-            <RankingIntro title={TITLE} lead={DESC} count={COIN_INDEX.length} unit="coins" sortedBy="market cap at our last refresh" />
+            <RankingIntro title={TITLE} />
             <Unavailable
               what="Market data"
               reason={data.error}
@@ -54,7 +54,7 @@ export default async function CoinsPage() {
           </>
         ) : (
           <>
-            <RankingIntro title={TITLE} lead={DESC} count={data.list.length} unit="coins" sortedBy="market cap" />
+            <RankingIntro title={TITLE} />
             <Card className="px-4">
               {data.list.map((c) => {
                 const up = (c.change24hPct ?? 0) >= 0;

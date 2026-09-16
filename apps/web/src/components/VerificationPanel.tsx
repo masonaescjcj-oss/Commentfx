@@ -75,11 +75,12 @@ export function VerificationPanel({ coverage }: { coverage: Coverage | null }) {
         ))}
       </ul>
 
-      <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.75]">
-        {unverified > 0 && `${unverified} field${unverified > 1 ? 's have' : ' has'} not been checked. `}
-        {stale > 0 && `${stale} verification${stale > 1 ? 's are' : ' is'} older than 90 days and counts as expired. `}
-        Each check records the exact source used and who made it.
-      </p>
+      {(unverified > 0 || stale > 0) && (
+        <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.75]">
+          {unverified > 0 && `${unverified} field${unverified > 1 ? 's have' : ' has'} not been checked. `}
+          {stale > 0 && `${stale} verification${stale > 1 ? 's are' : ' is'} older than 90 days and counts as expired.`}
+        </p>
+      )}
     </Card>
   );
 }

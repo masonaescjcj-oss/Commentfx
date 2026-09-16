@@ -8,7 +8,7 @@ export function Card({ children, className = '', as: As = 'div', id }: {
   id?: string;
 }) {
   return (
-    <As id={id} className={`bg-card rounded-[16px] shadow-[var(--shadow-card)] ${className}`}>
+    <As id={id} className={`bg-card rounded-[16px] border border-line ${className}`}>
       {children}
     </As>
   );

@@ -82,11 +82,12 @@ export function LicenceList({ broker, checks }: { broker: Broker; checks: CheckM
         })}
       </ul>
 
-      <p className="text-[11.5px] text-ink-3 mt-[10px] leading-[1.75]">
-        Tier A runs a statutory compensation scheme and a public register. Tier C is
-        registration only — in practice, no recourse.
-        {newest && ` Register readings are automated and were last refreshed ${age(newest)} days ago; a reading is not an editor verification.`}
-      </p>
+      {newest && (
+        <p className="text-[11.5px] text-ink-3 mt-[10px] leading-[1.75]">
+          Register readings are automated and were last refreshed {age(newest)} days ago;
+          a reading is not an editor verification.
+        </p>
+      )}
     </>
   );
 }

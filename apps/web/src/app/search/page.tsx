@@ -25,10 +25,6 @@ export default async function SearchPage() {
           <h1 className="font-[family-name:var(--font-display)] text-[26px] font-bold leading-[1.22] tracking-[-0.02em]">
             Search
           </h1>
-          <p className="text-[13.5px] text-ink-2 leading-[1.75] mt-2 max-w-[48ch]">
-            Everything we publish, on one page. What you type stays in your browser —
-            there is no search request, and nothing is logged.
-          </p>
         </header>
 
         <SiteSearch entries={entries} />

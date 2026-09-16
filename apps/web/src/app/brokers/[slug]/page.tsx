@@ -170,9 +170,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
           <CardHead title="Which entity will you be under?" />
           <EntityMap broker={b} />
           <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.8]">
-            A broker advertises its strongest licence. Which company you are actually
-            onboarded to is decided by where you live, and it decides what protection
-            sits behind your balance.
+            Where you live decides the entity, and the entity decides the protection.
           </p>
         </Card>
 

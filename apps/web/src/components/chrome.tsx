@@ -1,40 +1,90 @@
 import Link from 'next/link';
 import { SITE } from '@/lib/site';
 
+/**
+ * One line: the name, which opens the sections, and search.
+ *
+ * It was two — a brand row and a strip of category chips under it — which cost
+ * 40px of every screen before a reader saw anything, and the chips overflowed
+ * sideways on a phone so half the sections were off the edge anyway. Modelled
+ * on the header you sent: a pill that opens a menu, and nothing else.
+ *
+ * <details> rather than a button and a script, for the same reason the ranking
+ * tabs are radios: it is a native disclosure, so it is keyboard-operable and
+ * announced correctly without a line of JavaScript, and it works before
+ * hydration — which on this site means always, because nothing here hydrates.
+ * The one thing it will not do is close when you click elsewhere on the page.
+ * Clicking a link closes it by navigating, and clicking the pill closes it.
+ */
+const MORE = [
+  { href: '/methodology', label: 'How we score' },
+  { href: '/status', label: 'Broker status' },
+  { href: '/reviews', label: 'Reviews' },
+];
+
 export function Header({ active }: { active?: string }) {
+  const current = SITE.nav.find((n) => n.href === active);
+
   return (
     <header className="bg-card border-b border-line sticky top-0 z-20">
-      <div className="flex items-center gap-3 px-4 py-3">
-        <Link href="/" className="flex items-center gap-2 font-extrabold text-[16px] tracking-[-0.03em]">
-          <span className="grid place-items-center w-[26px] h-[26px] rounded-[9px_9px_9px_3px] bg-ink text-white text-[9.5px]">
-            FX
-          </span>
-          {SITE.name}
-        </Link>
+      <div className="flex items-center gap-3 px-4 py-[11px]">
+        <details className="menu relative">
+          <summary className="flex items-center gap-2 pl-[6px] pr-[10px] py-[5px] rounded-[11px] border border-line cursor-pointer list-none">
+            <span className="grid place-items-center w-[26px] h-[26px] rounded-[9px_9px_9px_3px] bg-ink text-white text-[9.5px] font-extrabold">
+              FX
+            </span>
+            <span className="font-extrabold text-[15.5px] tracking-[-0.03em]">{SITE.name}</span>
+            {current ? (
+              <span className="text-[13px] text-ink-3 font-medium">{current.label}</span>
+            ) : null}
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" className="text-ink-3" aria-hidden>
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </summary>
+
+          <nav
+            aria-label="Sections"
+            className="absolute left-0 top-[calc(100%+7px)] w-[232px] bg-card border border-line rounded-[14px] p-[6px] shadow-[0_10px_30px_-12px_rgb(13_20_33_/_0.22)]"
+          >
+            <ul>
+              <li>
+                <Link href="/" className="block px-3 py-[7px] rounded-[9px] text-[13.5px] hover:bg-card-2">
+                  Home
+                </Link>
+              </li>
+              {SITE.nav.map((n) => (
+                <li key={n.href}>
+                  <Link
+                    href={n.href}
+                    aria-current={active === n.href ? 'page' : undefined}
+                    className={`block px-3 py-[7px] rounded-[9px] text-[13.5px] hover:bg-card-2 ${
+                      active === n.href ? 'bg-card-2 font-semibold' : ''
+                    }`}
+                  >
+                    {n.label}
+                  </Link>
+                </li>
+              ))}
+              <li aria-hidden className="my-[5px] mx-3 border-t border-line-2" />
+              {MORE.map(({ href, label }) => (
+                <li key={href}>
+                  <Link href={href} className="block px-3 py-[7px] rounded-[9px] text-[13.5px] text-ink-2 hover:bg-card-2">
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </details>
+
         <div className="flex-1" />
-        <Link href="/search" aria-label="Search" className="w-8 h-8 grid place-items-center text-ink-2">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+
+        <Link href="/search" aria-label="Search" className="w-9 h-9 grid place-items-center rounded-[11px] border border-line text-ink-2">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round">
             <circle cx="11" cy="11" r="6.5" /><path d="m20 20-3.5-3.5" />
           </svg>
         </Link>
       </div>
-      <nav aria-label="Categories" className="flex gap-[7px] px-4 pb-[11px] overflow-x-auto">
-        {SITE.nav.map((n) => {
-          const on = active === n.href;
-          return (
-            <Link
-              key={n.href}
-              href={n.href}
-              aria-current={on ? 'page' : undefined}
-              className={`text-[12.5px] px-3 py-[5px] rounded-[9px] whitespace-nowrap border shrink-0 ${
-                on ? 'bg-ink text-white border-ink font-semibold' : 'bg-card-2 text-ink-2 border-line'
-              }`}
-            >
-              {n.label}
-            </Link>
-          );
-        })}
-      </nav>
     </header>
   );
 }

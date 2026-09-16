@@ -56,10 +56,6 @@ export default async function BestPage({ params }: { params: Promise<Params> }) 
           <h1 className="font-[family-name:var(--font-display)] text-[26px] font-bold leading-[1.22] tracking-[-0.02em] text-balance">
             {c.h1}
           </h1>
-          <p className="text-[13.5px] text-ink-2 leading-[1.75] mt-2 max-w-[48ch]">{c.lead}</p>
-          <p className="text-[11.5px] text-ink-3 mt-3">
-            <b className="text-ink tnum text-[13px]">{list.length}</b> brokers qualify · sorted by {c.metricLabel.toLowerCase()}
-          </p>
         </header>
 
         <Card className="px-4">

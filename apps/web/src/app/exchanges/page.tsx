@@ -4,7 +4,7 @@ import { pageMetadata, JsonLd, breadcrumbLd, itemListLd, faqLd } from '@/lib/seo
 import { rankedExchanges } from '@/lib/repo';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
 import { Card, CardHead, Meter } from '@/components/primitives';
-import { RankingIntro, RankRow, SeedNotice } from '@/components/ranking';
+import { RankingIntro, RankRow } from '@/components/ranking';
 
 const TITLE = 'Crypto exchange rankings';
 const DESC =
@@ -38,8 +38,7 @@ export default function ExchangesPage() {
       <Header active="/exchanges" />
       <main id="main" className="px-4 pt-3 pb-6 flex flex-col gap-[13px]">
         <Breadcrumbs trail={trail} />
-        <RankingIntro title={TITLE} lead={DESC} count={list.length} unit="exchanges" />
-        <SeedNotice what="Volumes here are self-reported by exchanges and used only as a liquidity band." />
+        <RankingIntro title={TITLE} />
 
         <Card className="px-4">
           {list.map((r) => (

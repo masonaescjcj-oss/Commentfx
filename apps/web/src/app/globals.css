@@ -2,12 +2,16 @@
 
 @theme {
   /* ── Surfaces ─────────────────────────────────────────── */
-  --color-bg:      #F1F2F4;
+  /* One white. The page, the cards and the header are all #FFFFFF, so nothing
+     is separated by a change of ground — the hairline does that work instead,
+     which is why --color-line is darker here than it was when it only had to
+     edge a white card sitting on grey. */
+  --color-bg:      #FFFFFF;
   --color-card:    #FFFFFF;
-  --color-card-2:  #F8F9FB;
-  --color-card-3:  #EFF2F6;
-  --color-line:    #EAEDF2;
-  --color-line-2:  #F2F4F7;
+  --color-card-2:  #F6F7F9;   /* chips and inputs: the only fill that is not white */
+  --color-card-3:  #EDEFF3;   /* meter tracks */
+  --color-line:    #E2E5EA;   /* 1.30:1 on white — a hairline, not text */
+  --color-line-2:  #EEF0F3;   /* inside a card, between rows */
 
   /* ── Text ─────────────────────────────────────────────────
      Every colour below clears 4.5:1 against the darkest surface it is
@@ -126,4 +130,12 @@
     outline: 2px solid var(--color-ink);
     outline-offset: 2px;
   }
+}
+
+/* The header menu. Safari still draws its own marker on a summary unless both
+   of these are set, and the marker would sit inside the pill next to the logo. */
+@layer components {
+  .menu > summary::-webkit-details-marker { display: none; }
+  .menu > summary::marker { content: ''; }
+  .menu > summary:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 2px; }
 }

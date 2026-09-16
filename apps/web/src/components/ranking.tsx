@@ -4,19 +4,24 @@ import type { Component } from '@commentfx/core';
 import { Card, CardHead, Meter, Logo, RankBadge, Score, Tag } from './primitives';
 
 /** Page intro shared by every ranking list, so the h1/lead/count never drift. */
-export function RankingIntro({ title, lead, count, unit, sortedBy }: {
-  title: string; lead: string; count: number; unit: string; sortedBy?: string;
-}) {
+/**
+ * The heading, and nothing under it.
+ *
+ * It carried a lead paragraph and a count line, and both went on request: the
+ * page is the ranking, and a sentence restating what the list plainly is costs
+ * a reader the top of their screen to tell them what they can already see. The
+ * lead survives where it earns its keep — as the meta description, which is
+ * what a search result shows.
+ *
+ * The h1 stays. It is one line, it is what a screen reader and a search engine
+ * use to say what the page is, and check:seo fails a page without exactly one.
+ */
+export function RankingIntro({ title }: { title: string }) {
   return (
     <header className="px-1">
       <h1 className="font-[family-name:var(--font-display)] text-[26px] font-bold leading-[1.22] tracking-[-0.02em] text-balance">
         {title}
       </h1>
-      <p className="text-[13.5px] text-ink-2 leading-[1.75] mt-2 max-w-[48ch]">{lead}</p>
-      <p className="text-[11.5px] text-ink-3 mt-3">
-        <b className="text-ink tnum text-[13px]">{count}</b> {unit}
-        {sortedBy ? ` · sorted by ${sortedBy}` : ' · updated daily'}
-      </p>
     </header>
   );
 }
@@ -115,11 +120,3 @@ export function FactList({ rows }: { rows: Array<[string, ReactNode]> }) {
   );
 }
 
-export function SeedNotice({ what }: { what: string }) {
-  return (
-    <p className="p-3 rounded-xl bg-warn-bg text-[11.5px] text-warn leading-[1.7]">
-      {what} These figures come from public sources and have not been re-checked by
-      an editor yet. Verify anything you plan to act on.
-    </p>
-  );
-}

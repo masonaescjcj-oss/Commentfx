@@ -144,9 +144,7 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
             ['Insurance fund', e.security.insuranceFund ? 'Yes' : 'No'],
           ]} />
           <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.8]">
-            An exchange is a counterparty, not a wallet. Everything above measures how
-            much evidence exists — none of it makes holding balances on an exchange the
-            same as holding your own keys.
+            An exchange is a counterparty, not a wallet.
           </p>
         </Card>
 

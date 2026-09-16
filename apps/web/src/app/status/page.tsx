@@ -45,7 +45,6 @@ export default async function StatusPage() {
         .map((b, i) => ({ b, s: statuses[i]! }))
         .sort((x, y) => y.s.reporters - x.s.reporters || x.b.rank - y.b.rank)
     : [];
-  const affected = byLevel.filter((r) => r.s.level !== 'normal').length;
 
   return (
     <>
@@ -56,15 +55,6 @@ export default async function StatusPage() {
           <h1 className="font-[family-name:var(--font-display)] text-[26px] font-bold leading-[1.22] tracking-[-0.02em] text-balance">
             Is it down, or is it just you?
           </h1>
-          <p className="text-[13.5px] text-ink-2 leading-[1.75] mt-2 max-w-[48ch]">{DESC}</p>
-          {statuses && (
-            <p className="text-[11.5px] text-ink-3 mt-3">
-              {affected === 0
-                ? `No broker is above the reporting threshold right now.`
-                : `${affected} broker${affected > 1 ? 's are' : ' is'} above the threshold.`}
-              {' '}Rolling {WINDOW_HOURS}-hour window.
-            </p>
-          )}
         </header>
 
         {!statuses ? (
@@ -95,11 +85,7 @@ export default async function StatusPage() {
         <Card className="p-4 bg-brass-bg shadow-none" as="section">
           <h2 className="text-[14px] font-bold text-brass-2 mb-[6px]">Reports are evidence, not a verdict</h2>
           <p className="text-[12.5px] text-ink-2 leading-[1.8]">
-            Nothing here is verified — that is the point, it is what makes it fast. A
-            quiet broker may still have a problem nobody has reported, and a noisy one
-            may be having a bad hour rather than a bad week. The count, the window and
-            the threshold are all published so you can weigh it yourself, and none of it
-            touches the broker&rsquo;s score.
+            Nothing here is verified, and none of it touches the broker&rsquo;s score.
           </p>
         </Card>
 

@@ -4,7 +4,7 @@ import { pageMetadata, JsonLd, breadcrumbLd, itemListLd, faqLd } from '@/lib/seo
 import { rankedProps } from '@/lib/repo';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
 import { Card, CardHead, Meter } from '@/components/primitives';
-import { RankingIntro, RankRow, SeedNotice } from '@/components/ranking';
+import { RankingIntro, RankRow } from '@/components/ranking';
 import { TopTiles, Tabset, StrengthList, CompareTable } from '@/components/rankings';
 import Link from 'next/link';
 
@@ -12,7 +12,6 @@ const TITLE = 'Prop firm rankings';
 const DESC =
   'Funded-trader challenges ranked on the rules you actually have to survive, ' +
   'what the payout terms really are, and what the challenge costs per $100k.';
-const LEAD = 'Ranked on rules, payout terms and challenge cost.';
 
 export const metadata: Metadata = pageMetadata({ title: TITLE, description: DESC, path: '/props' });
 export const revalidate = 3600;
@@ -51,8 +50,7 @@ export default function PropsPage() {
       <Header active="/props" />
       <main id="main" className="px-4 pt-3 pb-6 flex flex-col gap-[13px]">
         <Breadcrumbs trail={trail} />
-        <RankingIntro title={TITLE} lead={LEAD} count={list.length} unit="firms" />
-        <SeedNotice what="Prop firms change their rules often and rarely announce it." />
+        <RankingIntro title={TITLE} />
 
         <Card className="p-4" as="section">
           <CardHead title="The top eight" href="#all" hrefLabel="Every firm" />
