@@ -30,11 +30,11 @@ export default function WithdrawPage() {
           </p>
         </header>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <WithdrawForm />
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="If you have lost the code" />
           <p className="text-[12.5px] text-ink-2 leading-[1.85]">
             We cannot give it back to you, and that is deliberate rather than unhelpful.

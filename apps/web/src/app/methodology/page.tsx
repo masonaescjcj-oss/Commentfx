@@ -86,27 +86,27 @@ export default function MethodologyPage() {
         <Breadcrumbs trail={trail} />
         <h1 className="sr-only">{TITLE}</h1>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <h2 className="text-[15px] font-bold mb-4">Brokers</h2>
           <Weights keys={Object.keys(WEIGHTS) as ScoreKey[]} weights={WEIGHTS} labels={LABELS} what={WHAT} max={30} />
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <h2 className="text-[15px] font-bold mb-4">Prop firms</h2>
           <Weights keys={Object.keys(PROP_WEIGHTS) as PropKey[]} weights={PROP_WEIGHTS} labels={PROP_LABELS} what={PROP_WHAT} max={30} />
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <h2 className="text-[15px] font-bold mb-4">Exchanges</h2>
           <Weights keys={Object.keys(EXCHANGE_WEIGHTS) as ExchangeKey[]} weights={EXCHANGE_WEIGHTS} labels={EXCHANGE_LABELS} what={EXCHANGE_WHAT} max={30} />
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <h2 className="text-[15px] font-bold mb-4">Memecoins</h2>
           <Weights keys={Object.keys(MEME_WEIGHTS) as MemeKey[]} weights={MEME_WEIGHTS} labels={MEME_LABELS} what={MEME_WHAT} max={45} />
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="Reviews count only after a person checks them" />
           <p className="text-[12.5px] text-ink-2 leading-[1.85] mb-3">
             Reviews are the most attacked surface a ranking site has: the company wants
@@ -133,7 +133,7 @@ export default function MethodologyPage() {
           </p>
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="Incident reports are not part of any score" />
           <p className="text-[12.5px] text-ink-2 leading-[1.85] mb-3">
             The broker status signal on each page is unverified by design — that is what
@@ -149,7 +149,7 @@ export default function MethodologyPage() {
           </p>
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="Where the data comes from" />
           <p className="text-[12.5px] text-ink-2 leading-[1.85] mb-3">
             Every upstream is free and unauthenticated: CoinGecko for coin prices,
@@ -165,7 +165,7 @@ export default function MethodologyPage() {
           </p>
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="Which registers we can actually read" />
           <p className="text-[12.5px] text-ink-2 leading-[1.85] mb-3">
             Every regulator publishes a register precisely so anyone can check a firm
@@ -194,7 +194,7 @@ export default function MethodologyPage() {
           </ul>
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="How the economic calendar is graded" />
           <p className="text-[12.5px] text-ink-2 leading-[1.85] mb-3">
             Dates come from the institution that sets them — the BLS release schedule, the
@@ -223,7 +223,7 @@ export default function MethodologyPage() {
           </p>
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="Why there is no live spread feed" />
           <p className="text-[12.5px] text-ink-2 leading-[1.85]">
             Publishing live spreads honestly means running a terminal on every broker,
@@ -235,7 +235,7 @@ export default function MethodologyPage() {
           </p>
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="Missing data is excluded, not scored zero" />
           <p className="text-[12.5px] text-ink-2 leading-[1.85]">
             A broker with no verified reviews yet is not the same thing as a broker with
@@ -246,7 +246,7 @@ export default function MethodologyPage() {
           </p>
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="Regulator tiers" />
           {tiers.map(({ tier, regs }) => (
             <div key={tier} className="py-3 border-b border-line-2 last:border-b-0">
@@ -268,7 +268,7 @@ export default function MethodologyPage() {
           ))}
         </Card>
 
-        <Card className="p-4 border-[1.5px] border-brass shadow-none" as="section">
+        <Card className="p-4 lg:p-6 border-[1.5px] border-brass shadow-none" as="section">
           <h2 className="text-[14px] font-bold text-brass-2 mb-2">Money, and what it does not buy</h2>
           <p className="text-[12.5px] text-ink-2 leading-[1.85]">
             We earn commission from some brokers when a reader opens an account. That is

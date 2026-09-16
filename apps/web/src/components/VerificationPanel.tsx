@@ -26,7 +26,7 @@ const LABELS: Record<string, string> = {
 export function VerificationPanel({ coverage }: { coverage: Coverage | null }) {
   if (!coverage) {
     return (
-      <Card className="p-4 bg-warn-bg shadow-none border border-[#F3E3C2]" as="section">
+      <Card className="p-4 lg:p-6 bg-warn-bg shadow-none border border-[#F3E3C2]" as="section">
         <h2 className="text-[14px] font-bold text-warn mb-[6px]">Nothing on this page is editor-verified yet</h2>
         <p className="text-[12.5px] text-[#8A6420] leading-[1.8]">
           These figures come from the company&rsquo;s own published pages and have not
@@ -41,7 +41,7 @@ export function VerificationPanel({ coverage }: { coverage: Coverage | null }) {
   const tone = ratio === 1 ? 'up' : ratio >= 0.5 ? 'brass' : 'warn';
 
   return (
-    <Card className="p-4" as="section">
+    <Card className="p-4 lg:p-6" as="section">
       <CardHead
         title="What has been checked"
         aside={<span className="text-[11.5px] text-ink-3 tnum">{verified} of {fields.length}</span>}

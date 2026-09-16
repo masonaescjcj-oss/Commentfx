@@ -107,7 +107,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
         <div className="split rail-left">
           <div>
 
-          <Card className="p-4" as="article">
+          <Card className="p-4 lg:p-6" as="article">
             <div className="flex gap-[14px] items-start">
               <Logo {...b.logo} size={64} />
               <div className="flex-1 min-w-0">
@@ -115,9 +115,13 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
                 <h1 className="font-[family-name:var(--font-display)] text-[23px] font-bold mt-2 tracking-[-0.025em]">
                   {b.name}
                 </h1>
-                <div className="flex items-center gap-[9px] mt-2">
+                {/* Baseline-aligned, not centred: a 46px figure centred against
+                    two 11px lines hangs them off its middle, which is where the
+                    eye reads a fraction. On the baseline they read as a caption
+                    to the number, which is what they are. */}
+                <div className="flex items-end gap-[10px] mt-3">
                   <Score value={r.score.total} size="xl" />
-                  <span className="text-[11.5px] text-ink-3 leading-[1.4]">
+                  <span className="text-[11.5px] text-ink-3 leading-[1.5] pb-[3px]">
                     out of 10<br />
                     <Link href="/methodology" className="text-brass">how we score</Link>
                   </span>
@@ -147,7 +151,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
           </div>
 
           <div>
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="Score breakdown" href="/methodology" hrefLabel="Method" />
             <ul className="flex flex-col gap-[11px]">
               {r.score.components.map((c) => (
@@ -174,7 +178,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
             )}
           </Card>
 
-          <Card className="p-4 border-[1.5px] border-brass shadow-none" as="section">
+          <Card className="p-4 lg:p-6 border-[1.5px] border-brass shadow-none" as="section">
             <CardHead title="Which entity will you be under?" />
             <EntityMap broker={b} />
             <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.8]">
@@ -182,13 +186,13 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
             </p>
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="Licences" aside={<span className="text-[11.5px] text-ink-3">{b.entities.length} on record</span>} />
             <LicenceList broker={b} checks={checks} />
           </Card>
 
-          <Card className="p-4" as="section">
-            <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
+            <Card className="p-4 lg:p-6" as="section">
             <OfficialSite name={b.name} url={b.website} />
           </Card>
 
@@ -212,7 +216,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
             </dl>
           </Card>
 
-          <Card className="p-4" as="section" id="reviews">
+          <Card className="p-4 lg:p-6" as="section" id="reviews">
             <CardHead
               title="What customers say"
               aside={<span className="text-[11.5px] text-ink-3 tnum">{reviews.stats.total} published</span>}
@@ -221,12 +225,12 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
             <div className="mt-3"><ReviewList reviews={reviews.list} /></div>
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title={`Write about ${b.name}`} />
             <ReviewForm kind="broker" slug={b.slug} name={b.name} />
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="Compare" />
             <ul className="flex flex-col">
               {alternatives.map((a) => (
@@ -244,7 +248,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
             </ul>
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title={`${b.name} — common questions`} />
             <dl>
               {faq.map(({ q, a }) => (

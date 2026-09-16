@@ -67,12 +67,12 @@ export default async function BrokersPage() {
         <div className="split">
           <div>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="The top eight" href="#all" hrefLabel="Every broker" />
             <TopTiles base="/brokers" items={list.slice(0, 8).map((r) => ({ ...r.broker, score: r.score.total }))} />
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="Strongest on each thing" href="/methodology" hrefLabel="How each is scored" />
             <Tabset
               id="strength"
@@ -100,11 +100,11 @@ export default async function BrokersPage() {
             />
           </Card>
 
-          <Card className="px-4" id="all">
+          <Card className="px-4 lg:px-6" id="all">
             {list.map((r) => <BrokerRow headingLevel={2} key={r.broker.slug} r={r} />)}
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="What a round turn costs" href="/best/lowest-spread" hrefLabel="Cheapest first" />
             <CompareTable
               head={['Broker', 'EUR/USD', 'Commission']}
@@ -129,7 +129,7 @@ export default async function BrokersPage() {
           </div>
 
           <div>
-          <Card className="p-4">
+          <Card className="p-4 lg:p-6">
             <CardHead title="How the score is built" href="/methodology" hrefLabel="Full method" />
             <ul className="flex flex-col gap-[10px]">
               {(Object.keys(WEIGHTS) as ScoreKey[]).map((k) => (
@@ -145,7 +145,7 @@ export default async function BrokersPage() {
             </ul>
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="Common questions" />
             <dl className="flex flex-col">
               {FAQ.map(({ q, a }) => (

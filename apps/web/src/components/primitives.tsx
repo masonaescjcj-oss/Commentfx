@@ -26,22 +26,35 @@ export function Card({ children, className = '', as: As = 'div', id }: {
   return (
     <As
       id={id}
-      className={`bg-card border-b border-line sm:border sm:rounded-[16px] ${className}`}
+      className={`bg-card border-b border-line sm:border sm:rounded-[16px] lg:rounded-[20px] ${className}`}
     >
       {children}
     </As>
   );
 }
 
+/**
+ * The heading of a section, and the one link out of it.
+ *
+ * It is set in the display face rather than the body one. The two are close
+ * enough in colour that nobody would name the difference, and that is the
+ * point: a page where every heading is the body font at one weight up reads as
+ * a form, not as something anyone designed.
+ */
 export function CardHead({ title, href, hrefLabel, aside }: {
   title: string; href?: string; hrefLabel?: string; aside?: ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between gap-2 mb-3">
-      <h2 className="text-[15px] font-bold tracking-[-0.01em]">{title}</h2>
+    <div className="flex items-center justify-between gap-2 mb-3 lg:mb-4">
+      <h2 className="font-[family-name:var(--font-display)] text-[16px] lg:text-[17px] font-bold tracking-[-0.018em]">
+        {title}
+      </h2>
       {aside}
       {href && (
-        <Link href={href} className="text-brass text-[12px] font-semibold hover:text-brass-2">
+        <Link
+          href={href}
+          className="text-brass text-[12px] font-semibold hover:text-brass-2 shrink-0 whitespace-nowrap"
+        >
           {hrefLabel ?? 'All'} <span aria-hidden>›</span>
         </Link>
       )}
@@ -63,9 +76,30 @@ export function RankBadge({ rank }: { rank: number }) {
   );
 }
 
+/**
+ * The score, which is the whole product.
+ *
+ * It was one step up from the body text in the same face and weight as a row
+ * label, so the number this entire site exists to publish arrived on the page
+ * looking like a quantity in a table. It is set in the display face now, a size
+ * that separates it from everything beside it, and tracked in hard, which is
+ * what stops a large tabular figure reading as loose.
+ *
+ * It stays a plain figure in one colour. Tinting the leaders would say the
+ * score means something different at the top of a list than the bottom, and it
+ * does not — a 9.1 is a 9.1 whoever is above it. Rank is the thing that carries
+ * position, and RankBadge is already where that is said.
+ */
 export function Score({ value, size = 'md' }: { value: number; size?: 'md' | 'lg' | 'xl' }) {
-  const cls = size === 'xl' ? 'text-[30px]' : size === 'lg' ? 'text-[17px]' : 'text-[16px]';
-  return <span className={`font-extrabold tracking-[-0.02em] tnum ${cls}`}>{value.toFixed(1)}</span>;
+  const cls =
+    size === 'xl' ? 'text-[38px] lg:text-[46px] leading-[0.95]'
+    : size === 'lg' ? 'text-[20px] lg:text-[22px]'
+    : 'text-[17px] lg:text-[19px]';
+  return (
+    <span className={`font-[family-name:var(--font-display)] font-bold tracking-[-0.035em] tnum ${cls}`}>
+      {value.toFixed(1)}
+    </span>
+  );
 }
 
 export function Tag({ children, tone = 'neutral' }: {
@@ -80,7 +114,9 @@ export function Tag({ children, tone = 'neutral' }: {
     brass: 'bg-brass-bg border-transparent text-brass',
   } as const;
   return (
-    <span className={`inline-block text-[10.5px] leading-[1.55] px-[7px] py-[2px] rounded-md border ${tones[tone]}`}>
+    <span
+      className={`inline-block text-[10.5px] lg:text-[11.5px] leading-[1.6] px-[8px] lg:px-[10px] py-[3px] lg:py-[4px] rounded-lg border ${tones[tone]}`}
+    >
       {children}
     </span>
   );
@@ -134,8 +170,12 @@ export function Meter({ value, max = 10, tone = 'ink' }: {
 }) {
   const pct = Math.max(0, Math.min(100, (value / max) * 100));
   const bg = { ink: 'bg-ink', up: 'bg-up', brass: 'bg-brass', warn: 'bg-warn' }[tone];
+  // 3px, not 5. A meter is a proportion, and the wider the column the less of
+  // it needs to be ink to say so — at the width a desktop column gives it, five
+  // pixels of solid colour stops reading as a measurement and starts reading as
+  // a banner.
   return (
-    <div className="h-[5px] rounded-full bg-card-3 overflow-hidden">
+    <div className="h-[3px] rounded-full bg-card-3 overflow-hidden">
       <div className={`h-full rounded-full ${bg}`} style={{ width: `${pct}%` }} />
     </div>
   );

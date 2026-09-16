@@ -96,7 +96,7 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
         <div className="split rail-left">
           <div>
 
-          <Card className="p-4" as="article">
+          <Card className="p-4 lg:p-6" as="article">
             <div className="flex gap-[14px] items-start">
               <Logo {...e.logo} size={64} />
               <div className="flex-1 min-w-0">
@@ -104,9 +104,13 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
                 <h1 className="font-[family-name:var(--font-display)] text-[23px] font-bold mt-2 tracking-[-0.025em]">
                   {e.name}
                 </h1>
-                <div className="flex items-center gap-[9px] mt-2">
+                {/* Baseline-aligned, not centred: a 46px figure centred against
+                    two 11px lines hangs them off its middle, which is where the
+                    eye reads a fraction. On the baseline they read as a caption
+                    to the number, which is what they are. */}
+                <div className="flex items-end gap-[10px] mt-3">
                   <Score value={r.score.total} size="xl" />
-                  <span className="text-[11.5px] text-ink-3 leading-[1.4]">
+                  <span className="text-[11.5px] text-ink-3 leading-[1.5] pb-[3px]">
                     out of 10<br />
                     <Link href="/methodology" className="text-brass">how we score</Link>
                   </span>
@@ -128,7 +132,7 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
           <div>
           <ScoreBreakdownCard components={r.score.components} skipped={r.score.skipped} />
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="Fees and liquidity" />
             <FactList rows={[
               ['Taker fee', `${e.takerFeePct}%`],
@@ -140,7 +144,7 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
             ]} />
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="Solvency and security" />
             <FactList rows={[
               ['Proof of reserves', e.reserves.proofOfReserves ? 'Published' : 'None'],
@@ -155,11 +159,11 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
             </p>
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <OfficialSite name={e.name} url={e.website} />
           </Card>
 
-          <Card className="p-4" as="section" id="reviews">
+          <Card className="p-4 lg:p-6" as="section" id="reviews">
             <CardHead
               title="What customers say"
               aside={<span className="text-[11.5px] text-ink-3 tnum">{reviews.stats.total} published</span>}
@@ -168,12 +172,12 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
             <div className="mt-3"><ReviewList reviews={reviews.list} /></div>
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title={`Write about ${e.name}`} />
             <ReviewForm kind="exchange" slug={e.slug} name={e.name} />
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="Other exchanges" href="/exchanges" hrefLabel="Full ranking" />
             <ul>
               {all.filter((x) => x.exchange.slug !== e.slug).slice(0, 4).map((x) => (
@@ -192,7 +196,7 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
             </ul>
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title={`${e.name} — common questions`} />
             <dl>
               {faq.map(({ q, a }) => (

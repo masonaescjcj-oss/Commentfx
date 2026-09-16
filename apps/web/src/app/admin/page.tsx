@@ -74,7 +74,7 @@ export default async function AdminPage() {
         </Card>
       ))}
 
-      <Card className="p-4" as="section">
+      <Card className="p-4 lg:p-6" as="section">
         <CardHead
           title="Reviews waiting to be checked"
           aside={<span className="text-[11.5px] text-ink-3 tnum">{reviewQueue.length} in the queue</span>}
@@ -118,7 +118,7 @@ export default async function AdminPage() {
         </p>
       </Card>
 
-      <Card className="p-4" as="section">
+      <Card className="p-4 lg:p-6" as="section">
         <CardHead
           title="Register findings"
           aside={<span className="text-[11.5px] text-ink-3 tnum">{findings.length} unconfirmed</span>}
@@ -152,7 +152,7 @@ export default async function AdminPage() {
         </p>
       </Card>
 
-      <Card className="p-4" as="section">
+      <Card className="p-4 lg:p-6" as="section">
         <CardHead
           title="Register sources"
           aside={<span className="text-[11.5px] text-ink-3 tnum">{sources.filter((s) => s.state === 'live').length} of {sources.length} readable</span>}
@@ -190,7 +190,7 @@ export default async function AdminPage() {
         </p>
       </Card>
 
-      <Card className="p-4" as="section">
+      <Card className="p-4 lg:p-6" as="section">
         <CardHead title="Recent activity" aside={<span className="text-[11px] text-ink-3">append-only</span>} />
         {recent.length === 0 ? (
           <p className="text-[12.5px] text-ink-3">Nothing recorded yet.</p>

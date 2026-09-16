@@ -61,7 +61,7 @@ async function WhereToTrade({ symbol }: { symbol: string }) {
   const exchanges = rankedExchanges().slice(0, 4);
   const brokers = rankedBrokers(await reviewStats()).slice(0, 2);
   return (
-    <Card className="p-4" as="section">
+    <Card className="p-4 lg:p-6" as="section">
       <CardHead title={`Where to trade ${symbol}`} href="/exchanges" hrefLabel="All exchanges" />
       <p className="text-[11.5px] text-ink-3 leading-[1.7] mb-2">
         Ordered by our exchange score, which weights evidence that customer funds
@@ -141,7 +141,7 @@ export default async function CoinPage({ params }: { params: Promise<Params> }) 
         <Header active="/coins" />
         <main id="main" className="shell pt-0 pb-6 sm:pt-3 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
           <Breadcrumbs trail={trail} />
-          <Card className="p-4" as="article">
+          <Card className="p-4 lg:p-6" as="article">
             <h1 className="font-[family-name:var(--font-display)] text-[22px] font-bold tracking-[-0.025em] leading-tight">
               {ref.name}
             </h1>
@@ -190,7 +190,7 @@ export default async function CoinPage({ params }: { params: Promise<Params> }) 
       <main id="main" className="shell pt-0 pb-6 sm:pt-3 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
         <Breadcrumbs trail={trail} />
 
-        <Card className="p-4" as="article">
+        <Card className="p-4 lg:p-6" as="article">
           <div className="flex items-center gap-3">
             <img src={c.image} alt="" width={40} height={40} className="rounded-full shrink-0" />
             <div className="min-w-0 flex-1">
@@ -214,7 +214,7 @@ export default async function CoinPage({ params }: { params: Promise<Params> }) 
           <p className="text-[11px] text-ink-3 mt-1">Seven-day trend</p>
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="Statistics" />
           <FactList rows={[
             ['Market cap', fmtUsd(c.marketCap)],
@@ -229,7 +229,7 @@ export default async function CoinPage({ params }: { params: Promise<Params> }) 
 
         <WhereToTrade symbol={c.symbol} />
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title={`${c.name} — common questions`} />
           <dl>
             {faq.map(({ q, a }) => (

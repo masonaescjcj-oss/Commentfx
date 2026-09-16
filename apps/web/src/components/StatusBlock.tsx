@@ -49,7 +49,7 @@ export function StatusBlock({ brokerSlug, brokerName, status }: {
   // action answers it — it runs at request time, where the database is.
   if (!status) {
     return (
-      <Card className="p-4" as="section">
+      <Card className="p-4 lg:p-6" as="section">
         <CardHead title="Is it just you?" />
         <p className="text-[12.5px] text-ink-2 leading-[1.8]">
           The live count for {brokerName} is not loaded on this copy of the page yet.
@@ -67,7 +67,7 @@ export function StatusBlock({ brokerSlug, brokerName, status }: {
   const toNext = Math.max(0, THRESHOLD.degraded - status.reporters);
 
   return (
-    <Card className="p-4" as="section">
+    <Card className="p-4 lg:p-6" as="section">
       <CardHead
         title="Is it just you?"
         aside={<StatusChip status={status} />}

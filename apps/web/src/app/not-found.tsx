@@ -41,7 +41,7 @@ export default function NotFound() {
           </p>
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <h2 className="text-[15px] font-bold tracking-[-0.01em] mb-3">Try one of these</h2>
           <ul className="flex flex-col">
             {DOORS.map(({ href, title, note }) => (

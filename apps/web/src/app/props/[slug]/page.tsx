@@ -100,7 +100,7 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
         <div className="split rail-left">
           <div>
 
-          <Card className="p-4" as="article">
+          <Card className="p-4 lg:p-6" as="article">
             <div className="flex gap-[14px] items-start">
               <Logo {...f.logo} size={64} />
               <div className="flex-1 min-w-0">
@@ -108,9 +108,13 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
                 <h1 className="font-[family-name:var(--font-display)] text-[23px] font-bold mt-2 tracking-[-0.025em]">
                   {f.name}
                 </h1>
-                <div className="flex items-center gap-[9px] mt-2">
+                {/* Baseline-aligned, not centred: a 46px figure centred against
+                    two 11px lines hangs them off its middle, which is where the
+                    eye reads a fraction. On the baseline they read as a caption
+                    to the number, which is what they are. */}
+                <div className="flex items-end gap-[10px] mt-3">
                   <Score value={r.score.total} size="xl" />
-                  <span className="text-[11.5px] text-ink-3 leading-[1.4]">
+                  <span className="text-[11.5px] text-ink-3 leading-[1.5] pb-[3px]">
                     out of 10<br />
                     <Link href="/methodology" className="text-brass">how we score</Link>
                   </span>
@@ -130,7 +134,7 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
           <div>
           <ScoreBreakdownCard components={r.score.components} skipped={r.score.skipped} />
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="Challenge rules" />
             <FactList rows={[
               ['Steps', f.rules.steps === 'instant' ? 'Instant funding' : `${f.rules.steps}-step`],
@@ -145,7 +149,7 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
             ]} />
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="Payout and cost" />
             <FactList rows={[
               ['Profit split', `${f.payout.splitPct}%`],
@@ -158,11 +162,11 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
             ]} />
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <OfficialSite name={f.name} url={f.website} />
           </Card>
 
-          <Card className="p-4" as="section" id="reviews">
+          <Card className="p-4 lg:p-6" as="section" id="reviews">
             <CardHead
               title="What customers say"
               aside={<span className="text-[11.5px] text-ink-3 tnum">{reviews.stats.total} published</span>}
@@ -171,12 +175,12 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
             <div className="mt-3"><ReviewList reviews={reviews.list} /></div>
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title={`Write about ${f.name}`} />
             <ReviewForm kind="prop" slug={f.slug} name={f.name} />
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="Other firms" href="/props" hrefLabel="Full ranking" />
             <ul>
               {all.filter((x) => x.firm.slug !== f.slug).slice(0, 4).map((x) => (
@@ -195,7 +199,7 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
             </ul>
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title={`${f.name} — common questions`} />
             <dl>
               {faq.map(({ q, a }) => (

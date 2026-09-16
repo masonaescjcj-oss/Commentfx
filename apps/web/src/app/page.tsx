@@ -57,7 +57,7 @@ export default async function HomePage() {
         <div className="split">
           <div>
 
-          <Card className="p-4">
+          <Card className="p-4 lg:p-6">
             <CardHead title="Top brokers" href="/brokers" hrefLabel="Full ranking" />
             {top.map((r) => <BrokerRow key={r.broker.slug} r={r} />)}
             <p className="mt-3 pt-[11px] border-t border-line-2">
@@ -65,7 +65,7 @@ export default async function HomePage() {
             </p>
           </Card>
 
-          <Card className="p-4">
+          <Card className="p-4 lg:p-6">
             <CardHead title="Top prop firms" href="/props" hrefLabel="Full ranking" />
             {topProps.map((r) => (
               <RankRow key={r.firm.slug} rank={r.rank} href={`/props/${r.firm.slug}`}
@@ -79,7 +79,7 @@ export default async function HomePage() {
             ))}
           </Card>
 
-          <Card className="p-4">
+          <Card className="p-4 lg:p-6">
             <CardHead title="Top exchanges" href="/exchanges" hrefLabel="Full ranking" />
             {topExchanges.map((r) => (
               <RankRow key={r.exchange.slug} rank={r.rank} href={`/exchanges/${r.exchange.slug}`}
@@ -93,7 +93,7 @@ export default async function HomePage() {
             ))}
           </Card>
 
-          <Card className="p-4">
+          <Card className="p-4 lg:p-6">
             <CardHead title="Ranked by what you care about" />
             <ul className="flex flex-col">
               {BEST_CRITERIA.map((c) => (
@@ -110,7 +110,7 @@ export default async function HomePage() {
 
           <div>
           {topCoins.length > 0 && (
-            <Card className="px-4 pt-4" as="section">
+            <Card className="px-4 lg:px-6 pt-4" as="section">
               <CardHead title="Coin prices" href="/coins" hrefLabel="Top 100" />
               {topCoins.map((c) => <CoinRow key={c.id} c={c} />)}
             </Card>
@@ -122,7 +122,7 @@ export default async function HomePage() {
               trade can move a thin coin 300% and that is noise wearing a signal's
               clothes. */}
           {(gainers.length > 0 || losers.length > 0) && (
-            <Card className="p-4" as="section">
+            <Card className="p-4 lg:p-6" as="section">
               <CardHead title="Biggest moves today" href="/coins" hrefLabel="All coins" />
               <div className="grid grid-cols-2 gap-x-3 gap-y-[6px]">
                 <div className="flex flex-col gap-[6px]">
@@ -141,14 +141,14 @@ export default async function HomePage() {
               Four newsrooms have to go quiet at once for this card to disappear,
               which is why there is no apologetic empty state under it. */}
           {'error' in headlines ? null : headlines.items.length > 0 && (
-            <Card className="px-4 pt-4" as="section">
+            <Card className="px-4 lg:px-6 pt-4" as="section">
               <CardHead title="Crypto news" />
               <NewsList items={headlines.items} />
             </Card>
           )}
 
           {ahead.length > 0 && (
-            <Card className="p-4">
+            <Card className="p-4 lg:p-6">
               <CardHead title="Next, worth planning around" href="/calendar" hrefLabel="Calendar" />
               <ul className="flex flex-col">
                 {ahead.map((e) => {

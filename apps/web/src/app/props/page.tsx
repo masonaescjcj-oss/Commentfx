@@ -59,12 +59,12 @@ export default function PropsPage() {
         <div className="split">
           <div>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="The top eight" href="#all" hrefLabel="Every firm" />
             <TopTiles base="/props" items={list.slice(0, 8).map((r) => ({ ...r.firm, score: r.score.total }))} />
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="Strongest on each thing" href="/methodology" hrefLabel="How each is scored" />
             <Tabset
               id="prop-strength"
@@ -92,7 +92,7 @@ export default function PropsPage() {
             />
           </Card>
 
-          <Card className="px-4" id="all">
+          <Card className="px-4 lg:px-6" id="all">
             {list.map((r) => (
               <RankRow
                 headingLevel={2}
@@ -116,7 +116,7 @@ export default function PropsPage() {
             ))}
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="What the challenge costs, and what you keep" href="/props" hrefLabel="Full ranking" />
             <CompareTable
               head={['Firm', 'Fee / $100k', 'Split']}
@@ -139,7 +139,7 @@ export default function PropsPage() {
           </div>
 
           <div>
-          <Card className="p-4">
+          <Card className="p-4 lg:p-6">
             <CardHead title="How the score is built" href="/methodology" hrefLabel="Full method" />
             <ul className="flex flex-col gap-[10px]">
               {(Object.keys(PROP_WEIGHTS) as PropKey[]).map((k) => (
@@ -155,7 +155,7 @@ export default function PropsPage() {
             </ul>
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="Common questions" />
             <dl>
               {FAQ.map(({ q, a }) => (

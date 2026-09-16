@@ -73,7 +73,7 @@ export default async function CalendarPage() {
         <h1 className="sr-only">Economic calendar</h1>
 
         {ahead.length > 0 && (
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="Next, worth planning around" />
             <ul className="flex flex-col">
               {ahead.map((e) => (
@@ -93,7 +93,7 @@ export default async function CalendarPage() {
         )}
 
         {data.down.length > 0 && (
-          <Card className="p-4 bg-warn-bg shadow-none border border-[#F3E3C2]" as="section">
+          <Card className="p-4 lg:p-6 bg-warn-bg shadow-none border border-[#F3E3C2]" as="section">
             <h2 className="text-[13.5px] font-bold text-warn mb-[6px]">
               {data.down.length} of {data.down.length + data.live.length} calendars could not be read
             </h2>
@@ -121,7 +121,7 @@ export default async function CalendarPage() {
           <CalendarList days={days} todayUtc={today} />
         )}
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="Every date for one release" />
           <p className="text-[12px] text-ink-3 leading-[1.8] mb-[10px]">
             The releases worth a page of their own: the whole forward schedule, what each
@@ -143,7 +143,7 @@ export default async function CalendarPage() {
           </ul>
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="How impact is graded" href="/methodology" hrefLabel="Method" />
           <p className="text-[12px] text-ink-3 leading-[1.8] mb-[10px]">
             The institutions do not rank their own releases, so this grading is ours. It is a
@@ -161,7 +161,7 @@ export default async function CalendarPage() {
           </dl>
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="Sources" />
           <ul>
             {data.live.map((s) => (
@@ -183,7 +183,7 @@ export default async function CalendarPage() {
           </p>
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="Common questions" />
           <dl>
             {faq.map((f) => (

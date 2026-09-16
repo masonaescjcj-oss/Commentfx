@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import type { LogoMark } from '@commentfx/core';
-import { Card, CardHead, Logo } from './primitives';
+import { Card, CardHead, Logo, Score } from './primitives';
 
 export interface TileItem {
   slug: string;
@@ -25,20 +25,23 @@ export interface TileItem {
  */
 export function TopTiles({ items, base }: { items: TileItem[]; base: string }) {
   return (
-    <ul className="grid grid-cols-2 gap-x-3 gap-y-[2px]">
+    <ul className="grid grid-cols-2 gap-x-3 lg:gap-x-4 gap-y-[2px]">
       {items.map((it) => (
         <li key={it.slug}>
-          <Link href={`${base}/${it.slug}`} className="flex items-center gap-[10px] py-[9px] group">
+          <Link
+            href={`${base}/${it.slug}`}
+            className="row-hit flex items-center gap-[10px] lg:gap-3 py-[9px] lg:py-3 px-2 -mx-2 group"
+          >
             <Logo {...it.logo} size={42} />
             <span className="min-w-0">
-              <span className="block text-[14px] font-bold leading-[1.25] truncate group-hover:text-brass">
+              <span className="block font-[family-name:var(--font-display)] text-[14px] lg:text-[15px] font-bold leading-[1.25] tracking-[-0.015em] truncate group-hover:text-brass">
                 {it.name}
               </span>
-              <span className="flex items-center gap-[4px] mt-[2px]">
+              <span className="flex items-center gap-[5px] mt-[3px]">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="text-brass shrink-0" aria-hidden>
                   <path d="m12 2.5 2.9 5.9 6.6.9-4.8 4.6 1.2 6.5L12 17.3 6.1 20.4l1.2-6.5L2.5 9.3l6.6-.9z" />
                 </svg>
-                <span className="text-[13.5px] font-extrabold tnum">{it.score.toFixed(1)}</span>
+                <Score value={it.score} />
               </span>
             </span>
           </Link>
@@ -72,7 +75,7 @@ export function StrengthList({ rows, base }: { rows: StrengthRow[]; base: string
     <ol className="flex flex-col">
       {rows.map((r, i) => (
         <li key={r.slug} className="border-b border-line-2 last:border-b-0">
-          <Link href={`${base}/${r.slug}`} className="flex items-center gap-[10px] py-[10px] group">
+          <Link href={`${base}/${r.slug}`} className="row-hit flex items-center gap-[10px] lg:gap-3 py-[10px] lg:py-[13px] px-2 -mx-2 group">
             <span
               className="w-4 shrink-0 text-[11px] text-ink-3 tnum text-center"
               aria-label={positions[i] === positions[i - 1] ? `Equal ${positions[i]}` : undefined}
@@ -81,10 +84,10 @@ export function StrengthList({ rows, base }: { rows: StrengthRow[]; base: string
             </span>
             <Logo {...r.logo} size={28} />
             <span className="flex-1 min-w-0">
-              <span className="block text-[13px] font-semibold group-hover:text-brass truncate">{r.name}</span>
-              <span className="block text-[11px] text-ink-3 leading-[1.5] truncate">{r.note}</span>
+              <span className="block text-[13px] lg:text-[14px] font-semibold group-hover:text-brass truncate">{r.name}</span>
+              <span className="block text-[11px] lg:text-[11.5px] text-ink-3 leading-[1.5] truncate">{r.note}</span>
             </span>
-            <span className="text-[14px] font-extrabold tnum">{r.value.toFixed(1)}</span>
+            <Score value={r.value} />
           </Link>
         </li>
       ))}
@@ -183,7 +186,7 @@ export function CompareTable({ head, rows, note }: {
  */
 export function NotPublished({ items }: { items: Array<{ what: string; why: string }> }) {
   return (
-    <Card className="p-4" as="section">
+    <Card className="p-4 lg:p-6" as="section">
       <CardHead title="What this page does not rank" />
       <dl className="flex flex-col">
         {items.map(({ what, why }) => (

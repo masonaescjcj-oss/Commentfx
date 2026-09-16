@@ -10,8 +10,12 @@
   --color-card:    #FFFFFF;
   --color-card-2:  #F6F7F9;   /* chips and inputs: the only fill that is not white */
   --color-card-3:  #EDEFF3;   /* meter tracks */
-  --color-line:    #E2E5EA;   /* 1.30:1 on white — a hairline, not text */
-  --color-line-2:  #EEF0F3;   /* inside a card, between rows */
+  /* Two weights of hairline, and the difference is deliberate. The outer one
+     edges a card against the page; the inner one separates two rows that are
+     already inside one. Drawn at the same strength — which they were — every
+     row reads as its own box and the card stops being a single object. */
+  --color-line:    #E5E8EE;   /* the edge of a card */
+  --color-line-2:  #F0F2F5;   /* between rows inside one */
 
   /* ── Text ─────────────────────────────────────────────────
      Every colour below clears 4.5:1 against the darkest surface it is
@@ -38,6 +42,7 @@
   --color-warn-bg: #FDF3DC;
 
   --radius-card: 16px;
+  --radius-card-lg: 20px;
   --shadow-card: 0 1px 2px rgb(13 20 33 / 0.04), 0 6px 18px -10px rgb(13 20 33 / 0.10);
 
   --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
@@ -216,4 +221,31 @@
   /* From 640px the page has a gutter of its own, so this is back to the 4px
      nudge it always was. */
   @media (min-width: 640px) { .gutter { padding-inline: 4px; } }
+}
+
+/**
+ * The feel of the thing under a pointer.
+ *
+ * Every row on this site is a link, and until now hovering one tinted four
+ * words of it and left the other ninety per cent inert. That reads as a
+ * document with links in it rather than as a list you can operate, and it is
+ * the cheapest quality a page can be missing: the row already exists, it just
+ * has to answer.
+ *
+ * Applied as one class rather than per-component so the timing is the same
+ * everywhere — nothing gives away a page assembled by different hands faster
+ * than two hover states that ease differently. Held to a tint and the pointer,
+ * because a row that lifts or grows is a row that moves the rows under it.
+ */
+@layer components {
+  .row-hit {
+    border-radius: 10px;
+    transition: background-color 120ms ease-out;
+  }
+  @media (hover: hover) {
+    .row-hit:hover { background: color-mix(in srgb, var(--color-card-2) 70%, transparent); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .row-hit { transition: none; }
+  }
 }

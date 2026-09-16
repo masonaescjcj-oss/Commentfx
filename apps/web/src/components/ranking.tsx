@@ -44,18 +44,18 @@ export function RankRow({ rank, href, logo, name, score, why, facts, headingLeve
 }) {
   const H = `h${headingLevel}` as 'h2' | 'h3';
   return (
-    <article className="flex items-start gap-[10px] py-[14px] border-b border-line-2 last:border-b-0">
+    <article className="flex items-start gap-[10px] lg:gap-3 py-[14px] lg:py-[18px] border-b border-line-2 last:border-b-0">
       <RankBadge rank={rank} />
       <Logo {...logo} />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <H className="text-[15.5px] font-bold tracking-[-0.01em]">
+          <H className="font-[family-name:var(--font-display)] text-[15.5px] lg:text-[17px] font-bold tracking-[-0.018em]">
             <Link href={href} className="hover:text-brass">{name}</Link>
           </H>
           <div className="flex-1" />
           <Score value={score} size="lg" />
         </div>
-        <p className="text-[11.5px] text-ink-3 leading-[1.45] my-[6px]">{why}</p>
+        <p className="text-[11.5px] lg:text-[12.5px] text-ink-3 leading-[1.5] my-[6px] lg:my-[8px]">{why}</p>
         <div className="flex gap-[5px] flex-wrap">
           {facts.map((f) => (
             <Tag key={f.label} tone={f.tone}>
@@ -73,18 +73,20 @@ export function ScoreBreakdownCard<K extends string>({ components, skipped }: {
   components: Component<K>[]; skipped: K[];
 }) {
   return (
-    <Card className="p-4" as="section">
+    <Card className="p-4 lg:p-6" as="section">
       <CardHead title="Score breakdown" href="/methodology" hrefLabel="Method" />
-      <ul className="flex flex-col gap-[11px]">
+      <ul className="flex flex-col gap-[13px] lg:gap-4">
         {components.map((c) => (
           <li key={c.key}>
-            <div className="flex items-baseline gap-2 mb-[6px]">
-              <span className="text-[12.5px]">{c.label}</span>
+            <div className="flex items-baseline gap-2 mb-[7px]">
+              <span className="text-[12.5px] lg:text-[13.5px]">{c.label}</span>
               <span className="text-[11px] text-ink-3 tnum">{Math.round(c.weight * 100)}%</span>
               <div className="flex-1" />
-              <span className={`text-[13px] font-extrabold tnum ${c.value === null ? 'text-ink-3' : ''}`}>
-                {c.value === null ? '—' : c.value.toFixed(1)}
-              </span>
+              {c.value === null ? (
+                <span className="text-[13px] font-bold tnum text-ink-3">—</span>
+              ) : (
+                <Score value={c.value} />
+              )}
             </div>
             {c.value !== null && (
               <Meter value={c.value} tone={c.value >= 8 ? 'up' : c.value >= 6 ? 'brass' : 'warn'} />

@@ -56,7 +56,7 @@ export default async function StatusPage() {
         {!statuses ? (
           <Unavailable what="Incident reporting" reason="no database configured on this deployment" />
         ) : (
-          <Card className="px-4">
+          <Card className="px-4 lg:px-6">
             {byLevel.map(({ b, s }) => (
               <article key={b.broker.slug} className="flex items-center gap-[11px] py-[13px] border-b border-line-2 last:border-b-0">
                 <Logo {...b.broker.logo} size={34} />
@@ -78,14 +78,14 @@ export default async function StatusPage() {
           </Card>
         )}
 
-        <Card className="p-4 bg-brass-bg shadow-none" as="section">
+        <Card className="p-4 lg:p-6 bg-brass-bg shadow-none" as="section">
           <h2 className="text-[14px] font-bold text-brass-2 mb-[6px]">Reports are evidence, not a verdict</h2>
           <p className="text-[12.5px] text-ink-2 leading-[1.8]">
             Nothing here is verified, and none of it touches the broker&rsquo;s score.
           </p>
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="Common questions" />
           <dl>
             {FAQ.map(({ q, a }) => (

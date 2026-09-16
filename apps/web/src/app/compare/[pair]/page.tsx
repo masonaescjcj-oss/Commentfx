@@ -100,7 +100,7 @@ export default async function ComparePage({ params }: { params: Promise<Params> 
           ))}
         </div>
 
-        <Card className="px-4 py-2">
+        <Card className="px-4 lg:px-6 py-2">
           <table className="w-full">
             <caption className="sr-only">{a.broker.name} compared with {b.broker.name}</caption>
             <thead className="sr-only">
@@ -118,7 +118,7 @@ export default async function ComparePage({ params }: { params: Promise<Params> 
           </table>
         </Card>
 
-        <Card className="p-4 border-[1.5px] border-brass shadow-none">
+        <Card className="p-4 lg:p-6 border-[1.5px] border-brass shadow-none">
           <h2 className="text-[14px] font-bold text-brass-2 mb-[6px]">The short version</h2>
           <p className="text-[12.5px] text-ink-2 leading-[1.8]">
             {winner.broker.name} takes it overall on {winner.score.total.toFixed(1)} against{' '}

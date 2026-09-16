@@ -39,7 +39,7 @@ export default async function CoinsPage() {
                 the honest coin pages behind them unreachable by anyone who was
                 browsing rather than arriving from a search result. Names only —
                 there is no number here to be stale about. */}
-            <Card className="px-4">
+            <Card className="px-4 lg:px-6">
               {COIN_INDEX.map((c) => (
                 <article key={c.id} className="flex items-center gap-[10px] py-[11px] border-b border-line-2 last:border-b-0">
                   <div className="min-w-0">
@@ -55,7 +55,7 @@ export default async function CoinsPage() {
         ) : (
           <>
             <RankingIntro title={TITLE} />
-            <Card className="px-4">
+            <Card className="px-4 lg:px-6">
               {data.list.map((c) => <CoinRow key={c.id} c={c} rank />)}
             </Card>
             <Freshness at={data.at} source="CoinGecko" />

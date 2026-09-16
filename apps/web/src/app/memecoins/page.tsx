@@ -51,7 +51,7 @@ export default async function MemecoinsPage() {
         <Breadcrumbs trail={trail} />
         <RankingIntro title={TITLE} />
 
-        <Card className="p-4 bg-warn-bg shadow-none border border-[#F3E3C2]">
+        <Card className="p-4 lg:p-6 bg-warn-bg shadow-none border border-[#F3E3C2]">
           <h2 className="text-[14px] font-bold text-warn mb-[6px]">A safety score is not a buy signal</h2>
           <p className="text-[12.5px] text-[#8A6420] leading-[1.8]">
             An automated check of the contract and the pool. A token scoring well can
@@ -79,7 +79,7 @@ export default async function MemecoinsPage() {
           </Card>
         ) : (
           <>
-            <Card className="px-4">
+            <Card className="px-4 lg:px-6">
               {data.tokens.map(({ input: t, score, dex }) => {
                 const tone = score.total >= 7.5 ? 'good' : score.total >= 5 ? 'warn' : 'bad';
                 const up = (t.change24hPct ?? 0) >= 0;
@@ -154,7 +154,7 @@ export default async function MemecoinsPage() {
           </>
         )}
 
-        <Card className="p-4">
+        <Card className="p-4 lg:p-6">
           <CardHead title="How the safety score is built" href="/methodology" hrefLabel="Full method" />
           <ul className="flex flex-col gap-[10px]">
             {(Object.keys(MEME_WEIGHTS) as MemeKey[]).map((k) => (
@@ -170,7 +170,7 @@ export default async function MemecoinsPage() {
           </ul>
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="Common questions" />
           <dl>
             {FAQ.map(({ q, a }) => (

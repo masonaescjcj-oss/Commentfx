@@ -54,13 +54,13 @@ export default async function BestPage({ params }: { params: Promise<Params> }) 
         <Breadcrumbs trail={trail} />
         <h1 className="sr-only">{c.h1}</h1>
 
-        <Card className="px-4">
+        <Card className="px-4 lg:px-6">
           {list.map((r) => (
             <BrokerRow headingLevel={2} key={r.broker.slug} r={r} extra={{ label: c.metricLabel, value: c.metric(r.broker) }} />
           ))}
         </Card>
 
-        <Card className="p-4">
+        <Card className="p-4 lg:p-6">
           <CardHead title="Other ways to rank these brokers" />
           <ul className="flex flex-col">
             {BEST_CRITERIA.filter((x) => x.slug !== c.slug).map((x) => (

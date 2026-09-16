@@ -81,7 +81,7 @@ export default async function ReviewsPage() {
           <ReviewFeed items={items} />
         )}
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="How this works" href="/methodology" hrefLabel="Method" />
           <dl>
             {FAQ.map((f) => (

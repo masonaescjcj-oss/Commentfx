@@ -47,7 +47,7 @@ export default function ExchangesPage() {
         <div className="split">
           <div>
 
-          <Card className="px-4">
+          <Card className="px-4 lg:px-6">
             {list.map((r) => (
               <RankRow
                 headingLevel={2}
@@ -73,7 +73,7 @@ export default function ExchangesPage() {
           </div>
 
           <div>
-          <Card className="p-4">
+          <Card className="p-4 lg:p-6">
             <CardHead title="How the score is built" href="/methodology" hrefLabel="Full method" />
             <ul className="flex flex-col gap-[10px]">
               {(Object.keys(EXCHANGE_WEIGHTS) as ExchangeKey[]).map((k) => (
@@ -89,7 +89,7 @@ export default function ExchangesPage() {
             </ul>
           </Card>
 
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="Common questions" />
             <dl>
               {FAQ.map(({ q, a }) => (

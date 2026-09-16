@@ -127,7 +127,7 @@ export default async function AdminRecordPage({ params }: { params: Promise<{ ki
         );
       })}
 
-      <Card className="p-4" as="section">
+      <Card className="p-4 lg:p-6" as="section">
         <CardHead title="History" aside={<span className="text-[11px] text-ink-3">append-only</span>} />
         {history.length === 0 ? (
           <p className="text-[12.5px] text-ink-3">No checks recorded for this record yet.</p>

@@ -105,7 +105,7 @@ export default async function ReleasePage({ params }: { params: Promise<Params> 
         </header>
 
         {sourceDown ? (
-          <Card className="p-4 bg-warn-bg shadow-none border border-[#F3E3C2]" as="section">
+          <Card className="p-4 lg:p-6 bg-warn-bg shadow-none border border-[#F3E3C2]" as="section">
             <h2 className="text-[13.5px] font-bold text-warn mb-[6px]">
               The {sourceDown.source} calendar could not be read
             </h2>
@@ -119,7 +119,7 @@ export default async function ReleasePage({ params }: { params: Promise<Params> 
             </p>
           </Card>
         ) : next ? (
-          <Card className="p-4 border-[1.5px] border-brass shadow-none" as="section">
+          <Card className="p-4 lg:p-6 border-[1.5px] border-brass shadow-none" as="section">
             <p className="text-[11.5px] text-ink-3 mb-1">
               {r.kind === 'decision' ? 'Next meeting' : 'Next release'}
             </p>
@@ -141,14 +141,14 @@ export default async function ReleasePage({ params }: { params: Promise<Params> 
             {next.detail && <p className="text-[11.5px] text-ink-3 mt-2 leading-[1.7]">{next.detail}</p>}
           </Card>
         ) : (
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <p className="text-[12.5px] text-ink-2 leading-[1.8]">
               The {r.publisher} has not yet published a forward date for this.
             </p>
           </Card>
         )}
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="Why it matters" />
           <p className="text-[12.5px] text-ink-2 leading-[1.85]">{r.why}</p>
           <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.75]">
@@ -158,7 +158,7 @@ export default async function ReleasePage({ params }: { params: Promise<Params> 
         </Card>
 
         {upcoming.length > 1 && (
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead
               title="Scheduled dates"
               aside={<span className="text-[11.5px] text-ink-3 tnum">{upcoming.length} ahead</span>}
@@ -168,7 +168,7 @@ export default async function ReleasePage({ params }: { params: Promise<Params> 
         )}
 
         {past.length > 0 && (
-          <Card className="p-4" as="section">
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title={r.kind === 'decision' ? 'Recent meetings' : 'Recent releases'} />
             <Schedule events={past} />
             <p className="text-[11.5px] text-ink-3 mt-[10px] leading-[1.75]">
@@ -181,7 +181,7 @@ export default async function ReleasePage({ params }: { params: Promise<Params> 
           </Card>
         )}
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="Common questions" />
           <dl>
             {faq.map((f) => (
@@ -193,7 +193,7 @@ export default async function ReleasePage({ params }: { params: Promise<Params> 
           </dl>
         </Card>
 
-        <Card className="p-4" as="section">
+        <Card className="p-4 lg:p-6" as="section">
           <CardHead title="Other releases" href="/calendar" hrefLabel="Full calendar" />
           <ul className="flex flex-col">
             {RELEASES.filter((o) => o.slug !== r.slug).map((o) => (
