@@ -29,13 +29,9 @@ import { useEffect } from 'react';
  *     flick of the wheel reads as a glitch rather than a behaviour.
  *   - A 6px dead zone, so the sub-pixel jitter a trackpad produces at rest
  *     cannot flip the direction back and forth.
- *   - It comes back when scrolling stops — but only on a page with nothing to
- *     take its place. A record page has a section bar that slides in behind it,
- *     so there the two simply swap on direction and stay where the reader left
- *     them; flipping back to the header on every pause would take away the one
- *     thing they are most likely to want while reading. Everywhere else there
- *     is no substitute, and a bar that returns when you stop is the forgiving
- *     choice: a reader who wants the nav does not have to know to scroll up.
+ *   - It comes back when scrolling stops, not only when you scroll up. That is
+ *     the forgiving choice: a reader who wants the nav does not have to know
+ *     they must scroll up to get it.
  *   - The colour is decided on every frame, before the dead zone, because it
  *     depends on where the page is and not on which way it is going. The dead
  *     zone exists to stop the hiding flickering; applying it here would leave
@@ -53,9 +49,6 @@ export function HeaderAutoHide() {
     // white under the bar from the first pixel, so the bar is white from the
     // first pixel too.
     const band = document.querySelector<HTMLElement>('.hero');
-    // A page with one of these has something to show while the header is away,
-    // so it does not need the header back the moment scrolling stops.
-    const hasSubstitute = Boolean(document.querySelector('.section-bar'));
 
     let last = window.scrollY;
     let ticking = false;
@@ -87,10 +80,8 @@ export function HeaderAutoHide() {
         ticking = true;
         requestAnimationFrame(update);
       }
-      if (!hasSubstitute) {
-        clearTimeout(stopTimer);
-        stopTimer = setTimeout(show, STOPPED_AFTER);
-      }
+      clearTimeout(stopTimer);
+      stopTimer = setTimeout(show, STOPPED_AFTER);
     };
 
     paint();

@@ -227,42 +227,96 @@ export function PageHero({ title, trail = [], children }: {
   );
 }
 
+/**
+ * The footer, as a directory rather than as a page of small print.
+ *
+ * It carried two paragraphs — a commission disclosure and a risk warning — and
+ * they were the last thing on every page on the site. A wall of prose at the
+ * bottom is where nobody reads and everybody scrolls past, which is a poor
+ * place for something that matters and a worse place for everything else.
+ *
+ * So: four columns of where to go next, and one line of small print beside the
+ * year. The disclosure did not disappear — it is on every outbound link, which
+ * is the only place it is ever read, and the methodology page says it in full.
+ */
+const FOOTER: Array<{ title: string; links: Array<{ href: string; label: string }> }> = [
+  {
+    title: 'Rankings',
+    links: [
+      { href: '/brokers', label: 'Forex brokers' },
+      { href: '/props', label: 'Prop firms' },
+      { href: '/exchanges', label: 'Crypto exchanges' },
+      { href: '/coins', label: 'Coin prices' },
+    ],
+  },
+  {
+    title: 'Best for',
+    links: [
+      { href: '/best/lowest-spread', label: 'Lowest cost' },
+      { href: '/best/tier-1-regulated', label: 'Tier-1 regulated' },
+      { href: '/best/low-minimum-deposit', label: 'Low minimum' },
+      { href: '/best/fast-withdrawals', label: 'Fast withdrawals' },
+    ],
+  },
+  {
+    title: 'Tools',
+    links: [
+      { href: '/calendar', label: 'Economic calendar' },
+      { href: '/memecoins', label: 'Memecoin radar' },
+      { href: '/status', label: 'Broker status' },
+      { href: '/search', label: 'Search' },
+    ],
+  },
+  {
+    title: 'About',
+    links: [
+      { href: '/methodology', label: 'How we score' },
+      { href: '/reviews', label: 'Reviews' },
+      { href: '/reviews/withdraw', label: 'Withdraw a review' },
+      { href: '/best/crypto-funding', label: 'Crypto funding' },
+    ],
+  },
+];
+
 export function Footer() {
   return (
-    <footer className="mt-8 bg-card border-t border-line text-[12.5px] text-ink-2">
-      <div className="shell py-7 lg:py-9">
-        {/* Same reason as the breadcrumbs: padded to 24px of hit area, pulled
-            back so the rows stay where they were. */}
-        <div className="flex flex-wrap gap-x-6 gap-y-1 mb-5">
-          {[
-            { href: '/methodology', label: 'How we score', strong: true },
-            { href: '/status', label: 'Broker status', strong: true },
-            { href: '/reviews', label: 'Reviews', strong: true },
-            { href: '/best/lowest-spread', label: 'Lowest cost' },
-            { href: '/best/tier-1-regulated', label: 'Tier-1 regulated' },
-            { href: '/best/low-minimum-deposit', label: 'Low minimum' },
-            { href: '/best/fast-withdrawals', label: 'Fast withdrawals' },
-          ].map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className={`inline-block py-[4px] ${l.strong ? 'font-semibold text-ink' : ''}`}
-            >
-              {l.label}
+    <footer className="mt-10 bg-card border-t border-line">
+      <div className="shell py-9 lg:py-12">
+        <div className="grid grid-cols-2 lg:grid-cols-[auto_repeat(4,1fr)] gap-x-6 gap-y-8 lg:gap-x-10">
+          <div className="col-span-2 lg:col-span-1 lg:pr-8">
+            <Link href="/" className="inline-flex text-accent" aria-label={`${SITE.name} home`}>
+              <Logotype size={26} />
             </Link>
+            <p className="text-[12px] text-ink-3 leading-[1.7] mt-3 max-w-[26ch]">
+              Independent rankings on published weights.
+            </p>
+          </div>
+
+          {FOOTER.map((col) => (
+            <nav key={col.title} aria-label={col.title}>
+              <h2 className="text-[11px] font-bold uppercase tracking-[0.08em] text-ink-3 mb-[10px]">
+                {col.title}
+              </h2>
+              <ul className="flex flex-col gap-[2px]">
+                {col.links.map((l) => (
+                  <li key={l.href}>
+                    <Link href={l.href} className="inline-block text-[13px] text-ink-2 py-[5px] hover:text-accent">
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           ))}
         </div>
-        <p className="leading-[1.8] max-w-[60ch] mb-3">
-          {SITE.name} earns commission from some brokers when a reader opens an account.
-          That is disclosed on every link. It has no effect on the score or the order of
-          any list — the weights are published, and every licence is checked against its
-          regulator’s register or the page says why it could not be.
-        </p>
-        <p className="leading-[1.8] max-w-[60ch] text-ink-3">
-          Nothing here is investment advice. Trading leveraged products carries a high
-          risk of losing money rapidly.
-        </p>
-        <p className="mt-5 text-ink-3">© {new Date().getFullYear()} {SITE.name}</p>
+
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-9 pt-5 border-t border-line-2 text-[11.5px] text-ink-3">
+          <span>© {new Date().getFullYear()} {SITE.name}</span>
+          <span aria-hidden className="text-line">·</span>
+          <Link href="/methodology" className="hover:text-accent">Commission is disclosed on every link</Link>
+          <span aria-hidden className="text-line">·</span>
+          <span>Not investment advice</span>
+        </div>
       </div>
     </footer>
   );

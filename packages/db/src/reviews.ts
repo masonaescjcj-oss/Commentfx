@@ -15,7 +15,7 @@ export interface PublishedReview {
   id: number;
   kind: ReviewKind;
   slug: string;
-  rating: number;
+  rating: number | null;
   topic: ReviewTopic;
   body: string;
   verified: boolean;
@@ -160,7 +160,7 @@ export async function reviewStatsForAll(
     .from(reviews)
     .where(and(eq(reviews.kind, kind), eq(reviews.hidden, false)));
 
-  const bySlug = new Map<string, Array<{ rating: number; verifiedAt: Date | null }>>();
+  const bySlug = new Map<string, Array<{ rating: number | null; verifiedAt: Date | null }>>();
   for (const r of rows) {
     const list = bySlug.get(r.slug) ?? [];
     list.push({ rating: r.rating, verifiedAt: r.verifiedAt });

@@ -84,7 +84,7 @@ for (const topic of TOPICS) {
   await page.getByRole('button', { name: '5 out of 5' }).click();
   await page.locator('select[name="topic"]').selectOption(topic);
   await page.locator('textarea[name="body"]').fill(BODY);
-  await page.getByRole('button', { name: /Publish review/ }).click();
+  await page.getByRole('button', { name: /^Post/ }).click();
   try { await page.waitForSelector('code', { timeout: 12_000 }); published = true; break; }
   catch {
     const m = (await page.locator('[role="status"]').first().innerText().catch(() => '')).trim();

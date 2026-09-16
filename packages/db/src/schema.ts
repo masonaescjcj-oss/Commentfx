@@ -307,7 +307,8 @@ export const reviews = pgTable('reviews', {
    */
   kind: entityKind('kind').notNull(),
   slug: text('slug').notNull(),
-  rating: integer('rating').notNull(),
+  // Nullable since 0006: a review may be words alone.
+  rating: integer('rating'),
   topic: reviewTopic('topic').notNull(),
   body: text('body').notNull(),
   /** Salted, daily-rotated digest of the author. Never an address. */

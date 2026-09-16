@@ -6,6 +6,7 @@ import { coins, coin, fmtUsd, fmtPct } from '@/lib/market';
 import { rankedExchanges, rankedBrokers } from '@/lib/repo';
 import { reviewStats } from '@/lib/reviews';
 import { Header, PageHero, Footer, Breadcrumbs } from '@/components/chrome';
+import { Faq } from '@/components/Faq';
 import { Card, CardHead, Logo, Score } from '@/components/primitives';
 import { FactList } from '@/components/ranking';
 import { Sparkline } from '@/components/Sparkline';
@@ -231,14 +232,7 @@ export default async function CoinPage({ params }: { params: Promise<Params> }) 
 
           <Card className="p-4 lg:p-6" as="section">
             <CardHead title={`${c.name} — common questions`} />
-            <dl>
-              {faq.map(({ q, a }) => (
-                <div key={q} className="py-3 border-b border-line-2 last:border-b-0">
-                  <dt className="text-[13.5px] font-semibold mb-[5px]">{q}</dt>
-                  <dd className="text-[12.5px] text-ink-2 leading-[1.8]">{a}</dd>
-                </div>
-              ))}
-            </dl>
+            <Faq items={faq} />
           </Card>
 
           <Freshness at={view.at} source="CoinGecko" />

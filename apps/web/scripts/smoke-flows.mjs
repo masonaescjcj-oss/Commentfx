@@ -64,7 +64,7 @@ for (const topic of TOPICS) {
   await page.getByRole('button', { name: '4 out of 5' }).click();
   await page.locator('select[name="topic"]').selectOption(topic);
   await page.locator('textarea[name="body"]').fill(BODY);
-  await page.getByRole('button', { name: /Publish review/ }).click();
+  await page.getByRole('button', { name: /^Post/ }).click();
 
   try {
     await page.waitForSelector('code', { timeout: 12_000 });
@@ -76,6 +76,46 @@ for (const topic of TOPICS) {
   }
 }
 if (!code) check('publishing a review succeeds', false, lastMessage);
+
+/**
+ * Words alone, with no rating touched.
+ *
+ * The rating column stopped being NOT NULL for this, and a nullable column is
+ * exactly the kind of change that typechecks everywhere and then throws at the
+ * insert. Nothing but a real post through the real form proves it lands.
+ */
+{
+  const bareMark = `SMOKE-NORATING-${Date.now()}`;
+  const bare = `${bareMark} Support answered in a day and the platform has been stable since I opened the account. Nothing to complain about and nothing remarkable either.`;
+  // Walks the topics for the same reason the loop above does: one author may
+  // write about one topic once a day, and a re-run on the same database has
+  // already used some of them.
+  let landed = false;
+  let why = '(never submitted)';
+  for (const topic of TOPICS) {
+    await page.goto(`${BASE}/brokers/${SLUG}`, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(600);
+    await page.locator('select[name="topic"]').selectOption(topic);
+    await page.locator('textarea[name="body"]').fill(bare);
+    await page.getByRole('button', { name: /^Post/ }).click();
+    try {
+      await page.waitForSelector('code', { timeout: 12_000 });
+      landed = true;
+      break;
+    } catch {
+      why = (await page.locator('[role="status"]').first().innerText().catch(() => '(none)')).trim();
+      if (!/already written/i.test(why)) break;
+    }
+  }
+  if (!landed) check('a review with no rating publishes', false, why);
+  if (landed) {
+    check('a review with no rating publishes', true);
+    await page.goto(`${BASE}/brokers/${SLUG}`, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(600);
+    const shown = await page.locator('body').innerText();
+    check('it reaches the page with no star beside it', shown.includes(bare.slice(0, 40)));
+  }
+}
 
 if (code) {
   check('publishing a review returns a withdrawal code', /^\d+\./.test(code));

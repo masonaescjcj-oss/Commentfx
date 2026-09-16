@@ -5,6 +5,7 @@ import { RELEASES, releaseBySlug, scheduleNoun, utcDay, type CalendarEvent } fro
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd, itemListLd } from '@/lib/seo';
 import { calendarData } from '@/lib/calendar';
 import { Header, PageHero, Footer } from '@/components/chrome';
+import { Faq } from '@/components/Faq';
 import { Card, CardHead, Tag } from '@/components/primitives';
 
 type Params = { release: string };
@@ -183,14 +184,7 @@ export default async function ReleasePage({ params }: { params: Promise<Params> 
 
           <Card className="p-4 lg:p-6" as="section">
             <CardHead title="Common questions" />
-            <dl>
-              {faq.map((f) => (
-                <div key={f.q} className="py-[10px] border-b border-line-2 last:border-b-0">
-                  <dt className="text-[13px] font-semibold">{f.q}</dt>
-                  <dd className="text-[12px] text-ink-2 leading-[1.8] mt-[5px]">{f.a}</dd>
-                </div>
-              ))}
-            </dl>
+            <Faq items={faq} />
           </Card>
 
           <Card className="p-4 lg:p-6" as="section">

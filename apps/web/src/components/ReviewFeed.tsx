@@ -11,7 +11,7 @@ export interface FeedItem {
   slug: string;
   name: string;
   path: string;
-  rating: number;
+  rating: number | null;
   topic: keyof typeof TOPIC_LABELS;
   body: string;
   verified: boolean;

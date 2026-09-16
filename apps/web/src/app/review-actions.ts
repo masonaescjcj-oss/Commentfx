@@ -48,7 +48,9 @@ export async function postReview(_prev: ReviewResult | null, form: FormData): Pr
   const kind = String(form.get('kind') ?? '').trim();
   const slug = String(form.get('slug') ?? '').trim();
   const topic = String(form.get('topic') ?? '').trim();
-  const rating = Number(form.get('rating'));
+  // Empty means the person wrote words and left it at that, which is allowed.
+  const raw = String(form.get('rating') ?? '').trim();
+  const rating = raw === '' || raw === '0' ? null : Number(raw);
   const body = String(form.get('body') ?? '');
   const evidenceNote = String(form.get('evidenceNote') ?? '').trim() || null;
 

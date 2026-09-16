@@ -4,6 +4,7 @@ import { groupByDay, utcDay, IMPACT_RULE, IMPACT_LABEL, RELEASES } from '@commen
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd, itemListLd } from '@/lib/seo';
 import { calendarData, window14, inWindow, upcomingHigh } from '@/lib/calendar';
 import { Header, PageHero, Footer } from '@/components/chrome';
+import { Faq } from '@/components/Faq';
 import { Card, CardHead, Tag } from '@/components/primitives';
 import { CalendarList } from '@/components/CalendarList';
 import { Unavailable } from '@/components/Unavailable';
@@ -183,14 +184,7 @@ export default async function CalendarPage() {
 
           <Card className="p-4 lg:p-6" as="section">
             <CardHead title="Common questions" />
-            <dl>
-              {faq.map((f) => (
-                <div key={f.q} className="py-[10px] border-b border-line-2 last:border-b-0">
-                  <dt className="text-[13px] font-semibold">{f.q}</dt>
-                  <dd className="text-[12px] text-ink-2 leading-[1.8] mt-[5px]">{f.a}</dd>
-                </div>
-              ))}
-            </dl>
+            <Faq items={faq} />
           </Card>
 
           <p className="text-[11.5px] text-ink-3 gutter leading-[1.8]">

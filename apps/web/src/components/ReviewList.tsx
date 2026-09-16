@@ -1,14 +1,12 @@
 import {
-  TOPIC_LABELS, MIN_FOR_SCORE, reviewsAffectScore,
+  TOPIC_LABELS, MIN_FOR_SCORE, reviewsAffectScore, avatarFor,
   type ReviewKind, type ReviewSummaryStats,
 } from '@commentfx/core';
 import type { PublishedReview } from '@/lib/reviews';
 import { Tag } from './primitives';
+import { Avatar } from './Avatar';
 
 const RATING_BAR = 'h-[6px] rounded-full bg-accent';
-
-const dayOf = (d: Date) =>
-  d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
 
 /**
  * Two numbers, never merged into one.
@@ -82,28 +80,64 @@ export function ReviewSummary({ stats, kind }: { stats: ReviewSummaryStats; kind
   );
 }
 
+/**
+ * The comments, as a timeline.
+ *
+ * They were rows of a table: a rating tile, a topic label, a badge, then the
+ * words. That reads as a database listing, and a database listing is not
+ * something anyone wants to add to — which showed, because almost nobody did.
+ * A comment should look like a comment, so it does: a face, a handle, when it
+ * was written, and then the sentence, at a size meant to be read rather than
+ * scanned.
+ *
+ * What did not change is what the badges say. A review that no editor has
+ * checked still says so, and it still counts towards nothing. Making the shape
+ * friendlier is not the same as making the claims looser.
+ */
 export function ReviewList({ reviews }: { reviews: PublishedReview[] }) {
   if (reviews.length === 0) return null;
 
   return (
     <ul className="flex flex-col">
       {reviews.map((r) => (
-        <li key={r.id} className="py-[13px] border-b border-line-2 last:border-b-0">
-          <div className="flex items-center gap-2 mb-[6px]">
-            <span className="w-[26px] h-[26px] grid place-items-center rounded-[8px] bg-card-3 text-[12.5px] font-extrabold tnum">
-              {r.rating}
-            </span>
-            <span className="text-[12px] font-semibold">{TOPIC_LABELS[r.topic]}</span>
-            <div className="flex-1" />
-            {r.verified
-              ? <Tag tone="good">checked by an editor</Tag>
-              : <Tag tone="neutral">unverified</Tag>}
+        <li key={r.id} className="flex gap-3 py-4 border-b border-line-2 last:border-b-0">
+          <Avatar id={r.id} />
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-[6px] flex-wrap">
+              <span className="text-[13.5px] font-bold">{avatarFor(r.id).initials}·{r.id}</span>
+              <span className="text-[12.5px] text-ink-3">anonymous</span>
+              <span aria-hidden className="text-ink-3">·</span>
+              {/* The date, not "20m ago". This page is cached for five minutes,
+                  so a relative label is computed once and then served to
+                  everyone who arrives inside that window — measured: a review
+                  posted two seconds ago still read "2s" on three loads a minute
+                  apart. A timeline that freezes its clock is worse than one
+                  that never had one. */}
+              <time dateTime={r.createdAt.toISOString()} className="text-[12.5px] text-ink-3">
+                {r.createdAt.toLocaleDateString('en-GB', {
+                  day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC',
+                })}
+              </time>
+              <div className="flex-1" />
+              {r.rating !== null && (
+                <span className="flex items-center gap-[3px] text-[12.5px] font-bold tnum text-ink-2">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden className="text-accent">
+                    <path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6z" />
+                  </svg>
+                  {r.rating}
+                </span>
+              )}
+            </div>
+
+            <p className="text-[14px] leading-[1.65] whitespace-pre-line mt-[5px]">{r.body}</p>
+
+            <div className="flex items-center gap-[6px] flex-wrap mt-[10px]">
+              <Tag tone="neutral">{TOPIC_LABELS[r.topic]}</Tag>
+              {r.verified
+                ? <Tag tone="good">checked by an editor</Tag>
+                : <Tag tone="neutral">counts towards nothing until checked</Tag>}
+            </div>
           </div>
-          <p className="text-[12.5px] text-ink-2 leading-[1.8] whitespace-pre-line">{r.body}</p>
-          <p className="text-[11px] text-ink-3 mt-[6px]">
-            <time dateTime={r.createdAt.toISOString()}>{dayOf(r.createdAt)}</time>
-            {!r.verified && ' · counts towards nothing until checked'}
-          </p>
         </li>
       ))}
     </ul>

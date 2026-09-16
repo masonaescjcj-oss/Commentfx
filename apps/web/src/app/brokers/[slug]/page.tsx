@@ -11,9 +11,10 @@ import { recordReviews, reviewStats } from '@/lib/reviews';
 import { StatusBlock } from '@/components/StatusBlock';
 import { VerificationPanel } from '@/components/VerificationPanel';
 import { Header, PageHero, Footer } from '@/components/chrome';
+import { Faq } from '@/components/Faq';
 import { OfficialSite } from '@/components/OfficialSite';
 import { Card, CardHead, Logo, Score, Tag, Meter } from '@/components/primitives';
-import { RecordHero, QuickJump, SectionBar, StickyActions } from '@/components/RecordHero';
+import { RecordHero, QuickJump, StickyActions } from '@/components/RecordHero';
 import { IconScore, IconEntity, IconLicence, IconCost, IconStatus, IconReview, IconReviews, IconCompare, IconFaq } from '@/components/icons';
 import { EntityMap } from '@/components/EntityMap';
 import { LicenceList } from '@/components/LicenceList';
@@ -312,20 +313,12 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
 
             <Card className="p-4 lg:p-6" as="section" id="faq">
               <CardHead title={`${b.name} — common questions`} />
-              <dl>
-                {faq.map(({ q, a }) => (
-                  <div key={q} className="py-3 border-b border-line-2 last:border-b-0">
-                    <dt className="text-[13.5px] font-semibold mb-[5px]">{q}</dt>
-                    <dd className="text-[12.5px] text-ink-2 leading-[1.8]">{a}</dd>
-                  </div>
-                ))}
-              </dl>
+              <Faq items={faq} />
             </Card>
             </div>
           </div>
         </div>
       </main>
-      <SectionBar name={b.name} items={[{ href: '#score', label: 'Score' }, { href: '#entity', label: 'Entity' }, { href: '#licences', label: 'Licences' }, { href: '#costs', label: 'Costs' }, { href: '#review', label: 'Review' }, { href: '#status', label: 'Outages' }, { href: '#reviews', label: 'Reviews' }, { href: '#compare', label: 'Compare', ready: alternatives.length > 0 }, { href: '#faq', label: 'Questions' }]} />
       <StickyActions compareHref={alternatives.length > 0 ? '#compare' : '#reviews'} writeHref="#write" />
       <Footer />
       <JsonLd graph={[

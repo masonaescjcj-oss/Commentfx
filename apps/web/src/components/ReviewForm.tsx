@@ -46,97 +46,109 @@ export function ReviewForm({ kind, slug, name }: {
   }
 
   return (
-    <form action={action} className="flex flex-col gap-3">
+    <form action={action} className="flex gap-3">
       <input type="hidden" name="kind" value={kind} />
       <input type="hidden" name="slug" value={slug} />
-      <input type="hidden" name="rating" value={rating} />
+      <input type="hidden" name="rating" value={rating || ''} />
 
-      <fieldset>
-        <legend className="text-[11.5px] text-ink-3 mb-[6px]">
-          How was dealing with {name}?
-        </legend>
-        <div className="flex gap-[6px]">
-          {Array.from({ length: RATING_MAX - RATING_MIN + 1 }, (_, i) => RATING_MIN + i).map((n) => (
-            <button
-              key={n}
-              type="button"
-              onClick={() => setRating(n)}
-              aria-pressed={rating === n}
-              aria-label={`${n} out of ${RATING_MAX}`}
-              className={`w-10 h-10 rounded-[11px] border text-[14px] font-bold tnum ${
-                rating === n ? 'bg-ink text-white border-ink' : 'bg-card-2 text-ink-2 border-line'
-              }`}
+      {/* A circle where a face would be, so the box reads as somewhere a person
+          writes rather than as a field on a form. Nobody has an account here,
+          so it stays a circle. */}
+      <span aria-hidden className="w-10 h-10 rounded-full bg-card-3 grid place-items-center shrink-0 text-ink-3">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+          <circle cx="12" cy="8.5" r="3.6" /><path d="M4.8 20a7.2 7.2 0 0 1 14.4 0" strokeLinecap="round" />
+        </svg>
+      </span>
+
+      <div className="min-w-0 flex-1">
+        <label>
+          <span className="sr-only">What happened with {name}?</span>
+          <textarea
+            name="body"
+            required
+            rows={3}
+            maxLength={BODY_MAX}
+            placeholder={`What happened with ${name}?`}
+            onChange={(e) => setLength(e.target.value.trim().length)}
+            className="w-full bg-transparent border-0 px-0 py-1 text-[16px] leading-[1.6] placeholder:text-ink-3 focus:outline-none resize-y"
+          />
+        </label>
+
+        {/* Under the box, the way a compose row works: the optional things, then
+            the button. The rating is optional now — a review may be words alone,
+            and asking for a number before anyone can say a sentence is a survey
+            pretending to be a comment box. */}
+        <div className="flex items-center gap-2 flex-wrap pt-[10px] mt-[2px] border-t border-line-2">
+          <div className="flex gap-[3px]" role="group" aria-label="Rating, optional">
+            {Array.from({ length: RATING_MAX - RATING_MIN + 1 }, (_, i) => RATING_MIN + i).map((n) => (
+              <button
+                key={n}
+                type="button"
+                onClick={() => setRating(rating === n ? 0 : n)}
+                aria-pressed={rating === n}
+                aria-label={`${n} out of ${RATING_MAX}`}
+                className={`w-8 h-8 grid place-items-center rounded-full ${
+                  n <= rating ? 'text-accent' : 'text-line hover:text-ink-3'
+                }`}
+              >
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                  <path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6z" />
+                </svg>
+              </button>
+            ))}
+          </div>
+
+          <label className="min-w-0">
+            <span className="sr-only">What is this about?</span>
+            <select
+              name="topic"
+              required
+              defaultValue={TOPICS_FOR[kind][0]}
+              className="bg-card-2 border border-line rounded-full pl-3 pr-2 py-[6px] text-[12.5px] text-ink-2 max-w-[46vw] sm:max-w-none"
             >
-              {n}
-            </button>
-          ))}
+              {TOPICS_FOR[kind].map((t) => (
+                <option key={t} value={t}>{TOPIC_LABELS[t]}</option>
+              ))}
+            </select>
+          </label>
+
+          <div className="flex-1" />
+
+          <span className={`text-[11.5px] tnum ${length === 0 || length >= BODY_MIN ? 'text-ink-3' : 'text-warn'}`}>
+            {length > 0 && length < BODY_MIN ? `${length}/${BODY_MIN}` : ''}
+          </span>
+          <button
+            type="submit"
+            disabled={pending || length < BODY_MIN}
+            className="bg-accent text-white font-bold text-[13.5px] px-5 py-[9px] rounded-full disabled:opacity-40"
+          >
+            {pending ? 'Posting…' : 'Post'}
+          </button>
         </div>
-      </fieldset>
 
-      <label>
-        <span className="block text-[11.5px] text-ink-3 mb-[6px]">What is this about?</span>
-        <select
-          name="topic"
-          required
-          defaultValue=""
-          className="w-full bg-card-2 border border-line rounded-[11px] px-3 py-[10px] text-[13px]"
-        >
-          <option value="" disabled>Choose one</option>
-          {TOPICS_FOR[kind].map((t) => (
-            <option key={t} value={t}>{TOPIC_LABELS[t]}</option>
-          ))}
-        </select>
-      </label>
-
-      <label>
-        <span className="block text-[11.5px] text-ink-3 mb-[6px]">
-          What happened? Dates, amounts and how long things took are what make this
-          worth reading — and what an editor can actually check.
-        </span>
-        <textarea
-          name="body"
-          required
-          rows={6}
-          maxLength={BODY_MAX}
-          onChange={(e) => setLength(e.target.value.trim().length)}
-          className="w-full bg-card-2 border border-line rounded-[11px] px-3 py-[10px] text-[13px] leading-[1.7]"
-        />
-        <span className={`block text-[11px] mt-1 tnum ${length >= BODY_MIN ? 'text-ink-3' : 'text-warn'}`}>
-          {length} / {BODY_MIN} characters minimum
-        </span>
-      </label>
-
-      <label>
-        <span className="block text-[11.5px] text-ink-3 mb-[6px]">
-          Anything an editor could check, privately (optional) — a ticket number, the date
-          of a transfer. <b>This is never published.</b>
-        </span>
-        <input
-          name="evidenceNote"
-          className="w-full bg-card-2 border border-line rounded-[11px] px-3 py-[10px] text-[13px]"
-        />
-      </label>
-
-      <div className="flex items-center gap-3">
-        <button
-          type="submit"
-          disabled={pending || rating === 0}
-          className="bg-ink text-white font-bold text-[13px] px-4 py-[10px] rounded-[11px] disabled:opacity-40"
-        >
-          {pending ? 'Publishing…' : 'Publish review'}
-        </button>
         {state && !state.ok && (
-          <p className="text-[11.5px] text-down leading-[1.6]" role="status">{state.message}</p>
+          <p className="text-[12px] text-down leading-[1.6] mt-2" role="status">{state.message}</p>
         )}
-      </div>
 
-      <p className="text-[11.5px] text-ink-3 leading-[1.75]">
-        Your review appears straight away, marked unverified.{' '}
-        {reviewsAffectScore(kind)
-          ? 'It changes the score only once an editor has checked it — which is why buying reviews here buys nothing.'
-          : 'Reviews are not part of this ranking’s score at all yet: that model was published without a reviews component, and changing a published weight is a decision we make openly, not a side effect.'}{' '}
-        No account, no email, and no address is stored.
-      </p>
+        <details className="mt-3">
+          <summary className="text-[11.5px] text-ink-3 cursor-pointer list-none hover:text-ink-2">
+            Something an editor could check, privately &rsaquo;
+          </summary>
+          <input
+            name="evidenceNote"
+            placeholder="A ticket number, the date of a transfer — never published"
+            className="w-full bg-card-2 border border-line rounded-[11px] px-3 py-[9px] text-[12.5px] mt-2"
+          />
+        </details>
+
+        <p className="text-[11.5px] text-ink-3 leading-[1.75] mt-3">
+          It appears straight away, marked unverified.{' '}
+          {reviewsAffectScore(kind)
+            ? 'It changes the score only once an editor has checked it — which is why buying reviews here buys nothing.'
+            : 'Reviews are not part of this ranking’s score at all yet: that model was published without a reviews component.'}{' '}
+          No account, no email, no address.
+        </p>
+      </div>
     </form>
   );
 }

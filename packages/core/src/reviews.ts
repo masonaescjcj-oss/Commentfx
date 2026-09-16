@@ -63,7 +63,8 @@ export const BODY_MAX = 2000;
 
 export interface ReviewInput {
   kind: ReviewKind;
-  rating: number;
+  /** Optional: a review may be words alone. */
+  rating: number | null;
   topic: string;
   body: string;
 }
@@ -84,8 +85,12 @@ export type ReviewProblem =
 export function checkReview(input: ReviewInput): ReviewProblem[] {
   const problems: ReviewProblem[] = [];
 
-  if (!Number.isInteger(input.rating) || input.rating < RATING_MIN || input.rating > RATING_MAX) {
-    problems.push({ field: 'rating', message: `Give a rating from ${RATING_MIN} to ${RATING_MAX}.` });
+  // A missing rating is fine. A rating that is not one of the five is not: that
+  // is a broken client or someone posting by hand, and either way it would put
+  // a number into an average that nobody chose.
+  if (input.rating !== null
+      && (!Number.isInteger(input.rating) || input.rating < RATING_MIN || input.rating > RATING_MAX)) {
+    problems.push({ field: 'rating', message: `A rating is optional, but it has to be ${RATING_MIN} to ${RATING_MAX}.` });
   }
 
   if (!isTopicFor(input.kind, input.topic)) {
@@ -138,15 +143,29 @@ export const SCORED_KINDS: readonly ReviewKind[] = ['broker'];
 
 export const reviewsAffectScore = (kind: ReviewKind) => SCORED_KINDS.includes(kind);
 
+/**
+ * A review with no rating counts as a review and not as a zero.
+ *
+ * `total` and `verified` are counts of what people wrote, so they include the
+ * ones that are words alone. The averages and the distribution are about the
+ * number, so they only see reviews that carry one. Folding a missing rating in
+ * as a 0 — or as a 3 — would be inventing an opinion nobody expressed, which is
+ * the same mistake this site refuses to make with a missing score component.
+ */
 export function summarise(
-  reviews: Array<{ rating: number; verifiedAt: Date | string | null }>,
+  reviews: Array<{ rating: number | null; verifiedAt: Date | string | null }>,
 ): ReviewSummaryStats {
   const verified = reviews.filter((r) => r.verifiedAt !== null);
-  const distribution: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-  for (const r of verified) distribution[r.rating] = (distribution[r.rating] ?? 0) + 1;
+  const rated = (rows: typeof reviews) =>
+    rows.filter((r): r is typeof r & { rating: number } => r.rating !== null);
 
-  const mean = (rows: Array<{ rating: number }>) =>
-    rows.length === 0 ? null : Math.round((rows.reduce((s, r) => s + r.rating, 0) / rows.length) * 10) / 10;
+  const distribution: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+  for (const r of rated(verified)) distribution[r.rating] = (distribution[r.rating] ?? 0) + 1;
+
+  const mean = (rows: typeof reviews) => {
+    const xs = rated(rows);
+    return xs.length === 0 ? null : Math.round((xs.reduce((s, r) => s + r.rating, 0) / xs.length) * 10) / 10;
+  };
 
   return {
     total: reviews.length,
