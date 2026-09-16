@@ -131,7 +131,7 @@ export interface Broker {
 }
 
 export type ScoreKey =
-  | 'regulation' | 'cost' | 'payments' | 'platform' | 'reviews' | 'transparency';
+  | 'regulation' | 'conduct' | 'cost' | 'payments' | 'platform' | 'reviews' | 'transparency';
 
 export type ScoreComponent = import('./scoring-kit.ts').Component<ScoreKey>;
 export type ScoreBreakdown = import('./scoring-kit.ts').Composite<ScoreKey>;

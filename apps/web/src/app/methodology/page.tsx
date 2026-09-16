@@ -21,12 +21,34 @@ export const metadata: Metadata = pageMetadata({ title: TITLE, description: DESC
 
 const WHAT: Record<ScoreKey, string> = {
   regulation: 'The best licence a broker holds, plus a bounded bonus for holding several serious ones — counting only the companies that would open a retail account. A group licence held by an arm that deals with other firms is a fact about the group, not a protection for you, and it scores nothing here. Tier A regulators run a statutory compensation scheme and a public register; tier C is registration only.',
+  conduct: 'What regulators, prosecutors and courts have actually done about the company, on the record and with the document behind each one. A prosecution costs most, then a restriction, a fine, a public warning, and last a private claim — anyone may sue anyone. An allegation costs four fifths of what the same thing costs once decided, because a regulator bringing a case is information and pretending otherwise would let a firm under active prosecution score as though nothing were happening. Matters fade after three years and stop counting after ten. Crucially, a broker nobody here has searched is excluded rather than given ten: no data is not a clean record.',
   cost: 'Published EUR/USD spread and round-turn commission reduced to a single figure. A $7 commission per standard lot is worth about 0.7 pips, so the two are directly comparable.',
   payments: 'Breadth of funding methods, the broker’s own stated withdrawal processing time, and how much it takes to open an account.',
   platform: 'How many platforms are offered, the execution model, and whether copy trading is built in.',
   reviews: 'Mean of verified reviews. Counted only once a broker has at least five — below that it is excluded rather than guessed at.',
   transparency: 'Four disclosures: entity mapping, audited accounts, segregated client funds, public ownership.',
 };
+
+const REVISIONS: Array<{ date: string; what: string; why: string }> = [
+  {
+    date: '16 September 2026',
+    what: 'Added the regulatory and legal record at 0.10, taken from regulation, platform and reviews.',
+    why:
+      'The model read who supervises a broker and never what any of them had caught it doing. A regulator '
+      + 'suspending the voting rights of a broker’s controlling owner, and a financial crime agency attaching '
+      + 'his assets and prosecuting the company, moved this ranking by nothing at all — that broker sat fifth '
+      + 'of ten on spread and withdrawal speed while both were true. Regulation went from 0.30 to 0.27, '
+      + 'platform from 0.15 to 0.13, reviews from 0.10 to 0.09.',
+  },
+  {
+    date: '16 September 2026',
+    what: 'Regulation counts only the companies that would open a retail account.',
+    why:
+      'A broker was leading with an FCA licence held by a company whose own filed accounts describe a B2B '
+      + 'business. A licence nobody reading this site could be a client of is a fact about the group, not a '
+      + 'protection for the reader, and it now scores nothing.',
+  },
+];
 
 const PROP_WHAT: Record<PropKey, string> = {
   rules: 'How drawdown is measured carries more than a third of this component on its own. Static drawdown is fixed against your starting balance; trailing drawdown follows equity upward, so an unrealised spike permanently raises the floor. The rest is headroom, profit target, deadline, and whether a consistency rule, news ban or weekend ban applies.',
@@ -243,6 +265,23 @@ export default function MethodologyPage() {
               page lists which components were excluded, so a score is always readable
               against what actually went into it.
             </p>
+          </Card>
+
+          {/* A published model that changes without saying so is an unpublished
+              model with extra steps. Every weight revision goes here, with the
+              date and the reason, so anyone comparing a score they saw last
+              month against one they see today can find out why. */}
+          <Card className="p-4 lg:p-6" as="section" id="revisions">
+            <CardHead title="When the weights have changed" />
+            <ol className="flex flex-col">
+              {REVISIONS.map((r) => (
+                <li key={r.date} className="py-3 border-b border-line-2 last:border-b-0">
+                  <p className="text-[11.5px] text-ink-3 tnum">{r.date}</p>
+                  <p className="text-[13.5px] font-semibold leading-[1.5] mt-[2px]">{r.what}</p>
+                  <p className="text-[12.5px] text-ink-2 leading-[1.8] mt-[6px] max-w-[66ch]">{r.why}</p>
+                </li>
+              ))}
+            </ol>
           </Card>
 
           <Card className="p-4 lg:p-6" as="section">

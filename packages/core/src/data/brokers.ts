@@ -178,6 +178,18 @@ export const BROKERS: Broker[] = [
     slug: 'fxtm', name: 'FXTM', founded: 2011, headquarters: 'MU',
     website: 'https://www.fxtm.com/',
     entities: [
+      /**
+       * Two rows here and two missing, one of them tier-1. Exinity UK Limited
+       * holds FCA 777911 and takes retail clients — 476 accounts opened in 2024,
+       * 79 of them ever funded, £362,292 of client money at the year end. It
+       * counts, and how little it amounts to is the subject of the profile.
+       *
+       * The two Exinity Limited rows are correct and not a duplicate: one
+       * Mauritius company, C119470 C1/GBL, holding an investment dealer licence
+       * at home and an OTC derivative provider licence in South Africa.
+       */
+      { legalName: 'Exinity UK Limited', country: 'GB', licence: { regulator: 'FCA', number: '777911', status: 'authorised' }, serves: ['GB'] },
+      { legalName: 'Exinity Capital East Africa Ltd', country: 'KE', licence: { regulator: 'CMA-KE', number: '135', status: 'authorised' }, serves: ['KE'] },
       { legalName: 'Exinity Limited', country: 'MU', licence: { regulator: 'FSC-MU', number: 'C113012295', status: 'registered' }, serves: ['*'] },
       { legalName: 'Exinity Limited', country: 'ZA', licence: { regulator: 'FSCA', number: '50320', status: 'authorised' }, serves: ['ZA'] },
     ],

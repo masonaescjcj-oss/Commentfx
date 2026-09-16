@@ -1,6 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { ACTIONS, actionsFor, bearsOnClients } from './actions.ts';
+import {
+  ACTIONS, actionsFor, bearsOnClients, conductScore, ageFactor,
+  CONDUCT_COST, STAGE_FACTOR, SEARCHED,
+} from './actions.ts';
+import { WEIGHTS, LABELS } from '../score.ts';
 import { brokerBySlug } from './brokers.ts';
 import { profileFor } from './profiles.ts';
 
@@ -69,4 +73,49 @@ test('a broker with an action on record has a researched profile', () => {
     if (!bearsOnClients(a)) continue;
     assert.ok(profileFor(a.brokerSlug), `${a.brokerSlug} has ${a.authority} on record and no profile`);
   }
+});
+
+/* ── the conduct component ───────────────────────────────────────────────── */
+
+test('nobody has looked is null, not ten', () => {
+  assert.equal(conductScore('a-broker-nobody-has-researched'), null);
+  // Every broker named in SEARCHED gets a number, and it is never null.
+  for (const slug of Object.keys(SEARCHED)) {
+    assert.equal(typeof conductScore(slug), 'number', slug);
+  }
+});
+
+test('searched and clean scores ten; searched and not clean does not', () => {
+  const clean = Object.keys(SEARCHED).filter((s) => actionsFor(s).length === 0);
+  assert.ok(clean.length > 0, 'no clean broker to check against');
+  for (const s of clean) assert.equal(conductScore(s), 10, s);
+
+  const octa = conductScore('octafx')!;
+  assert.ok(octa < 4, `a live prosecution and a regulator restriction scored ${octa}`);
+});
+
+test('an allegation costs less than the same thing decided', () => {
+  const now = new Date('2026-09-16T00:00:00Z');
+  const one = (stage: 'alleged' | 'decided') =>
+    CONDUCT_COST.prosecution * STAGE_FACTOR[stage] * ageFactor('2026-01-01', now);
+  assert.ok(one('alleged') < one('decided'));
+  // And it is not free: a prosecution nobody has decided still moves the number.
+  assert.ok(one('alleged') > 0);
+});
+
+test('an old matter fades and a very old one stops counting', () => {
+  const now = new Date('2026-09-16T00:00:00Z');
+  assert.equal(ageFactor('2025-01-01', now), 1);
+  assert.equal(ageFactor('2021-01-01', now), 0.5);
+  assert.equal(ageFactor('2018-01-01', now), 0.25);
+  // The 2013 CySEC fine against XM's predecessor, which is why this exists.
+  assert.equal(ageFactor('2013-05-27', now), 0);
+});
+
+test('the published weights are the ones the score uses, and they sum to one', () => {
+  const total = Object.values(WEIGHTS).reduce((a, b) => a + b, 0);
+  assert.ok(Math.abs(total - 1) < 1e-9, `weights sum to ${total}`);
+  assert.ok(WEIGHTS.conduct > 0, 'conduct carries no weight');
+  // Every key in the model has a label, or the methodology page renders a hole.
+  for (const key of Object.keys(WEIGHTS)) assert.ok(LABELS[key as keyof typeof LABELS], key);
 });

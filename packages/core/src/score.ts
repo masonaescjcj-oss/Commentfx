@@ -1,23 +1,44 @@
 import { servesRetail, type Broker, type ScoreBreakdown, type ScoreKey } from './types.ts';
 import { REGULATORS, TIER_SCORE } from './regulators.ts';
 import { composite, clamp, round1, type Input } from './scoring-kit.ts';
+import { actionsFor, conductScore } from './data/actions.ts';
 
 /**
  * Nominal weights. Live spread monitoring is deliberately NOT part of this
  * model: we score the trading cost a broker publishes, with the date a human
  * last checked it, rather than implying a live feed we do not run.
  */
+/**
+ * Revised 16 September 2026, when `conduct` was added.
+ *
+ * The model read who supervises a broker and never what any of them had caught
+ * it doing. That was a hole rather than a nicety: a regulator suspending the
+ * voting rights of a broker's controlling owner, and a financial crime agency
+ * attaching his assets and prosecuting the company, moved this ranking by
+ * exactly nothing. Octa sat fifth of ten on spread and withdrawal speed while
+ * both were true.
+ *
+ * The 0.10 conduct takes comes off regulation, platform and reviews. The story
+ * the weights tell is unchanged in shape: what protects you is 0.37 of the
+ * score, what it costs you is 0.36, what you trade on is 0.13, what other
+ * people say is 0.09 and what the company discloses is 0.05.
+ *
+ * Every weight here is on /methodology, which is the only thing that makes the
+ * number worth anything. It moved on the record and in public, not quietly.
+ */
 export const WEIGHTS: Record<ScoreKey, number> = {
-  regulation: 0.30,
-  cost: 0.20,
-  payments: 0.20,
-  platform: 0.15,
-  reviews: 0.10,
+  regulation: 0.27,
+  conduct: 0.10,
+  cost: 0.18,
+  payments: 0.18,
+  platform: 0.13,
+  reviews: 0.09,
   transparency: 0.05,
 };
 
 export const LABELS: Record<ScoreKey, string> = {
   regulation: 'Regulation & licensing',
+  conduct: 'Regulatory & legal record',
   cost: 'Published trading cost',
   payments: 'Payments & withdrawals',
   platform: 'Platforms & execution',
@@ -81,6 +102,20 @@ export function scorePlatform(b: Broker): number {
   return clamp(round1(core + exec + copy));
 }
 
+/**
+ * Says which of the three things the number means: nobody has looked, somebody
+ * looked and found nothing, or here is what they found.
+ */
+function conductNote(b: Broker): string {
+  const value = conductScore(b.slug);
+  if (value === null) return 'Nobody has searched the registers and the courts for this one yet — excluded';
+  const acted = actionsFor(b.slug);
+  if (acted.length === 0) return 'Searched, and nothing on record from any regulator or court';
+  return acted
+    .map((a) => `${a.authority} (${a.date.slice(0, 4)}, ${a.stage.replace('-', ' ')})`)
+    .join('; ');
+}
+
 export function scoreTransparency(b: Broker): number {
   const t = b.transparency;
   const checks = [
@@ -107,6 +142,7 @@ export function scoreReviews(b: Broker): number | null {
 export function scoreBroker(b: Broker): ScoreBreakdown {
   const inputs: Input<ScoreKey>[] = [
     { key: 'regulation', value: scoreRegulation(b), note: licenceNote(b) },
+    { key: 'conduct', value: conductScore(b.slug), note: conductNote(b) },
     { key: 'cost', value: scoreCost(b), note: `${effectiveCostPips(b).toFixed(2)} pips all-in on EUR/USD` },
     { key: 'payments', value: scorePayments(b), note: paymentNote(b) },
     { key: 'platform', value: scorePlatform(b), note: `${b.platforms.list.length} platforms · ${b.platforms.execution.toUpperCase()}` },

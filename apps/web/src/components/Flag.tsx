@@ -9,6 +9,7 @@ const SHAPES: Record<string, string> = {
   ZA: '<rect width="20" height="14" fill="#002395"/><rect width="20" height="7" fill="#DE3831"/><path d="M0 0l8 7-8 7z" fill="#007A4D"/><path d="M0 1.6 6.4 7 0 12.4z" fill="#fff"/><path d="M0 3.4 4.6 7 0 10.6z" fill="#000"/>',
   BS: '<rect width="20" height="14" fill="#00ABC9"/><rect y="4.7" width="20" height="4.6" fill="#FFC72C"/><path d="M0 0 8.2 7 0 14Z" fill="#000"/>',
   IN: '<rect width="20" height="14" fill="#fff"/><rect width="20" height="4.67" fill="#FF9933"/><rect y="9.33" width="20" height="4.67" fill="#138808"/><circle cx="10" cy="7" r="1.9" fill="none" stroke="#000080" stroke-width=".7"/>',
+  KE: '<rect width="20" height="14" fill="#fff"/><rect width="20" height="4" fill="#000"/><rect y="10" width="20" height="4" fill="#006600"/><rect y="4.6" width="20" height="4.8" fill="#BB0000"/><path d="M10 3.2 11.5 7 10 10.8 8.5 7Z" fill="#fff"/>',
   MU: '<rect width="20" height="3.5" fill="#EA2839"/><rect y="3.5" width="20" height="3.5" fill="#1A206D"/><rect y="7" width="20" height="3.5" fill="#FFD500"/><rect y="10.5" width="20" height="3.5" fill="#00A551"/>',
   BZ: '<rect width="20" height="14" fill="#003F87"/><rect width="20" height="2.2" fill="#CE1126"/><rect y="11.8" width="20" height="2.2" fill="#CE1126"/><circle cx="10" cy="7" r="3.4" fill="#fff"/>',
   VC: '<rect width="20" height="14" fill="#FCD116"/><rect width="6" height="14" fill="#0072C6"/><rect x="14" width="6" height="14" fill="#009E49"/>',

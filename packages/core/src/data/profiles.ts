@@ -1175,7 +1175,152 @@ const XM: BrokerProfile = {
   ],
 };
 
-export const PROFILES: BrokerProfile[] = [EXNESS, IC_MARKETS, PEPPERSTONE, EIGHTCAP, OCTA, XM];
+const FXTM: BrokerProfile = {
+  slug: 'fxtm',
+  checked: '2026-09-16',
+  verdict:
+    'FXTM’s FCA-regulated company opened 476 accounts in the whole of 2024, and 79 of them were ever funded. '
+    + 'It held £362,292 of client money at the year end. The group also handed back its European licence '
+    + 'outright — renounced it, and CySEC withdrew it in May 2024. This is a broker that left the regulated '
+    + 'markets on purpose and kept the badges.',
+
+  sections: [
+    {
+      heading: 'It gave the European licence back',
+      paragraphs: [
+        'Every other broker in this directory holds its tier-1 licences and routes the rest of the world '
+        + 'offshore. FXTM did something none of the others did: it stopped.',
+
+        'Forextime Ltd stopped serving EU retail clients in February 2021, ceased Cypriot operations on 31 '
+        + 'December 2023, formally renounced its CIF authorisation, and CySEC withdrew licence 185/12 with '
+        + 'effect from 20 May 2024 [fm-cysec]. The group’s chief commercial officer said so plainly at the '
+        + 'time: "We haven’t targeted clients in Europe for a number of years through any of our brands, and we '
+        + 'don’t expect to focus on European audiences as we look forward. As a result we took the decision not '
+        + 'to maintain a retail licence under CYSEC" [fm-cysec].',
+
+        'It is worth being clear about what that is and is not. It is not an enforcement action and it is not '
+        + 'on this page’s record of those, because nobody acted against the firm — it resigned. A company deciding '
+        + 'Europe is not its market and giving up the licence rather than keeping a dormant one is arguably more '
+        + 'honest than the alternative, which is on another page in this directory.',
+
+        'What it means for a reader is simple: whatever FXTM’s marketing shows, there is no European entity '
+        + 'behind it any more, and there has not been for years.',
+      ],
+    },
+
+    {
+      heading: 'The British company, by its own numbers',
+      paragraphs: [
+        'Exinity UK Limited still holds FCA authorisation 777911, and it is the reason this broker scores a '
+        + 'ten on regulation. Its accounts describe a matched principal broker in the retail CFD markets whose '
+        + 'revenue comes from commissions and service charges paid by Exinity Limited in Mauritius, "as all '
+        + 'client trades of the Company are matched with Exinity Limited in its capacity as the Company’s '
+        + 'liquidity provider" [ch-uk].',
+
+        'Then the numbers, which are the most interesting thing on this page. "In 2024 the Company opened 476 '
+        + '(2023: 347) new accounts, of which 79 (2023: 190) had received funds deposited by clients before the '
+        + 'end of the year" [ch-uk]. Seventy-nine funded accounts in a year, down from a hundred and ninety. '
+        + 'Segregated client funds at 31 December 2024: £362,292, against £596,446 a year earlier [ch-uk].',
+
+        'For scale, Pepperstone’s British company held £26.2m of client money at its year end. FXTM’s holds '
+        + 'about one seventieth of that. The company is profitable, well capitalised and doing exactly what it '
+        + 'says; it is simply very small, and it is what the FCA badge on the marketing refers to.',
+
+        'This is not a criticism of the firm so much as an argument about the badge. A tier-1 licence tells you '
+        + 'a regulator supervises a company. It does not tell you that the company is where your money would '
+        + 'go, and on this record that gap is a factor of seventy.',
+      ],
+    },
+
+    {
+      heading: 'Where the business actually is',
+      paragraphs: [
+        'Mauritius. Exinity Limited, company C119470 C1/GBL, holds an investment dealer licence from the '
+        + 'Financial Services Commission there and takes every client the other entities do not [fxtm-legal]. '
+        + 'The same company holds South Africa’s FSCA licence as an over-the-counter derivative provider, which '
+        + 'is why the entity map shows one legal name against two jurisdictions — that is correct rather than a '
+        + 'duplicate.',
+
+        'Two entities were missing from this page entirely and one of them is tier-1: the British company '
+        + 'above, and Exinity Capital East Africa Ltd, licensed by Kenya’s Capital Markets Authority as a '
+        + 'non-dealing online foreign exchange broker [fxtm-legal]. Kenya has been added to the regulator table '
+        + 'for it, at tier B — a statutory regulator with a named licence category for this business and no '
+        + 'compensation scheme, the same shape as South Africa and Dubai.',
+
+        'The group says its focus is Kenya, South Africa and Mauritius, and the licences match the statement. '
+        + 'That is a coherent business. It is a different business from the one a reader in Europe or Britain '
+        + 'thinks they are looking at.',
+      ],
+    },
+
+    {
+      heading: 'What we searched for and did not find',
+      paragraphs: [
+        'No enforcement action against FXTM, Forextime or Exinity turned up in any register or outlet we '
+        + 'checked — no fine, no restriction, no warning list entry, no litigation. The conduct component on '
+        + 'this page therefore scores ten, and it means "a person looked on 16 September 2026 and found '
+        + 'nothing", not "there is nothing".',
+
+        'One number we could not settle: a review desk publishes 46614 as the South African licence where the '
+        + 'group’s own documents and this record say 50320. We have no reader for the FSCA register, so it '
+        + 'stays as it is with the disagreement noted.',
+      ],
+    },
+  ],
+
+  facts: [
+    { label: 'UK entity, new accounts opened in 2024', value: '476 (2023: 347)', from: 'ch-uk' },
+    { label: 'UK entity, of those ever funded', value: '79 (2023: 190)', from: 'ch-uk' },
+    { label: 'UK entity, segregated client funds', value: '£362,292 (2023: £596,446)', from: 'ch-uk' },
+    { label: 'UK entity, revenue 2024', value: '£1,784,690 (2023: £2,073,649)', from: 'ch-uk' },
+    { label: 'UK entity, net assets', value: '£5,766,762', from: 'ch-uk' },
+    { label: 'UK entity, execution model', value: 'Matched principal, hedged with the Mauritius company', from: 'ch-uk' },
+    { label: 'CySEC licence 185/12', value: 'Withdrawn 20 May 2024 after the firm renounced it', from: 'fm-cysec' },
+    { label: 'Stopped serving EU retail clients', value: 'February 2021', from: 'fm-cysec' },
+    { label: 'Mauritius company', value: 'Exinity Limited, C119470 C1/GBL', from: 'fxtm-legal' },
+    { label: 'Enforcement actions found', value: 'None, searched 16 September 2026', from: 'fm-cysec' },
+  ],
+
+  open: [
+    'The FSCA licence number is published as 50320 by the group and as 46614 by at least one review desk. We '
+    + 'have no reader for the South African register and have kept the group’s own figure.',
+    'Whether the British company still opens accounts at the rate its 2024 accounts describe is a question the '
+    + 'next filing answers, and it is the number to watch on this broker.',
+    'Mauritius is on the list of registers this site cannot read, so the licence that covers most of FXTM’s '
+    + 'clients has not been checked against its regulator by anyone here.',
+  ],
+
+  sources: [
+    {
+      id: 'ch-uk',
+      publisher: 'Companies House',
+      title: 'Exinity UK Limited — full accounts for the year ended 31 December 2024, company 10599136',
+      url: 'https://find-and-update.company-information.service.gov.uk/company/10599136/filing-history',
+      published: '2025-04-30',
+      read: '2026-09-16',
+      kind: 'filing',
+    },
+    {
+      id: 'fm-cysec',
+      publisher: 'Finance Magnates',
+      title: 'CySEC withdraws FXTM’s CIF authorisation following renunciation',
+      url: 'https://www.financemagnates.com/forex/cysec-withdraws-fxtms-cif-authorisation-following-renunciation/',
+      published: '2024-05-24',
+      read: '2026-09-16',
+      kind: 'press',
+    },
+    {
+      id: 'fxtm-legal',
+      publisher: 'FXTM',
+      title: 'Licensing and regulation',
+      url: 'https://www.forextime.com/policies-regulation/license-broker',
+      read: '2026-09-16',
+      kind: 'broker',
+    },
+  ],
+};
+
+export const PROFILES: BrokerProfile[] = [EXNESS, IC_MARKETS, PEPPERSTONE, EIGHTCAP, OCTA, XM, FXTM];
 
 export const profileFor = (slug: string) => PROFILES.find((p) => p.slug === slug);
 

@@ -31,6 +31,13 @@ export const REGULATORS: Record<string, Regulator> = {
    * a tier-A one, so the tier only ever moves the breadth bonus, which is
    * already capped. If that stops being true, revisit it on the evidence.
    */
+  /**
+   * Kenya licenses online forex brokers as a named category under the Capital
+   * Markets Act, supervises them and publishes a register — supervision rather
+   * than registration, and the same profile as FSCA and DFSA: no compensation
+   * scheme. It is here because FXTM's group holds one and the map was missing it.
+   */
+  'CMA-KE': { code: 'CMA-KE',   name: 'Capital Markets Authority of Kenya',    country: 'KE', tier: 'B', compensation: null,                 registryUrl: 'https://www.cma.or.ke/licensees/' },
   'SCB-BS': { code: 'SCB-BS',   name: 'Securities Commission of The Bahamas',   country: 'BS', tier: 'B', compensation: null,                 registryUrl: 'https://www.scb.gov.bs/' },
   'FSC-MU': { code: 'FSC-MU',   name: 'Financial Services Commission Mauritius', country: 'MU', tier: 'C', compensation: null,                registryUrl: 'https://www.fscmauritius.org/en/supervision/register-of-licensees' },
   'FSA-SC': { code: 'FSA-SC',   name: 'Financial Services Authority Seychelles', country: 'SC', tier: 'C', compensation: null,                registryUrl: 'https://fsaseychelles.sc/regulated-entities' },

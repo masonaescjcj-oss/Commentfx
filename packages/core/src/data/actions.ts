@@ -166,6 +166,27 @@ export const ACTIONS: EnforcementAction[] = [
   },
 ];
 
+/**
+ * When a person last went looking for actions against each broker, and found
+ * whatever is above — including nothing.
+ *
+ * This is what lets a clean record score as a clean record. "No entries" and
+ * "nobody has looked" are the same shape in the list above and completely
+ * different facts, and a directory that scores them alike is rewarding the
+ * brokers it has not got round to. A broker not named here has its conduct
+ * component excluded rather than set to ten, which is the same rule the reviews
+ * component already follows: no data is not a good score.
+ */
+export const SEARCHED: Record<string, string> = {
+  exness: '2026-09-16',
+  'ic-markets': '2026-09-16',
+  pepperstone: '2026-09-16',
+  eightcap: '2026-09-16',
+  octafx: '2026-09-16',
+  xm: '2026-09-16',
+  fxtm: '2026-09-16',
+};
+
 export const actionsFor = (slug: string): EnforcementAction[] =>
   ACTIONS.filter((a) => a.brokerSlug === slug).sort((a, b) => b.date.localeCompare(a.date));
 
@@ -180,3 +201,57 @@ export const ACTION_WEIGHT: Record<ActionKind, number> = {
 };
 
 export const bearsOnClients = (a: EnforcementAction) => ACTION_WEIGHT[a.kind] >= 2;
+
+/* ── the conduct component ───────────────────────────────────────────────── */
+
+/**
+ * How far each kind of action pulls a broker down, out of ten.
+ *
+ * A prosecution costs most because an authority has decided the conduct is
+ * worth a court's time. A restriction costs nearly as much because a regulator
+ * has already acted rather than asked. A fine is a closed matter with a price
+ * on it. A warning is a regulator telling the public something. A private claim
+ * costs least: anyone may sue anyone, and the bar for filing is a filing fee.
+ */
+export const CONDUCT_COST: Record<ActionKind, number> = {
+  prosecution: 5, restriction: 4, fine: 3, warning: 2, 'civil-claim': 1,
+};
+
+/**
+ * An allegation costs less than a finding and it is not free — a regulator or a
+ * prosecutor bringing a case is itself information, and pretending otherwise
+ * would let a broker under active prosecution score as though nothing were
+ * happening. An action under appeal is nearly a finding, because it is one
+ * until the appeal says otherwise.
+ */
+export const STAGE_FACTOR: Record<ActionStage, number> = {
+  alleged: 0.8, decided: 1, 'under-appeal': 0.85,
+};
+
+/**
+ * Conduct is about what a company is like now, so old matters fade. A firm
+ * fined in 2013 and clean since has demonstrably changed; carrying that at full
+ * weight forever would make the component a memorial rather than a measure.
+ * Ten years is the cut-off, which is roughly how long a regulator keeps a
+ * disciplinary record in view.
+ */
+export function ageFactor(actionDate: string, now = new Date()): number {
+  const years = (now.getTime() - Date.parse(`${actionDate}T00:00:00Z`)) / (365.25 * 86_400_000);
+  if (years <= 3) return 1;
+  if (years <= 7) return 0.5;
+  if (years <= 10) return 0.25;
+  return 0;
+}
+
+/**
+ * Ten when a person has looked and found nothing; null when nobody has looked.
+ * Never a number that means "we have not checked".
+ */
+export function conductScore(slug: string, now = new Date()): number | null {
+  if (!Object.hasOwn(SEARCHED, slug)) return null;
+  const cost = actionsFor(slug).reduce(
+    (sum, a) => sum + CONDUCT_COST[a.kind] * STAGE_FACTOR[a.stage] * ageFactor(a.date, now),
+    0,
+  );
+  return Math.round(Math.max(0, 10 - cost) * 10) / 10;
+}
