@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { SITE } from '@/lib/site';
-import { Logotype } from './Mark';
 
 /**
  * The front page's opening.
@@ -30,9 +29,7 @@ export function Hero({ stats, licences }: {
   return (
     <section className="hero">
       <div className="shell relative py-12 sm:py-16 lg:py-20">
-        <Logotype tone="dark" size={30} />
-
-        <p className="flex items-center gap-2 text-[11.5px] font-bold uppercase tracking-[0.13em] text-[color:var(--hero-accent)] mt-9">
+        <p className="flex items-center gap-2 text-[11.5px] font-bold uppercase tracking-[0.13em] text-[color:var(--hero-accent)]">
           <span aria-hidden className="inline-block w-[18px] h-px bg-[color:var(--hero-accent)]" />
           Independent rankings
         </p>

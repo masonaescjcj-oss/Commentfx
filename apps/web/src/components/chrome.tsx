@@ -3,8 +3,13 @@ import { SITE } from '@/lib/site';
 import { Logotype, Mark } from './Mark';
 
 /**
- * One line at every width, with the sections behind a menu on a phone and laid
- * out along it on a desktop.
+ * One line at every width, in the blue of the hero, with the sections behind a
+ * menu on a phone and laid out along it on a desktop.
+ *
+ * It is the same dark surface on every page, not only the one with the hero
+ * under it. A bar that changes colour with the page beneath it is two headers
+ * a reader has to recognise as one thing, and the seam between them is exactly
+ * where the eye lands on arrival.
  *
  * It was two rows — a brand row and a strip of category chips under it — which
  * cost 40px of every screen before a reader saw anything, and the chips
@@ -35,13 +40,13 @@ export function Header({ active }: { active?: string }) {
   const current = SITE.nav.find((n) => n.href === active);
 
   return (
-    <header className="bg-card border-b border-line sticky top-0 z-20">
+    <header className="site-header sticky top-0 z-20">
       <div className="shell flex items-center gap-3 py-[11px] lg:py-[9px]">
         {/* The mark. A link on a desktop, where it is the only way back to the
             front page; on a phone it is the summary of the menu below, which
             carries Home as its first row. */}
         <Link href="/" className="hidden lg:flex shrink-0 mr-3" aria-label={`${SITE.name} home`}>
-          <Logotype size={27} />
+          <Logotype tone="dark" size={27} />
         </Link>
 
         <nav aria-label="Sections" className="hidden lg:flex items-center gap-[2px] min-w-0">
@@ -50,8 +55,8 @@ export function Header({ active }: { active?: string }) {
               key={n.href}
               href={n.href}
               aria-current={active === n.href ? 'page' : undefined}
-              className={`px-[10px] py-[7px] rounded-[9px] text-[13.5px] hover:bg-card-2 ${
-                active === n.href ? 'font-semibold' : 'text-ink-2'
+              className={`hdr-link px-[10px] py-[7px] rounded-[9px] text-[13.5px] ${
+                active === n.href ? 'font-semibold text-white' : ''
               }`}
             >
               {n.label}
@@ -60,22 +65,25 @@ export function Header({ active }: { active?: string }) {
         </nav>
 
         <details className="menu relative lg:hidden">
-          <summary className="flex items-center gap-2 pl-[8px] pr-[10px] py-[5px] rounded-[11px] border border-line cursor-pointer list-none">
-            <Mark size={25} className="text-accent shrink-0" />
-            <span className="font-[family-name:var(--font-display)] font-bold text-[15.5px] tracking-[-0.035em]">
+          <summary className="hdr-pill flex items-center gap-2 pl-[8px] pr-[10px] py-[5px] rounded-[11px] cursor-pointer list-none">
+            <Mark size={25} className="text-white shrink-0" />
+            <span className="font-[family-name:var(--font-display)] font-bold text-[15.5px] tracking-[-0.035em] text-white">
               {SITE.name}
             </span>
             {current ? (
-              <span className="text-[13px] text-ink-3 font-medium">{current.label}</span>
+              <span className="text-[13px] text-[color:var(--hdr-ink-2)] font-medium">{current.label}</span>
             ) : null}
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" className="text-ink-3" aria-hidden>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" className="text-[color:var(--hdr-ink-2)]" aria-hidden>
               <path d="m6 9 6 6 6-6" />
             </svg>
           </summary>
 
+          {/* The panel stays on white. It is a sheet over the page rather than
+              part of the bar, and a dark sheet of six links over a white page
+              is a second dark surface fighting the first. */}
           <nav
             aria-label="Sections"
-            className="absolute left-0 top-[calc(100%+7px)] w-[232px] bg-card border border-line rounded-[14px] p-[6px] shadow-[0_10px_30px_-12px_rgb(13_20_33_/_0.22)]"
+            className="absolute left-0 top-[calc(100%+7px)] w-[232px] bg-card border border-line rounded-[14px] p-[6px] shadow-[0_18px_40px_-16px_rgb(7_15_34_/_0.45)]"
           >
             <ul>
               <li>
@@ -117,14 +125,18 @@ export function Header({ active }: { active?: string }) {
             <Link
               key={href}
               href={href}
-              className="px-[10px] py-[7px] rounded-[9px] text-[13px] text-ink-3 hover:bg-card-2 hover:text-ink-2"
+              className="hdr-link px-[10px] py-[7px] rounded-[9px] text-[13px]"
             >
               {label}
             </Link>
           ))}
         </nav>
 
-        <Link href="/search" aria-label="Search" className="w-9 h-9 grid place-items-center rounded-[11px] border border-line text-ink-2 shrink-0">
+        <Link
+          href="/search"
+          aria-label="Search"
+          className="hdr-pill w-9 h-9 grid place-items-center rounded-[11px] text-[color:var(--hdr-ink-2)] shrink-0"
+        >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round">
             <circle cx="11" cy="11" r="6.5" /><path d="m20 20-3.5-3.5" />
           </svg>

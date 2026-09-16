@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Manrope, Bricolage_Grotesque } from 'next/font/google';
 import { SITE } from '@/lib/site';
 import { JsonLd, organizationLd, websiteLd } from '@/lib/seo';
+import { HeaderAutoHide } from '@/components/HeaderAutoHide';
 import './globals.css';
 
 /**
@@ -46,7 +47,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#FFFFFF',
+  themeColor: '#0B1630',
   colorScheme: 'light',
 };
 
@@ -61,6 +62,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         {children}
+        {/* Renders nothing; it only sets an attribute on <html> that the
+            stylesheet reads. In the layout rather than in Header so the one
+            listener is registered once for the whole app rather than on each
+            navigation. */}
+        <HeaderAutoHide />
         <JsonLd graph={[organizationLd(), websiteLd()]} />
       </body>
     </html>

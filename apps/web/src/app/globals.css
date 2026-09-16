@@ -339,3 +339,62 @@
     .hero-cta:hover { transform: none; }
   }
 }
+
+/**
+ * The header bar, and the way it gets out of the way.
+ *
+ * The same dark blue as the hero, on every page rather than only the one the
+ * hero is on: a bar that changes colour with the page under it is two headers
+ * a reader has to recognise as one thing, and the seam between them lands
+ * exactly where the eye does on arrival. On the front page it continues
+ * straight into the hero, which is why it carries the hero's gradient origin
+ * rather than a flat fill — the two meet with nothing to see.
+ *
+ * Every pair on it was measured: white on #0B1630 is 17.7:1, and --hdr-ink-2
+ * at #B9C4D8 is 9.9:1, which is what a nav link that is not the current page
+ * has to clear.
+ *
+ * It slides out of view on the way down and returns the moment you stop or turn
+ * around. `transform` and not `top`, because a transform is composited and does
+ * not ask the page to lay out again sixty times a second; and `sticky` stays,
+ * so nothing below it moves when it goes.
+ */
+@layer components {
+  .site-header {
+    --hdr-ink-2: #B9C4D8;
+
+    background: linear-gradient(160deg, #070F22 0%, #0E1C3D 140%);
+    border-bottom: 1px solid rgb(255 255 255 / 0.10);
+    transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+  }
+
+  [data-chrome-hidden] .site-header {
+    transform: translateY(-100%);
+  }
+
+  .hdr-link {
+    color: var(--hdr-ink-2);
+    transition: background-color 120ms ease-out, color 120ms ease-out;
+  }
+  .hdr-pill {
+    border: 1px solid rgb(255 255 255 / 0.16);
+    background: rgb(255 255 255 / 0.05);
+    transition: background-color 120ms ease-out, border-color 120ms ease-out;
+  }
+
+  @media (hover: hover) {
+    .hdr-link:hover { background: rgb(255 255 255 / 0.09); color: #FFFFFF; }
+    .hdr-pill:hover { background: rgb(255 255 255 / 0.11); border-color: rgb(255 255 255 / 0.28); }
+  }
+
+  /* The site's focus ring is ink, which is invisible on this bar. */
+  .site-header :focus-visible { outline-color: #FFFFFF; }
+
+  /* Someone who asked not to be moved gets a header that is simply always
+     there: no slide, and no hiding either, since the hiding is the motion. */
+  @media (prefers-reduced-motion: reduce) {
+    .site-header { transition: none; }
+    [data-chrome-hidden] .site-header { transform: none; }
+  }
+}
