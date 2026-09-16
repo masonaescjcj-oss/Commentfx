@@ -65,6 +65,17 @@ jobs:
       - name: Accessibility audit, desktop
         run: AUDIT_WIDTH=1440 AUDIT_BASE=http://127.0.0.1:3000 pnpm --filter @commentfx/web audit:a11y
 
+      # The header is two colour schemes, not one: blue with white type while it
+      # is standing on the blue band, white with ink and the brand blue once the
+      # band has scrolled away. The runs above only ever see the first. This one
+      # sees the second, and it caught a deliberately broken --hdr-ink-2 on 13
+      # pages that neither of the others noticed at all.
+      - name: Accessibility audit, scrolled
+        run: AUDIT_SCROLL=900 AUDIT_BASE=http://127.0.0.1:3000 pnpm --filter @commentfx/web audit:a11y
+
+      - name: Accessibility audit, scrolled, desktop
+        run: AUDIT_SCROLL=900 AUDIT_WIDTH=1440 AUDIT_BASE=http://127.0.0.1:3000 pnpm --filter @commentfx/web audit:a11y
+
       # The sitemap is generated from the data rather than hand-maintained, which
       # makes it feel self-maintaining and is why nobody looked at it: it was
       # missing every coin page. Reuses the server the audit left on 3000.

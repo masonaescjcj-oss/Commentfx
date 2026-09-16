@@ -46,8 +46,8 @@ export function Header({ active }: { active?: string }) {
         {/* The mark. A link on a desktop, where it is the only way back to the
             front page; on a phone it is the summary of the menu below, which
             carries Home as its first row. */}
-        <Link href="/" className="hidden lg:flex shrink-0 mr-3" aria-label={`${SITE.name} home`}>
-          <Logotype tone="dark" size={27} />
+        <Link href="/" className="hdr-brand hidden lg:flex shrink-0 mr-3" aria-label={`${SITE.name} home`}>
+          <Logotype size={27} />
         </Link>
 
         <nav aria-label="Sections" className="hidden lg:flex items-center gap-[2px] min-w-0">
@@ -57,7 +57,7 @@ export function Header({ active }: { active?: string }) {
               href={n.href}
               aria-current={active === n.href ? 'page' : undefined}
               className={`hdr-link px-[10px] py-[7px] rounded-[9px] text-[13.5px] ${
-                active === n.href ? 'font-semibold text-white' : ''
+                active === n.href ? 'hdr-current' : ''
               }`}
             >
               {n.label}
@@ -67,9 +67,11 @@ export function Header({ active }: { active?: string }) {
 
         <details className="menu relative lg:hidden">
           <summary className="hdr-pill flex items-center gap-2 pl-[8px] pr-[10px] py-[5px] rounded-[11px] cursor-pointer list-none">
-            <Mark size={25} className="text-white shrink-0" />
-            <span className="font-[family-name:var(--font-display)] font-bold text-[15.5px] tracking-[-0.035em] text-white">
-              {SITE.name}
+            <span className="hdr-brand flex items-center gap-2 min-w-0">
+              <Mark size={25} className="shrink-0" />
+              <span className="font-[family-name:var(--font-display)] font-bold text-[15.5px] tracking-[-0.035em]">
+                {SITE.name}
+              </span>
             </span>
             {current ? (
               <span className="text-[13px] text-[color:var(--hdr-ink-2)] font-medium">{current.label}</span>

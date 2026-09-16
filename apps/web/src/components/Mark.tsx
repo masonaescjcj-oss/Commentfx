@@ -53,23 +53,22 @@ export function Mark({ size = 28, className = '' }: { size?: number; className?:
 /**
  * The mark and the name together, which is the logo.
  *
- * `tone` is the whole of the difference between the two places it appears. On
- * white the ring is the brand blue and the name is ink; on the dark panel both
- * are white, because a 5.88:1 blue chosen against white is not a colour to put
- * on navy.
+ * Both take `currentColor`, and nothing here decides what that is. The header
+ * is blue while it is still standing on the blue band and white once it is
+ * past it, and the logo has to turn over with it — white on the blue, the
+ * brand blue on the white. Two hard-coded tones cannot do that, because the
+ * switch happens in the browser long after this has rendered. One colour, set
+ * by the bar it is sitting in, can.
  */
-export function Logotype({ tone = 'light', size = 28, className = '' }: {
-  tone?: 'light' | 'dark';
+export function Logotype({ size = 28, className = '' }: {
   size?: number;
   className?: string;
 }) {
   return (
     <span className={`inline-flex items-center gap-[7px] ${className}`}>
-      <Mark size={size} className={tone === 'dark' ? 'text-white' : 'text-accent'} />
+      <Mark size={size} />
       <span
-        className={`font-[family-name:var(--font-display)] font-bold tracking-[-0.035em] ${
-          tone === 'dark' ? 'text-white' : 'text-ink'
-        }`}
+        className="font-[family-name:var(--font-display)] font-bold tracking-[-0.035em]"
         style={{ fontSize: size * 0.62 }}
       >
         CommentFX

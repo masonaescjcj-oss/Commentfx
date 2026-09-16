@@ -54,6 +54,8 @@ const browser = await chromium.launch({ executablePath });
 // A phone, because the design is mobile-first and that is where the contrast
 // and the tap targets actually have to survive.
 const WIDTH = Number(process.env.AUDIT_WIDTH ?? 390);
+// How far down each page to scroll before auditing. 0 is the top of the page.
+const SCROLL = Number(process.env.AUDIT_SCROLL ?? 0);
 const ctx = await browser.newContext({
   viewport: { width: WIDTH, height: WIDTH >= 1024 ? 900 : 844 },
   deviceScaleFactor: 2,
@@ -80,6 +82,19 @@ for (const entry of PAGES) {
   }
   audited++;
 
+  // The header has two states and they are different colour schemes, not two
+  // shades of one: blue with white type while it is standing on the blue band,
+  // white with ink and the brand blue once that band has scrolled away. Auditing
+  // only the top of the page audits only the first of them, and the second is
+  // the one carrying a 5.88:1 blue and a 5.9:1 grey on white — exactly the pair
+  // that goes wrong quietly. AUDIT_SCROLL runs the same pages in that state.
+  if (SCROLL) {
+    await page.evaluate((y) => window.scrollTo(0, y), SCROLL);
+    // Long enough for the bar to finish coming back after the scroll stops:
+    // it returns 180ms after the last event and takes 220ms to slide.
+    await page.waitForTimeout(700);
+  }
+
   await page.addScriptTag({ content: axeSource });
   const result = await page.evaluate(
     async (tags) => await window.axe.run(document, { runOnly: { type: 'tag', values: tags } }),
@@ -101,7 +116,7 @@ await browser.close();
 const order = { critical: 0, serious: 1, moderate: 2, minor: 3 };
 const list = [...found.entries()].sort((a, b) => (order[a[1].impact] ?? 9) - (order[b[1].impact] ?? 9));
 
-console.log(`\n${audited} of ${PAGES.length} pages audited at ${WIDTH}px against ${TAGS.join(", ")}`);
+console.log(`\n${audited} of ${PAGES.length} pages audited at ${WIDTH}px${SCROLL ? `, scrolled to ${SCROLL}px` : ''} against ${TAGS.join(", ")}`);
 
 if (list.length === 0) {
   console.log('No violations.');

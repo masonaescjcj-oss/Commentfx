@@ -300,7 +300,8 @@
    *     line. The diagonal feel comes from the washes, which is where it was
    *     coming from anyway.
    *   - --chrome-h is taller than the tallest header-plus-hero on any width
-   *     (851px at 390, the worst case), so the washes are never cut mid-glow.
+   *     (511px at 390, the worst case), so where a panel ends is always inside
+   *     the painting and no wash is ever cut off mid-glow.
    */
   :root {
     --chrome-h:   1000px;
@@ -309,7 +310,6 @@
       radial-gradient(58ch 36ch at 84% -8%, rgb(56 110 255 / 0.42), transparent 62%),
       radial-gradient(52ch 34ch at 104% 46%, rgb(36 86 232 / 0.30), transparent 64%),
       radial-gradient(64ch 44ch at 0% 2%, rgb(80 140 255 / 0.26), transparent 62%),
-      radial-gradient(46ch 30ch at 22% 80%, rgb(36 86 232 / 0.24), transparent 66%),
       linear-gradient(180deg, #070F22 0%, #0E1C3D 52%, #081228 100%);
   }
 
@@ -415,7 +415,8 @@
     background-repeat: no-repeat;
     background-size: 100% var(--chrome-h);
     background-position: 0 0;
-    transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 200ms ease-out;
     will-change: transform;
   }
 
@@ -429,10 +430,12 @@
     transform: translateY(-100%);
   }
 
+  .hdr-brand { color: #FFFFFF; }
   .hdr-link {
     color: var(--hdr-ink-2);
     transition: background-color 120ms ease-out, color 120ms ease-out;
   }
+  .hdr-current { color: #FFFFFF; font-weight: 600; }
   .hdr-pill {
     border: 1px solid rgb(255 255 255 / 0.16);
     background: rgb(255 255 255 / 0.05);
@@ -446,6 +449,46 @@
 
   /* The site's focus ring is ink, which is invisible on this bar. */
   .site-header :focus-visible { outline-color: #FFFFFF; }
+
+  /**
+   * Past the band, the bar is white.
+   *
+   * The blue is not the bar's colour, it is the band's — the bar is only
+   * standing on it. Once the band has scrolled away the bar is standing on the
+   * page, and the page is white, so it becomes white and the logo takes the
+   * brand blue it was drawn in. Scroll back to the top and it is blue again.
+   *
+   * Nothing here names a colour twice. The bar keeps one --hdr-ink-2 and this
+   * block changes what it is, so the links, the search pill and the section
+   * label all turn over from one line.
+   *
+   * The edge is an inset shadow, not a border. A border would make the bar one
+   * pixel taller the moment it turned white, and every pixel of the page below
+   * it would move: a layout shift caused by scrolling, which is the kind this
+   * site measures at 0.0000 and intends to keep there.
+   *
+   * It needs the one script this site ships, because the switch is a comparison
+   * between where the band ends and where the bar is, and CSS cannot hold that.
+   * Without it the bar simply stays blue, which is what it was yesterday.
+   */
+  [data-chrome-light] .site-header {
+    --hdr-ink-2: var(--color-ink-2);
+    background-image: none;
+    background-color: #FFFFFF;
+    box-shadow: inset 0 -1px 0 var(--color-line);
+  }
+  [data-chrome-light] .hdr-brand { color: var(--color-accent); }
+  [data-chrome-light] .hdr-current { color: var(--color-ink); }
+  [data-chrome-light] .hdr-pill {
+    border-color: var(--color-line);
+    background: var(--color-card-2);
+  }
+  [data-chrome-light] .site-header :focus-visible { outline-color: var(--color-ink); }
+
+  @media (hover: hover) {
+    [data-chrome-light] .hdr-link:hover { background: var(--color-card-2); color: var(--color-ink); }
+    [data-chrome-light] .hdr-pill:hover { background: var(--color-card-3); border-color: var(--color-line); }
+  }
 
   /* Someone who asked not to be moved gets a header that is simply always
      there: no slide, and no hiding either, since the hiding is the motion. */

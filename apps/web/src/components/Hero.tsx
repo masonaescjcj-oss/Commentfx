@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { SITE } from '@/lib/site';
 
 /**
  * The front page's opening.
@@ -22,8 +21,7 @@ import { SITE } from '@/lib/site';
  * brand colour is the honest answer whenever a brand has both surfaces. Every
  * pair was measured, not judged by eye — the lowest is 6.99:1.
  */
-export function Hero({ stats, licences }: {
-  stats: Array<{ value: string; label: string }>;
+export function Hero({ licences }: {
   licences: { checked: number; total: number };
 }) {
   return (
@@ -67,38 +65,6 @@ export function Hero({ stats, licences }: {
           </Link>
         </div>
 
-        <dl className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-5 mt-11 lg:mt-14 pt-8 border-t border-[color:var(--hero-line)]">
-          {stats.map((s) => (
-            <div key={s.label}>
-              <dt className="sr-only">{s.label}</dt>
-              <dd className="m-0">
-                <span className="block font-[family-name:var(--font-display)] text-[26px] lg:text-[32px] font-bold tracking-[-0.035em] tnum text-white">
-                  {s.value}
-                </span>
-                <span className="block text-[11.5px] lg:text-[12px] text-[color:var(--hero-ink-3)] mt-[3px]">
-                  {s.label}
-                </span>
-              </dd>
-            </div>
-          ))}
-        </dl>
-
-        {/* A list, not a <nav>. The header already publishes these six links as
-            a landmark called Sections, and a second landmark with the same name
-            is a navigation a screen reader user has to tell apart from the
-            first one for no gain. The desktop accessibility audit failed on
-            exactly that, which is the second time it has caught something the
-            phone-width run could not see: below 1024px the header's nav is
-            display:none and the two never coexist. */}
-        <ul className="flex flex-wrap gap-2 mt-8">
-          {SITE.nav.map((n) => (
-            <li key={n.href}>
-              <Link href={n.href} className="hero-chip inline-block text-[12.5px] px-[13px] py-[7px] rounded-full">
-                {n.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
       </div>
     </section>
   );

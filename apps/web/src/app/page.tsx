@@ -51,12 +51,6 @@ export default async function HomePage() {
   // goes stale the day a record is added, and the footer already made exactly
   // that mistake once.
   const coverage = registerCoverage();
-  const heroStats = [
-    { value: String(rankedBrokers(stats).length), label: 'Forex brokers' },
-    { value: String(rankedProps().length), label: 'Prop firms' },
-    { value: String(rankedExchanges().length), label: 'Crypto exchanges' },
-    { value: `${coverage.licencesChecked}/${coverage.licencesTotal}`, label: 'Licences register-checked' },
-  ];
 
   return (
     <>
@@ -65,10 +59,7 @@ export default async function HomePage() {
           can be the width of the window while everything under it keeps the
           measure. */}
       <main id="main">
-        <Hero
-          stats={heroStats}
-          licences={{ checked: coverage.licencesChecked, total: coverage.licencesTotal }}
-        />
+        <Hero licences={{ checked: coverage.licencesChecked, total: coverage.licencesTotal }} />
 
         <div className="shell pt-0 pb-6 sm:pt-5 lg:pt-7 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
 
