@@ -4,7 +4,7 @@ import { MIN_FOR_SCORE, type ReviewKind } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { latestReviews, pathForKind } from '@/lib/reviews';
 import { getBroker, getProp, getExchange } from '@/lib/repo';
-import { Header, Footer, Breadcrumbs } from '@/components/chrome';
+import { Header, PageHero, Footer } from '@/components/chrome';
 import { Card, CardHead } from '@/components/primitives';
 import { ReviewFeed, type FeedItem } from '@/components/ReviewFeed';
 
@@ -61,42 +61,41 @@ export default async function ReviewsPage() {
   return (
     <>
       <Header />
-      <main id="main" className="shell pt-0 pb-6 sm:pt-3 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
-        <Breadcrumbs trail={trail} />
+      <main id="main" className="pb-6 lg:pb-10">
+        <PageHero title="What customers actually say" trail={trail} />
+        <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
+          {items.length === 0 ? (
+            <Card className="p-5 text-center" as="section">
+              <p className="text-[14px] font-semibold mb-1">Nobody has written one yet</p>
+              <p className="text-[12.5px] text-ink-2 leading-[1.8] max-w-[42ch] mx-auto">
+                Reviews appear here as they are written. Open any{' '}
+                <Link href="/brokers" className="text-accent font-semibold">broker</Link>,{' '}
+                <Link href="/props" className="text-accent font-semibold">prop firm</Link> or{' '}
+                <Link href="/exchanges" className="text-accent font-semibold">exchange</Link>{' '}
+                to be the first.
+              </p>
+            </Card>
+          ) : (
+            <ReviewFeed items={items} />
+          )}
 
-        <h1 className="sr-only">What customers actually say</h1>
-
-        {items.length === 0 ? (
-          <Card className="p-5 text-center" as="section">
-            <p className="text-[14px] font-semibold mb-1">Nobody has written one yet</p>
-            <p className="text-[12.5px] text-ink-2 leading-[1.8] max-w-[42ch] mx-auto">
-              Reviews appear here as they are written. Open any{' '}
-              <Link href="/brokers" className="text-accent font-semibold">broker</Link>,{' '}
-              <Link href="/props" className="text-accent font-semibold">prop firm</Link> or{' '}
-              <Link href="/exchanges" className="text-accent font-semibold">exchange</Link>{' '}
-              to be the first.
+          <Card className="p-4 lg:p-6" as="section">
+            <CardHead title="How this works" href="/methodology" hrefLabel="Method" />
+            <dl>
+              {FAQ.map((f) => (
+                <div key={f.q} className="py-[10px] border-b border-line-2 last:border-b-0">
+                  <dt className="text-[13px] font-semibold">{f.q}</dt>
+                  <dd className="text-[12px] text-ink-2 leading-[1.8] mt-[5px]">{f.a}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="text-[11.5px] mt-3">
+              <Link href="/reviews/withdraw" className="text-accent font-semibold">
+                Withdraw a review
+              </Link>
             </p>
           </Card>
-        ) : (
-          <ReviewFeed items={items} />
-        )}
-
-        <Card className="p-4 lg:p-6" as="section">
-          <CardHead title="How this works" href="/methodology" hrefLabel="Method" />
-          <dl>
-            {FAQ.map((f) => (
-              <div key={f.q} className="py-[10px] border-b border-line-2 last:border-b-0">
-                <dt className="text-[13px] font-semibold">{f.q}</dt>
-                <dd className="text-[12px] text-ink-2 leading-[1.8] mt-[5px]">{f.a}</dd>
-              </div>
-            ))}
-          </dl>
-          <p className="text-[11.5px] mt-3">
-            <Link href="/reviews/withdraw" className="text-accent font-semibold">
-              Withdraw a review
-            </Link>
-          </p>
-        </Card>
+        </div>
       </main>
       <Footer />
 

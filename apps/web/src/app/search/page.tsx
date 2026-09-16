@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { pageMetadata, JsonLd, breadcrumbLd } from '@/lib/seo';
 import { searchIndex } from '@/lib/searchIndex';
 import { reviewStats } from '@/lib/reviews';
-import { Header, Footer, Breadcrumbs } from '@/components/chrome';
+import { Header, PageHero, Footer, Breadcrumbs } from '@/components/chrome';
 import { SiteSearch } from '@/components/SiteSearch';
 
 const TITLE = 'Search — every broker, prop firm and exchange we rank';
@@ -19,11 +19,11 @@ export default async function SearchPage() {
   return (
     <>
       <Header />
-      <main id="main" className="shell pt-0 pb-6 sm:pt-3 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
-        <Breadcrumbs trail={trail} />
-        <h1 className="sr-only">Search</h1>
-
-        <SiteSearch entries={entries} />
+      <main id="main" className="pb-6 lg:pb-10">
+        <PageHero title="Search" trail={trail} />
+        <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
+          <SiteSearch entries={entries} />
+        </div>
       </main>
       <Footer />
 

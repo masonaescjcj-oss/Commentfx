@@ -274,6 +274,49 @@
  * are against the darkest and lightest points the text can actually land on.
  */
 @layer components {
+  /**
+   * One painting, shared.
+   *
+   * The header and the hero used to carry a gradient each. Two gradients that
+   * nearly match are not one colour: their own boxes are different heights, so
+   * they arrive at different values by the time they meet, and the join reads
+   * as a line across the top of the page — which is the first thing a reader
+   * looks at.
+   *
+   * So there is now one image, --chrome-paint, painted at one fixed size,
+   * --chrome-h. The header shows its first --hdr-h pixels; every hero shifts
+   * the same image up by exactly that much and carries on. At rest the two are
+   * a single continuous surface with nothing at all to see between them.
+   *
+   * Three things make that hold:
+   *   - The painting is a FIXED height in pixels, not a percentage, so both
+   *     elements resolve the same picture despite being different heights. The
+   *     radial positions are percentages OF THAT BOX, so they land identically
+   *     in both.
+   *   - The base gradient runs straight down rather than at an angle. A
+   *     diagonal reaches its last colour only in one corner, so where the paint
+   *     runs out on a taller-than-expected panel the flat fallback underneath
+   *     would not match. Vertically it matches exactly, on every pixel of the
+   *     line. The diagonal feel comes from the washes, which is where it was
+   *     coming from anyway.
+   *   - --chrome-h is taller than the tallest header-plus-hero on any width
+   *     (851px at 390, the worst case), so the washes are never cut mid-glow.
+   */
+  :root {
+    --chrome-h:   1000px;
+    --hdr-h:      60px;
+    --chrome-paint:
+      radial-gradient(58ch 36ch at 84% -8%, rgb(56 110 255 / 0.42), transparent 62%),
+      radial-gradient(52ch 34ch at 104% 46%, rgb(36 86 232 / 0.30), transparent 64%),
+      radial-gradient(64ch 44ch at 0% 2%, rgb(80 140 255 / 0.26), transparent 62%),
+      radial-gradient(46ch 30ch at 22% 80%, rgb(36 86 232 / 0.24), transparent 66%),
+      linear-gradient(180deg, #070F22 0%, #0E1C3D 52%, #081228 100%);
+  }
+
+  @media (min-width: 1024px) {
+    :root { --hdr-h: 56px; }
+  }
+
   .hero {
     /* The accent here is not --color-accent. That blue is picked to clear
        4.5:1 against WHITE, which makes it far too dark to read on navy; this is
@@ -288,12 +331,12 @@
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    background:
-      radial-gradient(58ch 36ch at 84% -8%, rgb(56 110 255 / 0.42), transparent 62%),
-      radial-gradient(52ch 34ch at 104% 46%, rgb(36 86 232 / 0.30), transparent 64%),
-      radial-gradient(64ch 44ch at 0% 2%, rgb(80 140 255 / 0.26), transparent 62%),
-      radial-gradient(44ch 30ch at 26% 112%, rgb(36 86 232 / 0.22), transparent 66%),
-      linear-gradient(160deg, #070F22 0%, #0E1C3D 46%, #081228 100%);
+    background-color: #081228;
+    background-image: var(--chrome-paint);
+    background-repeat: no-repeat;
+    background-size: 100% var(--chrome-h);
+    /* Where the header stopped. */
+    background-position: 0 calc(-1 * var(--hdr-h));
   }
 
   /* The panel's own gutter. The white sections below are edge to edge on a
@@ -346,9 +389,13 @@
  * The same dark blue as the hero, on every page rather than only the one the
  * hero is on: a bar that changes colour with the page under it is two headers
  * a reader has to recognise as one thing, and the seam between them lands
- * exactly where the eye does on arrival. On the front page it continues
- * straight into the hero, which is why it carries the hero's gradient origin
- * rather than a flat fill — the two meet with nothing to see.
+ * exactly where the eye does on arrival. It does not merely match the hero — it
+ * is the first --hdr-h pixels of the very same painting, and the hero is the
+ * rest of it. See the block above for how that is held together.
+ *
+ * Its height is pinned rather than left to its contents, because that height is
+ * the offset the hero shifts the shared painting by. A header that grew by a
+ * pixel would put a step in the middle of the gradient.
  *
  * Every pair on it was measured: white on #0B1630 is 17.7:1, and --hdr-ink-2
  * at #B9C4D8 is 9.9:1, which is what a nav link that is not the current page
@@ -363,10 +410,19 @@
   .site-header {
     --hdr-ink-2: #B9C4D8;
 
-    background: linear-gradient(160deg, #070F22 0%, #0E1C3D 140%);
-    border-bottom: 1px solid rgb(255 255 255 / 0.10);
+    background-color: #081228;
+    background-image: var(--chrome-paint);
+    background-repeat: no-repeat;
+    background-size: 100% var(--chrome-h);
+    background-position: 0 0;
     transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform;
+  }
+
+  /* No hairline along the bottom. There is nothing for it to separate: below it
+     is the same painting, continuing. */
+  .site-header > .shell {
+    height: var(--hdr-h);
   }
 
   [data-chrome-hidden] .site-header {

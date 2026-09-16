@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import { pageMetadata, JsonLd, breadcrumbLd, itemListLd } from '@/lib/seo';
 import { BEST_CRITERIA, bestCriterion, bestList } from '@/lib/repo';
 import { reviewStats } from '@/lib/reviews';
-import { Header, Footer, Breadcrumbs } from '@/components/chrome';
+import { Header, PageHero, Footer } from '@/components/chrome';
 import { Card, CardHead } from '@/components/primitives';
 import { BrokerRow } from '@/components/BrokerRow';
 
@@ -50,29 +50,29 @@ export default async function BestPage({ params }: { params: Promise<Params> }) 
   return (
     <>
       <Header active="/brokers" />
-      <main id="main" className="shell pt-0 pb-6 sm:pt-3 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
-        <Breadcrumbs trail={trail} />
-        <h1 className="sr-only">{c.h1}</h1>
-
-        <Card className="px-4 lg:px-6">
-          {list.map((r) => (
-            <BrokerRow headingLevel={2} key={r.broker.slug} r={r} extra={{ label: c.metricLabel, value: c.metric(r.broker) }} />
-          ))}
-        </Card>
-
-        <Card className="p-4 lg:p-6">
-          <CardHead title="Other ways to rank these brokers" />
-          <ul className="flex flex-col">
-            {BEST_CRITERIA.filter((x) => x.slug !== c.slug).map((x) => (
-              <li key={x.slug} className="border-b border-line-2 last:border-b-0">
-                <Link href={`/best/${x.slug}`} className="flex items-center gap-3 py-[11px] group">
-                  <span className="flex-1 text-[13.5px] font-semibold group-hover:text-accent">{x.h1}</span>
-                  <span aria-hidden className="text-ink-3">›</span>
-                </Link>
-              </li>
+      <main id="main" className="pb-6 lg:pb-10">
+        <PageHero title={c.h1} trail={trail} />
+        <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
+          <Card className="px-4 lg:px-6">
+            {list.map((r) => (
+              <BrokerRow headingLevel={2} key={r.broker.slug} r={r} extra={{ label: c.metricLabel, value: c.metric(r.broker) }} />
             ))}
-          </ul>
-        </Card>
+          </Card>
+
+          <Card className="p-4 lg:p-6">
+            <CardHead title="Other ways to rank these brokers" />
+            <ul className="flex flex-col">
+              {BEST_CRITERIA.filter((x) => x.slug !== c.slug).map((x) => (
+                <li key={x.slug} className="border-b border-line-2 last:border-b-0">
+                  <Link href={`/best/${x.slug}`} className="flex items-center gap-3 py-[11px] group">
+                    <span className="flex-1 text-[13.5px] font-semibold group-hover:text-accent">{x.h1}</span>
+                    <span aria-hidden className="text-ink-3">›</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Card>
+        </div>
       </main>
       <Footer />
       <JsonLd graph={[

@@ -3,9 +3,9 @@ import type { Metadata } from 'next';
 import { pageMetadata, JsonLd, breadcrumbLd, itemListLd } from '@/lib/seo';
 import { coins } from '@/lib/market';
 import { COIN_INDEX } from '@commentfx/core';
-import { Header, Footer, Breadcrumbs } from '@/components/chrome';
+import { Header, PageHero, Footer } from '@/components/chrome';
 import { Card } from '@/components/primitives';
-import { RankingIntro } from '@/components/ranking';
+
 import { CoinRow } from '@/components/CoinRow';
 import { Unavailable, Freshness } from '@/components/Unavailable';
 
@@ -24,43 +24,43 @@ export default async function CoinsPage() {
   return (
     <>
       <Header active="/coins" />
-      <main id="main" className="shell pt-0 pb-6 sm:pt-3 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
-        <Breadcrumbs trail={trail} />
-        {'error' in data ? (
-          <>
-            <RankingIntro title={TITLE} />
-            <Unavailable
-              what="Market data"
-              reason={data.error}
-              elsewhere={{ href: 'https://www.coingecko.com/', label: 'Check CoinGecko directly' }}
-            />
-            {/* The prices are gone; the coverage is not. Without this the page
-                loses every link to a coin during an outage, which would make
-                the honest coin pages behind them unreachable by anyone who was
-                browsing rather than arriving from a search result. Names only —
-                there is no number here to be stale about. */}
-            <Card className="px-4 lg:px-6">
-              {COIN_INDEX.map((c) => (
-                <article key={c.id} className="flex items-center gap-[10px] py-[11px] border-b border-line-2 last:border-b-0">
-                  <div className="min-w-0">
-                    <h2 className="text-[13.5px] font-semibold leading-tight">
-                      <Link href={`/coins/${c.id}`} className="hover:text-accent">{c.name}</Link>
-                    </h2>
-                    <p className="text-[11px] text-ink-3 tnum">{c.symbol}</p>
-                  </div>
-                </article>
-              ))}
-            </Card>
-          </>
-        ) : (
-          <>
-            <RankingIntro title={TITLE} />
-            <Card className="px-4 lg:px-6">
-              {data.list.map((c) => <CoinRow key={c.id} c={c} rank />)}
-            </Card>
-            <Freshness at={data.at} source="CoinGecko" />
-          </>
-        )}
+      <main id="main" className="pb-6 lg:pb-10">
+        <PageHero title={TITLE} trail={trail} />
+        <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
+          {'error' in data ? (
+            <>
+              <Unavailable
+                what="Market data"
+                reason={data.error}
+                elsewhere={{ href: 'https://www.coingecko.com/', label: 'Check CoinGecko directly' }}
+              />
+              {/* The prices are gone; the coverage is not. Without this the page
+                  loses every link to a coin during an outage, which would make
+                  the honest coin pages behind them unreachable by anyone who was
+                  browsing rather than arriving from a search result. Names only —
+                  there is no number here to be stale about. */}
+              <Card className="px-4 lg:px-6">
+                {COIN_INDEX.map((c) => (
+                  <article key={c.id} className="flex items-center gap-[10px] py-[11px] border-b border-line-2 last:border-b-0">
+                    <div className="min-w-0">
+                      <h2 className="text-[13.5px] font-semibold leading-tight">
+                        <Link href={`/coins/${c.id}`} className="hover:text-accent">{c.name}</Link>
+                      </h2>
+                      <p className="text-[11px] text-ink-3 tnum">{c.symbol}</p>
+                    </div>
+                  </article>
+                ))}
+              </Card>
+            </>
+          ) : (
+            <>
+              <Card className="px-4 lg:px-6">
+                {data.list.map((c) => <CoinRow key={c.id} c={c} rank />)}
+              </Card>
+              <Freshness at={data.at} source="CoinGecko" />
+            </>
+          )}
+        </div>
       </main>
       <Footer />
       <JsonLd graph={[

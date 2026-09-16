@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import { volumeBand } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { rankedExchanges, getRankedExchange } from '@/lib/repo';
-import { Header, Footer, Breadcrumbs } from '@/components/chrome';
+import { Header, PageHero, Footer } from '@/components/chrome';
 import { ReviewForm } from '@/components/ReviewForm';
 import { ReviewList, ReviewSummary } from '@/components/ReviewList';
 import { recordReviews } from '@/lib/reviews';
@@ -87,126 +87,127 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
   return (
     <>
       <Header active="/exchanges" />
-      <main id="main" className="shell pt-0 pb-6 sm:pt-3 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
-        <Breadcrumbs trail={trail} />
+      <main id="main" className="pb-6 lg:pb-10">
+        <PageHero trail={trail} />
+        <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
+          {/* Two columns above 1024px, the narrow one first: who this is and
+              what is known about them, then the detail, which is most of the
+              page and wants the width. */}
+          <div className="split rail-left">
+            <div>
 
-        {/* Two columns above 1024px, the narrow one first: who this is and
-            what is known about them, then the detail, which is most of the
-            page and wants the width. */}
-        <div className="split rail-left">
-          <div>
-
-          <Card className="p-4 lg:p-6" as="article">
-            <div className="flex gap-[14px] items-start">
-              <Logo {...e.logo} size={64} />
-              <div className="flex-1 min-w-0">
-                <Tag tone="accent">RANK #{r.rank} OF {all.length}</Tag>
-                <h1 className="font-[family-name:var(--font-display)] text-[23px] font-bold mt-2 tracking-[-0.025em]">
-                  {e.name}
-                </h1>
-                {/* Baseline-aligned, not centred: a 46px figure centred against
-                    two 11px lines hangs them off its middle, which is where the
-                    eye reads a fraction. On the baseline they read as a caption
-                    to the number, which is what they are. */}
-                <div className="flex items-end gap-[10px] mt-3">
-                  <Score value={r.score.total} size="xl" />
-                  <span className="text-[11.5px] text-ink-3 leading-[1.5] pb-[3px]">
-                    out of 10<br />
-                    <Link href="/methodology" className="text-accent">how we score</Link>
-                  </span>
+            <Card className="p-4 lg:p-6" as="article">
+              <div className="flex gap-[14px] items-start">
+                <Logo {...e.logo} size={64} />
+                <div className="flex-1 min-w-0">
+                  <Tag tone="accent">RANK #{r.rank} OF {all.length}</Tag>
+                  <h1 className="font-[family-name:var(--font-display)] text-[23px] font-bold mt-2 tracking-[-0.025em]">
+                    {e.name}
+                  </h1>
+                  {/* Baseline-aligned, not centred: a 46px figure centred against
+                      two 11px lines hangs them off its middle, which is where the
+                      eye reads a fraction. On the baseline they read as a caption
+                      to the number, which is what they are. */}
+                  <div className="flex items-end gap-[10px] mt-3">
+                    <Score value={r.score.total} size="xl" />
+                    <span className="text-[11.5px] text-ink-3 leading-[1.5] pb-[3px]">
+                      out of 10<br />
+                      <Link href="/methodology" className="text-accent">how we score</Link>
+                    </span>
+                  </div>
                 </div>
               </div>
+              <div className="flex gap-[5px] flex-wrap mt-4">
+                {e.reserves.publiclyListed && <Tag tone="good">Publicly listed</Tag>}
+                {e.reserves.thirdPartyAudit && <Tag tone="good">Third-party audit</Tag>}
+                {e.reserves.proofOfReserves && <Tag tone="accent">Proof of reserves</Tag>}
+                {e.security.lastBreachYear === null
+                  ? <Tag tone="good">No breach on record</Tag>
+                  : <Tag tone={e.security.madeUsersWhole ? 'warn' : 'bad'}>Breach {e.security.lastBreachYear}</Tag>}
+              </div>
+            </Card>
+              <VerificationPanel coverage={cov} />
             </div>
-            <div className="flex gap-[5px] flex-wrap mt-4">
-              {e.reserves.publiclyListed && <Tag tone="good">Publicly listed</Tag>}
-              {e.reserves.thirdPartyAudit && <Tag tone="good">Third-party audit</Tag>}
-              {e.reserves.proofOfReserves && <Tag tone="accent">Proof of reserves</Tag>}
-              {e.security.lastBreachYear === null
-                ? <Tag tone="good">No breach on record</Tag>
-                : <Tag tone={e.security.madeUsersWhole ? 'warn' : 'bad'}>Breach {e.security.lastBreachYear}</Tag>}
+
+            <div>
+            <ScoreBreakdownCard components={r.score.components} skipped={r.score.skipped} />
+
+            <Card className="p-4 lg:p-6" as="section">
+              <CardHead title="Fees and liquidity" />
+              <FactList rows={[
+                ['Taker fee', `${e.takerFeePct}%`],
+                ['Maker fee', `${e.makerFeePct}%`],
+                ['Reported 24h spot volume', volumeBand(e.spotVolumeUsd)],
+                ['Type', e.kind === 'centralised' ? 'Centralised' : 'Decentralised'],
+                ['Founded', String(e.founded)],
+                ['Headquarters', e.headquarters],
+              ]} />
+            </Card>
+
+            <Card className="p-4 lg:p-6" as="section">
+              <CardHead title="Solvency and security" />
+              <FactList rows={[
+                ['Proof of reserves', e.reserves.proofOfReserves ? 'Published' : 'None'],
+                ['Third-party audit', e.reserves.thirdPartyAudit ? 'Yes' : 'No'],
+                ['Publicly listed', e.reserves.publiclyListed ? 'Yes' : 'No'],
+                ['Last customer-funds breach', e.security.lastBreachYear === null ? 'None on record' : String(e.security.lastBreachYear)],
+                ['Users made whole', e.security.madeUsersWhole === null ? '—' : e.security.madeUsersWhole ? 'Yes' : 'No'],
+                ['Insurance fund', e.security.insuranceFund ? 'Yes' : 'No'],
+              ]} />
+              <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.8]">
+                An exchange is a counterparty, not a wallet.
+              </p>
+            </Card>
+
+            <Card className="p-4 lg:p-6" as="section">
+              <OfficialSite name={e.name} url={e.website} />
+            </Card>
+
+            <Card className="p-4 lg:p-6" as="section" id="reviews">
+              <CardHead
+                title="What customers say"
+                aside={<span className="text-[11.5px] text-ink-3 tnum">{reviews.stats.total} published</span>}
+              />
+              <ReviewSummary stats={reviews.stats} kind="exchange" />
+              <div className="mt-3"><ReviewList reviews={reviews.list} /></div>
+            </Card>
+
+            <Card className="p-4 lg:p-6" as="section">
+              <CardHead title={`Write about ${e.name}`} />
+              <ReviewForm kind="exchange" slug={e.slug} name={e.name} />
+            </Card>
+
+            <Card className="p-4 lg:p-6" as="section">
+              <CardHead title="Other exchanges" href="/exchanges" hrefLabel="Full ranking" />
+              <ul>
+                {all.filter((x) => x.exchange.slug !== e.slug).slice(0, 4).map((x) => (
+                  <li key={x.exchange.slug} className="border-b border-line-2 last:border-b-0">
+                    <Link href={`/exchanges/${x.exchange.slug}`} className="flex items-center gap-3 py-[11px] group">
+                      <Logo {...x.exchange.logo} size={32} />
+                      <span className="flex-1 min-w-0">
+                        <span className="block text-[13.5px] font-semibold group-hover:text-accent">{x.exchange.name}</span>
+                        <span className="block text-[11px] text-ink-3">{x.exchange.takerFeePct}% taker · {volumeBand(x.exchange.spotVolumeUsd)}</span>
+                      </span>
+                      <Score value={x.score.total} />
+                      <span aria-hidden className="text-ink-3">›</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+
+            <Card className="p-4 lg:p-6" as="section">
+              <CardHead title={`${e.name} — common questions`} />
+              <dl>
+                {faq.map(({ q, a }) => (
+                  <div key={q} className="py-3 border-b border-line-2 last:border-b-0">
+                    <dt className="text-[13.5px] font-semibold mb-[5px]">{q}</dt>
+                    <dd className="text-[12.5px] text-ink-2 leading-[1.8]">{a}</dd>
+                  </div>
+                ))}
+              </dl>
+            </Card>
             </div>
-          </Card>
-            <VerificationPanel coverage={cov} />
-          </div>
-
-          <div>
-          <ScoreBreakdownCard components={r.score.components} skipped={r.score.skipped} />
-
-          <Card className="p-4 lg:p-6" as="section">
-            <CardHead title="Fees and liquidity" />
-            <FactList rows={[
-              ['Taker fee', `${e.takerFeePct}%`],
-              ['Maker fee', `${e.makerFeePct}%`],
-              ['Reported 24h spot volume', volumeBand(e.spotVolumeUsd)],
-              ['Type', e.kind === 'centralised' ? 'Centralised' : 'Decentralised'],
-              ['Founded', String(e.founded)],
-              ['Headquarters', e.headquarters],
-            ]} />
-          </Card>
-
-          <Card className="p-4 lg:p-6" as="section">
-            <CardHead title="Solvency and security" />
-            <FactList rows={[
-              ['Proof of reserves', e.reserves.proofOfReserves ? 'Published' : 'None'],
-              ['Third-party audit', e.reserves.thirdPartyAudit ? 'Yes' : 'No'],
-              ['Publicly listed', e.reserves.publiclyListed ? 'Yes' : 'No'],
-              ['Last customer-funds breach', e.security.lastBreachYear === null ? 'None on record' : String(e.security.lastBreachYear)],
-              ['Users made whole', e.security.madeUsersWhole === null ? '—' : e.security.madeUsersWhole ? 'Yes' : 'No'],
-              ['Insurance fund', e.security.insuranceFund ? 'Yes' : 'No'],
-            ]} />
-            <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.8]">
-              An exchange is a counterparty, not a wallet.
-            </p>
-          </Card>
-
-          <Card className="p-4 lg:p-6" as="section">
-            <OfficialSite name={e.name} url={e.website} />
-          </Card>
-
-          <Card className="p-4 lg:p-6" as="section" id="reviews">
-            <CardHead
-              title="What customers say"
-              aside={<span className="text-[11.5px] text-ink-3 tnum">{reviews.stats.total} published</span>}
-            />
-            <ReviewSummary stats={reviews.stats} kind="exchange" />
-            <div className="mt-3"><ReviewList reviews={reviews.list} /></div>
-          </Card>
-
-          <Card className="p-4 lg:p-6" as="section">
-            <CardHead title={`Write about ${e.name}`} />
-            <ReviewForm kind="exchange" slug={e.slug} name={e.name} />
-          </Card>
-
-          <Card className="p-4 lg:p-6" as="section">
-            <CardHead title="Other exchanges" href="/exchanges" hrefLabel="Full ranking" />
-            <ul>
-              {all.filter((x) => x.exchange.slug !== e.slug).slice(0, 4).map((x) => (
-                <li key={x.exchange.slug} className="border-b border-line-2 last:border-b-0">
-                  <Link href={`/exchanges/${x.exchange.slug}`} className="flex items-center gap-3 py-[11px] group">
-                    <Logo {...x.exchange.logo} size={32} />
-                    <span className="flex-1 min-w-0">
-                      <span className="block text-[13.5px] font-semibold group-hover:text-accent">{x.exchange.name}</span>
-                      <span className="block text-[11px] text-ink-3">{x.exchange.takerFeePct}% taker · {volumeBand(x.exchange.spotVolumeUsd)}</span>
-                    </span>
-                    <Score value={x.score.total} />
-                    <span aria-hidden className="text-ink-3">›</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </Card>
-
-          <Card className="p-4 lg:p-6" as="section">
-            <CardHead title={`${e.name} — common questions`} />
-            <dl>
-              {faq.map(({ q, a }) => (
-                <div key={q} className="py-3 border-b border-line-2 last:border-b-0">
-                  <dt className="text-[13.5px] font-semibold mb-[5px]">{q}</dt>
-                  <dd className="text-[12.5px] text-ink-2 leading-[1.8]">{a}</dd>
-                </div>
-              ))}
-            </dl>
-          </Card>
           </div>
         </div>
       </main>

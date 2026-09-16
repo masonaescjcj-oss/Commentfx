@@ -5,7 +5,7 @@ import { effectiveCostPips, hours, leverage } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd } from '@/lib/seo';
 import { comparePairs, pairSlug, parsePair, getRanked, type RankedBroker } from '@/lib/repo';
 import { reviewStats } from '@/lib/reviews';
-import { Header, Footer, Breadcrumbs } from '@/components/chrome';
+import { Header, PageHero, Footer } from '@/components/chrome';
 import { Card, Logo, Score } from '@/components/primitives';
 
 type Params = { pair: string };
@@ -83,62 +83,64 @@ export default async function ComparePage({ params }: { params: Promise<Params> 
   return (
     <>
       <Header active="/brokers" />
-      <main id="main" className="shell pt-0 pb-6 sm:pt-3 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
-        <Breadcrumbs trail={trail} />
-        <h1 className="font-[family-name:var(--font-display)] text-[24px] font-bold leading-[1.25] tracking-[-0.02em] gutter text-balance">
-          {a.broker.name} vs {b.broker.name}
-        </h1>
+      <main id="main" className="pb-6 lg:pb-10">
+        <PageHero trail={trail} />
+        <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
+          <h1 className="font-[family-name:var(--font-display)] text-[24px] font-bold leading-[1.25] tracking-[-0.02em] gutter text-balance">
+            {a.broker.name} vs {b.broker.name}
+          </h1>
 
-        <div className="flex items-start gap-[10px] gutter">
-          {[a, b].map((x, i) => (
-            <div key={x.broker.slug} className="flex-1 text-center">
-              <Logo {...x.broker.logo} size={48} />
-              <p className="text-[13.5px] font-bold mt-2">{x.broker.name}</p>
-              <p className="text-[11.5px] text-ink-3">#{x.rank} overall</p>
-              {i === 0 && <span className="sr-only">compared with</span>}
-            </div>
-          ))}
-        </div>
+          <div className="flex items-start gap-[10px] gutter">
+            {[a, b].map((x, i) => (
+              <div key={x.broker.slug} className="flex-1 text-center">
+                <Logo {...x.broker.logo} size={48} />
+                <p className="text-[13.5px] font-bold mt-2">{x.broker.name}</p>
+                <p className="text-[11.5px] text-ink-3">#{x.rank} overall</p>
+                {i === 0 && <span className="sr-only">compared with</span>}
+              </div>
+            ))}
+          </div>
 
-        <Card className="px-4 lg:px-6 py-2">
-          <table className="w-full">
-            <caption className="sr-only">{a.broker.name} compared with {b.broker.name}</caption>
-            <thead className="sr-only">
-              <tr><th scope="col">Attribute</th><th scope="col">{a.broker.name}</th><th scope="col">{b.broker.name}</th></tr>
-            </thead>
-            <tbody>
-              {table.map((row) => (
-                <tr key={row.label} className="border-b border-line-2 last:border-b-0">
-                  <td className={`py-[11px] text-[13px] tnum text-center w-[36%] ${row.win === 1 ? 'font-extrabold text-accent' : 'text-ink-2'}`}>{row.a}</td>
-                  <th scope="row" className="py-[11px] text-[11px] text-ink-3 font-normal text-center">{row.label}</th>
-                  <td className={`py-[11px] text-[13px] tnum text-center w-[36%] ${row.win === 2 ? 'font-extrabold text-accent' : 'text-ink-2'}`}>{row.b}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Card>
+          <Card className="px-4 lg:px-6 py-2">
+            <table className="w-full">
+              <caption className="sr-only">{a.broker.name} compared with {b.broker.name}</caption>
+              <thead className="sr-only">
+                <tr><th scope="col">Attribute</th><th scope="col">{a.broker.name}</th><th scope="col">{b.broker.name}</th></tr>
+              </thead>
+              <tbody>
+                {table.map((row) => (
+                  <tr key={row.label} className="border-b border-line-2 last:border-b-0">
+                    <td className={`py-[11px] text-[13px] tnum text-center w-[36%] ${row.win === 1 ? 'font-extrabold text-accent' : 'text-ink-2'}`}>{row.a}</td>
+                    <th scope="row" className="py-[11px] text-[11px] text-ink-3 font-normal text-center">{row.label}</th>
+                    <td className={`py-[11px] text-[13px] tnum text-center w-[36%] ${row.win === 2 ? 'font-extrabold text-accent' : 'text-ink-2'}`}>{row.b}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Card>
 
-        <Card className="p-4 lg:p-6 border-[1.5px] border-accent shadow-none">
-          <h2 className="text-[14px] font-bold text-accent-2 mb-[6px]">The short version</h2>
-          <p className="text-[12.5px] text-ink-2 leading-[1.8]">
-            {winner.broker.name} takes it overall on {winner.score.total.toFixed(1)} against{' '}
-            {other.score.total.toFixed(1)} — {winner.broker.why.charAt(0).toLowerCase() + winner.broker.why.slice(1)}.
-            {' '}{other.broker.name} is the better pick if what you need is{' '}
-            {effectiveCostPips(other.broker) < effectiveCostPips(winner.broker)
-              ? 'the tighter all-in cost'
-              : other.broker.payments.minDepositUsd < winner.broker.payments.minDepositUsd
-                ? 'the lower minimum deposit'
-                : 'a different platform line-up'}.
-          </p>
-        </Card>
+          <Card className="p-4 lg:p-6 border-[1.5px] border-accent shadow-none">
+            <h2 className="text-[14px] font-bold text-accent-2 mb-[6px]">The short version</h2>
+            <p className="text-[12.5px] text-ink-2 leading-[1.8]">
+              {winner.broker.name} takes it overall on {winner.score.total.toFixed(1)} against{' '}
+              {other.score.total.toFixed(1)} — {winner.broker.why.charAt(0).toLowerCase() + winner.broker.why.slice(1)}.
+              {' '}{other.broker.name} is the better pick if what you need is{' '}
+              {effectiveCostPips(other.broker) < effectiveCostPips(winner.broker)
+                ? 'the tighter all-in cost'
+                : other.broker.payments.minDepositUsd < winner.broker.payments.minDepositUsd
+                  ? 'the lower minimum deposit'
+                  : 'a different platform line-up'}.
+            </p>
+          </Card>
 
-        <div className="flex gap-[10px]">
-          {[a, b].map((x) => (
-            <Link key={x.broker.slug} href={`/brokers/${x.broker.slug}`}
-              className="flex-1 flex items-center justify-center gap-2 bg-card border border-line rounded-[13px] py-3 text-[13.5px] font-semibold hover:border-ink">
-              {x.broker.name} <Score value={x.score.total} />
-            </Link>
-          ))}
+          <div className="flex gap-[10px]">
+            {[a, b].map((x) => (
+              <Link key={x.broker.slug} href={`/brokers/${x.broker.slug}`}
+                className="flex-1 flex items-center justify-center gap-2 bg-card border border-line rounded-[13px] py-3 text-[13.5px] font-semibold hover:border-ink">
+                {x.broker.name} <Score value={x.score.total} />
+              </Link>
+            ))}
+          </div>
         </div>
       </main>
       <Footer />

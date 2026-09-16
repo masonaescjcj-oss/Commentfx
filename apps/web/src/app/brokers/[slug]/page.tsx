@@ -10,7 +10,7 @@ import { registerChecksFor } from '@/lib/registers';
 import { recordReviews, reviewStats } from '@/lib/reviews';
 import { StatusBlock } from '@/components/StatusBlock';
 import { VerificationPanel } from '@/components/VerificationPanel';
-import { Header, Footer, Breadcrumbs } from '@/components/chrome';
+import { Header, PageHero, Footer } from '@/components/chrome';
 import { OfficialSite } from '@/components/OfficialSite';
 import { Card, CardHead, Logo, Score, Tag, Meter } from '@/components/primitives';
 import { EntityMap } from '@/components/EntityMap';
@@ -98,167 +98,168 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
   return (
     <>
       <Header active="/brokers" />
-      <main id="main" className="shell pt-0 pb-6 sm:pt-3 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
-        <Breadcrumbs trail={trail} />
+      <main id="main" className="pb-6 lg:pb-10">
+        <PageHero trail={trail} />
+        <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
+          {/* Two columns above 1024px, the narrow one first: who this is and
+              what is known about them, then the detail, which is most of the
+              page and wants the width. */}
+          <div className="split rail-left">
+            <div>
 
-        {/* Two columns above 1024px, the narrow one first: who this is and
-            what is known about them, then the detail, which is most of the
-            page and wants the width. */}
-        <div className="split rail-left">
-          <div>
-
-          <Card className="p-4 lg:p-6" as="article">
-            <div className="flex gap-[14px] items-start">
-              <Logo {...b.logo} size={64} />
-              <div className="flex-1 min-w-0">
-                <Tag tone="accent">RANK #{r.rank} OF {all.length}</Tag>
-                <h1 className="font-[family-name:var(--font-display)] text-[23px] font-bold mt-2 tracking-[-0.025em]">
-                  {b.name}
-                </h1>
-                {/* Baseline-aligned, not centred: a 46px figure centred against
-                    two 11px lines hangs them off its middle, which is where the
-                    eye reads a fraction. On the baseline they read as a caption
-                    to the number, which is what they are. */}
-                <div className="flex items-end gap-[10px] mt-3">
-                  <Score value={r.score.total} size="xl" />
-                  <span className="text-[11.5px] text-ink-3 leading-[1.5] pb-[3px]">
-                    out of 10<br />
-                    <Link href="/methodology" className="text-accent">how we score</Link>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <dl className="flex flex-wrap mt-4 pt-1 border-t border-line-2">
-              {[
-                ['Founded', String(b.founded)],
-                ['Min deposit', b.payments.minDepositUsd === 0 ? 'None' : `$${b.payments.minDepositUsd}`],
-                ['Headquarters', b.headquarters],
-                ['Max leverage', leverage(b.platforms.maxLeverage)],
-              ].map(([k, v]) => (
-                <div key={k} className="basis-1/2 py-2">
-                  <dt className="text-[11.5px] text-ink-3">{k}</dt>
-                  <dd className="text-[14px] font-bold tnum">{v}</dd>
-                </div>
-              ))}
-            </dl>
-
-          </Card>
-
-          <StatusBlock brokerSlug={b.slug} brokerName={b.name} status={status} />
-
-          <VerificationPanel coverage={cov} />
-          </div>
-
-          <div>
-          <Card className="p-4 lg:p-6" as="section">
-            <CardHead title="Score breakdown" href="/methodology" hrefLabel="Method" />
-            <ul className="flex flex-col gap-[11px]">
-              {r.score.components.map((c) => (
-                <li key={c.key}>
-                  <div className="flex items-baseline gap-2 mb-[6px]">
-                    <span className="text-[12.5px]">{c.label}</span>
-                    <span className="text-[11px] text-ink-3 tnum">{Math.round(c.weight * 100)}%</span>
-                    <div className="flex-1" />
-                    <span className={`text-[13px] font-extrabold tnum ${c.value === null ? 'text-ink-3' : ''}`}>
-                      {c.value === null ? '—' : c.value.toFixed(1)}
+            <Card className="p-4 lg:p-6" as="article">
+              <div className="flex gap-[14px] items-start">
+                <Logo {...b.logo} size={64} />
+                <div className="flex-1 min-w-0">
+                  <Tag tone="accent">RANK #{r.rank} OF {all.length}</Tag>
+                  <h1 className="font-[family-name:var(--font-display)] text-[23px] font-bold mt-2 tracking-[-0.025em]">
+                    {b.name}
+                  </h1>
+                  {/* Baseline-aligned, not centred: a 46px figure centred against
+                      two 11px lines hangs them off its middle, which is where the
+                      eye reads a fraction. On the baseline they read as a caption
+                      to the number, which is what they are. */}
+                  <div className="flex items-end gap-[10px] mt-3">
+                    <Score value={r.score.total} size="xl" />
+                    <span className="text-[11.5px] text-ink-3 leading-[1.5] pb-[3px]">
+                      out of 10<br />
+                      <Link href="/methodology" className="text-accent">how we score</Link>
                     </span>
                   </div>
-                  {c.value !== null && <Meter value={c.value} tone={c.value >= 8 ? 'up' : c.value >= 6 ? 'accent' : 'warn'} />}
-                  <p className="text-[11px] text-ink-3 mt-[5px]">{c.note}</p>
-                </li>
-              ))}
-            </ul>
-            {r.score.skipped.length > 0 && (
-              <p className="mt-3 text-[11.5px] text-ink-3 leading-[1.7]">
-                {r.score.skipped.length} component{r.score.skipped.length > 1 ? 's' : ''} had no data
-                and {r.score.skipped.length > 1 ? 'were' : 'was'} excluded — the remaining weights were
-                renormalised rather than scoring it zero.
-              </p>
-            )}
-          </Card>
+                </div>
+              </div>
 
-          <Card className="p-4 lg:p-6 border-[1.5px] border-accent shadow-none" as="section">
-            <CardHead title="Which entity will you be under?" />
-            <EntityMap broker={b} />
-            <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.8]">
-              Where you live decides the entity, and the entity decides the protection.
-            </p>
-          </Card>
+              <dl className="flex flex-wrap mt-4 pt-1 border-t border-line-2">
+                {[
+                  ['Founded', String(b.founded)],
+                  ['Min deposit', b.payments.minDepositUsd === 0 ? 'None' : `$${b.payments.minDepositUsd}`],
+                  ['Headquarters', b.headquarters],
+                  ['Max leverage', leverage(b.platforms.maxLeverage)],
+                ].map(([k, v]) => (
+                  <div key={k} className="basis-1/2 py-2">
+                    <dt className="text-[11.5px] text-ink-3">{k}</dt>
+                    <dd className="text-[14px] font-bold tnum">{v}</dd>
+                  </div>
+                ))}
+              </dl>
 
-          <Card className="p-4 lg:p-6" as="section">
-            <CardHead title="Licences" aside={<span className="text-[11.5px] text-ink-3">{b.entities.length} on record</span>} />
-            <LicenceList broker={b} checks={checks} />
-          </Card>
+            </Card>
 
-          <Card className="p-4 lg:p-6" as="section">
+            <StatusBlock brokerSlug={b.slug} brokerName={b.name} status={status} />
+
+            <VerificationPanel coverage={cov} />
+            </div>
+
+            <div>
             <Card className="p-4 lg:p-6" as="section">
-            <OfficialSite name={b.name} url={b.website} />
-          </Card>
+              <CardHead title="Score breakdown" href="/methodology" hrefLabel="Method" />
+              <ul className="flex flex-col gap-[11px]">
+                {r.score.components.map((c) => (
+                  <li key={c.key}>
+                    <div className="flex items-baseline gap-2 mb-[6px]">
+                      <span className="text-[12.5px]">{c.label}</span>
+                      <span className="text-[11px] text-ink-3 tnum">{Math.round(c.weight * 100)}%</span>
+                      <div className="flex-1" />
+                      <span className={`text-[13px] font-extrabold tnum ${c.value === null ? 'text-ink-3' : ''}`}>
+                        {c.value === null ? '—' : c.value.toFixed(1)}
+                      </span>
+                    </div>
+                    {c.value !== null && <Meter value={c.value} tone={c.value >= 8 ? 'up' : c.value >= 6 ? 'accent' : 'warn'} />}
+                    <p className="text-[11px] text-ink-3 mt-[5px]">{c.note}</p>
+                  </li>
+                ))}
+              </ul>
+              {r.score.skipped.length > 0 && (
+                <p className="mt-3 text-[11.5px] text-ink-3 leading-[1.7]">
+                  {r.score.skipped.length} component{r.score.skipped.length > 1 ? 's' : ''} had no data
+                  and {r.score.skipped.length > 1 ? 'were' : 'was'} excluded — the remaining weights were
+                  renormalised rather than scoring it zero.
+                </p>
+              )}
+            </Card>
 
-          <CardHead title="Costs and terms" />
-            <dl>
-              {[
-                ['EUR/USD spread', `${b.cost.eurusdSpread.toFixed(1)} pips`],
-                ['Commission', b.cost.commissionPerLot === 0 ? 'None' : `$${b.cost.commissionPerLot} per lot round turn`],
-                ['All-in cost', `${effectiveCostPips(b).toFixed(2)} pips`],
-                ['Swap-free available', b.cost.swapFreeAvailable ? 'Yes' : 'No'],
-                ['Stated withdrawal time', hours(b.payments.statedWithdrawalHours)],
-                ['Funding methods', b.payments.methods.join(', ')],
-                ['Platforms', b.platforms.list.join(', ').toUpperCase()],
-                ['Execution', b.platforms.execution.toUpperCase()],
-              ].map(([k, v]) => (
-                <div key={k} className="flex justify-between items-center gap-3 py-[9px] border-b border-line-2 last:border-b-0">
-                  <dt className="text-[12.5px] text-ink-3">{k}</dt>
-                  <dd className="text-[13px] font-semibold tnum text-right">{v}</dd>
-                </div>
-              ))}
-            </dl>
-          </Card>
+            <Card className="p-4 lg:p-6 border-[1.5px] border-accent shadow-none" as="section">
+              <CardHead title="Which entity will you be under?" />
+              <EntityMap broker={b} />
+              <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.8]">
+                Where you live decides the entity, and the entity decides the protection.
+              </p>
+            </Card>
 
-          <Card className="p-4 lg:p-6" as="section" id="reviews">
-            <CardHead
-              title="What customers say"
-              aside={<span className="text-[11.5px] text-ink-3 tnum">{reviews.stats.total} published</span>}
-            />
-            <ReviewSummary stats={reviews.stats} kind="broker" />
-            <div className="mt-3"><ReviewList reviews={reviews.list} /></div>
-          </Card>
+            <Card className="p-4 lg:p-6" as="section">
+              <CardHead title="Licences" aside={<span className="text-[11.5px] text-ink-3">{b.entities.length} on record</span>} />
+              <LicenceList broker={b} checks={checks} />
+            </Card>
 
-          <Card className="p-4 lg:p-6" as="section">
-            <CardHead title={`Write about ${b.name}`} />
-            <ReviewForm kind="broker" slug={b.slug} name={b.name} />
-          </Card>
+            <Card className="p-4 lg:p-6" as="section">
+              <Card className="p-4 lg:p-6" as="section">
+              <OfficialSite name={b.name} url={b.website} />
+            </Card>
 
-          <Card className="p-4 lg:p-6" as="section">
-            <CardHead title="Compare" />
-            <ul className="flex flex-col">
-              {alternatives.map((a) => (
-                <li key={a.broker.slug} className="border-b border-line-2 last:border-b-0">
-                  <Link href={`/compare/${b.slug}-vs-${a.broker.slug}`} className="flex items-center gap-3 py-[11px] group">
-                    <Logo {...a.broker.logo} size={32} />
-                    <span className="flex-1 text-[13.5px] font-semibold group-hover:text-accent">
-                      {b.name} vs {a.broker.name}
-                    </span>
-                    <Score value={a.score.total} />
-                    <span aria-hidden className="text-ink-3">›</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </Card>
+            <CardHead title="Costs and terms" />
+              <dl>
+                {[
+                  ['EUR/USD spread', `${b.cost.eurusdSpread.toFixed(1)} pips`],
+                  ['Commission', b.cost.commissionPerLot === 0 ? 'None' : `$${b.cost.commissionPerLot} per lot round turn`],
+                  ['All-in cost', `${effectiveCostPips(b).toFixed(2)} pips`],
+                  ['Swap-free available', b.cost.swapFreeAvailable ? 'Yes' : 'No'],
+                  ['Stated withdrawal time', hours(b.payments.statedWithdrawalHours)],
+                  ['Funding methods', b.payments.methods.join(', ')],
+                  ['Platforms', b.platforms.list.join(', ').toUpperCase()],
+                  ['Execution', b.platforms.execution.toUpperCase()],
+                ].map(([k, v]) => (
+                  <div key={k} className="flex justify-between items-center gap-3 py-[9px] border-b border-line-2 last:border-b-0">
+                    <dt className="text-[12.5px] text-ink-3">{k}</dt>
+                    <dd className="text-[13px] font-semibold tnum text-right">{v}</dd>
+                  </div>
+                ))}
+              </dl>
+            </Card>
 
-          <Card className="p-4 lg:p-6" as="section">
-            <CardHead title={`${b.name} — common questions`} />
-            <dl>
-              {faq.map(({ q, a }) => (
-                <div key={q} className="py-3 border-b border-line-2 last:border-b-0">
-                  <dt className="text-[13.5px] font-semibold mb-[5px]">{q}</dt>
-                  <dd className="text-[12.5px] text-ink-2 leading-[1.8]">{a}</dd>
-                </div>
-              ))}
-            </dl>
-          </Card>
+            <Card className="p-4 lg:p-6" as="section" id="reviews">
+              <CardHead
+                title="What customers say"
+                aside={<span className="text-[11.5px] text-ink-3 tnum">{reviews.stats.total} published</span>}
+              />
+              <ReviewSummary stats={reviews.stats} kind="broker" />
+              <div className="mt-3"><ReviewList reviews={reviews.list} /></div>
+            </Card>
+
+            <Card className="p-4 lg:p-6" as="section">
+              <CardHead title={`Write about ${b.name}`} />
+              <ReviewForm kind="broker" slug={b.slug} name={b.name} />
+            </Card>
+
+            <Card className="p-4 lg:p-6" as="section">
+              <CardHead title="Compare" />
+              <ul className="flex flex-col">
+                {alternatives.map((a) => (
+                  <li key={a.broker.slug} className="border-b border-line-2 last:border-b-0">
+                    <Link href={`/compare/${b.slug}-vs-${a.broker.slug}`} className="flex items-center gap-3 py-[11px] group">
+                      <Logo {...a.broker.logo} size={32} />
+                      <span className="flex-1 text-[13.5px] font-semibold group-hover:text-accent">
+                        {b.name} vs {a.broker.name}
+                      </span>
+                      <Score value={a.score.total} />
+                      <span aria-hidden className="text-ink-3">›</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+
+            <Card className="p-4 lg:p-6" as="section">
+              <CardHead title={`${b.name} — common questions`} />
+              <dl>
+                {faq.map(({ q, a }) => (
+                  <div key={q} className="py-3 border-b border-line-2 last:border-b-0">
+                    <dt className="text-[13.5px] font-semibold mb-[5px]">{q}</dt>
+                    <dd className="text-[12.5px] text-ink-2 leading-[1.8]">{a}</dd>
+                  </div>
+                ))}
+              </dl>
+            </Card>
+            </div>
           </div>
         </div>
       </main>

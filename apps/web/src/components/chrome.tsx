@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 import { SITE } from '@/lib/site';
 import { Logotype, Mark } from './Mark';
 
@@ -41,7 +42,7 @@ export function Header({ active }: { active?: string }) {
 
   return (
     <header className="site-header sticky top-0 z-20">
-      <div className="shell flex items-center gap-3 py-[11px] lg:py-[9px]">
+      <div className="shell flex items-center gap-3">
         {/* The mark. A link on a desktop, where it is the only way back to the
             front page; on a phone it is the summary of the menu below, which
             carries Home as its first row. */}
@@ -154,17 +155,27 @@ export function Header({ active }: { active?: string }) {
  * moving. 11.5px text is 19px tall on its own, which is a small thing to ask a
  * thumb to find.
  */
-export function Breadcrumbs({ trail }: { trail: Array<{ name: string; path: string }> }) {
+export function Breadcrumbs({ trail, tone = 'light' }: {
+  trail: Array<{ name: string; path: string }>;
+  tone?: 'light' | 'dark';
+}) {
+  const dark = tone === 'dark';
   return (
-    <nav aria-label="Breadcrumb" className="text-[11.5px] text-ink-3 gutter pb-1">
+    <nav
+      aria-label="Breadcrumb"
+      className={`text-[11.5px] ${dark ? 'text-[color:var(--hero-ink-3)]' : 'text-ink-3 gutter pb-1'}`}
+    >
       <ol className="flex flex-wrap items-center gap-1">
         {trail.map((t, i) => (
           <li key={t.path} className="flex items-center gap-1">
-            {i > 0 && <span aria-hidden className="text-line">/</span>}
+            {i > 0 && <span aria-hidden className={dark ? 'text-[rgb(255_255_255_/_0.28)]' : 'text-line'}>/</span>}
             {i === trail.length - 1 ? (
-              <span className="text-ink-2">{t.name}</span>
+              <span className={dark ? 'text-[color:var(--hero-ink-2)]' : 'text-ink-2'}>{t.name}</span>
             ) : (
-              <Link href={t.path} className="hover:text-ink inline-block py-[4px] -my-[4px]">
+              <Link
+                href={t.path}
+                className={`inline-block py-[4px] -my-[4px] ${dark ? 'hover:text-white' : 'hover:text-ink'}`}
+              >
                 {t.name}
               </Link>
             )}
@@ -172,6 +183,41 @@ export function Breadcrumbs({ trail }: { trail: Array<{ name: string; path: stri
         ))}
       </ol>
     </nav>
+  );
+}
+
+/**
+ * The blue band every page opens on.
+ *
+ * It is the small version of the front page's hero, and it is the same object:
+ * the same painting, shifted by the same header height, so header and band read
+ * as one surface rather than as a bar sitting on a panel. On a section page it
+ * carries that page's name; on a record page it carries the trail alone, because
+ * the card immediately below already says whose page it is in bigger type next
+ * to their logo, and saying it twice is not emphasis, it is noise.
+ *
+ * The h1 it renders is the same h1 that used to be in the markup and off the
+ * screen. Hiding it was right when the alternative was a line of ink floating
+ * above a list that already said what it was; on a band of its own it is the
+ * thing that makes the band a place rather than a stripe.
+ */
+export function PageHero({ title, trail, children }: {
+  title?: string;
+  trail: Array<{ name: string; path: string }>;
+  children?: ReactNode;
+}) {
+  return (
+    <section className={`hero ${title ? '' : 'hero-thin'}`}>
+      <div className={`shell ${title ? 'pt-4 pb-6 sm:pt-5 sm:pb-8 lg:pt-6 lg:pb-9' : 'py-3 sm:py-[14px]'}`}>
+        <Breadcrumbs trail={trail} tone="dark" />
+        {title ? (
+          <h1 className="font-[family-name:var(--font-display)] text-[23px] sm:text-[27px] lg:text-[31px] font-bold leading-[1.12] tracking-[-0.032em] text-white mt-[7px] max-w-[22ch] text-balance">
+            {title}
+          </h1>
+        ) : null}
+        {children}
+      </div>
+    </section>
   );
 }
 

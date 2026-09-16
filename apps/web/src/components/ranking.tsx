@@ -3,26 +3,6 @@ import type { ReactNode } from 'react';
 import type { Component, LogoMark } from '@commentfx/core';
 import { Card, CardHead, Meter, Logo, RankBadge, Score, Tag } from './primitives';
 
-/**
- * The page's name, in the markup and not on the screen.
- *
- * This started as a heading with a lead paragraph and a count under it. The
- * paragraph went, then the count, and now the heading itself: on a ranking page
- * the list is the page, and a line of type restating what the list plainly is
- * costs a reader the top of their screen to tell them what they can already
- * see. Each card names itself, and the breadcrumb above says where you are.
- *
- * It is hidden, not deleted, and the difference matters. A screen reader still
- * announces it, the document still has an outline, and check:seo still finds
- * exactly one h1 — which it would fail without. sr-only is the standard way to
- * do that: the same markup goes to everyone, it is simply not painted. Deleting
- * the element would cost the page its name in both the accessibility tree and
- * the search result, which is a real loss for a line nobody reads anyway.
- */
-export function RankingIntro({ title }: { title: string }) {
-  return <h1 className="sr-only">{title}</h1>;
-}
-
 /** One row of any ranking: rank, logo, name, score, a why line, then facts. */
 /**
  * The heading level for each row's company name.

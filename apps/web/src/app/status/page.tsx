@@ -5,7 +5,7 @@ import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { allStatus } from '@/lib/status';
 import { rankedBrokers } from '@/lib/repo';
 import { reviewStats } from '@/lib/reviews';
-import { Header, Footer, Breadcrumbs } from '@/components/chrome';
+import { Header, PageHero, Footer } from '@/components/chrome';
 import { Card, CardHead, Logo, Tag } from '@/components/primitives';
 import { StatusChip } from '@/components/StatusBlock';
 import { Unavailable } from '@/components/Unavailable';
@@ -49,53 +49,53 @@ export default async function StatusPage() {
   return (
     <>
       <Header />
-      <main id="main" className="shell pt-0 pb-6 sm:pt-3 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
-        <Breadcrumbs trail={trail} />
-        <h1 className="sr-only">Is it down, or is it just you?</h1>
+      <main id="main" className="pb-6 lg:pb-10">
+        <PageHero title="Is it down, or is it just you?" trail={trail} />
+        <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
+          {!statuses ? (
+            <Unavailable what="Incident reporting" reason="no database configured on this deployment" />
+          ) : (
+            <Card className="px-4 lg:px-6">
+              {byLevel.map(({ b, s }) => (
+                <article key={b.broker.slug} className="flex items-center gap-[11px] py-[13px] border-b border-line-2 last:border-b-0">
+                  <Logo {...b.broker.logo} size={34} />
+                  <div className="min-w-0 flex-1">
+                    <h2 className="text-[14px] font-semibold leading-tight">
+                      <Link href={`/brokers/${b.broker.slug}`} className="hover:text-accent">{b.broker.name}</Link>
+                    </h2>
+                    <div className="mt-[3px]"><StatusChip status={s} /></div>
+                    {s.leading && s.reporters > 0 && (
+                      <p className="text-[11px] text-ink-3 mt-[3px]">Mostly: {INCIDENT_LABELS[s.leading].toLowerCase()}</p>
+                    )}
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-[16px] font-extrabold tnum leading-none">{s.reporters}</p>
+                    <p className="text-[10.5px] text-ink-3">reporters</p>
+                  </div>
+                </article>
+              ))}
+            </Card>
+          )}
 
-        {!statuses ? (
-          <Unavailable what="Incident reporting" reason="no database configured on this deployment" />
-        ) : (
-          <Card className="px-4 lg:px-6">
-            {byLevel.map(({ b, s }) => (
-              <article key={b.broker.slug} className="flex items-center gap-[11px] py-[13px] border-b border-line-2 last:border-b-0">
-                <Logo {...b.broker.logo} size={34} />
-                <div className="min-w-0 flex-1">
-                  <h2 className="text-[14px] font-semibold leading-tight">
-                    <Link href={`/brokers/${b.broker.slug}`} className="hover:text-accent">{b.broker.name}</Link>
-                  </h2>
-                  <div className="mt-[3px]"><StatusChip status={s} /></div>
-                  {s.leading && s.reporters > 0 && (
-                    <p className="text-[11px] text-ink-3 mt-[3px]">Mostly: {INCIDENT_LABELS[s.leading].toLowerCase()}</p>
-                  )}
-                </div>
-                <div className="text-right shrink-0">
-                  <p className="text-[16px] font-extrabold tnum leading-none">{s.reporters}</p>
-                  <p className="text-[10.5px] text-ink-3">reporters</p>
-                </div>
-              </article>
-            ))}
+          <Card className="p-4 lg:p-6 bg-accent-bg shadow-none" as="section">
+            <h2 className="text-[14px] font-bold text-accent-2 mb-[6px]">Reports are evidence, not a verdict</h2>
+            <p className="text-[12.5px] text-ink-2 leading-[1.8]">
+              Nothing here is verified, and none of it touches the broker&rsquo;s score.
+            </p>
           </Card>
-        )}
 
-        <Card className="p-4 lg:p-6 bg-accent-bg shadow-none" as="section">
-          <h2 className="text-[14px] font-bold text-accent-2 mb-[6px]">Reports are evidence, not a verdict</h2>
-          <p className="text-[12.5px] text-ink-2 leading-[1.8]">
-            Nothing here is verified, and none of it touches the broker&rsquo;s score.
-          </p>
-        </Card>
-
-        <Card className="p-4 lg:p-6" as="section">
-          <CardHead title="Common questions" />
-          <dl>
-            {FAQ.map(({ q, a }) => (
-              <div key={q} className="py-3 border-b border-line-2 last:border-b-0">
-                <dt className="text-[13.5px] font-semibold mb-[5px]">{q}</dt>
-                <dd className="text-[12.5px] text-ink-2 leading-[1.8]">{a}</dd>
-              </div>
-            ))}
-          </dl>
-        </Card>
+          <Card className="p-4 lg:p-6" as="section">
+            <CardHead title="Common questions" />
+            <dl>
+              {FAQ.map(({ q, a }) => (
+                <div key={q} className="py-3 border-b border-line-2 last:border-b-0">
+                  <dt className="text-[13.5px] font-semibold mb-[5px]">{q}</dt>
+                  <dd className="text-[12.5px] text-ink-2 leading-[1.8]">{a}</dd>
+                </div>
+              ))}
+            </dl>
+          </Card>
+        </div>
       </main>
       <Footer />
       <JsonLd graph={[breadcrumbLd(trail), faqLd(FAQ)]} />

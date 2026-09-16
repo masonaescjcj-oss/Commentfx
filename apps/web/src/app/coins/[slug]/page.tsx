@@ -5,7 +5,7 @@ import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { coins, coin, fmtUsd, fmtPct } from '@/lib/market';
 import { rankedExchanges, rankedBrokers } from '@/lib/repo';
 import { reviewStats } from '@/lib/reviews';
-import { Header, Footer, Breadcrumbs } from '@/components/chrome';
+import { Header, PageHero, Footer, Breadcrumbs } from '@/components/chrome';
 import { Card, CardHead, Logo, Score } from '@/components/primitives';
 import { FactList } from '@/components/ranking';
 import { Sparkline } from '@/components/Sparkline';
@@ -187,61 +187,62 @@ export default async function CoinPage({ params }: { params: Promise<Params> }) 
   return (
     <>
       <Header active="/coins" />
-      <main id="main" className="shell pt-0 pb-6 sm:pt-3 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
-        <Breadcrumbs trail={trail} />
-
-        <Card className="p-4 lg:p-6" as="article">
-          <div className="flex items-center gap-3">
-            <img src={c.image} alt="" width={40} height={40} className="rounded-full shrink-0" />
-            <div className="min-w-0 flex-1">
-              <h1 className="font-[family-name:var(--font-display)] text-[22px] font-bold tracking-[-0.025em] leading-tight">
-                {c.name}
-              </h1>
-              <p className="text-[12px] text-ink-3 tnum">{c.symbol}{c.rank ? ` · rank #${c.rank}` : ''}</p>
-            </div>
-          </div>
-          <div className="flex items-end gap-3 mt-4">
-            <span className="font-[family-name:var(--font-display)] text-[32px] font-bold tnum leading-none">
-              {fmtUsd(c.price)}
-            </span>
-            <span className={`text-[13px] font-bold tnum px-[9px] py-[3px] rounded-lg text-white ${up ? 'bg-up' : 'bg-down'}`}>
-              {up ? '▲' : '▼'} {fmtPct(c.change24hPct)}
-            </span>
-          </div>
-          <div className="mt-4 -mx-1">
-            <Sparkline points={c.spark} up={(c.change7dPct ?? c.change24hPct ?? 0) >= 0} w={330} h={78} />
-          </div>
-          <p className="text-[11px] text-ink-3 mt-1">Seven-day trend</p>
-        </Card>
-
-        <Card className="p-4 lg:p-6" as="section">
-          <CardHead title="Statistics" />
-          <FactList rows={[
-            ['Market cap', fmtUsd(c.marketCap)],
-            ['24h volume', fmtUsd(c.volume24h)],
-            ['24h range', `${fmtUsd(c.low24h)} – ${fmtUsd(c.high24h)}`],
-            ['7-day change', fmtPct(c.change7dPct)],
-            ['Circulating supply', c.circulating ? `${c.circulating.toLocaleString('en-US', { maximumFractionDigits: 0 })} ${c.symbol}` : '—'],
-            ['Max supply', c.maxSupply ? c.maxSupply.toLocaleString('en-US', { maximumFractionDigits: 0 }) : 'Uncapped'],
-            ['All-time high', `${fmtUsd(c.ath)}${c.athChangePct !== null ? ` (${fmtPct(c.athChangePct)})` : ''}`],
-          ]} />
-        </Card>
-
-        <WhereToTrade symbol={c.symbol} />
-
-        <Card className="p-4 lg:p-6" as="section">
-          <CardHead title={`${c.name} — common questions`} />
-          <dl>
-            {faq.map(({ q, a }) => (
-              <div key={q} className="py-3 border-b border-line-2 last:border-b-0">
-                <dt className="text-[13.5px] font-semibold mb-[5px]">{q}</dt>
-                <dd className="text-[12.5px] text-ink-2 leading-[1.8]">{a}</dd>
+      <main id="main" className="pb-6 lg:pb-10">
+        <PageHero trail={trail} />
+        <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
+          <Card className="p-4 lg:p-6" as="article">
+            <div className="flex items-center gap-3">
+              <img src={c.image} alt="" width={40} height={40} className="rounded-full shrink-0" />
+              <div className="min-w-0 flex-1">
+                <h1 className="font-[family-name:var(--font-display)] text-[22px] font-bold tracking-[-0.025em] leading-tight">
+                  {c.name}
+                </h1>
+                <p className="text-[12px] text-ink-3 tnum">{c.symbol}{c.rank ? ` · rank #${c.rank}` : ''}</p>
               </div>
-            ))}
-          </dl>
-        </Card>
+            </div>
+            <div className="flex items-end gap-3 mt-4">
+              <span className="font-[family-name:var(--font-display)] text-[32px] font-bold tnum leading-none">
+                {fmtUsd(c.price)}
+              </span>
+              <span className={`text-[13px] font-bold tnum px-[9px] py-[3px] rounded-lg text-white ${up ? 'bg-up' : 'bg-down'}`}>
+                {up ? '▲' : '▼'} {fmtPct(c.change24hPct)}
+              </span>
+            </div>
+            <div className="mt-4 -mx-1">
+              <Sparkline points={c.spark} up={(c.change7dPct ?? c.change24hPct ?? 0) >= 0} w={330} h={78} />
+            </div>
+            <p className="text-[11px] text-ink-3 mt-1">Seven-day trend</p>
+          </Card>
 
-        <Freshness at={view.at} source="CoinGecko" />
+          <Card className="p-4 lg:p-6" as="section">
+            <CardHead title="Statistics" />
+            <FactList rows={[
+              ['Market cap', fmtUsd(c.marketCap)],
+              ['24h volume', fmtUsd(c.volume24h)],
+              ['24h range', `${fmtUsd(c.low24h)} – ${fmtUsd(c.high24h)}`],
+              ['7-day change', fmtPct(c.change7dPct)],
+              ['Circulating supply', c.circulating ? `${c.circulating.toLocaleString('en-US', { maximumFractionDigits: 0 })} ${c.symbol}` : '—'],
+              ['Max supply', c.maxSupply ? c.maxSupply.toLocaleString('en-US', { maximumFractionDigits: 0 }) : 'Uncapped'],
+              ['All-time high', `${fmtUsd(c.ath)}${c.athChangePct !== null ? ` (${fmtPct(c.athChangePct)})` : ''}`],
+            ]} />
+          </Card>
+
+          <WhereToTrade symbol={c.symbol} />
+
+          <Card className="p-4 lg:p-6" as="section">
+            <CardHead title={`${c.name} — common questions`} />
+            <dl>
+              {faq.map(({ q, a }) => (
+                <div key={q} className="py-3 border-b border-line-2 last:border-b-0">
+                  <dt className="text-[13.5px] font-semibold mb-[5px]">{q}</dt>
+                  <dd className="text-[12.5px] text-ink-2 leading-[1.8]">{a}</dd>
+                </div>
+              ))}
+            </dl>
+          </Card>
+
+          <Freshness at={view.at} source="CoinGecko" />
+        </div>
       </main>
       <Footer />
       <JsonLd graph={[breadcrumbLd(trail), faqLd(faq)]} />

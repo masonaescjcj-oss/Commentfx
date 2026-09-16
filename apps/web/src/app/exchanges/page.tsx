@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import { EXCHANGE_WEIGHTS, EXCHANGE_LABELS, volumeBand, type ExchangeKey } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, itemListLd, faqLd } from '@/lib/seo';
 import { rankedExchanges } from '@/lib/repo';
-import { Header, Footer, Breadcrumbs } from '@/components/chrome';
+import { Header, PageHero, Footer } from '@/components/chrome';
 import { Card, CardHead, Meter } from '@/components/primitives';
-import { RankingIntro, RankRow } from '@/components/ranking';
+import { RankRow } from '@/components/ranking';
 
 const TITLE = 'Crypto exchange rankings';
 const DESC =
@@ -36,70 +36,70 @@ export default function ExchangesPage() {
   return (
     <>
       <Header active="/exchanges" />
-      <main id="main" className="shell pt-0 pb-6 sm:pt-3 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
-        <Breadcrumbs trail={trail} />
-        <RankingIntro title={TITLE} />
+      <main id="main" className="pb-6 lg:pb-10">
+        <PageHero title={TITLE} trail={trail} />
+        <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
+          {/* Two columns above 1024px. The ranking is the page, so it takes the
+              width; how the score is built and what people ask about it are the
+              material beside it. Source order is unchanged, so a phone reads the
+              list first and then the rest, exactly as before. */}
+          <div className="split">
+            <div>
 
-        {/* Two columns above 1024px. The ranking is the page, so it takes the
-            width; how the score is built and what people ask about it are the
-            material beside it. Source order is unchanged, so a phone reads the
-            list first and then the rest, exactly as before. */}
-        <div className="split">
-          <div>
+            <Card className="px-4 lg:px-6">
+              {list.map((r) => (
+                <RankRow
+                  headingLevel={2}
+                  key={r.exchange.slug}
+                  rank={r.rank}
+                  href={`/exchanges/${r.exchange.slug}`}
+                  logo={r.exchange.logo}
+                  name={r.exchange.name}
+                  score={r.score.total}
+                  why={r.exchange.why}
+                  facts={[
+                    { label: 'Taker', value: `${r.exchange.takerFeePct}%` },
+                    { label: 'Volume', value: volumeBand(r.exchange.spotVolumeUsd) },
+                    {
+                      label: 'Breach',
+                      value: r.exchange.security.lastBreachYear === null ? 'None' : String(r.exchange.security.lastBreachYear),
+                      tone: r.exchange.security.lastBreachYear === null ? 'good' : r.exchange.security.madeUsersWhole ? 'warn' : 'bad',
+                    },
+                  ]}
+                />
+              ))}
+            </Card>
+            </div>
 
-          <Card className="px-4 lg:px-6">
-            {list.map((r) => (
-              <RankRow
-                headingLevel={2}
-                key={r.exchange.slug}
-                rank={r.rank}
-                href={`/exchanges/${r.exchange.slug}`}
-                logo={r.exchange.logo}
-                name={r.exchange.name}
-                score={r.score.total}
-                why={r.exchange.why}
-                facts={[
-                  { label: 'Taker', value: `${r.exchange.takerFeePct}%` },
-                  { label: 'Volume', value: volumeBand(r.exchange.spotVolumeUsd) },
-                  {
-                    label: 'Breach',
-                    value: r.exchange.security.lastBreachYear === null ? 'None' : String(r.exchange.security.lastBreachYear),
-                    tone: r.exchange.security.lastBreachYear === null ? 'good' : r.exchange.security.madeUsersWhole ? 'warn' : 'bad',
-                  },
-                ]}
-              />
-            ))}
-          </Card>
-          </div>
+            <div>
+            <Card className="p-4 lg:p-6">
+              <CardHead title="How the score is built" href="/methodology" hrefLabel="Full method" />
+              <ul className="flex flex-col gap-[10px]">
+                {(Object.keys(EXCHANGE_WEIGHTS) as ExchangeKey[]).map((k) => (
+                  <li key={k}>
+                    <div className="flex items-baseline gap-2 mb-[6px]">
+                      <span className="text-[12.5px]">{EXCHANGE_LABELS[k]}</span>
+                      <div className="flex-1" />
+                      <span className="text-[11.5px] text-ink-3 font-bold tnum">{Math.round(EXCHANGE_WEIGHTS[k] * 100)}%</span>
+                    </div>
+                    <Meter value={EXCHANGE_WEIGHTS[k] * 100} max={30} />
+                  </li>
+                ))}
+              </ul>
+            </Card>
 
-          <div>
-          <Card className="p-4 lg:p-6">
-            <CardHead title="How the score is built" href="/methodology" hrefLabel="Full method" />
-            <ul className="flex flex-col gap-[10px]">
-              {(Object.keys(EXCHANGE_WEIGHTS) as ExchangeKey[]).map((k) => (
-                <li key={k}>
-                  <div className="flex items-baseline gap-2 mb-[6px]">
-                    <span className="text-[12.5px]">{EXCHANGE_LABELS[k]}</span>
-                    <div className="flex-1" />
-                    <span className="text-[11.5px] text-ink-3 font-bold tnum">{Math.round(EXCHANGE_WEIGHTS[k] * 100)}%</span>
+            <Card className="p-4 lg:p-6" as="section">
+              <CardHead title="Common questions" />
+              <dl>
+                {FAQ.map(({ q, a }) => (
+                  <div key={q} className="py-3 border-b border-line-2 last:border-b-0">
+                    <dt className="text-[13.5px] font-semibold mb-[5px]">{q}</dt>
+                    <dd className="text-[12.5px] text-ink-2 leading-[1.8]">{a}</dd>
                   </div>
-                  <Meter value={EXCHANGE_WEIGHTS[k] * 100} max={30} />
-                </li>
-              ))}
-            </ul>
-          </Card>
-
-          <Card className="p-4 lg:p-6" as="section">
-            <CardHead title="Common questions" />
-            <dl>
-              {FAQ.map(({ q, a }) => (
-                <div key={q} className="py-3 border-b border-line-2 last:border-b-0">
-                  <dt className="text-[13.5px] font-semibold mb-[5px]">{q}</dt>
-                  <dd className="text-[12.5px] text-ink-2 leading-[1.8]">{a}</dd>
-                </div>
-              ))}
-            </dl>
-          </Card>
+                ))}
+              </dl>
+            </Card>
+            </div>
           </div>
         </div>
       </main>

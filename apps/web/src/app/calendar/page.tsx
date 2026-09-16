@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { groupByDay, utcDay, IMPACT_RULE, IMPACT_LABEL, RELEASES } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd, itemListLd } from '@/lib/seo';
 import { calendarData, window14, inWindow, upcomingHigh } from '@/lib/calendar';
-import { Header, Footer, Breadcrumbs } from '@/components/chrome';
+import { Header, PageHero, Footer } from '@/components/chrome';
 import { Card, CardHead, Tag } from '@/components/primitives';
 import { CalendarList } from '@/components/CalendarList';
 import { Unavailable } from '@/components/Unavailable';
@@ -67,140 +67,139 @@ export default async function CalendarPage() {
   return (
     <>
       <Header active="/calendar" />
-      <main id="main" className="shell pt-0 pb-6 sm:pt-3 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
-        <Breadcrumbs trail={trail} />
+      <main id="main" className="pb-6 lg:pb-10">
+        <PageHero title="Economic calendar" trail={trail} />
+        <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
+          {ahead.length > 0 && (
+            <Card className="p-4 lg:p-6" as="section">
+              <CardHead title="Next, worth planning around" />
+              <ul className="flex flex-col">
+                {ahead.map((e) => (
+                  <li key={e.id} className="flex items-baseline gap-2 py-[8px] border-b border-line-2 last:border-b-0">
+                    <span className="text-[12.5px] font-semibold flex-1 min-w-0">{e.title}</span>
+                    <span className="text-[10.5px] font-bold text-ink-3">{e.currency}</span>
+                    <time dateTime={e.at ?? e.date} className="text-[12px] tnum text-ink-2">
+                      {new Date(`${e.date}T00:00:00Z`).toLocaleDateString('en-GB', {
+                        day: 'numeric', month: 'short', timeZone: 'UTC',
+                      })}
+                      {e.localTime ? ` · ${e.localTime}` : ''}
+                    </time>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
 
-        <h1 className="sr-only">Economic calendar</h1>
+          {data.down.length > 0 && (
+            <Card className="p-4 lg:p-6 bg-warn-bg shadow-none border border-[#F3E3C2]" as="section">
+              <h2 className="text-[13.5px] font-bold text-warn mb-[6px]">
+                {data.down.length} of {data.down.length + data.live.length} calendars could not be read
+              </h2>
+              <ul className="text-[12px] text-[#8A6420] leading-[1.8]">
+                {data.down.map((d) => (
+                  <li key={d.source}>
+                    <strong>{d.source}</strong>: {d.reason} —{' '}
+                    <a href={d.sourceUrl} rel="nofollow noopener external" target="_blank" className="underline">
+                      check it directly
+                    </a>
+                    .
+                  </li>
+                ))}
+              </ul>
+              <p className="text-[11.5px] text-[#8A6420] mt-2 leading-[1.7]">
+                The days below are missing whatever that source publishes. Nothing has been
+                filled in from memory or from another calendar.
+              </p>
+            </Card>
+          )}
 
-        {ahead.length > 0 && (
+          {data.live.length === 0 ? (
+            <Unavailable what="The economic calendar" reason="no official schedule answered" />
+          ) : (
+            <CalendarList days={days} todayUtc={today} />
+          )}
+
           <Card className="p-4 lg:p-6" as="section">
-            <CardHead title="Next, worth planning around" />
+            <CardHead title="Every date for one release" />
+            <p className="text-[12px] text-ink-3 leading-[1.8] mb-[10px]">
+              The releases worth a page of their own: the whole forward schedule, what each
+              one measures, and the exact time where the publisher states one.
+            </p>
             <ul className="flex flex-col">
-              {ahead.map((e) => (
-                <li key={e.id} className="flex items-baseline gap-2 py-[8px] border-b border-line-2 last:border-b-0">
-                  <span className="text-[12.5px] font-semibold flex-1 min-w-0">{e.title}</span>
-                  <span className="text-[10.5px] font-bold text-ink-3">{e.currency}</span>
-                  <time dateTime={e.at ?? e.date} className="text-[12px] tnum text-ink-2">
-                    {new Date(`${e.date}T00:00:00Z`).toLocaleDateString('en-GB', {
-                      day: 'numeric', month: 'short', timeZone: 'UTC',
-                    })}
-                    {e.localTime ? ` · ${e.localTime}` : ''}
-                  </time>
+              {RELEASES.map((r) => (
+                <li key={r.slug} className="border-b border-line-2 last:border-b-0">
+                  <Link href={`/calendar/${r.slug}`} className="flex items-center gap-3 py-[10px] group">
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[13px] font-semibold group-hover:text-accent">{r.name}</span>
+                      <span className="block text-[11.5px] text-ink-3 mt-[2px]">{r.publisher}</span>
+                    </span>
+                    <Tag tone={r.currency === 'USD' ? 'neutral' : 'accent'}>{r.currency}</Tag>
+                    <span aria-hidden className="text-ink-3">›</span>
+                  </Link>
                 </li>
               ))}
             </ul>
           </Card>
-        )}
 
-        {data.down.length > 0 && (
-          <Card className="p-4 lg:p-6 bg-warn-bg shadow-none border border-[#F3E3C2]" as="section">
-            <h2 className="text-[13.5px] font-bold text-warn mb-[6px]">
-              {data.down.length} of {data.down.length + data.live.length} calendars could not be read
-            </h2>
-            <ul className="text-[12px] text-[#8A6420] leading-[1.8]">
-              {data.down.map((d) => (
-                <li key={d.source}>
-                  <strong>{d.source}</strong>: {d.reason} —{' '}
-                  <a href={d.sourceUrl} rel="nofollow noopener external" target="_blank" className="underline">
-                    check it directly
+          <Card className="p-4 lg:p-6" as="section">
+            <CardHead title="How impact is graded" href="/methodology" hrefLabel="Method" />
+            <p className="text-[12px] text-ink-3 leading-[1.8] mb-[10px]">
+              The institutions do not rank their own releases, so this grading is ours. It is a
+              list of names rather than a model, because a list can be argued with.
+            </p>
+            <dl>
+              {(['high', 'medium', 'low'] as const).map((level) => (
+                <div key={level} className="py-[8px] border-b border-line-2 last:border-b-0">
+                  <dt className="text-[12.5px] font-bold">{IMPACT_LABEL[level]}</dt>
+                  <dd className="text-[11.5px] text-ink-3 mt-[3px] leading-[1.7] capitalize">
+                    {IMPACT_RULE[level].join(' · ')}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </Card>
+
+          <Card className="p-4 lg:p-6" as="section">
+            <CardHead title="Sources" />
+            <ul>
+              {data.live.map((s) => (
+                <li key={s.source} className="flex items-baseline gap-2 py-[8px] border-b border-line-2 last:border-b-0">
+                  <a href={s.sourceUrl} rel="nofollow noopener external" target="_blank" className="text-[12.5px] font-semibold text-accent">
+                    {s.source}
                   </a>
-                  .
+                  <div className="flex-1" />
+                  <span className="text-[11.5px] text-ink-3 tnum">{s.count} dates</span>
                 </li>
               ))}
             </ul>
-            <p className="text-[11.5px] text-[#8A6420] mt-2 leading-[1.7]">
-              The days below are missing whatever that source publishes. Nothing has been
-              filled in from memory or from another calendar.
+            <p className="text-[11.5px] text-ink-3 mt-[10px] leading-[1.75]">
+              Read{' '}
+              <time dateTime={data.fetchedAt}>
+                {new Date(data.fetchedAt).toUTCString().replace('GMT', 'UTC')}
+              </time>
+              . This page refreshes every six hours.
             </p>
           </Card>
-        )}
 
-        {data.live.length === 0 ? (
-          <Unavailable what="The economic calendar" reason="no official schedule answered" />
-        ) : (
-          <CalendarList days={days} todayUtc={today} />
-        )}
+          <Card className="p-4 lg:p-6" as="section">
+            <CardHead title="Common questions" />
+            <dl>
+              {faq.map((f) => (
+                <div key={f.q} className="py-[10px] border-b border-line-2 last:border-b-0">
+                  <dt className="text-[13px] font-semibold">{f.q}</dt>
+                  <dd className="text-[12px] text-ink-2 leading-[1.8] mt-[5px]">{f.a}</dd>
+                </div>
+              ))}
+            </dl>
+          </Card>
 
-        <Card className="p-4 lg:p-6" as="section">
-          <CardHead title="Every date for one release" />
-          <p className="text-[12px] text-ink-3 leading-[1.8] mb-[10px]">
-            The releases worth a page of their own: the whole forward schedule, what each
-            one measures, and the exact time where the publisher states one.
+          <p className="text-[11.5px] text-ink-3 gutter leading-[1.8]">
+            A calendar is not a signal. If you are choosing where to trade these releases,{' '}
+            <Link href="/brokers" className="text-accent font-semibold">the broker rankings</Link>{' '}
+            and <Link href="/status" className="text-accent font-semibold">broker status</Link> are
+            the pages that matter.
           </p>
-          <ul className="flex flex-col">
-            {RELEASES.map((r) => (
-              <li key={r.slug} className="border-b border-line-2 last:border-b-0">
-                <Link href={`/calendar/${r.slug}`} className="flex items-center gap-3 py-[10px] group">
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-[13px] font-semibold group-hover:text-accent">{r.name}</span>
-                    <span className="block text-[11.5px] text-ink-3 mt-[2px]">{r.publisher}</span>
-                  </span>
-                  <Tag tone={r.currency === 'USD' ? 'neutral' : 'accent'}>{r.currency}</Tag>
-                  <span aria-hidden className="text-ink-3">›</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </Card>
-
-        <Card className="p-4 lg:p-6" as="section">
-          <CardHead title="How impact is graded" href="/methodology" hrefLabel="Method" />
-          <p className="text-[12px] text-ink-3 leading-[1.8] mb-[10px]">
-            The institutions do not rank their own releases, so this grading is ours. It is a
-            list of names rather than a model, because a list can be argued with.
-          </p>
-          <dl>
-            {(['high', 'medium', 'low'] as const).map((level) => (
-              <div key={level} className="py-[8px] border-b border-line-2 last:border-b-0">
-                <dt className="text-[12.5px] font-bold">{IMPACT_LABEL[level]}</dt>
-                <dd className="text-[11.5px] text-ink-3 mt-[3px] leading-[1.7] capitalize">
-                  {IMPACT_RULE[level].join(' · ')}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </Card>
-
-        <Card className="p-4 lg:p-6" as="section">
-          <CardHead title="Sources" />
-          <ul>
-            {data.live.map((s) => (
-              <li key={s.source} className="flex items-baseline gap-2 py-[8px] border-b border-line-2 last:border-b-0">
-                <a href={s.sourceUrl} rel="nofollow noopener external" target="_blank" className="text-[12.5px] font-semibold text-accent">
-                  {s.source}
-                </a>
-                <div className="flex-1" />
-                <span className="text-[11.5px] text-ink-3 tnum">{s.count} dates</span>
-              </li>
-            ))}
-          </ul>
-          <p className="text-[11.5px] text-ink-3 mt-[10px] leading-[1.75]">
-            Read{' '}
-            <time dateTime={data.fetchedAt}>
-              {new Date(data.fetchedAt).toUTCString().replace('GMT', 'UTC')}
-            </time>
-            . This page refreshes every six hours.
-          </p>
-        </Card>
-
-        <Card className="p-4 lg:p-6" as="section">
-          <CardHead title="Common questions" />
-          <dl>
-            {faq.map((f) => (
-              <div key={f.q} className="py-[10px] border-b border-line-2 last:border-b-0">
-                <dt className="text-[13px] font-semibold">{f.q}</dt>
-                <dd className="text-[12px] text-ink-2 leading-[1.8] mt-[5px]">{f.a}</dd>
-              </div>
-            ))}
-          </dl>
-        </Card>
-
-        <p className="text-[11.5px] text-ink-3 gutter leading-[1.8]">
-          A calendar is not a signal. If you are choosing where to trade these releases,{' '}
-          <Link href="/brokers" className="text-accent font-semibold">the broker rankings</Link>{' '}
-          and <Link href="/status" className="text-accent font-semibold">broker status</Link> are
-          the pages that matter.
-        </p>
+        </div>
       </main>
       <Footer />
 
