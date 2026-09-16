@@ -141,19 +141,29 @@
 }
 
 /**
- * The desktop layout.
+ * Three widths, not two.
  *
  * The site was built for a phone and served the same single column to a 1440px
  * screen, where a broker row stretched until its score sat most of a screen
- * away from the name it belonged to. Both rules below live here rather than as
+ * away from the name it belonged to. Fixing that at 1024px left a gap in the
+ * middle: at 1000px the page was still edge-to-edge phone layout, a row a
+ * thousand pixels wide with its score adrift at the end of it and the sections
+ * touching both edges of the glass. Edge to edge is right on a 390px screen,
+ * where a gutter and a border cost 34 of it, and wrong the moment there is
+ * width to spare.
+ *
+ * So: under 640px the sections are the screen; from 640 they are boxes with a
+ * gutter around them; from 1024 the pages that are one main thing plus its
+ * supporting material become two columns. The rules live here rather than as
  * breakpoint classes repeated across twenty-two pages, so the measure is one
  * decision in one place.
  */
 @layer components {
   /* The measure. A phone gets the whole screen — the sections inside run edge
      to edge and pad their own contents, so no width is spent on a gutter around
-     a box. A desktop gets a cap, because a line of text or a row of figures has
-     a width past which it stops being readable however much screen is spare. */
+     a box. Anything wider gets a cap, because a line of text or a row of
+     figures has a width past which it stops being readable however much screen
+     is going spare. */
   .shell {
     max-width: 1120px;
     margin-inline: auto;
@@ -168,6 +178,11 @@
     display: flex;
     flex-direction: column;
     min-width: 0;
+  }
+
+  @media (min-width: 640px) {
+    .shell { padding-inline: 16px; }
+    .split > * { gap: 13px; }
   }
 
   @media (min-width: 1024px) {
@@ -194,10 +209,11 @@
  * Text that sits directly on the page rather than inside a section: a
  * breadcrumb, a freshness line, the closing sentence of a ranking. The sections
  * pad their own contents, so these have to pad themselves now that the page
- * itself has no gutter on a phone. Above 1024px it is the 4px nudge it always
- * was, because there the page has a gutter again.
+ * itself has no gutter on a phone.
  */
 @layer components {
   .gutter { padding-inline: 16px; }
-  @media (min-width: 1024px) { .gutter { padding-inline: 4px; } }
+  /* From 640px the page has a gutter of its own, so this is back to the 4px
+     nudge it always was. */
+  @media (min-width: 640px) { .gutter { padding-inline: 4px; } }
 }

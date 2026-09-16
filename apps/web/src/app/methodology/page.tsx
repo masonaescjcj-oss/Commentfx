@@ -82,7 +82,7 @@ export default function MethodologyPage() {
   return (
     <>
       <Header />
-      <main id="main" className="shell pt-0 pb-6 lg:pt-3 lg:pb-10 flex flex-col gap-0 lg:gap-4">
+      <main id="main" className="shell pt-0 pb-6 sm:pt-3 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
         <Breadcrumbs trail={trail} />
         <h1 className="sr-only">{TITLE}</h1>
 

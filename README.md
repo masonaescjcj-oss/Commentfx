@@ -288,10 +288,17 @@ pnpm build                           # all packages
 No database or API key is needed to run the site. Everything renders from the
 seed data in `packages/core/src/data/`.
 
+Putting it on a server is [docs/DEPLOY.md](docs/DEPLOY.md): what each of the
+four environment variables buys, why a deployment without `DATABASE_URL` is
+read-only rather than broken, and why there is no migration step to remember.
+
 ## Accessibility
 
 `pnpm --filter @commentfx/web audit:a11y` runs axe against the built site on a
-390px viewport, and CI runs it on every push. It is not a formality — the first
+390px viewport, and `AUDIT_WIDTH=1440` runs it against the desktop layout, which
+is different markup rather than a wider copy of the same — above 1024px the
+header swaps its menu for an inline nav and four page shapes become two columns.
+CI runs both on every push. It is not a formality — the first
 run found **twenty distinct failing colour pairs**, because a palette that looks
 restrained on a designer's monitor is unreadable on a phone outdoors:
 
@@ -622,7 +629,7 @@ packages/ingest   free-tier upstreams behind one failure-tolerant contract
 .github/workflows CI, and the daily upstream probe
 design/           app screen designs (dark, Persian)
 design-web/       website designs (light, English) — the tokens the app uses
-docs/             the 16-week roadmap
+docs/             the 16-week roadmap, and DEPLOY.md
 ```
 
 ## Two constraints that shape the build

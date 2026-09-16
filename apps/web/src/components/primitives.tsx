@@ -13,9 +13,10 @@ import { legibleTile } from '@commentfx/core';
  * card is edge to edge with a hairline under it, and the padding a caller
  * passes still keeps the text off the glass.
  *
- * From 1024px up it is a box again, and there the border earns its keep: the
- * page is two columns by then, and a card in a rail beside another column needs
- * an edge to say where it ends.
+ * From 640px up it is a box again. The trade that makes edge-to-edge right on a
+ * phone — 34px of a 390px screen is a tenth of everything — stops being a trade
+ * at all once there is width going spare, and a section touching both edges of
+ * a 900px window just looks unfinished.
  */
 export function Card({ children, className = '', as: As = 'div', id }: {
   children: ReactNode; className?: string; as?: 'div' | 'section' | 'article';
@@ -25,7 +26,7 @@ export function Card({ children, className = '', as: As = 'div', id }: {
   return (
     <As
       id={id}
-      className={`bg-card border-b border-line lg:border lg:rounded-[16px] ${className}`}
+      className={`bg-card border-b border-line sm:border sm:rounded-[16px] ${className}`}
     >
       {children}
     </As>
