@@ -17,6 +17,21 @@ export const REGULATORS: Record<string, Regulator> = {
   FSCA:     { code: 'FSCA',     name: 'Financial Sector Conduct Authority',     country: 'ZA', tier: 'B', compensation: null,                 registryUrl: 'https://www.fsca.co.za/Fais/Search_FSP.htm' },
   DFSA:     { code: 'DFSA',     name: 'Dubai Financial Services Authority',     country: 'AE', tier: 'B', compensation: null,                 registryUrl: 'https://www.dfsa.ae/public-register' },
   MFSA:     { code: 'MFSA',     name: 'Malta Financial Services Authority',     country: 'MT', tier: 'B', compensation: 'ICS up to €20,000',  registryUrl: 'https://www.mfsa.mt/financial-services-register/' },
+  /**
+   * Tier B rather than C, and it is a judgement rather than a reading.
+   *
+   * The Bahamas is where a broker goes for leverage a tier-A regulator will not
+   * allow, which is the company C belongs to. But the tier line here is "real
+   * supervision" against "registration only", and the SCB licenses under the
+   * Securities Industry Act, inspects, enforces and publishes a register — it
+   * is not a filing cabinet the way Seychelles and Belize are. Same profile as
+   * FSCA and DFSA, which are already B with no compensation scheme either.
+   *
+   * It buys nobody a rank: every broker here holding an SCB licence also holds
+   * a tier-A one, so the tier only ever moves the breadth bonus, which is
+   * already capped. If that stops being true, revisit it on the evidence.
+   */
+  'SCB-BS': { code: 'SCB-BS',   name: 'Securities Commission of The Bahamas',   country: 'BS', tier: 'B', compensation: null,                 registryUrl: 'https://www.scb.gov.bs/' },
   'FSC-MU': { code: 'FSC-MU',   name: 'Financial Services Commission Mauritius', country: 'MU', tier: 'C', compensation: null,                registryUrl: 'https://www.fscmauritius.org/en/supervision/register-of-licensees' },
   'FSA-SC': { code: 'FSA-SC',   name: 'Financial Services Authority Seychelles', country: 'SC', tier: 'C', compensation: null,                registryUrl: 'https://fsaseychelles.sc/regulated-entities' },
   'IFSC-BZ':{ code: 'IFSC-BZ',  name: 'Financial Services Commission Belize',   country: 'BZ', tier: 'C', compensation: null,                 registryUrl: 'https://www.ifsc.gov.bz/' },

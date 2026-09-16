@@ -473,7 +473,191 @@ const IC_MARKETS: BrokerProfile = {
   ],
 };
 
-export const PROFILES: BrokerProfile[] = [EXNESS, IC_MARKETS];
+const PEPPERSTONE: BrokerProfile = {
+  slug: 'pepperstone',
+  checked: '2026-09-16',
+  verdict:
+    'The useful comparison is with Exness. Both lead with an FCA licence; both have a British company filing '
+    + 'accounts anyone can read. Pepperstone’s says its business is onboarding retail clients and that it held '
+    + '£26.2m of client money at 30 June 2025. Exness’s says B2B, and $2.5m. Same regulator, same kind of '
+    + 'licence, and the filings tell you which one is actually doing the thing it advertises.',
+
+  sections: [
+    {
+      heading: 'The British company does what it says it does',
+      paragraphs: [
+        'Pepperstone Limited files full accounts at Companies House every year, and the 2025 set opens by '
+        + 'stating what the company is for: "to onboard retail and professional clients for the purpose of '
+        + 'providing a platform for these clients to buy and sell leveraged Contract for Difference and '
+        + 'spread-betting products" [ch-accounts]. Retail is the first word. It has been profitable every year '
+        + 'since it started operating in 2017.',
+
+        'The numbers are ordinary in the good sense. Revenue from commissions, swaps and spreads of £15.04m in '
+        + 'the year to 30 June 2025, up from £13.02m. Profit before tax of £24.07m against £13.27m. Client cash '
+        + 'held in segregated accounts of £26.17m, close to flat on the £26.97m a year earlier [ch-accounts]. '
+        + 'A dividend of £8.5m was declared and paid.',
+
+        'One structural detail is worth pulling out, because it is the kind of thing no review site mentions and '
+        + 'it changes what the FCA licence means. The accounts say plainly: "The Company’s licence does not allow '
+        + 'it to take on any market risk and therefore all market risk is borne by the Company’s affiliate '
+        + 'company Pepperstone Group Limited" [ch-accounts]. The British firm faces the client and holds the '
+        + 'money; the Australian firm carries the position. That is a normal matched-principal arrangement, and '
+        + 'it means the counterparty to your trade is in Melbourne even when your client agreement is in London.',
+      ],
+    },
+
+    {
+      heading: 'The entity we had wrong, and what it was costing readers',
+      paragraphs: [
+        'Until this research, this site listed Pepperstone EU Limited — the CySEC firm — as the catch-all. That '
+        + 'told every reader outside Australia, Britain and Dubai that they would be a client of a European '
+        + 'investment firm with the Investor Compensation Fund behind it. They would not be.',
+
+        'Pepperstone’s own regulation page names one company as the operator of the global site: Pepperstone '
+        + 'Markets Limited, company number 177174 B, licensed by the Securities Commission of The Bahamas as '
+        + 'SIA-F217, registered at Old Fort Bay in Nassau [pep-reg]. That is the entity most readers here get, '
+        + 'and the map says so now. Two more that we had simply left out are on it too: Pepperstone GmbH, a '
+        + 'BaFin-supervised securities institution in Düsseldorf [bafin], and the Cyprus firm, now against the '
+        + 'countries it actually covers.',
+
+        'The Bahamas is not Seychelles. The Securities Commission licenses under a securities act, inspects and '
+        + 'enforces, and publishes a register — which is why it sits at tier B here rather than with the pure '
+        + 'registration regimes. What it does not run is a compensation scheme, and what it does not impose is a '
+        + 'leverage cap. That is the trade, and it is the same trade every broker in this directory offers to '
+        + 'the part of the world its tier-A licences do not reach.',
+      ],
+    },
+
+    {
+      heading: 'Who owns it, and the fight about that',
+      paragraphs: [
+        'Pepperstone was founded in Melbourne in 2010 by Owen Kerr and Joe Davenport. Champ Private Equity, now '
+        + 'CPE Capital, bought 60% in 2016; in 2018 that stake went to FX Group Holdings, a vehicle of Fiona '
+        + 'Lock with the chief executive and a former director alongside her, funded by a A$150m loan from CPE '
+        + 'repayable at A$211.6m [cpe].',
+
+        'That deal ended up in the Supreme Court of New South Wales. In September 2025 Justice Kelly Rees '
+        + 'ordered FX Group Holdings to pay CPE A$96.9m plus interest, finding that a drafting error in the '
+        + 'share sale agreement had been exploited and that the reading advanced against CPE was "absurd". An '
+        + 'appeal was lodged in December and is pending [cpe].',
+
+        'None of this is about client money or conduct, and it is not a reason to avoid the broker. It is here '
+        + 'because a private company’s ownership is normally invisible, and for once there is a judgment saying '
+        + 'who owns what and what they owe. The British subsidiary names its immediate parent as FX MidCo Pty Ltd '
+        + 'and points to group accounts at FX HoldCo Pty Ltd in Melbourne [ch-accounts] — more of a paper trail '
+        + 'than most brokers here leave.',
+      ],
+    },
+
+    {
+      heading: 'What checked out, and the one thing to actually watch',
+      paragraphs: [
+        'Every licence on this page was read rather than taken on trust. ASIC’s register returns Pepperstone '
+        + 'Group Limited under AFS licence 414530, active; CySEC’s returns Pepperstone EU Limited under 388/20 '
+        + '[registers]. The FCA firm reference, 684312, has been authorised since 5 August 2015, and the UK '
+        + 'accounts corroborate it from the other direction [ch-accounts].',
+
+        'The thing worth watching has nothing to do with Pepperstone’s conduct. BaFin has published consumer '
+        + 'warnings about websites impersonating the brand — pepperstone.vip in May 2024 and pepperstone.life in '
+        + 'November 2024 — and the FCA has warned about a Pepperstone clone of its own [bafin-clone]. Clone '
+        + 'firms target the brokers people trust, so a warning list entry like this is closer to a compliment '
+        + 'than an accusation. It is still money someone lost. Check the domain against the licence before you '
+        + 'deposit, and the guide on this site on reading a register will tell you how.',
+
+        'As with every broker here, Pepperstone’s own pricing and payment figures on this page are the ones it '
+        + 'publishes, read by a person, with the date beside them. Its spreads are quoted to two decimal places '
+        + 'by a dozen review sites and not one of them says how it measured. We do not carry those numbers.',
+      ],
+    },
+  ],
+
+  facts: [
+    { label: 'UK entity, client money at 30 June 2025', value: '£26,172,993', from: 'ch-accounts' },
+    { label: 'UK entity, the year before', value: '£26,971,370', from: 'ch-accounts' },
+    { label: 'UK entity, trading revenue 2025', value: '£15,040,968', from: 'ch-accounts' },
+    { label: 'UK entity, profit before tax 2025', value: '£24,070,877', from: 'ch-accounts' },
+    { label: 'UK entity, principal activity', value: 'Onboarding retail and professional clients', from: 'ch-accounts' },
+    { label: 'Who carries the market risk', value: 'Pepperstone Group Limited, Australia', from: 'ch-accounts' },
+    { label: 'Immediate parent', value: 'FX MidCo Pty Ltd; group accounts at FX HoldCo Pty Ltd', from: 'ch-accounts' },
+    { label: 'Global site operator', value: 'Pepperstone Markets Limited, Bahamas, SIA-F217', from: 'pep-reg' },
+    { label: 'FCA authorisation, effective', value: '5 August 2015, firm reference 684312', from: 'fca' },
+    { label: 'NSW Supreme Court order, September 2025', value: 'A$96.9m plus interest, under appeal', from: 'cpe' },
+  ],
+
+  open: [
+    'Which EU country goes to which entity is our reading, not a disclosure. Germany is assigned to Pepperstone '
+    + 'GmbH because that is what a BaFin-licensed German firm is for, and the rest of the EU to the Cyprus firm. '
+    + 'The broker does not publish the split country by country.',
+    'A Kenyan entity licensed by the CMA appears in Pepperstone’s own footers and is not on this map yet, '
+    + 'because nobody here has read the Kenyan register.',
+    'The A$96.9m appeal has been pending since December 2025. It is an ownership dispute rather than a client '
+    + 'one, and it is still the largest open financial question about the group.',
+  ],
+
+  sources: [
+    {
+      id: 'ch-accounts',
+      publisher: 'Companies House',
+      title: 'Pepperstone Limited — full accounts for the year ended 30 June 2025, company 08965105',
+      url: 'https://find-and-update.company-information.service.gov.uk/company/08965105/filing-history',
+      published: '2026-04-10',
+      read: '2026-09-16',
+      kind: 'filing',
+    },
+    {
+      id: 'pep-reg',
+      publisher: 'Pepperstone',
+      title: 'Is Pepperstone licensed and regulated',
+      url: 'https://pepperstone.com/en/help-and-support/opening-an-account/is-pepperstone-licensed-and-regulated/',
+      read: '2026-09-16',
+      kind: 'broker',
+    },
+    {
+      id: 'registers',
+      publisher: 'ASIC and CySEC',
+      title: 'AFS licensee register (414530) and the register of Cyprus Investment Firms (388/20)',
+      url: 'https://www.cysec.gov.cy/en-GB/entities/investment-firms/cypriot/',
+      read: '2026-09-16',
+      kind: 'register',
+    },
+    {
+      id: 'bafin',
+      publisher: 'Bundesanstalt für Finanzdienstleistungsaufsicht',
+      title: 'Company database — Pepperstone GmbH, Düsseldorf, licence 151148',
+      url: 'https://portal.mvp.bafin.de/database/InstInfo/institutDetails.do?cmd=loadInstitutAction&institutId=151148',
+      read: '2026-09-16',
+      kind: 'register',
+    },
+    {
+      id: 'bafin-clone',
+      publisher: 'Bundesanstalt für Finanzdienstleistungsaufsicht',
+      title: 'Identitätsdiebstahl: BaFin warns about the website pepperstone.life',
+      url: 'https://www.bafin.de/SharedDocs/Veroeffentlichungen/DE/Verbrauchermitteilung/unerlaubte/2024/meldung_2024_11_25_pepperstone_life.html',
+      published: '2024-11-25',
+      read: '2026-09-16',
+      kind: 'regulator',
+    },
+    {
+      id: 'fca',
+      publisher: 'Financial Conduct Authority',
+      title: 'Financial Services Register — Pepperstone Limited, firm reference 684312',
+      url: 'https://register.fca.org.uk/',
+      read: '2026-09-16',
+      kind: 'register',
+    },
+    {
+      id: 'cpe',
+      publisher: 'FX News Group',
+      title: 'Pepperstone owners ordered to pay A$96m to CPE Capital',
+      url: 'https://fxnewsgroup.com/forex-news/retail-forex/pepperstone-owners-ordered-to-pay-a96m-to-cpe-capital/',
+      published: '2026-03-03',
+      read: '2026-09-16',
+      kind: 'press',
+    },
+  ],
+};
+
+export const PROFILES: BrokerProfile[] = [EXNESS, IC_MARKETS, PEPPERSTONE];
 
 export const profileFor = (slug: string) => PROFILES.find((p) => p.slug === slug);
 

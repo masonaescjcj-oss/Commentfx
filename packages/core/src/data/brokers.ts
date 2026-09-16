@@ -67,10 +67,23 @@ export const BROKERS: Broker[] = [
     slug: 'pepperstone', name: 'Pepperstone', founded: 2010, headquarters: 'AU',
     website: 'https://pepperstone.com/',
     entities: [
+      /**
+       * This map said the catch-all entity was the Cyprus one, so every reader
+       * outside Australia, Britain and Dubai was told they would be a client of
+       * a CySEC firm with the ICF behind it. They would not.
+       *
+       * Pepperstone's own regulation page names a single company as the
+       * operator of the global site: Pepperstone Markets Limited, company
+       * 177174 B, licensed by the Securities Commission of The Bahamas as
+       * SIA-F217, at Old Fort Bay in Nassau. That is the fallback, and it is
+       * where the '*' belongs. Two real entities were also simply missing.
+       */
       { legalName: 'Pepperstone Group Limited', country: 'AU', licence: { regulator: 'ASIC', number: '414530', status: 'authorised' }, serves: ['AU', 'NZ'] },
       { legalName: 'Pepperstone Limited', country: 'GB', licence: { regulator: 'FCA', number: '684312', status: 'authorised' }, serves: ['GB'] },
-      { legalName: 'Pepperstone EU Limited', country: 'CY', licence: { regulator: 'CySEC', number: '388/20', status: 'authorised' }, serves: ['*'] },
+      { legalName: 'Pepperstone GmbH', country: 'DE', licence: { regulator: 'BaFin', number: '151148', status: 'authorised' }, serves: ['DE'] },
+      { legalName: 'Pepperstone EU Limited', country: 'CY', licence: { regulator: 'CySEC', number: '388/20', status: 'authorised' }, serves: ['CY', 'FR', 'IT', 'ES', 'NL'] },
       { legalName: 'Pepperstone Financial Services (DIFC) Ltd', country: 'AE', licence: { regulator: 'DFSA', number: 'F004356', status: 'authorised' }, serves: ['AE'] },
+      { legalName: 'Pepperstone Markets Limited', country: 'BS', licence: { regulator: 'SCB-BS', number: 'SIA-F217', status: 'authorised' }, serves: ['*'] },
     ],
     cost: { eurusdSpread: 0.15, commissionPerLot: 7, swapFreeAvailable: true, verifiedAt: null },
     payments: { methods: ['bank', 'card', 'ewallet'], statedWithdrawalHours: 24, minDepositUsd: 0, verifiedAt: null },
