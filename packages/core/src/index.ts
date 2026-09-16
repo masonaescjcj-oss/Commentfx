@@ -19,6 +19,7 @@ export * from './data/coins.ts';
 export * from './memecoins.ts';
 export * from './name-safety.ts';
 export * from './incidents.ts';
+export * from './data/actions.ts';
 export * from './calendar.ts';
 export * from './releases.ts';
 export * from './reviews.ts';

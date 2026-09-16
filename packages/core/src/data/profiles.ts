@@ -816,7 +816,187 @@ const EIGHTCAP: BrokerProfile = {
   ],
 };
 
-export const PROFILES: BrokerProfile[] = [EXNESS, IC_MARKETS, PEPPERSTONE, EIGHTCAP];
+const OCTA: BrokerProfile = {
+  slug: 'octafx',
+  checked: '2026-09-16',
+  verdict:
+    'India’s financial crime agency has attached ₹2,681 crore of assets, arrested the group’s controlling owner '
+    + 'in Spain, and filed a prosecution against OctaFX and 54 others. Cyprus’s regulator has stripped that same '
+    + 'man of the voting rights on his 95% of the licensed European company. The Cyprus licence is still live and '
+    + 'the pricing is still commission-free, and neither of those is the thing to read this page for.',
+
+  sections: [
+    {
+      heading: 'What the Enforcement Directorate says',
+      paragraphs: [
+        'On 17 October 2025 India’s Directorate of Enforcement published a press release. It is short, it is '
+        + 'specific, and it is worth reading in the agency’s own words rather than anyone’s summary of them.',
+
+        'The ED says OctaFX "systematically duped Indian investors of approximately Rs. 1,875 Crore between July '
+        + '2022 and April 2023, generating profits of around Rs. 800 Crore", that across 2019 to 2024 total '
+        + 'profits from India are "estimated to exceed Rs. 5,000 Crore", and that the platform operated "without '
+        + 'RBI permission". On how: "OctaFX manipulated trading operations, using falsified candlestick charts '
+        + 'and deliberate slippage, ensuring consistent investor losses." And on the early payouts: "The initial '
+        + 'investors received small profits to build trust, as is generally seen in a typical Ponzi scheme" '
+        + '[ed-oct].',
+
+        'The structure the ED describes is the reason this site exists. It says the group "operated through a '
+        + 'distributed global network designed to evade regulatory scrutiny and layer illicit funds across '
+        + 'jurisdictions": marketing run from the British Virgin Islands, servers and back office in Spain, '
+        + 'payment gateways in Estonia, technical support in Georgia, Dubai overseeing Indian operations through '
+        + 'Russian promoters, Singapore used to export bogus services — and "entity in Cyprus served as the '
+        + 'holding company for the Indian entity" [ed-oct]. The regulated company was part of the map, not '
+        + 'separate from it.',
+
+        'The agency has attached over ₹2,681 crore of assets including 19 properties and a yacht, plus ₹2,385 '
+        + 'crore of cryptocurrency, and says Pavel Prozorov was arrested in Spain by Spanish police [ed-oct].',
+
+        'Now the part that matters as much: **none of this has been decided**. A prosecution complaint has been '
+        + 'filed and the PMLA Special Court has taken cognisance of it, which is the beginning of a case. An '
+        + 'attachment is provisional. An arrest is not a conviction. This page labels every line of it as '
+        + 'alleged, and will say so until something decides otherwise.',
+      ],
+    },
+
+    {
+      heading: 'And what Cyprus did about it',
+      paragraphs: [
+        'A regulator has already acted, and that part is decided rather than alleged. At its meeting of 25 '
+        + 'August 2025 CySEC suspended the voting rights attached to the shares in Octa Markets Cyprus Ltd held '
+        + 'by Pavel Prozorov — 95% of the company — and prohibited him from exercising management duties on its '
+        + 'board, under article 11(3) of Law 87(I)/2017, having found his influence as ultimate beneficial owner '
+        + 'prejudicial to the sound and prudent management of the firm [cy-mail].',
+
+        'Read that precisely, because it is narrower and stranger than a headline suggests. CySEC did not '
+        + 'suspend the licence. Octa Markets Cyprus Ltd is on the register today, authorised since 10 December '
+        + '2018 under 372/18, trading as Octa, with 14 approved domains and passporting rights into 28 member '
+        + 'states — we read that entry ourselves [cy-reg]. What the regulator did was remove the owner’s ability '
+        + 'to control it. The firm keeps trading; the man behind it may not direct it.',
+
+        'For a European client that is the best available outcome and still an uncomfortable one. For everyone '
+        + 'else it is close to irrelevant, because everyone else is not a client of the Cyprus company.',
+      ],
+    },
+
+    {
+      heading: 'Where everyone else signs, and why it now reads differently',
+      paragraphs: [
+        'Octa Markets Incorporated in St Vincent and the Grenadines takes every client the licensed European '
+        + 'entity does not. This page used to describe it as registered under the St Vincent FSA, which gave it '
+        + 'the look of a light-touch licence. It is not a licence of any kind.',
+
+        'St Vincent’s Financial Services Authority and its Financial Intelligence Unit say so jointly, in an '
+        + 'advisory they publish themselves: "there is no regulation in place for Foreign Exchange (Forex) '
+        + 'Trading and Cryptocurrency offerings in St. Vincent and the Grenadines. Furthermore, no Forex Trading '
+        + 'or Cryptocurrency licenses are issued in St. Vincent and the Grenadines" [svg]. The number in the '
+        + 'entity map, 19776 IBC 2011, is a company registration. There is no conduct rulebook behind it and '
+        + 'nobody to complain to.',
+
+        'That correction has been applied to every St Vincent company in this directory, not just this one. It '
+        + 'costs LiteFinance three quarters of a point, because a jurisdiction that issues no licence cannot be '
+        + 'scored as a weak regulator; it has to be scored as none.',
+      ],
+    },
+
+    {
+      heading: 'The brand moved, and the old address is gone',
+      paragraphs: [
+        'OctaFX renamed itself Octa in September 2023. That is ordinary enough. What is not ordinary is that '
+        + 'octafx.com — the address this site carried, and the one on a decade of reviews, bonus pages and IPL '
+        + 'sponsorship — now answers HTTP 410 Gone. Not a redirect to the new brand. Gone, deliberately, which '
+        + 'is what 410 means.',
+
+        'The European business runs on domains CySEC has approved, among them octamarkets.eu and octa.trading, '
+        + 'and those answer 451 to a request from outside the EU, which is a legal geo-block working as '
+        + 'intended [cy-reg]. The global business is at octabroker.com. A reader following an old link, or an '
+        + 'old review, arrives nowhere.',
+
+        'We have corrected the address on this record. It is worth knowing that most pages about this broker '
+        + 'still point at a domain that has been switched off, and that they were written before any of the '
+        + 'above happened.',
+      ],
+    },
+
+    {
+      heading: 'What we are not saying',
+      paragraphs: [
+        'We are not saying Octa is a fraud. An agency has alleged it, a court has agreed to hear the '
+        + 'allegation, and that is where it stands. Firms are prosecuted and acquitted.',
+
+        'We are also not going to pretend the ranking handles this. Octa sits fifth of ten on this site because '
+        + 'the score reads licences, published costs, payment terms, platforms and disclosures, and there is no '
+        + 'component in it for a live money-laundering prosecution. That is a gap in the model, stated here and '
+        + 'on the page rather than patched with a penalty nobody could see — the published weights are the only '
+        + 'thing that makes the number worth anything.',
+
+        'If you are weighing this broker: the European entity is supervised and its owner has been removed from '
+        + 'its controls. Every other client in the world is with a company that no financial regulator licenses, '
+        + 'run by the same group, while that case runs.',
+      ],
+    },
+  ],
+
+  facts: [
+    { label: 'Assets attached by India’s ED', value: '₹2,681 crore, including 19 properties and a yacht', from: 'ed-oct' },
+    { label: 'Cryptocurrency attached, 17 October 2025', value: '₹2,385 crore', from: 'ed-oct' },
+    { label: 'Alleged loss to Indian investors', value: '₹1,875 crore, July 2022 to April 2023', from: 'ed-oct' },
+    { label: 'Accused in the prosecution complaint', value: 'OctaFX and 54 other persons or entities', from: 'ed-oct' },
+    { label: 'Stage of the Indian case', value: 'Complaint filed, court has taken cognisance — undecided', from: 'ed-oct' },
+    { label: 'CySEC decision, 25 August 2025', value: 'Voting rights on 95% suspended; owner barred from the board', from: 'cy-mail' },
+    { label: 'Cyprus licence 372/18', value: 'Active, authorised 10 December 2018', from: 'cy-reg' },
+    { label: 'St Vincent entity', value: 'Company number 19776 IBC 2011 — no financial licence', from: 'svg' },
+    { label: 'St Vincent FSA on forex licences', value: '“No Forex Trading or Cryptocurrency licenses are issued”', from: 'svg' },
+    { label: 'octafx.com today', value: 'HTTP 410 Gone', from: 'cy-reg' },
+  ],
+
+  open: [
+    'The score model has no component for enforcement or prosecution, so none of this moves the number. That '
+    + 'is a gap in the published weights and it needs deciding in the open, not quietly.',
+    'We have not found CySEC’s own announcement of the 25 August 2025 decision, only reporting of it. The '
+    + 'decision is described consistently across several outlets and we would rather cite the document.',
+    'What Octa now tells a new client about which entity they are joining is unknown to us: the European '
+    + 'domains geo-block our infrastructure and the global site renders client-side.',
+  ],
+
+  sources: [
+    {
+      id: 'ed-oct',
+      publisher: 'Directorate of Enforcement, Government of India',
+      title: 'Press release: provisional attachment order, OctaFX — 17 October 2025',
+      url: 'https://www.enforcementdirectorate.gov.in/media/press-release-documents/a490dca5-edac-400a-b916-0d73fe571ee6_Press%20Release-%20PAO%20OctaFX%20-17.10.2025%204.pdf',
+      published: '2025-10-17',
+      read: '2026-09-16',
+      kind: 'regulator',
+    },
+    {
+      id: 'cy-reg',
+      publisher: 'Cyprus Securities and Exchange Commission',
+      title: 'Register of Cyprus Investment Firms — Octa Markets Cyprus Ltd, licence 372/18',
+      url: 'https://www.cysec.gov.cy/en-GB/entities/investment-firms/cypriot/81668/',
+      read: '2026-09-16',
+      kind: 'register',
+    },
+    {
+      id: 'cy-mail',
+      publisher: 'Cyprus Mail',
+      title: 'CySEC orders liquidation of fund, restricts shareholder voting rights',
+      url: 'https://cyprus-mail.com/2025/09/04/cysec-orders-liquidation-of-fund-restricts-shareholder-voting-rights',
+      published: '2025-09-04',
+      read: '2026-09-16',
+      kind: 'press',
+    },
+    {
+      id: 'svg',
+      publisher: 'Financial Services Authority and Financial Intelligence Unit, St Vincent and the Grenadines',
+      title: 'Advisory: foreign exchange (forex) trading and cryptocurrency offerings',
+      url: 'https://svgfiu.com/images/pdf/PressReleases/ADVISORY.pdf',
+      read: '2026-09-16',
+      kind: 'regulator',
+    },
+  ],
+};
+
+export const PROFILES: BrokerProfile[] = [EXNESS, IC_MARKETS, PEPPERSTONE, EIGHTCAP, OCTA];
 
 export const profileFor = (slug: string) => PROFILES.find((p) => p.slug === slug);
 

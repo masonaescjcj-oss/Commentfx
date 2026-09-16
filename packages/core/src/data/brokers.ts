@@ -175,18 +175,26 @@ export const BROKERS: Broker[] = [
     logo: { initials: 'FX', bg: '#1F6B5A', fg: '#FFFFFF', img: '/logos/fxtm.png' },
   },
   {
-    slug: 'octafx', name: 'OctaFX', founded: 2011, headquarters: 'CY',
-    website: 'https://www.octafx.com/',
+    // Renamed from OctaFX to Octa in September 2023. CySEC's register carries
+    // "Octa" as the approved trade name; octafx.com answers HTTP 410 Gone. The
+    // slug stays `octafx` because that is still what people search for.
+    slug: 'octafx', name: 'Octa', founded: 2011, headquarters: 'CY',
+    website: 'https://www.octabroker.com/',
     entities: [
       { legalName: 'Octa Markets Cyprus Ltd', country: 'CY', licence: { regulator: 'CySEC', number: '372/18', status: 'authorised' }, serves: ['CY', 'DE', 'FR', 'IT', 'ES'] },
-      { legalName: 'Octa Markets Incorporated', country: 'VC', licence: { regulator: 'FSA-SVG', number: '19776 IBC 2011', status: 'registered' }, serves: ['*'] },
+      // An IBC number, not a licence. St Vincent's FSA and FIU say in a joint
+      // advisory that there is "no regulation in place for Foreign Exchange
+      // (Forex) Trading" there and that "no Forex Trading or Cryptocurrency
+      // licenses are issued" — so every St Vincent entity in this file reads
+      // `unregulated`, and this one carries almost all of Octa's clients.
+      { legalName: 'Octa Markets Incorporated', country: 'VC', licence: { regulator: 'FSA-SVG', number: '19776 IBC 2011', status: 'unregulated' }, serves: ['*'] },
     ],
     cost: { eurusdSpread: 0.9, commissionPerLot: 0, swapFreeAvailable: true, verifiedAt: null },
     payments: { methods: ['bank', 'card', 'crypto', 'ewallet'], statedWithdrawalHours: 6, minDepositUsd: 25, verifiedAt: null },
     platforms: { list: ['mt4', 'mt5', 'proprietary', 'web', 'mobile'], execution: 'market', copyTrading: true, maxLeverage: 1000 },
     transparency: { publishesEntityMapping: false, publishesAuditedAccounts: false, segregatedClientFunds: true, publicOwnership: false },
     reviews: { verifiedCount: 0, verifiedAverage: null },
-    why: 'No commission on any account type, but most clients land offshore',
+    why: 'Commission-free pricing, an unregulated catch-all entity, and a live money-laundering prosecution',
     logo: { initials: 'OC', bg: '#C4762C', fg: '#FFFFFF', img: '/logos/octafx.png' },
   },
   {
@@ -221,7 +229,11 @@ export const BROKERS: Broker[] = [
     slug: 'litefinance', name: 'LiteFinance', founded: 2005, headquarters: 'VC',
     website: 'https://www.litefinance.org/',
     entities: [
-      { legalName: 'LiteFinance Global LLC', country: 'VC', licence: { regulator: 'FSA-SVG', number: '931 LLC 2021', status: 'registered' }, serves: ['*'] },
+      // The only company in this group, and St Vincent issues no forex licence
+      // to anyone. LiteFinance therefore has no financial regulator at all,
+      // and its regulation score is zero rather than a tier-C 2.5 — which is
+      // the difference between "lightly supervised" and "not supervised".
+      { legalName: 'LiteFinance Global LLC', country: 'VC', licence: { regulator: 'FSA-SVG', number: '931 LLC 2021', status: 'unregulated' }, serves: ['*'] },
     ],
     cost: { eurusdSpread: 1.3, commissionPerLot: 0, swapFreeAvailable: false, verifiedAt: null },
     payments: { methods: ['card', 'crypto', 'ewallet'], statedWithdrawalHours: 24, minDepositUsd: 50, verifiedAt: null },

@@ -5,6 +5,7 @@ import { BROKERS } from './data/brokers.ts';
 import { PROPS } from './data/props.ts';
 import { EXCHANGES } from './data/exchanges.ts';
 import { REGULATORS } from './regulators.ts';
+import { ACTIONS } from './data/actions.ts';
 
 /**
  * The point of this file is that a page says "Seychelles" and not "SC". A code
@@ -23,6 +24,7 @@ test('every country the data names has a name', () => {
   for (const p of PROPS) codes.add(p.headquarters);
   for (const e of EXCHANGES) codes.add(e.headquarters);
   for (const r of Object.values(REGULATORS)) codes.add(r.country);
+  for (const a of ACTIONS) codes.add(a.country);
 
   const missing = [...codes].filter((c) => !Object.hasOwn(COUNTRIES, c));
   assert.deepEqual(missing, [], `no name for: ${missing.join(', ')}`);

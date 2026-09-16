@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import {
   REGULATORS, countryName, brokerReview, brokerVerdict, effectiveCostPips, hours, leverage, profileFor,
-  servesRetail, BROKERS,
+  servesRetail, actionsFor, BROKERS,
 } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, financialServiceLd, faqLd, reviewLd } from '@/lib/seo';
 import { rankedBrokers, getRanked, alternativesFor } from '@/lib/repo';
@@ -18,10 +18,11 @@ import { Faq } from '@/components/Faq';
 import { OfficialSite } from '@/components/OfficialSite';
 import { Card, CardHead, Logo, Score, Tag, Meter } from '@/components/primitives';
 import { RecordHero, QuickJump, StickyActions } from '@/components/RecordHero';
-import { IconScore, IconEntity, IconLicence, IconCost, IconStatus, IconReview, IconReviews, IconCompare, IconFaq, IconResearch, IconVerdict } from '@/components/icons';
+import { IconScore, IconEntity, IconLicence, IconCost, IconStatus, IconReview, IconReviews, IconCompare, IconFaq, IconResearch, IconVerdict, IconGavel } from '@/components/icons';
 import { EntityMap } from '@/components/EntityMap';
 import { Profile } from '@/components/Profile';
 import { VerdictCard } from '@/components/Verdict';
+import { ActionList } from '@/components/Actions';
 import { LicenceList } from '@/components/LicenceList';
 import { ReviewForm } from '@/components/ReviewForm';
 import { ReviewList, ReviewSummary } from '@/components/ReviewList';
@@ -102,6 +103,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
   // paragraph written by hand stops being true the first time a field changes.
   const profile = profileFor(b.slug);
   const verdict = brokerVerdict(b, BROKERS);
+  const actions = actionsFor(b.slug);
   const review = brokerReview({
     broker: b,
     rank: r.rank,
@@ -199,6 +201,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
         <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
           <QuickJump items={[
             { href: '#verdict', label: 'In short', icon: <IconVerdict /> },
+            { href: '#actions', label: 'On record', icon: <IconGavel />, ready: actions.length > 0 },
             { href: '#score', label: 'Score', icon: <IconScore /> },
             { href: '#entity', label: 'Entity', icon: <IconEntity /> },
             { href: '#licences', label: 'Licences', icon: <IconLicence /> },
@@ -224,6 +227,8 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
             </div>
 
             <div>
+            <ActionList actions={actions} name={b.name} />
+
             <VerdictCard verdict={verdict} name={b.name} summary={profile?.verdict} />
 
             <Card className="p-4 lg:p-6" as="section" id="score">

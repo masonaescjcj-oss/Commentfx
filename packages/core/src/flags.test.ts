@@ -6,6 +6,7 @@ import { BROKERS } from './data/brokers.ts';
 import { PROPS } from './data/props.ts';
 import { EXCHANGES } from './data/exchanges.ts';
 import { REGULATORS } from './regulators.ts';
+import { ACTIONS } from './data/actions.ts';
 
 /**
  * Every country the data names has a flag drawn for it.
@@ -40,6 +41,10 @@ test('every country the data names has a flag', () => {
   for (const p of PROPS) codes.add(p.headquarters);
   for (const e of EXCHANGES) codes.add(e.headquarters);
   for (const r of Object.values(REGULATORS)) codes.add(r.country);
+  // Actions name countries no broker record does — India came in this way and
+  // rendered a grey box next to the Enforcement Directorate for exactly as long
+  // as this line was missing.
+  for (const a of ACTIONS) codes.add(a.country);
 
   const missing = [...codes].filter((c) => !shapes.has(c)).sort();
   assert.deepEqual(missing, [], `no flag drawn for: ${missing.join(', ')}`);

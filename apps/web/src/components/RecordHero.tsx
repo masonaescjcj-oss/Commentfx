@@ -181,7 +181,13 @@ export function QuickJump({ items }: {
                   {inner}
                 </a>
               ) : (
-                <span className="flex flex-col items-center gap-[6px] px-1 py-[10px] opacity-60">{inner}</span>
+                /* No opacity. Measured: ink-3 on white is 5.27:1 and the same
+                   colour at 60% is 2.42:1, because fading text composites it
+                   towards the background and takes the contrast with it. The
+                   entity map already had this written down and this grid was
+                   doing it anyway. The icon in `text-line` carries the
+                   de-emphasis on its own. */
+                <span className="flex flex-col items-center gap-[6px] px-1 py-[10px]">{inner}</span>
               )}
             </li>
           );

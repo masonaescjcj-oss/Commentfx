@@ -27,3 +27,5 @@ export const IconReview = () => <S><path d="M6 3h9l4 4v14H6z" /><path d="M15 3v4
 export const IconResearch = () => <S><path d="M6 3h8l4 4v5.5" /><path d="M14 3v4h4" /><path d="M6 3v18h5" /><circle cx="16.5" cy="17" r="3.5" /><path d="m19.2 19.6 2.3 2.3" /></S>;
 // A tick and a cross in one frame: the two lists the card holds.
 export const IconVerdict = () => <S><path d="M3 7.5 5 9.5 9 5" /><path d="M3 16l2 2 4-4.5" /><path d="M13 7.5h8M13 17h8" /></S>;
+// A gavel: the section for what a regulator or a court has done.
+export const IconGavel = () => <S><path d="m14.5 3.5 6 6" /><path d="m17.5 6.5-7 7" /><path d="m11.5 4.5 4 4" /><path d="M9.5 10.5 3 17l4 4 6.5-6.5" /><path d="M13 20h9" /></S>;

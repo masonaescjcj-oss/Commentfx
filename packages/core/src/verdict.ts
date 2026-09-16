@@ -2,6 +2,7 @@ import { servesRetail, type Broker } from './types.ts';
 import { REGULATORS } from './regulators.ts';
 import { effectiveCostPips } from './score.ts';
 import { countryName } from './countries.ts';
+import { actionsFor, bearsOnClients } from './data/actions.ts';
 
 /**
  * What is good and what is not, in a list, generated from the record.
@@ -126,6 +127,21 @@ export function brokerVerdict(b: Broker, peers: Broker[]): Verdict {
   if (b.platforms.execution === 'dealing-desk') cons.push('Runs a dealing desk, so it is the counterparty to your trade');
   if (b.platforms.maxLeverage >= 1000) {
     cons.push(`Offers leverage up to 1:${b.platforms.maxLeverage}, which no tier-1 regulator allows a retail client`);
+  }
+
+  /* ── What authorities have done ──────────────────────────────────────── */
+  // Above transparency deliberately: a regulator acting on who may control the
+  // company outranks whether the company publishes a PDF.
+  const acted = actionsFor(b.slug).filter(bearsOnClients);
+  for (const a of acted.slice(0, 2)) {
+    const when = a.date.slice(0, 4);
+    cons.push(
+      a.stage === 'alleged'
+        ? `${a.authority} has an open case against the group (${when}) — alleged, not decided`
+        : a.stage === 'under-appeal'
+          ? `${a.authority} acted against it in ${when}, and the company is appealing`
+          : `${a.authority} acted against it in ${when}`,
+    );
   }
 
   /* ── Transparency ────────────────────────────────────────────────────── */

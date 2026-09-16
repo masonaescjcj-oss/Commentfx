@@ -26,6 +26,7 @@ export const COUNTRIES: Record<string, string> = {
   MT: 'Malta',
   MU: 'Mauritius',
   BS: 'The Bahamas',
+  IN: 'India',
   NL: 'Netherlands',
   NZ: 'New Zealand',
   PL: 'Poland',
