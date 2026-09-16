@@ -106,6 +106,21 @@ export const BROKERS: Broker[] = [
       // either, and is not claimed here beyond the `serves` field this row
       // already carried: whether XM still onboards Australian clients through it.
       { legalName: 'Trading.com Markets Pty Ltd', country: 'AU', licence: { regulator: 'ASIC', number: '443670', status: 'authorised' }, serves: ['AU'] },
+      /**
+       * Four entities were missing, two of them tier-1, and the British one is
+       * the same story as the Australian: Trading.com Markets UK Limited was
+       * Trading Point of Financial Instruments UK Limited until 7 January 2025.
+       * A reader searching "XM" in London or Sydney finds no XM, because in
+       * both places the group trades as Trading.com.
+       */
+      { legalName: 'Trading.com Markets UK Limited', country: 'GB', licence: { regulator: 'FCA', number: '705428', status: 'authorised' }, serves: ['GB'] },
+      { legalName: 'Trading Point MENA Limited', country: 'AE', licence: { regulator: 'DFSA', number: 'F003484', status: 'authorised' }, serves: ['AE'] },
+      { legalName: 'XM ZA (Pty) Ltd', country: 'ZA', licence: { regulator: 'FSCA', number: '49976', status: 'authorised' }, serves: ['ZA'] },
+      { legalName: 'XM International MU Limited', country: 'MU', licence: { regulator: 'FSC-MU', number: 'GB23202700', status: 'registered' }, serves: [] },
+      // The catch-all, and the only licence number on this record that nobody
+      // here has been able to confirm: Belize's register is an application, and
+      // four different suffixes under 000261 circulate on review sites. See the
+      // profile.
       { legalName: 'XM Global Limited', country: 'BZ', licence: { regulator: 'IFSC-BZ', number: '000261/397', status: 'registered' }, serves: ['*'] },
     ],
     cost: { eurusdSpread: 0.6, commissionPerLot: 0, swapFreeAvailable: true, verifiedAt: null },

@@ -996,7 +996,186 @@ const OCTA: BrokerProfile = {
   ],
 };
 
-export const PROFILES: BrokerProfile[] = [EXNESS, IC_MARKETS, PEPPERSTONE, EIGHTCAP, OCTA];
+const XM: BrokerProfile = {
+  slug: 'xm',
+  checked: '2026-09-16',
+  verdict:
+    'XM’s British company says in its own filed accounts that it "acts as the counterparty to all trades '
+    + 'entered into by its clients" — it takes the other side, which is a different business from the ones that '
+    + 'hedge. It also lost money in 2024, its net assets nearly halved, and the parent put £1.1m in over the '
+    + 'following quarter. And in Britain and Australia the group does not trade as XM at all.',
+
+  sections: [
+    {
+      heading: 'It is the counterparty to your trade, and it says so',
+      paragraphs: [
+        'Most brokers are vague about whether they take the other side of your position. XM’s British subsidiary '
+        + 'is not, because a filed account has to be. The 2024 strategic report of Trading.com Markets UK Limited '
+        + 'says the company "enables retail customers to trade global over-the-counter CFDs" and then, flatly: '
+        + '"The Company acts as the counterparty to all trades entered into by its clients" [ch-uk]. The FCA '
+        + 'permission matches — it is authorised to deal in investments as principal [fca].',
+
+        'That is worth understanding rather than being alarmed by. Somebody has to be on the other side of a CFD, '
+        + 'and a broker doing it itself is normal and legal. It is simply a different arrangement from '
+        + 'Pepperstone’s British company, whose accounts say its licence "does not allow it to take on any '
+        + 'market risk", or Eightcap’s, which says it hedges "on a back-to-back basis with our liquidity '
+        + 'provider". Three British companies, three filings, three different answers to the same question. None '
+        + 'of them puts it on the marketing page.',
+
+        'What it means in practice is that the firm’s revenue and your losses are not unrelated. That does not '
+        + 'make it dishonest and it does make it a thing to know, and it is the reason this section is first.',
+      ],
+    },
+
+    {
+      heading: 'The British arm is small and had a bad year',
+      paragraphs: [
+        'Revenue rose to £1,843,567 from £1,448,366, which sounds like growth until you read what the directors '
+        + 'attribute it to: "mainly ... the increase of payroll recharges to an affiliate entity" [ch-uk]. The '
+        + 'company also earns commission from the Cyprus entity based on its clients’ trading volume, so its '
+        + 'income is substantially internal.',
+
+        'Net assets went the other way, down to £1,046,948 from £2,028,066, "due to the losses incurred during '
+        + 'the year". The accounts then say that in January and March 2025 the directors agreed to issue 1,100,000 '
+        + 'new £1 shares for cash, taken up by the sole shareholder, and that "Management remains vigilant on the '
+        + 'cash position of the Company on a regular basis to ensure that it has the liquidity to operate" '
+        + '[ch-uk].',
+
+        'A parent recapitalising a subsidiary is ordinary corporate housekeeping and the company is above its '
+        + 'regulatory capital. It is still a smaller and thinner balance sheet than the British arms of the '
+        + 'brokers ranked above it, and the sentence about remaining vigilant on cash is not one you find in all '
+        + 'of them.',
+      ],
+    },
+
+    {
+      heading: 'Search XM in London and you will not find XM',
+      paragraphs: [
+        'The group runs two brands. XM is the Cyprus and Belize business — the one with the education programme, '
+        + 'the lowest entry price here and most of the world’s clients. In Britain and Australia the same group trades as '
+        + 'Trading.com, and the companies were renamed to match: Trading Point of Financial Instruments UK '
+        + 'Limited became Trading.com Markets UK Limited on 7 January 2025 [ch-uk], and the Australian licence '
+        + 'holder went the same way.',
+
+        'So the FCA and ASIC licences in XM’s marketing are real, and a British or Australian reader who follows '
+        + 'them arrives at a differently branded site. That is legitimate segmentation and it is also the kind of '
+        + 'thing that makes a licence look more available than it is. The entity map on this page now carries all '
+        + 'seven companies, including the four — UK, Dubai, South Africa and Mauritius — that were missing from '
+        + 'it entirely.',
+      ],
+    },
+
+    {
+      heading: 'The one number we could not confirm',
+      paragraphs: [
+        'Everyone outside Europe, Britain, Australia, the Emirates and South Africa is a client of XM Global '
+        + 'Limited in Belize. That is the entity that matters most here, and its licence number is the one thing '
+        + 'on this record nobody has been able to verify.',
+
+        'Four different numbers circulate. This record carries 000261/397; review sites publish 000261/106, '
+        + '000261/309 and 000261/4 for the same company, and a separate registration number under the Securities '
+        + 'Industry Act 2021 is quoted as 8557558. They cannot all be right, and the fact that four sites quote '
+        + 'four numbers with equal confidence is a fair summary of how much checking went into any of them.',
+
+        'The register exists. Belize’s Financial Services Commission publishes one, and it is an application '
+        + 'rather than a page: its form-definition endpoint answers and the endpoint that returns the rows is not '
+        + 'documented. We have added it to the list of registers this site cannot read, next to the FCA, '
+        + 'Mauritius and the NFA, so the verification panel on this page says "unchecked" rather than implying '
+        + 'otherwise.',
+
+        'XM’s own site would settle it, and XM’s own site returns 403 to our infrastructure on every path we '
+        + 'tried — the second broker in this directory to do that, after Exness.',
+      ],
+    },
+
+    {
+      heading: 'What is not on the record against it',
+      paragraphs: [
+        'There is one old enforcement action and it is not in this page’s register of them. In 2013 CySEC fined '
+        + 'Trading Point €5,000 over client-funds and anti-money-laundering compliance, noting that the firm had '
+        + 'never been fined before; the company said it had cooperated and remediated [fm-2013]. Thirteen years '
+        + 'and one rebrand ago, at a sum that would not cover a week of the marketing budget.',
+
+        'It is mentioned here and deliberately kept out of the "on the record" block, which is for things that '
+        + 'would change a reader’s mind. A directory that lists every historic infraction forever gives a reader '
+        + 'no way to tell a €5,000 housekeeping fine in 2013 from a live prosecution in 2025, and the second of '
+        + 'those is on another page in this directory.',
+
+        'Beyond that we found nothing: no current regulatory action, no litigation, no warning list entry. As '
+        + 'always, "we found nothing" is weaker than "there is nothing", and it is what we are able to say.',
+      ],
+    },
+  ],
+
+  facts: [
+    { label: 'UK entity, its role in your trade', value: 'Counterparty to all client trades', from: 'ch-uk' },
+    { label: 'UK entity, net assets 2024', value: '£1,046,948 (2023: £2,028,066)', from: 'ch-uk' },
+    { label: 'UK entity, revenue 2024', value: '£1,843,567, largely payroll recharges to an affiliate', from: 'ch-uk' },
+    { label: 'Capital injected, Q1 2025', value: '1,100,000 new £1 shares, taken by the sole shareholder', from: 'ch-uk' },
+    { label: 'UK company renamed', value: 'To Trading.com Markets UK Limited, 7 January 2025', from: 'ch-uk' },
+    { label: 'Group parent', value: 'Trading Point Holdings Limited', from: 'ch-uk' },
+    { label: 'FCA permission', value: 'Deal as principal, hold client money — firm reference 705428', from: 'fca' },
+    { label: 'CySEC register, licence 120/10', value: 'Trading Point of Financial Instruments Ltd, active', from: 'cysec' },
+    { label: 'ASIC register, AFS licence 443670', value: 'Trading.com Markets Pty Ltd, active', from: 'cysec' },
+    { label: 'Belize licence number', value: 'Unconfirmed — four different numbers circulate', from: 'bz' },
+  ],
+
+  open: [
+    'The Belize licence number is unverified and the register cannot be read from here. Until it can, the '
+    + 'number on this page is the best of four candidates rather than a fact.',
+    'The counterparty disclosure is the British company’s. Whether the Cyprus and Belize entities run the same '
+    + 'book is not disclosed anywhere we found, and this record still describes execution as market rather than '
+    + 'dealing-desk on that basis. One filing about one subsidiary is not enough to change the field.',
+    'Whether XM still onboards UK and Australian clients under the XM brand at all, or only through Trading.com, '
+    + 'is not something either register answers.',
+  ],
+
+  sources: [
+    {
+      id: 'ch-uk',
+      publisher: 'Companies House',
+      title: 'Trading.com Markets UK Limited — full accounts for the year ended 31 December 2024, company 09436004',
+      url: 'https://find-and-update.company-information.service.gov.uk/company/09436004/filing-history',
+      published: '2025-10-01',
+      read: '2026-09-16',
+      kind: 'filing',
+    },
+    {
+      id: 'cysec',
+      publisher: 'CySEC and ASIC',
+      title: 'Register of Cyprus Investment Firms (120/10) and the AFS licensee register (443670)',
+      url: 'https://www.cysec.gov.cy/en-GB/entities/investment-firms/cypriot/',
+      read: '2026-09-16',
+      kind: 'register',
+    },
+    {
+      id: 'fca',
+      publisher: 'Financial Conduct Authority',
+      title: 'Financial Services Register — Trading.com Markets UK Limited, firm reference 705428',
+      url: 'https://register.fca.org.uk/',
+      read: '2026-09-16',
+      kind: 'register',
+    },
+    {
+      id: 'bz',
+      publisher: 'Financial Services Commission, Belize',
+      title: 'Public register of licensees',
+      url: 'https://licensys.belizefsc.org.bz/#/publicSearch',
+      read: '2026-09-16',
+      kind: 'register',
+    },
+    {
+      id: 'fm-2013',
+      publisher: 'Finance Magnates',
+      title: 'CySEC fines Trading Point €5,000 for infringement of client funds regulations',
+      url: 'https://www.financemagnates.com/forex/regulation/cysec-flexes-its-muscles-fines-trading-point-e5000-for-infringement-of-client-funds-regulations/',
+      read: '2026-09-16',
+      kind: 'press',
+    },
+  ],
+};
+
+export const PROFILES: BrokerProfile[] = [EXNESS, IC_MARKETS, PEPPERSTONE, EIGHTCAP, OCTA, XM];
 
 export const profileFor = (slug: string) => PROFILES.find((p) => p.slug === slug);
 
