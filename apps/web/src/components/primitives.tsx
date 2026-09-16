@@ -53,7 +53,7 @@ export function CardHead({ title, href, hrefLabel, aside }: {
       {href && (
         <Link
           href={href}
-          className="text-brass text-[12px] font-semibold hover:text-brass-2 shrink-0 whitespace-nowrap"
+          className="text-accent text-[12px] font-semibold hover:text-accent-2 shrink-0 whitespace-nowrap"
         >
           {hrefLabel ?? 'All'} <span aria-hidden>›</span>
         </Link>
@@ -67,7 +67,7 @@ export function RankBadge({ rank }: { rank: number }) {
   return (
     <span
       className={`w-6 shrink-0 text-center tnum text-[13px] font-extrabold ${
-        rank <= 3 ? 'text-brass' : 'text-ink-3'
+        rank <= 3 ? 'text-accent' : 'text-ink-3'
       }`}
       aria-label={`Rank ${rank}`}
     >
@@ -104,14 +104,14 @@ export function Score({ value, size = 'md' }: { value: number; size?: 'md' | 'lg
 
 export function Tag({ children, tone = 'neutral' }: {
   children: ReactNode;
-  tone?: 'neutral' | 'good' | 'bad' | 'warn' | 'brass';
+  tone?: 'neutral' | 'good' | 'bad' | 'warn' | 'accent';
 }) {
   const tones = {
     neutral: 'bg-card-2 border-line text-ink-2',
     good: 'bg-up-bg border-transparent text-up',
     bad: 'bg-down-bg border-transparent text-down',
     warn: 'bg-warn-bg border-transparent text-warn',
-    brass: 'bg-brass-bg border-transparent text-brass',
+    accent: 'bg-accent-bg border-transparent text-accent',
   } as const;
   return (
     <span
@@ -166,10 +166,10 @@ export function Logo({ initials, bg, fg, img, size = 40 }: {
 
 /** A bar that reads as a proportion, used for score components. */
 export function Meter({ value, max = 10, tone = 'ink' }: {
-  value: number; max?: number; tone?: 'ink' | 'up' | 'brass' | 'warn';
+  value: number; max?: number; tone?: 'ink' | 'up' | 'accent' | 'warn';
 }) {
   const pct = Math.max(0, Math.min(100, (value / max) * 100));
-  const bg = { ink: 'bg-ink', up: 'bg-up', brass: 'bg-brass', warn: 'bg-warn' }[tone];
+  const bg = { ink: 'bg-ink', up: 'bg-up', accent: 'bg-accent', warn: 'bg-warn' }[tone];
   // 3px, not 5. A meter is a proportion, and the wider the column the less of
   // it needs to be ink to say so — at the width a desktop column gives it, five
   // pixels of solid colour stops reading as a measurement and starts reading as

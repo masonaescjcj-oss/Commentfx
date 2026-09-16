@@ -132,10 +132,10 @@ export default async function CalendarPage() {
               <li key={r.slug} className="border-b border-line-2 last:border-b-0">
                 <Link href={`/calendar/${r.slug}`} className="flex items-center gap-3 py-[10px] group">
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[13px] font-semibold group-hover:text-brass">{r.name}</span>
+                    <span className="block text-[13px] font-semibold group-hover:text-accent">{r.name}</span>
                     <span className="block text-[11.5px] text-ink-3 mt-[2px]">{r.publisher}</span>
                   </span>
-                  <Tag tone={r.currency === 'USD' ? 'neutral' : 'brass'}>{r.currency}</Tag>
+                  <Tag tone={r.currency === 'USD' ? 'neutral' : 'accent'}>{r.currency}</Tag>
                   <span aria-hidden className="text-ink-3">›</span>
                 </Link>
               </li>
@@ -166,7 +166,7 @@ export default async function CalendarPage() {
           <ul>
             {data.live.map((s) => (
               <li key={s.source} className="flex items-baseline gap-2 py-[8px] border-b border-line-2 last:border-b-0">
-                <a href={s.sourceUrl} rel="nofollow noopener external" target="_blank" className="text-[12.5px] font-semibold text-brass">
+                <a href={s.sourceUrl} rel="nofollow noopener external" target="_blank" className="text-[12.5px] font-semibold text-accent">
                   {s.source}
                 </a>
                 <div className="flex-1" />
@@ -197,8 +197,8 @@ export default async function CalendarPage() {
 
         <p className="text-[11.5px] text-ink-3 gutter leading-[1.8]">
           A calendar is not a signal. If you are choosing where to trade these releases,{' '}
-          <Link href="/brokers" className="text-brass font-semibold">the broker rankings</Link>{' '}
-          and <Link href="/status" className="text-brass font-semibold">broker status</Link> are
+          <Link href="/brokers" className="text-accent font-semibold">the broker rankings</Link>{' '}
+          and <Link href="/status" className="text-accent font-semibold">broker status</Link> are
           the pages that matter.
         </p>
       </main>

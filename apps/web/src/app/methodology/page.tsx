@@ -61,7 +61,7 @@ function Weights<K extends string>({ keys, weights, labels, what, max }: {
           <div className="flex items-baseline gap-2 mb-[6px]">
             <h3 className="text-[13.5px] font-bold">{labels[k]}</h3>
             <div className="flex-1" />
-            <span className="text-[12px] font-extrabold text-brass tnum">{Math.round(weights[k] * 100)}%</span>
+            <span className="text-[12px] font-extrabold text-accent tnum">{Math.round(weights[k] * 100)}%</span>
           </div>
           <Meter value={weights[k] * 100} max={max} />
           <p className="text-[12px] text-ink-2 leading-[1.8] mt-2">{what[k]}</p>
@@ -268,8 +268,8 @@ export default function MethodologyPage() {
           ))}
         </Card>
 
-        <Card className="p-4 lg:p-6 border-[1.5px] border-brass shadow-none" as="section">
-          <h2 className="text-[14px] font-bold text-brass-2 mb-2">Money, and what it does not buy</h2>
+        <Card className="p-4 lg:p-6 border-[1.5px] border-accent shadow-none" as="section">
+          <h2 className="text-[14px] font-bold text-accent-2 mb-2">Money, and what it does not buy</h2>
           <p className="text-[12.5px] text-ink-2 leading-[1.85]">
             We earn commission from some brokers when a reader opens an account. That is
             disclosed on every link that carries it. Commission is not an input to any

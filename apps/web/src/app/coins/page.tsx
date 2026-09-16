@@ -44,7 +44,7 @@ export default async function CoinsPage() {
                 <article key={c.id} className="flex items-center gap-[10px] py-[11px] border-b border-line-2 last:border-b-0">
                   <div className="min-w-0">
                     <h2 className="text-[13.5px] font-semibold leading-tight">
-                      <Link href={`/coins/${c.id}`} className="hover:text-brass">{c.name}</Link>
+                      <Link href={`/coins/${c.id}`} className="hover:text-accent">{c.name}</Link>
                     </h2>
                     <p className="text-[11px] text-ink-3 tnum">{c.symbol}</p>
                   </div>

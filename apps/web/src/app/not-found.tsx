@@ -47,7 +47,7 @@ export default function NotFound() {
             {DOORS.map(({ href, title, note }) => (
               <li key={href} className="border-b border-line-2 last:border-b-0">
                 <Link href={href} className="block py-[11px] group">
-                  <span className="block text-[13.5px] font-semibold group-hover:text-brass">{title}</span>
+                  <span className="block text-[13.5px] font-semibold group-hover:text-accent">{title}</span>
                   <span className="block text-[11.5px] text-ink-3 leading-[1.6] mt-[2px]">{note}</span>
                 </Link>
               </li>

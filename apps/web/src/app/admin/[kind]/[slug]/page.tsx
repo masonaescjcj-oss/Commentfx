@@ -71,14 +71,14 @@ export default async function AdminRecordPage({ params }: { params: Promise<{ ki
 
   return (
     <main className="px-4 py-5 flex flex-col gap-[13px] max-w-[560px] mx-auto">
-      <Link href="/admin" className="text-[12px] text-brass">‹ Queue</Link>
+      <Link href="/admin" className="text-[12px] text-accent">‹ Queue</Link>
 
       <header className="gutter">
         <h1 className="font-[family-name:var(--font-display)] text-[23px] font-bold tracking-[-0.02em]">{slug}</h1>
         <p className="text-[12.5px] text-ink-2 mt-1">
           {kind} · {cov.verified} of {cov.fields.length} fields verified
         </p>
-        <div className="mt-2"><Meter value={cov.ratio * 100} max={100} tone={cov.ratio >= 0.5 ? 'brass' : 'warn'} /></div>
+        <div className="mt-2"><Meter value={cov.ratio * 100} max={100} tone={cov.ratio >= 0.5 ? 'accent' : 'warn'} /></div>
       </header>
 
       {cov.fields.map((f) => {
@@ -98,7 +98,7 @@ export default async function AdminRecordPage({ params }: { params: Promise<{ ki
           {f.sourceUrl && (
             <p className="text-[11.5px] text-ink-3 mt-1 truncate">
               Last source:{' '}
-              <a href={f.sourceUrl} target="_blank" rel="nofollow noopener" className="text-brass">{f.sourceUrl}</a>
+              <a href={f.sourceUrl} target="_blank" rel="nofollow noopener" className="text-accent">{f.sourceUrl}</a>
               {f.verifiedBy ? ` · ${f.verifiedBy}` : ''}
             </p>
           )}
@@ -109,7 +109,7 @@ export default async function AdminRecordPage({ params }: { params: Promise<{ ki
               {sources.map((s, i) => (
                 <span key={s.url}>
                   {i > 0 && ' · '}
-                  <a href={s.url} target="_blank" rel="nofollow noopener" className="text-brass">{s.label}</a>
+                  <a href={s.url} target="_blank" rel="nofollow noopener" className="text-accent">{s.label}</a>
                 </span>
               ))}
             </p>

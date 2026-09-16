@@ -73,7 +73,7 @@ async function WhereToTrade({ symbol }: { symbol: string }) {
             <Link href={`/exchanges/${e.exchange.slug}`} className="flex items-center gap-3 py-[11px] group">
               <Logo {...e.exchange.logo} size={32} />
               <span className="flex-1 min-w-0">
-                <span className="block text-[13.5px] font-semibold group-hover:text-brass">{e.exchange.name}</span>
+                <span className="block text-[13.5px] font-semibold group-hover:text-accent">{e.exchange.name}</span>
                 <span className="block text-[11px] text-ink-3">{e.exchange.takerFeePct}% taker fee</span>
               </span>
               <Score value={e.score.total} />
@@ -89,7 +89,7 @@ async function WhereToTrade({ symbol }: { symbol: string }) {
             <li key={b.broker.slug} className="border-b border-line-2 last:border-b-0">
               <Link href={`/brokers/${b.broker.slug}`} className="flex items-center gap-3 py-[10px] group">
                 <Logo {...b.broker.logo} size={28} />
-                <span className="flex-1 text-[13px] font-semibold group-hover:text-brass">{b.broker.name}</span>
+                <span className="flex-1 text-[13px] font-semibold group-hover:text-accent">{b.broker.name}</span>
                 <Score value={b.score.total} />
               </Link>
             </li>

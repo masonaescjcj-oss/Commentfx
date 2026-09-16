@@ -40,7 +40,7 @@ export function SiteSearch({ entries }: { entries: SearchEntry[] }) {
           onChange={(e) => setQ(e.target.value)}
           placeholder="Broker, prop firm, exchange, regulator…"
           autoComplete="off"
-          className="w-full bg-card border border-line rounded-[13px] px-[14px] py-[11px] text-[14px] placeholder:text-ink-3 focus:outline-none focus:border-brass"
+          className="w-full bg-card border border-line rounded-[13px] px-[14px] py-[11px] text-[14px] placeholder:text-ink-3 focus:outline-none focus:border-accent"
         />
         <p className="text-[11.5px] text-ink-3 mt-2" aria-live="polite">
           {terms.length === 0
@@ -65,7 +65,7 @@ export function SiteSearch({ entries }: { entries: SearchEntry[] }) {
                 <li key={e.path} className="border-b border-line-2 last:border-b-0">
                   <Link href={e.path} className="flex items-center gap-3 p-[11px_12px] group">
                     <span className="min-w-0 flex-1">
-                      <span className="block text-[13.5px] font-semibold group-hover:text-brass truncate">
+                      <span className="block text-[13.5px] font-semibold group-hover:text-accent truncate">
                         {e.title}
                       </span>
                       <span className="block text-[11.5px] text-ink-3 mt-[2px] leading-[1.6]">{e.note}</span>

@@ -143,6 +143,21 @@ test('an image from a host the page cannot display is dropped', () => {
   assert.equal(parseRss(nonsense, 'X')[0]?.image, null, 'an unparseable URL does not throw');
 });
 
+test('every allowed image host is one the optimiser may fetch', () => {
+  // Same reasoning as the CSP check below, and a harder failure: a host missing
+  // from next.config.ts's remotePatterns does not degrade to a missing picture,
+  // it throws while rendering and takes the page with it.
+  const config = readFileSync(
+    fileURLToPath(new URL('../../../apps/web/next.config.ts', import.meta.url)),
+    'utf8',
+  );
+  const block = /remotePatterns:\s*\[[\s\S]*?\]/.exec(config)?.[0];
+  assert.ok(block, 'next.config.ts still declares remotePatterns');
+  for (const host of NEWS_IMAGE_HOSTS) {
+    assert.ok(block.includes(`'${host}'`), `remotePatterns is missing ${host}`);
+  }
+});
+
 test("every allowed image host is in the site's own img-src", () => {
   // The two live in different packages and nothing links them at build time, so
   // this is what stops one being edited without the other: add a publisher to

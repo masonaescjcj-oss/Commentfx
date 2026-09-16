@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { ago, type NewsItem } from '@/lib/news';
 
 /**
@@ -32,7 +33,7 @@ export function NewsList({ items }: { items: NewsItem[] }) {
                   </time>
                 ) : null}
               </span>
-              <span className="block text-[13.5px] font-semibold leading-[1.4] mt-[3px] group-hover:text-brass">
+              <span className="block text-[13.5px] font-semibold leading-[1.4] mt-[3px] group-hover:text-accent">
                 {n.title}
               </span>
             </span>
@@ -40,16 +41,20 @@ export function NewsList({ items }: { items: NewsItem[] }) {
                 there before the picture is and nothing below it moves. A
                 publisher that blocks hotlinking leaves an empty square of the
                 right size rather than a collapsed row — which is why the
-                headline, not the image, carries the meaning. */}
+                headline, not the image, carries the meaning.
+
+                Through next/image, so what arrives is 64px of WebP rather than
+                the megabyte original the publisher happens to have: see the
+                images block in next.config.ts for what that cost before. */}
             {n.image ? (
-              <img
+              <Image
                 src={n.image}
                 alt=""
                 aria-hidden
                 width={64}
                 height={64}
                 loading="lazy"
-                decoding="async"
+                sizes="64px"
                 className="w-16 h-16 shrink-0 rounded-[11px] object-cover bg-card-2 border border-line"
               />
             ) : null}

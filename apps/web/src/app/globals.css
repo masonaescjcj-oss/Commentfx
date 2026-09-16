@@ -28,10 +28,16 @@
   --color-ink-2:   #58667E;   /* 5.05:1 worst case */
   --color-ink-3:   #616C84;   /* was #9AA3B5 — 2.21:1 */
 
-  /* ── Accent: brass. Scores, ranks 1–3, links. Never a button. */
-  --color-brass:    #8F6522;  /* was #A87528 — 3.66:1; 4.61:1 worst case */
-  --color-brass-2:  #835A18;
-  --color-brass-bg: #FBF4E4;
+  /* ── Accent: the blue of the mark. Links, ranks 1–3, the hero.
+     Taken from the logo and then checked rather than the other way round:
+     #2456E8 is 5.88:1 on white, which it has to be because it is a link colour,
+     and 5.88:1 under white, which it has to be because it is also a button.
+     The token used to be called `brass` and held #8F6522. A name that says one
+     colour while the value says another is the kind of thing that costs
+     somebody an hour, so it was renamed everywhere in the same change. */
+  --color-accent:    #2456E8;  /* 5.88:1 on white, both directions */
+  --color-accent-2:  #1B45C7;  /* 7.71:1 — hover, and the darker half of a pair */
+  --color-accent-bg: #EEF3FE;  /* the tint behind a chip */
 
   /* ── Market semantics. Never used for UI chrome. ──────── */
   --color-up:      #0E7E55;   /* was #14B87C — 2.31:1 */
@@ -66,7 +72,7 @@
      that are their own row -- nav, cards, list items -- are distinguished by
      position and are left alone. */
   p a, dd a, li > p a { text-decoration: underline; text-underline-offset: 2px; }
-  ::selection { background: var(--color-brass-bg); }
+  ::selection { background: var(--color-accent-bg); }
 }
 
 /* Tabbed rankings, with no JavaScript.
@@ -247,5 +253,89 @@
   }
   @media (prefers-reduced-motion: reduce) {
     .row-hit { transition: none; }
+  }
+}
+
+/**
+ * The front page's hero surface.
+ *
+ * Everything on this site is one white; this is the one panel that is not, and
+ * it is deliberate. A reader needs one place that says what the site is before
+ * the lists start, and a surface that differs from every other surface is what
+ * they read as that place.
+ *
+ * Built out of gradients rather than a picture: nothing to download, nothing
+ * that lays out late, nothing that goes stale, and it costs the LCP nothing —
+ * which matters, because it IS the LCP element on the site's most-visited page.
+ *
+ * The two radial washes are the whole of the colour. They are placed off the
+ * top corners so the text never sits on the brightest part of either, which is
+ * what keeps the measured contrast honest: the figures in Hero.tsx's comment
+ * are against the darkest and lightest points the text can actually land on.
+ */
+@layer components {
+  .hero {
+    /* The accent here is not --color-accent. That blue is picked to clear
+       4.5:1 against WHITE, which makes it far too dark to read on navy; this is
+       the same hue lifted until it clears on the panel — 6.99:1 measured. Two
+       values for one brand colour is the honest answer whenever a brand has
+       both a light and a dark surface. */
+    --hero-accent: #7FA9FF;
+    --hero-ink-2:  #C3CCDC;
+    --hero-ink-3:  #93A0B6;
+    --hero-line:   rgb(255 255 255 / 0.14);
+
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background:
+      radial-gradient(58ch 36ch at 84% -8%, rgb(56 110 255 / 0.42), transparent 62%),
+      radial-gradient(52ch 34ch at 104% 46%, rgb(36 86 232 / 0.30), transparent 64%),
+      radial-gradient(64ch 44ch at 0% 2%, rgb(80 140 255 / 0.26), transparent 62%),
+      radial-gradient(44ch 30ch at 26% 112%, rgb(36 86 232 / 0.22), transparent 66%),
+      linear-gradient(160deg, #070F22 0%, #0E1C3D 46%, #081228 100%);
+  }
+
+  /* The panel's own gutter. The white sections below are edge to edge on a
+     phone on purpose — a border and a margin cost a tenth of a 390px screen —
+     but that argument does not carry to a dark panel with a headline on it,
+     where text against the glass reads as a mistake rather than as a decision.
+     Only below 640px: from there the shell has a gutter of its own. */
+  @media (max-width: 639px) {
+    .hero > .shell { padding-inline: 20px; }
+  }
+
+  /* A hairline of light along the bottom, so the panel ends on an edge rather
+     than stopping. Inside the element, so it cannot add height. */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgb(127 169 255 / 0.55), transparent);
+  }
+
+  .hero-cta { transition: transform 140ms ease-out, box-shadow 140ms ease-out; }
+  .hero-ghost,
+  .hero-chip {
+    border: 1px solid var(--hero-line);
+    background: rgb(255 255 255 / 0.04);
+    color: var(--hero-ink-2);
+    transition: background-color 140ms ease-out, border-color 140ms ease-out;
+  }
+
+  @media (hover: hover) {
+    .hero-cta:hover { transform: translateY(-1px); box-shadow: 0 10px 28px -12px rgb(0 0 0 / 0.55); }
+    .hero-ghost:hover,
+    .hero-chip:hover { background: rgb(255 255 255 / 0.10); border-color: rgb(255 255 255 / 0.24); }
+  }
+
+  /* On the dark panel the site's default focus ring is ink on ink. */
+  .hero :focus-visible { outline-color: var(--hero-accent); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-cta, .hero-ghost, .hero-chip { transition: none; }
+    .hero-cta:hover { transform: none; }
   }
 }

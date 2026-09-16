@@ -41,6 +41,40 @@ const CSP = [
 
 const config: NextConfig = {
   reactStrictMode: true,
+
+  /**
+   * News thumbnails go through Next's optimiser rather than straight to the
+   * publisher's CDN.
+   *
+   * They are drawn at 64px and the publishers send what they have: the front
+   * page was pulling 2.7MB of images, 2.1MB of which was two article covers at
+   * 1181kB and 959kB for two 64px squares. On the throttled profile check:vitals
+   * uses that is fourteen seconds for two pictures, and it was found by that
+   * check timing out rather than by anyone looking.
+   *
+   * Resizing at our end rather than guessing each CDN's query parameters: two
+   * of the four publish a documented way to ask for a smaller file and two do
+   * not, and a guessed parameter that 404s costs the picture. This way one
+   * mechanism covers all four, our server fetches the original once and caches
+   * it, and their bandwidth bill goes down too.
+   *
+   * The hosts are the same list as the CSP's, and news.test.ts fails if this
+   * and that list ever disagree.
+   */
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: 'cdn.sanity.io' },
+      { protocol: 'https', hostname: 'cdn.decrypt.co' },
+      { protocol: 'https', hostname: 'img.decrypt.co' },
+      { protocol: 'https', hostname: 'www.tbstat.com' },
+      { protocol: 'https', hostname: 's3-images.ctmedia.io' },
+    ],
+    // The one size they are ever drawn at, and its 2x. Asking for a ladder of
+    // eight widths would have the optimiser build seven nobody requests.
+    imageSizes: [64, 128],
+    formats: ['image/webp'],
+  },
+
   serverExternalPackages: ['@electric-sql/pglite', 'pg'],
   poweredByHeader: false,
   transpilePackages: ['@commentfx/core', '@commentfx/ingest', '@commentfx/db'],

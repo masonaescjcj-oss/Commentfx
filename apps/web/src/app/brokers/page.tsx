@@ -112,7 +112,7 @@ export default async function BrokersPage() {
                 slug: r.broker.slug,
                 cells: [
                   <span key="n" className="block">
-                    <Link href={`/brokers/${r.broker.slug}`} className="hover:text-brass">{r.broker.name}</Link>
+                    <Link href={`/brokers/${r.broker.slug}`} className="hover:text-accent">{r.broker.name}</Link>
                     <span className="block text-[10.5px] font-normal text-ink-3 uppercase tracking-[0.05em]">
                       {r.broker.platforms.execution}
                     </span>
@@ -159,9 +159,9 @@ export default async function BrokersPage() {
 
           <p className="text-[11.5px] text-ink-3 gutter leading-[1.7]">
             Looking for something specific?{' '}
-            <Link href="/best/lowest-spread" className="text-brass">lowest cost</Link>,{' '}
-            <Link href="/best/tier-1-regulated" className="text-brass">tier-1 regulated</Link>,{' '}
-            <Link href="/best/low-minimum-deposit" className="text-brass">low minimum deposit</Link>.
+            <Link href="/best/lowest-spread" className="text-accent">lowest cost</Link>,{' '}
+            <Link href="/best/tier-1-regulated" className="text-accent">tier-1 regulated</Link>,{' '}
+            <Link href="/best/low-minimum-deposit" className="text-accent">low minimum deposit</Link>.
           </p>
           </div>
         </div>

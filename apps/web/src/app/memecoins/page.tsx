@@ -101,7 +101,7 @@ export default async function MemecoinsPage() {
                     <div className="flex items-center gap-[9px] my-[9px] bg-card-2 rounded-[10px] px-[11px] py-2">
                       <span className="text-[11.5px] text-ink-3 shrink-0">Safety</span>
                       <div className="flex-1">
-                        <Meter value={score.total} tone={tone === 'good' ? 'up' : tone === 'warn' ? 'warn' : 'brass'} />
+                        <Meter value={score.total} tone={tone === 'good' ? 'up' : tone === 'warn' ? 'warn' : 'accent'} />
                       </div>
                       <span className={`text-[13px] font-extrabold tnum shrink-0 ${
                         tone === 'good' ? 'text-up' : tone === 'warn' ? 'text-warn' : 'text-down'}`}>

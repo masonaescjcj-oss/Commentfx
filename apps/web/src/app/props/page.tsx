@@ -124,7 +124,7 @@ export default function PropsPage() {
                 slug: r.firm.slug,
                 cells: [
                   <span key="n" className="block">
-                    <Link href={`/props/${r.firm.slug}`} className="hover:text-brass">{r.firm.name}</Link>
+                    <Link href={`/props/${r.firm.slug}`} className="hover:text-accent">{r.firm.name}</Link>
                     <span className="block text-[10.5px] font-normal text-ink-3">
                       {describeDrawdown(r.firm.rules.drawdownType)} drawdown
                     </span>

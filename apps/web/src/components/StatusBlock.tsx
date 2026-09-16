@@ -83,7 +83,7 @@ export function StatusBlock({ brokerSlug, brokerName, status }: {
         </span>
       </div>
 
-      <Meter value={Math.min(status.reporters, THRESHOLD.down)} max={THRESHOLD.down} tone={c.tone === 'good' ? 'up' : c.tone === 'warn' ? 'warn' : 'brass'} />
+      <Meter value={Math.min(status.reporters, THRESHOLD.down)} max={THRESHOLD.down} tone={c.tone === 'good' ? 'up' : c.tone === 'warn' ? 'warn' : 'accent'} />
 
       <p className="text-[11px] text-ink-3 mt-2 leading-[1.7]">
         {status.level === 'normal'

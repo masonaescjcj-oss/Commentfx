@@ -39,7 +39,7 @@ export function ReviewForm({ kind, slug, name }: {
           {state.deleteToken}
         </code>
         <p className="text-[11.5px] text-ink-3 mt-2 leading-[1.7]">
-          Use it at <a href="/reviews/withdraw" className="text-brass font-semibold">/reviews/withdraw</a>.
+          Use it at <a href="/reviews/withdraw" className="text-accent font-semibold">/reviews/withdraw</a>.
         </p>
       </div>
     );

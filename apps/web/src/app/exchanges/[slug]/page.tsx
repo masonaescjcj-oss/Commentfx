@@ -100,7 +100,7 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
             <div className="flex gap-[14px] items-start">
               <Logo {...e.logo} size={64} />
               <div className="flex-1 min-w-0">
-                <Tag tone="brass">RANK #{r.rank} OF {all.length}</Tag>
+                <Tag tone="accent">RANK #{r.rank} OF {all.length}</Tag>
                 <h1 className="font-[family-name:var(--font-display)] text-[23px] font-bold mt-2 tracking-[-0.025em]">
                   {e.name}
                 </h1>
@@ -112,7 +112,7 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
                   <Score value={r.score.total} size="xl" />
                   <span className="text-[11.5px] text-ink-3 leading-[1.5] pb-[3px]">
                     out of 10<br />
-                    <Link href="/methodology" className="text-brass">how we score</Link>
+                    <Link href="/methodology" className="text-accent">how we score</Link>
                   </span>
                 </div>
               </div>
@@ -120,7 +120,7 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
             <div className="flex gap-[5px] flex-wrap mt-4">
               {e.reserves.publiclyListed && <Tag tone="good">Publicly listed</Tag>}
               {e.reserves.thirdPartyAudit && <Tag tone="good">Third-party audit</Tag>}
-              {e.reserves.proofOfReserves && <Tag tone="brass">Proof of reserves</Tag>}
+              {e.reserves.proofOfReserves && <Tag tone="accent">Proof of reserves</Tag>}
               {e.security.lastBreachYear === null
                 ? <Tag tone="good">No breach on record</Tag>
                 : <Tag tone={e.security.madeUsersWhole ? 'warn' : 'bad'}>Breach {e.security.lastBreachYear}</Tag>}
@@ -185,7 +185,7 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
                   <Link href={`/exchanges/${x.exchange.slug}`} className="flex items-center gap-3 py-[11px] group">
                     <Logo {...x.exchange.logo} size={32} />
                     <span className="flex-1 min-w-0">
-                      <span className="block text-[13.5px] font-semibold group-hover:text-brass">{x.exchange.name}</span>
+                      <span className="block text-[13.5px] font-semibold group-hover:text-accent">{x.exchange.name}</span>
                       <span className="block text-[11px] text-ink-3">{x.exchange.takerFeePct}% taker · {volumeBand(x.exchange.spotVolumeUsd)}</span>
                     </span>
                     <Score value={x.score.total} />

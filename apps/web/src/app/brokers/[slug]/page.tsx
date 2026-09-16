@@ -111,7 +111,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
             <div className="flex gap-[14px] items-start">
               <Logo {...b.logo} size={64} />
               <div className="flex-1 min-w-0">
-                <Tag tone="brass">RANK #{r.rank} OF {all.length}</Tag>
+                <Tag tone="accent">RANK #{r.rank} OF {all.length}</Tag>
                 <h1 className="font-[family-name:var(--font-display)] text-[23px] font-bold mt-2 tracking-[-0.025em]">
                   {b.name}
                 </h1>
@@ -123,7 +123,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
                   <Score value={r.score.total} size="xl" />
                   <span className="text-[11.5px] text-ink-3 leading-[1.5] pb-[3px]">
                     out of 10<br />
-                    <Link href="/methodology" className="text-brass">how we score</Link>
+                    <Link href="/methodology" className="text-accent">how we score</Link>
                   </span>
                 </div>
               </div>
@@ -164,7 +164,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
                       {c.value === null ? '—' : c.value.toFixed(1)}
                     </span>
                   </div>
-                  {c.value !== null && <Meter value={c.value} tone={c.value >= 8 ? 'up' : c.value >= 6 ? 'brass' : 'warn'} />}
+                  {c.value !== null && <Meter value={c.value} tone={c.value >= 8 ? 'up' : c.value >= 6 ? 'accent' : 'warn'} />}
                   <p className="text-[11px] text-ink-3 mt-[5px]">{c.note}</p>
                 </li>
               ))}
@@ -178,7 +178,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
             )}
           </Card>
 
-          <Card className="p-4 lg:p-6 border-[1.5px] border-brass shadow-none" as="section">
+          <Card className="p-4 lg:p-6 border-[1.5px] border-accent shadow-none" as="section">
             <CardHead title="Which entity will you be under?" />
             <EntityMap broker={b} />
             <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.8]">
@@ -237,7 +237,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
                 <li key={a.broker.slug} className="border-b border-line-2 last:border-b-0">
                   <Link href={`/compare/${b.slug}-vs-${a.broker.slug}`} className="flex items-center gap-3 py-[11px] group">
                     <Logo {...a.broker.logo} size={32} />
-                    <span className="flex-1 text-[13.5px] font-semibold group-hover:text-brass">
+                    <span className="flex-1 text-[13.5px] font-semibold group-hover:text-accent">
                       {b.name} vs {a.broker.name}
                     </span>
                     <Score value={a.score.total} />

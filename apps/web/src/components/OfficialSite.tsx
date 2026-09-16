@@ -17,7 +17,7 @@ export function OfficialSite({ name, url }: { name: string; url: string }) {
       <span className="flex-1">
         {name}&rsquo;s own site <span className="text-ink-3">— their claims, not ours</span>
       </span>
-      <span className="text-brass font-semibold group-hover:underline">
+      <span className="text-accent font-semibold group-hover:underline">
         {new URL(url).hostname.replace(/^www\./, '')} ↗
       </span>
     </a>

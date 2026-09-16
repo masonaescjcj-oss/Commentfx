@@ -38,7 +38,7 @@ export function VerificationPanel({ coverage }: { coverage: Coverage | null }) {
   }
 
   const { verified, stale, unverified, fields, ratio } = coverage;
-  const tone = ratio === 1 ? 'up' : ratio >= 0.5 ? 'brass' : 'warn';
+  const tone = ratio === 1 ? 'up' : ratio >= 0.5 ? 'accent' : 'warn';
 
   return (
     <Card className="p-4 lg:p-6" as="section">
@@ -61,7 +61,7 @@ export function VerificationPanel({ coverage }: { coverage: Coverage | null }) {
                     href={f.sourceUrl}
                     rel="nofollow noopener external"
                     target="_blank"
-                    className="text-[11px] text-brass"
+                    className="text-[11px] text-accent"
                   >
                     source
                   </a>

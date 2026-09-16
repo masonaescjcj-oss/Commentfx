@@ -72,7 +72,7 @@ export function CalendarList({ days, todayUtc }: { days: CalendarDay[]; todayUtc
             <h2 className="text-[12.5px] font-bold text-ink-2 pb-[7px] flex items-baseline gap-2">
               {dayLabel(d.date)}
               {d.date === todayUtc && (
-                <span className="text-[10px] font-extrabold text-white bg-brass px-[7px] py-[1px] rounded">
+                <span className="text-[10px] font-extrabold text-white bg-accent px-[7px] py-[1px] rounded">
                   TODAY
                 </span>
               )}
@@ -112,7 +112,7 @@ function EventTitle({ event }: { event: CalendarEvent }) {
   const release = releaseForTitle(event.title);
   if (!release) return <span className="text-[13px] font-semibold">{event.title}</span>;
   return (
-    <Link href={`/calendar/${release.slug}`} className="text-[13px] font-semibold hover:text-brass">
+    <Link href={`/calendar/${release.slug}`} className="text-[13px] font-semibold hover:text-accent">
       {event.title}
     </Link>
   );

@@ -26,7 +26,7 @@ export function BrokerRow({ r, showWhy = true, extra, headingLevel = 3 }: {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <H className="text-[15.5px] font-bold tracking-[-0.01em]">
-            <Link href={`/brokers/${b.slug}`} className="hover:text-brass">{b.name}</Link>
+            <Link href={`/brokers/${b.slug}`} className="hover:text-accent">{b.name}</Link>
           </H>
           <div className="flex-1" />
           <Score value={r.score.total} size="lg" />
@@ -45,7 +45,7 @@ export function BrokerRow({ r, showWhy = true, extra, headingLevel = 3 }: {
 
         <div className="flex gap-[5px] flex-wrap">
           {extra ? (
-            <Tag tone="brass">{extra.label} <b className="tnum">{extra.value}</b></Tag>
+            <Tag tone="accent">{extra.label} <b className="tnum">{extra.value}</b></Tag>
           ) : (
             <Tag>Cost <b className="text-ink tnum">{effectiveCostPips(b).toFixed(2)}</b></Tag>
           )}

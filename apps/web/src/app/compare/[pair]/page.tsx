@@ -109,17 +109,17 @@ export default async function ComparePage({ params }: { params: Promise<Params> 
             <tbody>
               {table.map((row) => (
                 <tr key={row.label} className="border-b border-line-2 last:border-b-0">
-                  <td className={`py-[11px] text-[13px] tnum text-center w-[36%] ${row.win === 1 ? 'font-extrabold text-brass' : 'text-ink-2'}`}>{row.a}</td>
+                  <td className={`py-[11px] text-[13px] tnum text-center w-[36%] ${row.win === 1 ? 'font-extrabold text-accent' : 'text-ink-2'}`}>{row.a}</td>
                   <th scope="row" className="py-[11px] text-[11px] text-ink-3 font-normal text-center">{row.label}</th>
-                  <td className={`py-[11px] text-[13px] tnum text-center w-[36%] ${row.win === 2 ? 'font-extrabold text-brass' : 'text-ink-2'}`}>{row.b}</td>
+                  <td className={`py-[11px] text-[13px] tnum text-center w-[36%] ${row.win === 2 ? 'font-extrabold text-accent' : 'text-ink-2'}`}>{row.b}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </Card>
 
-        <Card className="p-4 lg:p-6 border-[1.5px] border-brass shadow-none">
-          <h2 className="text-[14px] font-bold text-brass-2 mb-[6px]">The short version</h2>
+        <Card className="p-4 lg:p-6 border-[1.5px] border-accent shadow-none">
+          <h2 className="text-[14px] font-bold text-accent-2 mb-[6px]">The short version</h2>
           <p className="text-[12.5px] text-ink-2 leading-[1.8]">
             {winner.broker.name} takes it overall on {winner.score.total.toFixed(1)} against{' '}
             {other.score.total.toFixed(1)} — {winner.broker.why.charAt(0).toLowerCase() + winner.broker.why.slice(1)}.

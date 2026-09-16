@@ -34,11 +34,11 @@ export function TopTiles({ items, base }: { items: TileItem[]; base: string }) {
           >
             <Logo {...it.logo} size={42} />
             <span className="min-w-0">
-              <span className="block font-[family-name:var(--font-display)] text-[14px] lg:text-[15px] font-bold leading-[1.25] tracking-[-0.015em] truncate group-hover:text-brass">
+              <span className="block font-[family-name:var(--font-display)] text-[14px] lg:text-[15px] font-bold leading-[1.25] tracking-[-0.015em] truncate group-hover:text-accent">
                 {it.name}
               </span>
               <span className="flex items-center gap-[5px] mt-[3px]">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="text-brass shrink-0" aria-hidden>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="text-accent shrink-0" aria-hidden>
                   <path d="m12 2.5 2.9 5.9 6.6.9-4.8 4.6 1.2 6.5L12 17.3 6.1 20.4l1.2-6.5L2.5 9.3l6.6-.9z" />
                 </svg>
                 <Score value={it.score} />
@@ -84,7 +84,7 @@ export function StrengthList({ rows, base }: { rows: StrengthRow[]; base: string
             </span>
             <Logo {...r.logo} size={28} />
             <span className="flex-1 min-w-0">
-              <span className="block text-[13px] lg:text-[14px] font-semibold group-hover:text-brass truncate">{r.name}</span>
+              <span className="block text-[13px] lg:text-[14px] font-semibold group-hover:text-accent truncate">{r.name}</span>
               <span className="block text-[11px] lg:text-[11.5px] text-ink-3 leading-[1.5] truncate">{r.note}</span>
             </span>
             <Score value={r.value} />

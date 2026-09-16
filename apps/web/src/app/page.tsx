@@ -14,6 +14,8 @@ import { coins } from '@/lib/market';
 import { news } from '@/lib/news';
 import { CoinRow, MoverChip, movers } from '@/components/CoinRow';
 import { NewsList } from '@/components/NewsList';
+import { Hero } from '@/components/Hero';
+import { registerCoverage } from '@/lib/register-coverage';
 
 export const metadata: Metadata = pageMetadata({
   title: `${SITE.name} — ${SITE.tagline}`,
@@ -44,11 +46,31 @@ export default async function HomePage() {
   const topCoins = 'error' in market ? [] : market.list.slice(0, 5);
   const { gainers, losers } = 'error' in market ? { gainers: [], losers: [] } : movers(market.list);
 
+  // Counted from the data rather than written into the hero, for the reason
+  // register-coverage.ts exists: a number typed into a headline is a claim that
+  // goes stale the day a record is added, and the footer already made exactly
+  // that mistake once.
+  const coverage = registerCoverage();
+  const heroStats = [
+    { value: String(rankedBrokers(stats).length), label: 'Forex brokers' },
+    { value: String(rankedProps().length), label: 'Prop firms' },
+    { value: String(rankedExchanges().length), label: 'Crypto exchanges' },
+    { value: `${coverage.licencesChecked}/${coverage.licencesTotal}`, label: 'Licences register-checked' },
+  ];
+
   return (
     <>
       <Header />
-      <main id="main" className="shell pt-0 pb-6 sm:pt-4 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
-        <h1 className="sr-only">Brokers, prop firms and exchanges, ranked</h1>
+      {/* The shell is on the inner wrapper rather than on <main>, so the hero
+          can be the width of the window while everything under it keeps the
+          measure. */}
+      <main id="main">
+        <Hero
+          stats={heroStats}
+          licences={{ checked: coverage.licencesChecked, total: coverage.licencesTotal }}
+        />
+
+        <div className="shell pt-0 pb-6 sm:pt-5 lg:pt-7 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
 
         {/* Two columns above 1024px: the rankings, which are what this site is
             for, and beside them the market data that changes during the day.
@@ -61,7 +83,7 @@ export default async function HomePage() {
             <CardHead title="Top brokers" href="/brokers" hrefLabel="Full ranking" />
             {top.map((r) => <BrokerRow key={r.broker.slug} r={r} />)}
             <p className="mt-3 pt-[11px] border-t border-line-2">
-              <Link href="/methodology" className="text-[11.5px] text-brass font-semibold">How we score</Link>
+              <Link href="/methodology" className="text-[11.5px] text-accent font-semibold">How we score</Link>
             </p>
           </Card>
 
@@ -99,7 +121,7 @@ export default async function HomePage() {
               {BEST_CRITERIA.map((c) => (
                 <li key={c.slug} className="border-b border-line-2 last:border-b-0">
                   <Link href={`/best/${c.slug}`} className="flex items-center gap-3 py-[11px] group">
-                    <span className="flex-1 text-[13.5px] font-semibold group-hover:text-brass">{c.h1}</span>
+                    <span className="flex-1 text-[13.5px] font-semibold group-hover:text-accent">{c.h1}</span>
                     <span aria-hidden className="text-ink-3">›</span>
                   </Link>
                 </li>
@@ -156,7 +178,7 @@ export default async function HomePage() {
                   return (
                     <li key={e.id} className="flex items-baseline gap-2 py-[9px] border-b border-line-2 last:border-b-0">
                       {release ? (
-                        <Link href={`/calendar/${release.slug}`} className="text-[13px] font-semibold hover:text-brass min-w-0 truncate">
+                        <Link href={`/calendar/${release.slug}`} className="text-[13px] font-semibold hover:text-accent min-w-0 truncate">
                           {e.title}
                         </Link>
                       ) : (
@@ -177,6 +199,7 @@ export default async function HomePage() {
             </Card>
           )}
           </div>
+        </div>
         </div>
       </main>
       <Footer />

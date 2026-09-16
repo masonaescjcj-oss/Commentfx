@@ -62,7 +62,7 @@ export default async function StatusPage() {
                 <Logo {...b.broker.logo} size={34} />
                 <div className="min-w-0 flex-1">
                   <h2 className="text-[14px] font-semibold leading-tight">
-                    <Link href={`/brokers/${b.broker.slug}`} className="hover:text-brass">{b.broker.name}</Link>
+                    <Link href={`/brokers/${b.broker.slug}`} className="hover:text-accent">{b.broker.name}</Link>
                   </h2>
                   <div className="mt-[3px]"><StatusChip status={s} /></div>
                   {s.leading && s.reporters > 0 && (
@@ -78,8 +78,8 @@ export default async function StatusPage() {
           </Card>
         )}
 
-        <Card className="p-4 lg:p-6 bg-brass-bg shadow-none" as="section">
-          <h2 className="text-[14px] font-bold text-brass-2 mb-[6px]">Reports are evidence, not a verdict</h2>
+        <Card className="p-4 lg:p-6 bg-accent-bg shadow-none" as="section">
+          <h2 className="text-[14px] font-bold text-accent-2 mb-[6px]">Reports are evidence, not a verdict</h2>
           <p className="text-[12.5px] text-ink-2 leading-[1.8]">
             Nothing here is verified, and none of it touches the broker&rsquo;s score.
           </p>

@@ -104,7 +104,7 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
             <div className="flex gap-[14px] items-start">
               <Logo {...f.logo} size={64} />
               <div className="flex-1 min-w-0">
-                <Tag tone="brass">RANK #{r.rank} OF {all.length}</Tag>
+                <Tag tone="accent">RANK #{r.rank} OF {all.length}</Tag>
                 <h1 className="font-[family-name:var(--font-display)] text-[23px] font-bold mt-2 tracking-[-0.025em]">
                   {f.name}
                 </h1>
@@ -116,7 +116,7 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
                   <Score value={r.score.total} size="xl" />
                   <span className="text-[11.5px] text-ink-3 leading-[1.5] pb-[3px]">
                     out of 10<br />
-                    <Link href="/methodology" className="text-brass">how we score</Link>
+                    <Link href="/methodology" className="text-accent">how we score</Link>
                   </span>
                 </div>
               </div>
@@ -188,7 +188,7 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
                   <Link href={`/props/${x.firm.slug}`} className="flex items-center gap-3 py-[11px] group">
                     <Logo {...x.firm.logo} size={32} />
                     <span className="flex-1 min-w-0">
-                      <span className="block text-[13.5px] font-semibold group-hover:text-brass">{x.firm.name}</span>
+                      <span className="block text-[13.5px] font-semibold group-hover:text-accent">{x.firm.name}</span>
                       <span className="block text-[11px] text-ink-3">{describeDrawdown(x.firm.rules.drawdownType)} · ${x.firm.feeUsdPer100k}</span>
                     </span>
                     <Score value={x.score.total} />

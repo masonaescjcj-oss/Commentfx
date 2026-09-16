@@ -70,7 +70,7 @@ export function LicenceList({ broker, checks }: { broker: Broker; checks: CheckM
                     No automated check: {BLOCKED_REASON[e.licence.regulator]
                       ?? 'we have no reader for this register yet'}. Check it yourself at{' '}
                     {reg?.registryUrl ? (
-                      <a href={reg.registryUrl} rel="nofollow noopener external" target="_blank" className="text-brass">
+                      <a href={reg.registryUrl} rel="nofollow noopener external" target="_blank" className="text-accent">
                         the {e.licence.regulator} register
                       </a>
                     ) : 'the regulator’s register'}.

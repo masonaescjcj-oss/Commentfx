@@ -78,7 +78,7 @@ export function ReviewFeed({ items }: { items: FeedItem[] }) {
                 <span className="w-[26px] h-[26px] grid place-items-center rounded-[8px] bg-card-3 text-[12.5px] font-extrabold tnum shrink-0">
                   {r.rating}
                 </span>
-                <Link href={`${r.path}#reviews`} className="text-[13px] font-semibold hover:text-brass truncate">
+                <Link href={`${r.path}#reviews`} className="text-[13px] font-semibold hover:text-accent truncate">
                   {r.name}
                 </Link>
                 <span className="text-[11px] text-ink-3 truncate">{TOPIC_LABELS[r.topic]}</span>

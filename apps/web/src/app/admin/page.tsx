@@ -56,9 +56,9 @@ export default async function AdminPage() {
                 <li key={c.slug} className="border-b border-line-2 last:border-b-0">
                   <Link href={`/admin/${c.kind}/${c.slug}`} className="flex items-center gap-3 py-[11px] group">
                     <span className="flex-1 min-w-0">
-                      <span className="block text-[13.5px] font-semibold group-hover:text-brass">{c.slug}</span>
+                      <span className="block text-[13.5px] font-semibold group-hover:text-accent">{c.slug}</span>
                       <span className="block mt-[5px]">
-                        <Meter value={c.ratio * 100} max={100} tone={c.ratio >= 0.5 ? 'brass' : 'warn'} />
+                        <Meter value={c.ratio * 100} max={100} tone={c.ratio >= 0.5 ? 'accent' : 'warn'} />
                       </span>
                     </span>
                     <span className="text-[11px] text-ink-3 tnum shrink-0">
@@ -91,7 +91,7 @@ export default async function AdminPage() {
                   <span className="w-[24px] h-[22px] grid place-items-center rounded-[6px] bg-card-3 text-[12px] font-extrabold tnum shrink-0">
                     {q.rating}
                   </span>
-                  <Link href={`${pathForKind(q.kind, q.slug)}#reviews`} className="text-[13px] font-semibold hover:text-brass">
+                  <Link href={`${pathForKind(q.kind, q.slug)}#reviews`} className="text-[13px] font-semibold hover:text-accent">
                     {q.slug}
                   </Link>
                   <span className="text-[10.5px] text-ink-3">{KIND_LABEL[q.kind]}</span>
@@ -132,7 +132,7 @@ export default async function AdminPage() {
             {findings.map((f) => (
               <li key={`${f.brokerSlug}-${f.regulatorCode}-${f.licenceNumber}`} className="py-[10px] border-b border-line-2 last:border-b-0">
                 <div className="flex items-baseline gap-2">
-                  <Link href={`/admin/broker/${f.brokerSlug}`} className="text-[13px] font-semibold hover:text-brass">
+                  <Link href={`/admin/broker/${f.brokerSlug}`} className="text-[13px] font-semibold hover:text-accent">
                     {f.brokerSlug}
                   </Link>
                   <span className="text-[11.5px] text-ink-3 tnum">{f.regulatorCode} {f.licenceNumber}</span>

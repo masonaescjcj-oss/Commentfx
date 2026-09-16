@@ -119,7 +119,7 @@ export default async function ReleasePage({ params }: { params: Promise<Params> 
             </p>
           </Card>
         ) : next ? (
-          <Card className="p-4 lg:p-6 border-[1.5px] border-brass shadow-none" as="section">
+          <Card className="p-4 lg:p-6 border-[1.5px] border-accent shadow-none" as="section">
             <p className="text-[11.5px] text-ink-3 mb-1">
               {r.kind === 'decision' ? 'Next meeting' : 'Next release'}
             </p>
@@ -173,7 +173,7 @@ export default async function ReleasePage({ params }: { params: Promise<Params> 
             <Schedule events={past} />
             <p className="text-[11.5px] text-ink-3 mt-[10px] leading-[1.75]">
               Dates only. We do not publish the figures themselves — read them at{' '}
-              <a href={r.publisherUrl} rel="nofollow noopener external" target="_blank" className="text-brass">
+              <a href={r.publisherUrl} rel="nofollow noopener external" target="_blank" className="text-accent">
                 {r.publisher}
               </a>
               , which is where they are authoritative.
@@ -199,10 +199,10 @@ export default async function ReleasePage({ params }: { params: Promise<Params> 
             {RELEASES.filter((o) => o.slug !== r.slug).map((o) => (
               <li key={o.slug} className="border-b border-line-2 last:border-b-0">
                 <Link href={`/calendar/${o.slug}`} className="flex items-center gap-3 py-[10px] group">
-                  <span className="text-[13px] font-semibold flex-1 min-w-0 group-hover:text-brass">
+                  <span className="text-[13px] font-semibold flex-1 min-w-0 group-hover:text-accent">
                     {o.name}
                   </span>
-                  <Tag tone={o.currency === 'USD' ? 'neutral' : 'brass'}>{o.currency}</Tag>
+                  <Tag tone={o.currency === 'USD' ? 'neutral' : 'accent'}>{o.currency}</Tag>
                   <span aria-hidden className="text-ink-3">›</span>
                 </Link>
               </li>

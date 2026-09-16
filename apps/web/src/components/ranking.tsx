@@ -40,7 +40,7 @@ export function RankRow({ rank, href, logo, name, score, why, facts, headingLeve
   name: string;
   score: number;
   why: string;
-  facts: Array<{ label: string; value: string; tone?: 'neutral' | 'good' | 'bad' | 'warn' | 'brass' }>;
+  facts: Array<{ label: string; value: string; tone?: 'neutral' | 'good' | 'bad' | 'warn' | 'accent' }>;
 }) {
   const H = `h${headingLevel}` as 'h2' | 'h3';
   return (
@@ -50,7 +50,7 @@ export function RankRow({ rank, href, logo, name, score, why, facts, headingLeve
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <H className="font-[family-name:var(--font-display)] text-[15.5px] lg:text-[17px] font-bold tracking-[-0.018em]">
-            <Link href={href} className="hover:text-brass">{name}</Link>
+            <Link href={href} className="hover:text-accent">{name}</Link>
           </H>
           <div className="flex-1" />
           <Score value={score} size="lg" />
@@ -89,7 +89,7 @@ export function ScoreBreakdownCard<K extends string>({ components, skipped }: {
               )}
             </div>
             {c.value !== null && (
-              <Meter value={c.value} tone={c.value >= 8 ? 'up' : c.value >= 6 ? 'brass' : 'warn'} />
+              <Meter value={c.value} tone={c.value >= 8 ? 'up' : c.value >= 6 ? 'accent' : 'warn'} />
             )}
             <p className="text-[11px] text-ink-3 mt-[5px]">{c.note}</p>
           </li>

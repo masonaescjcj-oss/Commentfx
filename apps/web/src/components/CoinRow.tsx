@@ -32,7 +32,7 @@ export function CoinRow({ c, rank, headingLevel = 2 }: {
       <img src={c.image} alt="" width={28} height={28} loading="lazy" decoding="async" className="rounded-full shrink-0" />
       <div className="min-w-0">
         <H className="text-[13.5px] font-semibold leading-tight">
-          <Link href={`/coins/${c.id}`} className="hover:text-brass">{c.name}</Link>
+          <Link href={`/coins/${c.id}`} className="hover:text-accent">{c.name}</Link>
         </H>
         <p className="text-[11px] text-ink-3 tnum">{c.symbol}</p>
       </div>
@@ -73,7 +73,7 @@ export function MoverChip({ c }: { c: CoinMarket }) {
   return (
     <Link
       href={`/coins/${c.id}`}
-      className="flex items-center gap-2 py-[9px] px-[10px] rounded-[11px] border border-line hover:border-brass min-w-0"
+      className="flex items-center gap-2 py-[9px] px-[10px] rounded-[11px] border border-line hover:border-accent min-w-0"
     >
       <img src={c.image} alt="" width={22} height={22} loading="lazy" decoding="async" className="rounded-full shrink-0" />
       <span className="text-[12.5px] font-bold tnum truncate min-w-0">{c.symbol}</span>

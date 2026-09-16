@@ -5,7 +5,7 @@ import {
 import type { PublishedReview } from '@/lib/reviews';
 import { Tag } from './primitives';
 
-const RATING_BAR = 'h-[6px] rounded-full bg-brass';
+const RATING_BAR = 'h-[6px] rounded-full bg-accent';
 
 const dayOf = (d: Date) =>
   d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });

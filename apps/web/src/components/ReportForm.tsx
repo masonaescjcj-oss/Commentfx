@@ -23,7 +23,7 @@ export function ReportForm({ brokerSlug }: { brokerSlug: string }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="text-[13px] font-semibold text-brass hover:text-brass-2"
+        className="text-[13px] font-semibold text-accent hover:text-accent-2"
       >
         Having a problem? Report it →
       </button>

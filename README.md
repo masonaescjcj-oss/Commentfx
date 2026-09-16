@@ -307,8 +307,16 @@ restrained on a designer's monitor is unreadable on a phone outdoors:
 | `--ink-3` (secondary text) | `#9AA3B5` | 2.21:1 | `#616C84` | 4.58:1 |
 | `--up` | `#14B87C` | 2.31:1 | `#0E7E55` | 4.56:1 |
 | `--warn` | `#BE7A09` | 3.18:1 | `#9B6307` | 4.55:1 |
-| `--brass` (links) | `#A87528` | 3.66:1 | `#8F6522` | 4.61:1 |
+| `--accent` (links) | `#A87528` | 3.66:1 | `#2456E8` | 5.88:1 |
 | `--down` | `#E0393F` | 3.78:1 | `#D22127` | 4.58:1 |
+
+The accent later became the blue of the mark and the token was renamed from
+`--brass` in the same change, because a name that says one colour while the
+value says another is the kind of thing that costs somebody an hour. It is
+checked in both directions — 5.88:1 as a link on white and 5.88:1 as white text
+on it, because it is also a button — and the dark hero panel carries a second,
+lighter value of the same hue at 6.99:1, since a blue picked to clear 4.5:1
+against white cannot be read on navy.
 
 Each ratio is against the darkest surface that colour is actually painted on,
 measured rather than judged by eye, and the numbers are in `globals.css` beside

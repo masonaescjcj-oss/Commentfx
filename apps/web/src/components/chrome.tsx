@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { SITE } from '@/lib/site';
+import { Logotype, Mark } from './Mark';
 
 /**
  * One line at every width, with the sections behind a menu on a phone and laid
@@ -39,15 +40,8 @@ export function Header({ active }: { active?: string }) {
         {/* The mark. A link on a desktop, where it is the only way back to the
             front page; on a phone it is the summary of the menu below, which
             carries Home as its first row. */}
-        <Link
-          href="/"
-          className="hidden lg:flex items-center gap-2 shrink-0 mr-2"
-          aria-label={`${SITE.name} home`}
-        >
-          <span className="grid place-items-center w-[26px] h-[26px] rounded-[9px_9px_9px_3px] bg-ink text-white text-[9.5px] font-extrabold">
-            FX
-          </span>
-          <span className="font-extrabold text-[15.5px] tracking-[-0.03em]">{SITE.name}</span>
+        <Link href="/" className="hidden lg:flex shrink-0 mr-3" aria-label={`${SITE.name} home`}>
+          <Logotype size={27} />
         </Link>
 
         <nav aria-label="Sections" className="hidden lg:flex items-center gap-[2px] min-w-0">
@@ -66,11 +60,11 @@ export function Header({ active }: { active?: string }) {
         </nav>
 
         <details className="menu relative lg:hidden">
-          <summary className="flex items-center gap-2 pl-[6px] pr-[10px] py-[5px] rounded-[11px] border border-line cursor-pointer list-none">
-            <span className="grid place-items-center w-[26px] h-[26px] rounded-[9px_9px_9px_3px] bg-ink text-white text-[9.5px] font-extrabold">
-              FX
+          <summary className="flex items-center gap-2 pl-[8px] pr-[10px] py-[5px] rounded-[11px] border border-line cursor-pointer list-none">
+            <Mark size={25} className="text-accent shrink-0" />
+            <span className="font-[family-name:var(--font-display)] font-bold text-[15.5px] tracking-[-0.035em]">
+              {SITE.name}
             </span>
-            <span className="font-extrabold text-[15.5px] tracking-[-0.03em]">{SITE.name}</span>
             {current ? (
               <span className="text-[13px] text-ink-3 font-medium">{current.label}</span>
             ) : null}

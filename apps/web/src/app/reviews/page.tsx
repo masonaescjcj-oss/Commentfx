@@ -71,9 +71,9 @@ export default async function ReviewsPage() {
             <p className="text-[14px] font-semibold mb-1">Nobody has written one yet</p>
             <p className="text-[12.5px] text-ink-2 leading-[1.8] max-w-[42ch] mx-auto">
               Reviews appear here as they are written. Open any{' '}
-              <Link href="/brokers" className="text-brass font-semibold">broker</Link>,{' '}
-              <Link href="/props" className="text-brass font-semibold">prop firm</Link> or{' '}
-              <Link href="/exchanges" className="text-brass font-semibold">exchange</Link>{' '}
+              <Link href="/brokers" className="text-accent font-semibold">broker</Link>,{' '}
+              <Link href="/props" className="text-accent font-semibold">prop firm</Link> or{' '}
+              <Link href="/exchanges" className="text-accent font-semibold">exchange</Link>{' '}
               to be the first.
             </p>
           </Card>
@@ -92,7 +92,7 @@ export default async function ReviewsPage() {
             ))}
           </dl>
           <p className="text-[11.5px] mt-3">
-            <Link href="/reviews/withdraw" className="text-brass font-semibold">
+            <Link href="/reviews/withdraw" className="text-accent font-semibold">
               Withdraw a review
             </Link>
           </p>

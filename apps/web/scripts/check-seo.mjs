@@ -58,7 +58,22 @@ check('no url is listed twice', sitemap.size === paths.length, `${paths.length -
 
 // ── What the build emits ─────────────────────────────────────────────────────
 const manifest = JSON.parse(await readFile(new URL('../.next/prerender-manifest.json', import.meta.url), 'utf8'));
-const built = Object.keys(manifest.routes).filter((r) => !/\.(xml|txt)$/.test(r) && !r.startsWith('/_'));
+
+/**
+ * Which prerendered routes are pages.
+ *
+ * This asked the filename, with a list of extensions that were not pages, and
+ * the list was wrong the first time something new was added: a favicon at
+ * /icon.svg is a prerendered route, is not .xml or .txt, and was duly required
+ * to have one h1, a title and a description. Asking the response what it is
+ * costs one HEAD per route and cannot go stale.
+ */
+const built = [];
+for (const route of Object.keys(manifest.routes)) {
+  if (route.startsWith('/_')) continue;
+  const res = await fetch(BASE + route, { method: 'HEAD' });
+  if ((res.headers.get('content-type') ?? '').startsWith('text/html')) built.push(route);
+}
 
 // ── Each page says whether it wants indexing, and the sitemap must agree ─────
 const NOINDEX = /<meta name="robots" content="[^"]*noindex/;

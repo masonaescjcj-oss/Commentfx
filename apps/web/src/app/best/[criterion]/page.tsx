@@ -66,7 +66,7 @@ export default async function BestPage({ params }: { params: Promise<Params> }) 
             {BEST_CRITERIA.filter((x) => x.slug !== c.slug).map((x) => (
               <li key={x.slug} className="border-b border-line-2 last:border-b-0">
                 <Link href={`/best/${x.slug}`} className="flex items-center gap-3 py-[11px] group">
-                  <span className="flex-1 text-[13.5px] font-semibold group-hover:text-brass">{x.h1}</span>
+                  <span className="flex-1 text-[13.5px] font-semibold group-hover:text-accent">{x.h1}</span>
                   <span aria-hidden className="text-ink-3">›</span>
                 </Link>
               </li>
