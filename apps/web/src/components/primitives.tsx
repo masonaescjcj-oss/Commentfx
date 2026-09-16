@@ -166,17 +166,60 @@ export function Logo({ initials, bg, fg, img, size = 40 }: {
 
 /** A bar that reads as a proportion, used for score components. */
 export function Meter({ value, max = 10, tone = 'ink' }: {
-  value: number; max?: number; tone?: 'ink' | 'up' | 'accent' | 'warn';
+  value: number; max?: number; tone?: 'ink' | 'up' | 'accent' | 'warn' | 'on-dark';
 }) {
   const pct = Math.max(0, Math.min(100, (value / max) * 100));
-  const bg = { ink: 'bg-ink', up: 'bg-up', accent: 'bg-accent', warn: 'bg-warn' }[tone];
+  // on-dark is for the blue band, where ink is invisible and the accent picked
+  // against white is unreadable: it takes the band's own lighter blue.
+  const bg = {
+    ink: 'bg-ink', up: 'bg-up', accent: 'bg-accent', warn: 'bg-warn',
+    'on-dark': 'bg-[color:var(--hero-accent)]',
+  }[tone];
   // 3px, not 5. A meter is a proportion, and the wider the column the less of
   // it needs to be ink to say so — at the width a desktop column gives it, five
   // pixels of solid colour stops reading as a measurement and starts reading as
   // a banner.
   return (
-    <div className="h-[3px] rounded-full bg-card-3 overflow-hidden">
+    <div className={`h-[3px] rounded-full overflow-hidden ${
+      tone === 'on-dark' ? 'bg-[rgb(255_255_255_/_0.18)]' : 'bg-card-3'}`}>
       <div className={`h-full rounded-full ${bg}`} style={{ width: `${pct}%` }} />
     </div>
+  );
+}
+
+/**
+ * Five stars for a score out of ten.
+ *
+ * Every directory a reader has ever used shows stars, and a bare 8.5 asks them
+ * to work out what good looks like. So both: the stars for the shape of it, the
+ * figure for the fact of it.
+ *
+ * One row of outlines with a clipped row of filled stars laid over it. That is
+ * what makes a fraction honest — 8.5 is four and a quarter stars and it is drawn
+ * as four and a quarter, not rounded to four or up to five. Rounding is where a
+ * star rating starts lying.
+ *
+ * aria-hidden, all of it. The number beside it is the accessible name, and a
+ * screen reader that reads out "star star star star half star" has told its user
+ * less than "8.5" did.
+ */
+export function Stars({ value, max = 10, size = 15 }: { value: number; max?: number; size?: number }) {
+  const pct = Math.max(0, Math.min(100, (value / max) * 100));
+  const row = (cls: string) => (
+    <span className={`flex gap-[2px] ${cls}`}>
+      {[0, 1, 2, 3, 4].map((i) => (
+        <svg key={i} width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className="shrink-0">
+          <path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6z" />
+        </svg>
+      ))}
+    </span>
+  );
+  return (
+    <span aria-hidden className="relative inline-flex shrink-0 align-middle">
+      {row('text-[rgb(255_255_255_/_0.22)]')}
+      <span className="absolute inset-0 overflow-hidden" style={{ width: `${pct}%` }}>
+        {row('text-[color:var(--hero-accent)]')}
+      </span>
+    </span>
   );
 }

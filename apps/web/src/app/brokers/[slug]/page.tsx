@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { REGULATORS, effectiveCostPips, hours, leverage } from '@commentfx/core';
+import { REGULATORS, countryName, effectiveCostPips, hours, leverage } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, financialServiceLd, faqLd } from '@/lib/seo';
 import { rankedBrokers, getRanked, alternativesFor } from '@/lib/repo';
 import { coverage } from '@/lib/verify';
@@ -13,6 +13,8 @@ import { VerificationPanel } from '@/components/VerificationPanel';
 import { Header, PageHero, Footer } from '@/components/chrome';
 import { OfficialSite } from '@/components/OfficialSite';
 import { Card, CardHead, Logo, Score, Tag, Meter } from '@/components/primitives';
+import { RecordHero, QuickJump, StickyActions } from '@/components/RecordHero';
+import { IconScore, IconEntity, IconLicence, IconCost, IconStatus, IconReviews, IconCompare, IconFaq } from '@/components/icons';
 import { EntityMap } from '@/components/EntityMap';
 import { LicenceList } from '@/components/LicenceList';
 import { ReviewForm } from '@/components/ReviewForm';
@@ -76,6 +78,19 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
     { name: b.name, path: `/brokers/${b.slug}` },
   ];
 
+  // Said on the mark rather than in a sentence, and said from the licences on
+  // the record rather than from a marketing line: the best tier any of this
+  // company's entities holds. "Regulated" on its own is what an offshore
+  // registration calls itself, which is why the tier is in the words.
+  const tiers = b.entities.map((e) => REGULATORS[e.licence.regulator]?.tier);
+  const licenceBadge = tiers.includes('A')
+    ? { text: 'Tier 1', tone: 'strong' as const }
+    : tiers.includes('B')
+      ? { text: 'Tier 2', tone: 'plain' as const }
+      : b.entities.length > 0
+        ? { text: 'Offshore', tone: 'plain' as const }
+        : null;
+
   const faq = [
     {
       q: `Is ${b.name} regulated?`,
@@ -98,60 +113,71 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
   return (
     <>
       <Header active="/brokers" />
-      <main id="main" className="pb-6 lg:pb-10">
-        <PageHero trail={trail} />
+      {/* Room at the bottom for the pinned bar, which is fixed and therefore
+          covers whatever is under it. */}
+      <main id="main" className="pb-[84px] lg:pb-10">
+        <PageHero trail={trail}>
+          <RecordHero
+            logo={b.logo}
+            name={b.name}
+            badge={licenceBadge}
+            rank={r.rank}
+            of={all.length}
+            score={r.score.total}
+            reviews={{ count: reviews.stats.total, href: '#reviews' }}
+            visit={{ href: b.website, label: `Visit ${b.name}` }}
+            facts={[
+              { label: 'Founded', value: String(b.founded) },
+              { label: 'Min deposit', value: b.payments.minDepositUsd === 0 ? 'None' : `$${b.payments.minDepositUsd}` },
+              { label: 'Headquarters', value: countryName(b.headquarters), flag: b.headquarters },
+              { label: 'Max leverage', value: leverage(b.platforms.maxLeverage) },
+            ]}
+            parts={r.score.components.slice(0, 4).map((c) => ({
+              label: c.label, value: c.value, weight: c.weight,
+            }))}
+          >
+            {/* Who licenses them, at a glance. The list below says the numbers,
+                the status and whether we could read the register; this says
+                only which regulators are involved, which is the question a
+                reader asks before any of that. */}
+            <ul className="flex gap-[5px] flex-wrap mt-4">
+              {[...new Set(b.entities.map((e) => e.licence.regulator))].map((code) => (
+                <li key={code}>
+                  <Tag tone={REGULATORS[code]?.tier === 'A' ? 'good' : REGULATORS[code]?.tier === 'B' ? 'warn' : 'neutral'}>
+                    {code}
+                  </Tag>
+                </li>
+              ))}
+            </ul>
+          </RecordHero>
+        </PageHero>
+
         <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
+          <QuickJump items={[
+            { href: '#score', label: 'Score', icon: <IconScore /> },
+            { href: '#entity', label: 'Entity', icon: <IconEntity /> },
+            { href: '#licences', label: 'Licences', icon: <IconLicence /> },
+            { href: '#costs', label: 'Costs', icon: <IconCost /> },
+            { href: '#status', label: 'Outages', icon: <IconStatus /> },
+            { href: '#reviews', label: 'Reviews', icon: <IconReviews /> },
+            { href: '#compare', label: 'Compare', icon: <IconCompare />, ready: alternatives.length > 0 },
+            { href: '#faq', label: 'Questions', icon: <IconFaq /> },
+          ]} />
           {/* Two columns above 1024px, the narrow one first: who this is and
               what is known about them, then the detail, which is most of the
               page and wants the width. */}
           <div className="split rail-left">
             <div>
 
-            <Card className="p-4 lg:p-6" as="article">
-              <div className="flex gap-[14px] items-start">
-                <Logo {...b.logo} size={64} />
-                <div className="flex-1 min-w-0">
-                  <Tag tone="accent">RANK #{r.rank} OF {all.length}</Tag>
-                  <h1 className="font-[family-name:var(--font-display)] text-[23px] font-bold mt-2 tracking-[-0.025em]">
-                    {b.name}
-                  </h1>
-                  {/* Baseline-aligned, not centred: a 46px figure centred against
-                      two 11px lines hangs them off its middle, which is where the
-                      eye reads a fraction. On the baseline they read as a caption
-                      to the number, which is what they are. */}
-                  <div className="flex items-end gap-[10px] mt-3">
-                    <Score value={r.score.total} size="xl" />
-                    <span className="text-[11.5px] text-ink-3 leading-[1.5] pb-[3px]">
-                      out of 10<br />
-                      <Link href="/methodology" className="text-accent">how we score</Link>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <dl className="flex flex-wrap mt-4 pt-1 border-t border-line-2">
-                {[
-                  ['Founded', String(b.founded)],
-                  ['Min deposit', b.payments.minDepositUsd === 0 ? 'None' : `$${b.payments.minDepositUsd}`],
-                  ['Headquarters', b.headquarters],
-                  ['Max leverage', leverage(b.platforms.maxLeverage)],
-                ].map(([k, v]) => (
-                  <div key={k} className="basis-1/2 py-2">
-                    <dt className="text-[11.5px] text-ink-3">{k}</dt>
-                    <dd className="text-[14px] font-bold tnum">{v}</dd>
-                  </div>
-                ))}
-              </dl>
-
-            </Card>
-
-            <StatusBlock brokerSlug={b.slug} brokerName={b.name} status={status} />
+            <div id="status" className="contents">
+              <StatusBlock brokerSlug={b.slug} brokerName={b.name} status={status} />
+            </div>
 
             <VerificationPanel coverage={cov} />
             </div>
 
             <div>
-            <Card className="p-4 lg:p-6" as="section">
+            <Card className="p-4 lg:p-6" as="section" id="score">
               <CardHead title="Score breakdown" href="/methodology" hrefLabel="Method" />
               <ul className="flex flex-col gap-[11px]">
                 {r.score.components.map((c) => (
@@ -178,7 +204,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
               )}
             </Card>
 
-            <Card className="p-4 lg:p-6 border-[1.5px] border-accent shadow-none" as="section">
+            <Card className="p-4 lg:p-6 border-[1.5px] border-accent shadow-none" as="section" id="entity">
               <CardHead title="Which entity will you be under?" />
               <EntityMap broker={b} />
               <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.8]">
@@ -186,17 +212,14 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
               </p>
             </Card>
 
-            <Card className="p-4 lg:p-6" as="section">
+            <Card className="p-4 lg:p-6" as="section" id="licences">
               <CardHead title="Licences" aside={<span className="text-[11.5px] text-ink-3">{b.entities.length} on record</span>} />
               <LicenceList broker={b} checks={checks} />
             </Card>
 
-            <Card className="p-4 lg:p-6" as="section">
-              <Card className="p-4 lg:p-6" as="section">
+            <Card className="p-4 lg:p-6" as="section" id="costs">
               <OfficialSite name={b.name} url={b.website} />
-            </Card>
-
-            <CardHead title="Costs and terms" />
+              <CardHead title="Costs and terms" />
               <dl>
                 {[
                   ['EUR/USD spread', `${b.cost.eurusdSpread.toFixed(1)} pips`],
@@ -225,12 +248,12 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
               <div className="mt-3"><ReviewList reviews={reviews.list} /></div>
             </Card>
 
-            <Card className="p-4 lg:p-6" as="section">
+            <Card className="p-4 lg:p-6" as="section" id="write">
               <CardHead title={`Write about ${b.name}`} />
               <ReviewForm kind="broker" slug={b.slug} name={b.name} />
             </Card>
 
-            <Card className="p-4 lg:p-6" as="section">
+            <Card className="p-4 lg:p-6" as="section" id="compare">
               <CardHead title="Compare" />
               <ul className="flex flex-col">
                 {alternatives.map((a) => (
@@ -248,7 +271,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
               </ul>
             </Card>
 
-            <Card className="p-4 lg:p-6" as="section">
+            <Card className="p-4 lg:p-6" as="section" id="faq">
               <CardHead title={`${b.name} — common questions`} />
               <dl>
                 {faq.map(({ q, a }) => (
@@ -263,6 +286,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
           </div>
         </div>
       </main>
+      <StickyActions compareHref={alternatives.length > 0 ? '#compare' : '#reviews'} writeHref="#write" />
       <Footer />
       <JsonLd graph={[
         breadcrumbLd(trail),

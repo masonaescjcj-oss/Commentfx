@@ -1,0 +1,227 @@
+import Link from 'next/link';
+import type { ReactNode } from 'react';
+import { Logo, Meter, Stars } from './primitives';
+import { Flag } from './Flag';
+import type { LogoMark } from '@commentfx/core';
+
+/**
+ * The top of a record page: who this is, what they scored, and the two things
+ * a reader came to do about it — all on the blue band, above the white.
+ *
+ * It used to be the first white card on the page, which meant a reader arriving
+ * at a broker page met a hairline rectangle and had to read to find out whose
+ * page it was. The band was already there carrying nothing but a trail. Putting
+ * the identity on it costs no height that was not already spent and gives the
+ * page a front door.
+ *
+ * Nothing here is new information. The rank, the score, its four parts, the
+ * four facts and the two buttons are all things the page said further down; the
+ * change is that they are said once, at the top, in the order a reader asks
+ * them: who, how good, on what, and then what can I do.
+ */
+export interface HeroFact { label: string; value: string; flag?: string }
+export interface HeroPart { label: string; value: number | null; weight: number }
+
+export function RecordHero({
+  logo, name, badge, rank, of, score, facts, parts, reviews, visit, children,
+}: {
+  logo: LogoMark;
+  name: string;
+  badge?: { text: string; tone: 'strong' | 'plain' } | null;
+  rank: number;
+  of: number;
+  score: number;
+  facts: HeroFact[];
+  parts: HeroPart[];
+  reviews?: { count: number; href: string } | null;
+  visit?: { href: string; label: string } | null;
+  children?: ReactNode;
+}) {
+  return (
+    <div className="mt-4">
+      <div className="flex gap-[14px] items-start">
+        {/* The mark on its own white tile, which is the only white above the
+            fold and is therefore where the eye lands. The badge sits on its
+            corner rather than beside the name, because it is a fact about the
+            company and not part of what they are called. */}
+        <span className="relative shrink-0">
+          <span className="block p-[5px] bg-white rounded-[15px]">
+            <Logo {...logo} size={62} />
+          </span>
+          {/* On the corner of the tile, and short. It sat under the tile and
+              centred until "Static drawdown" ran straight through the stars on
+              a 390px screen: a badge wider than the thing it is a badge on will
+              always find something to collide with. The long form of each of
+              these is on the page below — the licence list, the rules card, the
+              breach line — so this is a label, not the fact itself. */}
+          {badge ? (
+            <span className={`absolute -top-[6px] -left-[5px] whitespace-nowrap rounded-full px-[7px] py-[2px] text-[9px] font-extrabold uppercase tracking-[0.05em] ${
+              badge.tone === 'strong'
+                ? 'bg-[color:var(--hero-accent)] text-[#08132B]'
+                : 'bg-[rgb(255_255_255_/_0.16)] text-white'
+            }`}>
+              {badge.text}
+            </span>
+          ) : null}
+        </span>
+
+        <div className="min-w-0 flex-1">
+          <p className="text-[10.5px] font-extrabold uppercase tracking-[0.1em] text-[color:var(--hero-accent)] tnum">
+            Rank #{rank} of {of}
+          </p>
+          <h1 className="font-[family-name:var(--font-display)] text-[26px] sm:text-[30px] lg:text-[34px] font-bold leading-[1.1] tracking-[-0.032em] text-white mt-[3px]">
+            {name}
+          </h1>
+          <div className="flex items-center gap-[9px] mt-[7px]">
+            <Stars value={score} />
+            <span className="font-[family-name:var(--font-display)] text-[19px] font-bold tracking-[-0.03em] tnum text-white">
+              {score.toFixed(1)}
+            </span>
+            <Link href="/methodology" className="text-[11.5px] text-[color:var(--hero-ink-3)] hover:text-white">
+              out of 10 — how we score
+            </Link>
+          </div>
+          {reviews ? (
+            <a href={reviews.href} className="inline-block text-[12px] text-[color:var(--hero-accent)] mt-[6px] hover:underline tnum">
+              {reviews.count} {reviews.count === 1 ? 'review' : 'reviews'} ›
+            </a>
+          ) : null}
+        </div>
+      </div>
+
+      <dl className="grid grid-cols-2 sm:grid-cols-4 gap-x-5 gap-y-[10px] mt-5 pt-4 border-t border-[color:var(--hero-line)]">
+        {facts.map((f) => (
+          <div key={f.label}>
+            <dt className="text-[11px] text-[color:var(--hero-ink-3)]">{f.label}</dt>
+            <dd className="flex items-center gap-[6px] text-[14.5px] font-bold tnum text-white mt-[1px]">
+              {f.flag ? <Flag code={f.flag} w={17} title={f.value} /> : null}
+              <span className="min-w-0 truncate">{f.value}</span>
+            </dd>
+          </div>
+        ))}
+      </dl>
+
+      {/* The score, opened up. Four panels rather than a list, because these are
+          four independent readings and a list implies an order they do not
+          have. A component with no data shows a dash and no bar: an empty bar
+          and a zero look the same from a distance and mean opposite things. */}
+      <ul className="grid grid-cols-2 lg:grid-cols-4 gap-[9px] mt-4">
+        {parts.map((p) => (
+          <li key={p.label} className="rounded-[13px] bg-[rgb(255_255_255_/_0.06)] border border-[color:var(--hero-line)] px-[13px] py-[11px]">
+            {p.value === null ? (
+              <div className="h-[3px] rounded-full bg-[rgb(255_255_255_/_0.12)]" />
+            ) : (
+              <Meter value={p.value} tone="on-dark" />
+            )}
+            <div className="flex items-end justify-between gap-2 mt-[9px]">
+              <span className="text-[11.5px] leading-[1.3] text-[color:var(--hero-ink-2)]">{p.label}</span>
+              <span className="text-[15px] font-bold tnum text-white leading-none">
+                {p.value === null ? '—' : p.value.toFixed(1)}
+              </span>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <div className="flex gap-[9px] mt-4 max-w-[520px]">
+        <a
+          href="#write"
+          className="hero-ghost flex-1 inline-flex items-center justify-center h-11 rounded-[12px] text-[13.5px] font-semibold"
+        >
+          Write a review
+        </a>
+        {visit ? (
+          <a
+            href={visit.href}
+            rel="nofollow noopener sponsored external"
+            target="_blank"
+            className="hero-cta flex-1 inline-flex items-center justify-center gap-[6px] h-11 rounded-[12px] bg-white text-ink text-[13.5px] font-bold"
+          >
+            {visit.label} <span aria-hidden>↗</span>
+          </a>
+        ) : null}
+      </div>
+
+      {children}
+    </div>
+  );
+}
+
+/**
+ * The page's own sections, as a grid of doors.
+ *
+ * A record page is long — licences, costs, entity map, outages, reviews, the
+ * comparisons — and on a phone that is a great deal of scrolling to find out
+ * whether the one thing you came for is even on it. This says what is on it in
+ * one screen and takes you there.
+ *
+ * A section with nothing in it is drawn dimmed and is not a link, rather than
+ * being left out: a grid that changes shape from company to company is a grid a
+ * reader has to read every time.
+ */
+export function QuickJump({ items }: {
+  items: Array<{ href: string; label: string; icon: ReactNode; ready?: boolean }>;
+}) {
+  return (
+    <nav aria-label="On this page" className="bg-card border-b border-line sm:border sm:rounded-[16px] lg:rounded-[20px] px-2 py-3 lg:px-4">
+      <ul className="grid grid-cols-4 lg:grid-cols-8 gap-y-1">
+        {items.map(({ href, label, icon, ready = true }) => {
+          const inner = (
+            <>
+              <span aria-hidden className={ready ? 'text-accent' : 'text-line'}>{icon}</span>
+              <span className={`text-[10.5px] leading-[1.25] text-center ${ready ? 'text-ink-2' : 'text-ink-3'}`}>
+                {label}
+              </span>
+            </>
+          );
+          return (
+            <li key={label}>
+              {ready ? (
+                <a href={href} className="flex flex-col items-center gap-[6px] px-1 py-[10px] rounded-[10px] hover:bg-card-2">
+                  {inner}
+                </a>
+              ) : (
+                <span className="flex flex-col items-center gap-[6px] px-1 py-[10px] opacity-60">{inner}</span>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  );
+}
+
+/**
+ * The two actions, pinned to the bottom of a phone.
+ *
+ * On a page this long the thing a reader wants to do is off-screen for most of
+ * the time they are on it. Fixed, so it costs no layout and cannot shift
+ * anything; hidden from 1024px, where the page is two columns and nothing is
+ * ever that far away.
+ *
+ * The page carries matching bottom padding below 1024px, because a bar that
+ * covers the last card is a bar that hides the thing it is advertising.
+ *
+ * A <nav>, not a <div>. It is fixed, so it is outside <main>, and anything
+ * outside every landmark is content a screen reader user reaches only by
+ * walking the whole document — which axe failed it for, on all three record
+ * pages, at phone width and nowhere else.
+ */
+export function StickyActions({ compareHref, writeHref }: { compareHref: string; writeHref: string }) {
+  return (
+    <nav
+      aria-label="Page actions"
+      className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-card border-t border-line px-3 py-[10px] flex gap-[9px] items-center"
+    >
+      <a href={compareHref} className="flex items-center justify-center gap-[6px] h-11 px-4 rounded-[12px] border border-line text-[13px] font-semibold shrink-0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="M8 4 4 8l4 4M4 8h16M16 20l4-4-4-4M20 16H4" />
+        </svg>
+        Compare
+      </a>
+      <a href={writeHref} className="flex-1 inline-flex items-center justify-center h-11 rounded-[12px] bg-accent text-white text-[13.5px] font-bold">
+        Write a review
+      </a>
+    </nav>
+  );
+}

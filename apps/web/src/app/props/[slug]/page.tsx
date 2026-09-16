@@ -1,10 +1,12 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { describeDrawdown } from '@commentfx/core';
+import { describeDrawdown, countryName } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { rankedProps, getRankedProp } from '@/lib/repo';
 import { Header, PageHero, Footer } from '@/components/chrome';
+import { RecordHero, QuickJump, StickyActions } from '@/components/RecordHero';
+import { IconScore, IconCost, IconLicence, IconReviews, IconCompare, IconFaq } from '@/components/icons';
 import { ReviewForm } from '@/components/ReviewForm';
 import { ReviewList, ReviewSummary } from '@/components/ReviewList';
 import { recordReviews } from '@/lib/reviews';
@@ -91,50 +93,59 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
   return (
     <>
       <Header active="/props" />
-      <main id="main" className="pb-6 lg:pb-10">
-        <PageHero trail={trail} />
+      <main id="main" className="pb-[84px] lg:pb-10">
+        <PageHero trail={trail}>
+          <RecordHero
+            logo={f.logo}
+            name={f.name}
+            badge={f.rules.drawdownType === 'static'
+              ? { text: 'Static', tone: 'strong' }
+              : { text: 'Trailing', tone: 'plain' }}
+            rank={r.rank}
+            of={all.length}
+            score={r.score.total}
+            reviews={{ count: reviews.stats.total, href: '#reviews' }}
+            visit={{ href: f.website, label: `Visit ${f.name}` }}
+            facts={[
+              { label: 'Founded', value: String(f.founded) },
+              { label: 'Headquarters', value: countryName(f.headquarters), flag: f.headquarters },
+              { label: 'Fee per $100k', value: `$${f.feeUsdPer100k}` },
+              { label: 'Profit split', value: `${f.payout.splitPct}%` },
+            ]}
+            parts={r.score.components.slice(0, 4).map((c) => ({ label: c.label, value: c.value, weight: c.weight }))}
+          >
+            <div className="flex gap-[5px] flex-wrap mt-4">
+              <Tag tone={f.rules.drawdownType === 'static' ? 'good' : f.rules.drawdownType === 'intraday-trailing' ? 'bad' : 'warn'}>
+                {describeDrawdown(f.rules.drawdownType)} drawdown
+              </Tag>
+              {f.rules.consistencyRule ? <Tag tone="warn">Consistency rule</Tag> : <Tag tone="good">No consistency rule</Tag>}
+              {f.rules.timeLimitDays === null ? <Tag tone="good">No time limit</Tag> : <Tag tone="warn">{f.rules.timeLimitDays}-day limit</Tag>}
+              {f.rules.newsTrading ? <Tag tone="good">News trading</Tag> : <Tag tone="bad">No news trading</Tag>}
+            </div>
+          </RecordHero>
+        </PageHero>
         <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
+          <QuickJump items={[
+            { href: '#score', label: 'Score', icon: <IconScore /> },
+            { href: '#rules', label: 'Rules', icon: <IconLicence /> },
+            { href: '#payout', label: 'Payout', icon: <IconCost /> },
+            { href: '#reviews', label: 'Reviews', icon: <IconReviews /> },
+            { href: '#compare', label: 'Other firms', icon: <IconCompare /> },
+            { href: '#faq', label: 'Questions', icon: <IconFaq /> },
+          ]} />
           {/* Two columns above 1024px, the narrow one first: who this is and
               what is known about them, then the detail, which is most of the
               page and wants the width. */}
           <div className="split rail-left">
             <div>
 
-            <Card className="p-4 lg:p-6" as="article">
-              <div className="flex gap-[14px] items-start">
-                <Logo {...f.logo} size={64} />
-                <div className="flex-1 min-w-0">
-                  <Tag tone="accent">RANK #{r.rank} OF {all.length}</Tag>
-                  <h1 className="font-[family-name:var(--font-display)] text-[23px] font-bold mt-2 tracking-[-0.025em]">
-                    {f.name}
-                  </h1>
-                  {/* Baseline-aligned, not centred: a 46px figure centred against
-                      two 11px lines hangs them off its middle, which is where the
-                      eye reads a fraction. On the baseline they read as a caption
-                      to the number, which is what they are. */}
-                  <div className="flex items-end gap-[10px] mt-3">
-                    <Score value={r.score.total} size="xl" />
-                    <span className="text-[11.5px] text-ink-3 leading-[1.5] pb-[3px]">
-                      out of 10<br />
-                      <Link href="/methodology" className="text-accent">how we score</Link>
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex gap-[5px] flex-wrap mt-4">
-                <Tag tone={ddTone}>{describeDrawdown(f.rules.drawdownType)} drawdown</Tag>
-                {f.rules.consistencyRule ? <Tag tone="warn">Consistency rule</Tag> : <Tag tone="good">No consistency rule</Tag>}
-                {f.rules.timeLimitDays === null ? <Tag tone="good">No time limit</Tag> : <Tag tone="warn">{f.rules.timeLimitDays}-day limit</Tag>}
-                {f.rules.newsTrading ? <Tag tone="good">News trading</Tag> : <Tag tone="bad">No news trading</Tag>}
-              </div>
-            </Card>
               <VerificationPanel coverage={cov} />
             </div>
 
             <div>
-            <ScoreBreakdownCard components={r.score.components} skipped={r.score.skipped} />
+            <div id="score" className="contents"><ScoreBreakdownCard components={r.score.components} skipped={r.score.skipped} /></div>
 
-            <Card className="p-4 lg:p-6" as="section">
+            <Card className="p-4 lg:p-6" as="section" id="rules">
               <CardHead title="Challenge rules" />
               <FactList rows={[
                 ['Steps', f.rules.steps === 'instant' ? 'Instant funding' : `${f.rules.steps}-step`],
@@ -149,7 +160,7 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
               ]} />
             </Card>
 
-            <Card className="p-4 lg:p-6" as="section">
+            <Card className="p-4 lg:p-6" as="section" id="payout">
               <CardHead title="Payout and cost" />
               <FactList rows={[
                 ['Profit split', `${f.payout.splitPct}%`],
@@ -175,12 +186,12 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
               <div className="mt-3"><ReviewList reviews={reviews.list} /></div>
             </Card>
 
-            <Card className="p-4 lg:p-6" as="section">
+            <Card className="p-4 lg:p-6" as="section" id="write">
               <CardHead title={`Write about ${f.name}`} />
               <ReviewForm kind="prop" slug={f.slug} name={f.name} />
             </Card>
 
-            <Card className="p-4 lg:p-6" as="section">
+            <Card className="p-4 lg:p-6" as="section" id="compare">
               <CardHead title="Other firms" href="/props" hrefLabel="Full ranking" />
               <ul>
                 {all.filter((x) => x.firm.slug !== f.slug).slice(0, 4).map((x) => (
@@ -199,7 +210,7 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
               </ul>
             </Card>
 
-            <Card className="p-4 lg:p-6" as="section">
+            <Card className="p-4 lg:p-6" as="section" id="faq">
               <CardHead title={`${f.name} — common questions`} />
               <dl>
                 {faq.map(({ q, a }) => (
@@ -214,6 +225,7 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
           </div>
         </div>
       </main>
+      <StickyActions compareHref="#compare" writeHref="#write" />
       <Footer />
       <JsonLd graph={[breadcrumbLd(trail), faqLd(faq)]} />
     </>

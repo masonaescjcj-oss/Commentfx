@@ -16,6 +16,8 @@ const SHAPES: Record<string, string> = {
   DE: '<rect width="20" height="4.67" fill="#000"/><rect y="4.67" width="20" height="4.66" fill="#DD0000"/><rect y="9.33" width="20" height="4.67" fill="#FFCE00"/>',
   CH: '<rect width="20" height="14" fill="#D52B1E"/><rect x="8.4" y="3.4" width="3.2" height="7.2" fill="#fff"/><rect x="6.4" y="5.4" width="7.2" height="3.2" fill="#fff"/>',
   MT: '<rect width="20" height="14" fill="#fff"/><rect x="10" width="10" height="14" fill="#CF142B"/>',
+  CZ: '<rect width="20" height="7" fill="#fff"/><rect y="7" width="20" height="7" fill="#D7141A"/><path d="M0 0l8.2 7L0 14z" fill="#11457E"/>',
+  IL: '<rect width="20" height="14" fill="#fff"/><rect y="2" width="20" height="1.8" fill="#0038B8"/><rect y="10.2" width="20" height="1.8" fill="#0038B8"/><path d="M10 4.6l2.6 4.5H7.4z" fill="none" stroke="#0038B8" stroke-width=".9"/><path d="M10 9.9 7.4 5.4h5.2z" fill="none" stroke="#0038B8" stroke-width=".9"/>',
 };
 
 export function Flag({ code, w = 16, title }: { code: string; w?: number; title?: string }) {

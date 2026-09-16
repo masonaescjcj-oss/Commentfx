@@ -223,6 +223,12 @@
  * itself has no gutter on a phone.
  */
 @layer components {
+  /* An in-page link lands under the header without this: the bar is sticky, so
+     the browser scrolls the target to y=0 and the bar is already sitting there.
+     One rule covers every anchor on the site — the quick-jump grid, the "every
+     broker" link on a ranking page, a shared link to one section. */
+  :target { scroll-margin-top: calc(var(--hdr-h) + 12px); }
+
   .gutter { padding-inline: 16px; }
   /* From 640px the page has a gutter of its own, so this is back to the 4px
      nudge it always was. */
