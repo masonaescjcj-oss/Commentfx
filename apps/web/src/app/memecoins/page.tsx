@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { MEME_WEIGHTS, MEME_LABELS, ageLabel, checkName, type MemeKey } from '@commentfx/core';
+import { MEME_WEIGHTS, MEME_LABELS, ageLabel, checkName, securityFindings, type MemeKey } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { memecoinRadar, MIN_LIQUIDITY_USD, fmtUsd, fmtPct } from '@/lib/market';
 import { Header, PageHero, Footer } from '@/components/chrome';
@@ -123,21 +123,19 @@ export default async function MemecoinsPage() {
                         {dex && <Tag tone="neutral">{dex}</Tag>}
                       </div>
 
+                      {/* Each chip says what is true, not what the flag is
+                          called: these used to read "✓ Mintable" in green for a
+                          token whose mint authority had been revoked, which is
+                          the right data and the wrong sentence. securityFindings
+                          does the wording, and is tested on it. */}
                       <ul className="flex gap-[5px] flex-wrap">
-                        {[
-                          ['Mintable', t.security.mintable],
-                          ['Freezable', t.security.freezable],
-                          ['Balance mutable', t.security.balanceMutable],
-                          ['Transfer controlled', t.security.transferControlled],
-                        ].map(([label, bad]) =>
-                          bad === null ? null : (
-                            <li key={label as string}>
-                              <Tag tone={bad ? 'bad' : 'good'}>
-                                {bad ? '✕' : '✓'} {label as string}
-                              </Tag>
-                            </li>
-                          ),
-                        )}
+                        {securityFindings(t.security).map((f) => (
+                          <li key={f.text}>
+                            <Tag tone={f.bad ? 'bad' : 'good'}>
+                              {f.bad ? '✕' : '✓'} {f.text}
+                            </Tag>
+                          </li>
+                        ))}
                       </ul>
                     </article>
                   );

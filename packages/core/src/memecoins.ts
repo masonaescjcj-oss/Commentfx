@@ -150,3 +150,44 @@ function taxNote(m: MemecoinInput): string {
 
 export const ageLabel = (h: number) =>
   h < 1 ? `${Math.round(h * 60)}m` : h < 48 ? `${Math.round(h)}h` : `${Math.round(h / 24)}d`;
+
+/**
+ * The security flags, written as findings rather than as hazard names.
+ *
+ * The chips used to be the name of the danger with a tick or a cross in front:
+ * a token whose mint authority had been revoked read "✓ Mintable", in green.
+ * Every word of that is true — the flag is called mintable, it is false, and
+ * false is good — and it still tells a reader the opposite of what happened,
+ * because nobody reads a tick as a negation. On a page whose only job is to say
+ * what a deployer can still do to you, that is not a wording preference.
+ *
+ * So each flag now has two sentences and the one that is true is the one shown.
+ * The tick stays, because colour must never be the only signal, but it is now
+ * agreeing with the words instead of inverting them.
+ *
+ * A flag the upstream did not report is left out entirely rather than guessed
+ * at: "not reported" and "not present" are different facts and only one of them
+ * is reassuring.
+ *
+ * The honeypot flag is not here. It is not a power the deployer still holds,
+ * it is a sale that already will not go through, and isDisqualifying says so
+ * above the chips in its own words.
+ */
+export interface SecurityFinding { text: string; bad: boolean }
+
+const FINDINGS: Array<[keyof MemecoinInput['security'], string, string]> = [
+  // Heaviest first: this is the order scoreControl docks points in.
+  ['balanceMutable',     'Balances fixed',        'Can rewrite balances'],
+  ['freezable',          'Freeze revoked',        'Can freeze holders'],
+  ['mintable',           'Mint revoked',          'Can mint more supply'],
+  ['transferControlled', 'Transfers unrestricted', 'Transfer fee or hook'],
+  ['metadataMutable',    'Metadata frozen',       'Can be renamed'],
+];
+
+export function securityFindings(s: MemecoinInput['security']): SecurityFinding[] {
+  return FINDINGS.flatMap(([key, clear, held]) => {
+    const flag = s[key];
+    if (typeof flag !== 'boolean') return [];
+    return [{ text: flag ? held : clear, bad: flag }];
+  });
+}

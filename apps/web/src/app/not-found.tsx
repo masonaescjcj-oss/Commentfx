@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { Header, Footer } from '@/components/chrome';
+import { Header, PageHero, Footer } from '@/components/chrome';
 import { Card } from '@/components/primitives';
 
 export const metadata: Metadata = {
@@ -29,12 +29,16 @@ export default function NotFound() {
   return (
     <>
       <Header />
-      <main id="main" className="shell pt-0 pb-6 sm:pt-3 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
+      <main id="main" className="pb-6 lg:pb-10">
+        {/* The band, on the one page that had none. Without it this was the only
+            address on the site that opened on white, and a reader who arrives
+            here is already unsure they are in the right place. No trail: there
+            is no path to this page, and a crumb reading "Home" as plain text
+            would be a way back that is not one. The doors below are. */}
+        <PageHero title="We do not have that page" />
+        <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
         <Card className="p-5" as="section">
-          <h1 className="font-[family-name:var(--font-display)] text-[24px] font-bold tracking-[-0.02em] leading-tight">
-            We do not have that page
-          </h1>
-          <p className="text-[13.5px] text-ink-2 leading-[1.8] mt-3 max-w-[46ch]">
+          <p className="text-[13.5px] text-ink-2 leading-[1.8] max-w-[46ch]">
             Either the address is wrong, or it is a company or coin we do not cover.
             We only publish a page once there is licence and cost data to put on it,
             so the directory is smaller than the market.
@@ -54,6 +58,7 @@ export default function NotFound() {
             ))}
           </ul>
         </Card>
+        </div>
       </main>
       <Footer />
     </>

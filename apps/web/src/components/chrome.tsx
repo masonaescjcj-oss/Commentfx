@@ -162,6 +162,10 @@ export function Breadcrumbs({ trail, tone = 'light' }: {
   tone?: 'light' | 'dark';
 }) {
   const dark = tone === 'dark';
+  // The last step is the page you are already on, so it is text rather than a
+  // link. A trail of one step is therefore a navigation with nothing to
+  // navigate to, and a landmark announcing itself for no reason.
+  if (trail.length < 2) return null;
   return (
     <nav
       aria-label="Breadcrumb"
@@ -203,9 +207,9 @@ export function Breadcrumbs({ trail, tone = 'light' }: {
  * above a list that already said what it was; on a band of its own it is the
  * thing that makes the band a place rather than a stripe.
  */
-export function PageHero({ title, trail, children }: {
+export function PageHero({ title, trail = [], children }: {
   title?: string;
-  trail: Array<{ name: string; path: string }>;
+  trail?: Array<{ name: string; path: string }>;
   children?: ReactNode;
 }) {
   return (
