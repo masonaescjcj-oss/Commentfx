@@ -47,7 +47,7 @@ export default async function MemecoinsPage() {
   return (
     <>
       <Header active="/memecoins" />
-      <main id="main" className="px-4 pt-3 pb-6 flex flex-col gap-[13px]">
+      <main id="main" className="shell pt-0 pb-6 lg:pt-3 lg:pb-10 flex flex-col gap-0 lg:gap-4">
         <Breadcrumbs trail={trail} />
         <RankingIntro title={TITLE} />
 
@@ -145,7 +145,7 @@ export default async function MemecoinsPage() {
               })}
             </Card>
 
-            <p className="text-[11.5px] text-ink-3 px-1 leading-[1.7]">
+            <p className="text-[11.5px] text-ink-3 gutter leading-[1.7]">
               {data.screened} new pools screened · {data.tokens.length} met the liquidity
               floor and returned an audit
               {data.dropped > 0 && ` · ${data.dropped} dropped because the security upstream had not indexed them`}

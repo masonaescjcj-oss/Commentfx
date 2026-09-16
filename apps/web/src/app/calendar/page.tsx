@@ -67,7 +67,7 @@ export default async function CalendarPage() {
   return (
     <>
       <Header active="/calendar" />
-      <main id="main" className="px-4 pt-3 pb-6 flex flex-col gap-[13px]">
+      <main id="main" className="shell pt-0 pb-6 lg:pt-3 lg:pb-10 flex flex-col gap-0 lg:gap-4">
         <Breadcrumbs trail={trail} />
 
         <h1 className="sr-only">Economic calendar</h1>
@@ -195,7 +195,7 @@ export default async function CalendarPage() {
           </dl>
         </Card>
 
-        <p className="text-[11.5px] text-ink-3 px-1 leading-[1.8]">
+        <p className="text-[11.5px] text-ink-3 gutter leading-[1.8]">
           A calendar is not a signal. If you are choosing where to trade these releases,{' '}
           <Link href="/brokers" className="text-brass font-semibold">the broker rankings</Link>{' '}
           and <Link href="/status" className="text-brass font-semibold">broker status</Link> are

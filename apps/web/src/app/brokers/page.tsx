@@ -56,105 +56,115 @@ export default async function BrokersPage() {
   return (
     <>
       <Header active="/brokers" />
-      <main id="main" className="px-4 pt-3 pb-6 flex flex-col gap-[13px]">
+      <main id="main" className="shell pt-0 pb-6 lg:pt-3 lg:pb-10 flex flex-col gap-0 lg:gap-4">
         <Breadcrumbs trail={trail} />
         <h1 className="sr-only">{TITLE}</h1>
 
-        <Card className="p-4" as="section">
-          <CardHead title="The top eight" href="#all" hrefLabel="Every broker" />
-          <TopTiles base="/brokers" items={list.slice(0, 8).map((r) => ({ ...r.broker, score: r.score.total }))} />
-        </Card>
+        {/* Two columns above 1024px. The ranking is the page, so it takes the
+            width; how the score is built and what people ask about it are the
+            material beside it. Source order is unchanged, so a phone reads the
+            list first and then the rest, exactly as before. */}
+        <div className="split">
+          <div>
 
-        <Card className="p-4" as="section">
-          <CardHead title="Strongest on each thing" href="/methodology" hrefLabel="How each is scored" />
-          <Tabset
-            id="strength"
-            label="Rank brokers by"
-            tabs={TAB_KEYS.map((key) => ({
-              label: SHORT[key],
-              panel: (
-                <StrengthList
-                  base="/brokers"
-                  rows={list
-                    .map((r) => ({ r, c: r.score.components.find((x) => x.key === key) }))
-                    .filter((x): x is { r: typeof list[number]; c: NonNullable<typeof x.c> } => Boolean(x.c?.value !== null && x.c))
-                    .sort((a, b) => (b.c.value ?? 0) - (a.c.value ?? 0))
-                    .slice(0, 6)
-                    .map(({ r, c }) => ({
-                      slug: r.broker.slug,
-                      name: r.broker.name,
-                      logo: r.broker.logo,
-                      value: c.value ?? 0,
-                      note: c.note ?? c.label,
-                    }))}
-                />
-              ),
-            }))}
-          />
-        </Card>
+          <Card className="p-4" as="section">
+            <CardHead title="The top eight" href="#all" hrefLabel="Every broker" />
+            <TopTiles base="/brokers" items={list.slice(0, 8).map((r) => ({ ...r.broker, score: r.score.total }))} />
+          </Card>
 
-        <Card className="px-4" id="all">
-          {list.map((r) => <BrokerRow headingLevel={2} key={r.broker.slug} r={r} />)}
-        </Card>
+          <Card className="p-4" as="section">
+            <CardHead title="Strongest on each thing" href="/methodology" hrefLabel="How each is scored" />
+            <Tabset
+              id="strength"
+              label="Rank brokers by"
+              tabs={TAB_KEYS.map((key) => ({
+                label: SHORT[key],
+                panel: (
+                  <StrengthList
+                    base="/brokers"
+                    rows={list
+                      .map((r) => ({ r, c: r.score.components.find((x) => x.key === key) }))
+                      .filter((x): x is { r: typeof list[number]; c: NonNullable<typeof x.c> } => Boolean(x.c?.value !== null && x.c))
+                      .sort((a, b) => (b.c.value ?? 0) - (a.c.value ?? 0))
+                      .slice(0, 6)
+                      .map(({ r, c }) => ({
+                        slug: r.broker.slug,
+                        name: r.broker.name,
+                        logo: r.broker.logo,
+                        value: c.value ?? 0,
+                        note: c.note ?? c.label,
+                      }))}
+                  />
+                ),
+              }))}
+            />
+          </Card>
 
-        <Card className="p-4" as="section">
-          <CardHead title="What a round turn costs" href="/best/lowest-spread" hrefLabel="Cheapest first" />
-          <CompareTable
-            head={['Broker', 'EUR/USD', 'Commission']}
-            rows={byCost.map((r) => ({
-              slug: r.broker.slug,
-              cells: [
-                <span key="n" className="block">
-                  <Link href={`/brokers/${r.broker.slug}`} className="hover:text-brass">{r.broker.name}</Link>
-                  <span className="block text-[10.5px] font-normal text-ink-3 uppercase tracking-[0.05em]">
-                    {r.broker.platforms.execution}
-                  </span>
-                </span>,
-                `${r.broker.cost.eurusdSpread.toFixed(2)} pips`,
-                r.broker.cost.commissionPerLot === 0
-                  ? 'none'
-                  : `$${r.broker.cost.commissionPerLot.toFixed(0)} / lot`,
-              ],
-            }))}
-            note="Spreads as each broker publishes them. Ordered by spread plus commission."
-          />
-        </Card>
+          <Card className="px-4" id="all">
+            {list.map((r) => <BrokerRow headingLevel={2} key={r.broker.slug} r={r} />)}
+          </Card>
 
+          <Card className="p-4" as="section">
+            <CardHead title="What a round turn costs" href="/best/lowest-spread" hrefLabel="Cheapest first" />
+            <CompareTable
+              head={['Broker', 'EUR/USD', 'Commission']}
+              rows={byCost.map((r) => ({
+                slug: r.broker.slug,
+                cells: [
+                  <span key="n" className="block">
+                    <Link href={`/brokers/${r.broker.slug}`} className="hover:text-brass">{r.broker.name}</Link>
+                    <span className="block text-[10.5px] font-normal text-ink-3 uppercase tracking-[0.05em]">
+                      {r.broker.platforms.execution}
+                    </span>
+                  </span>,
+                  `${r.broker.cost.eurusdSpread.toFixed(2)} pips`,
+                  r.broker.cost.commissionPerLot === 0
+                    ? 'none'
+                    : `$${r.broker.cost.commissionPerLot.toFixed(0)} / lot`,
+                ],
+              }))}
+              note="Spreads as each broker publishes them. Ordered by spread plus commission."
+            />
+          </Card>
+          </div>
 
-        <Card className="p-4">
-          <CardHead title="How the score is built" href="/methodology" hrefLabel="Full method" />
-          <ul className="flex flex-col gap-[10px]">
-            {(Object.keys(WEIGHTS) as ScoreKey[]).map((k) => (
-              <li key={k}>
-                <div className="flex items-baseline gap-2 mb-[6px]">
-                  <span className="text-[12.5px]">{LABELS[k]}</span>
-                  <div className="flex-1" />
-                  <span className="text-[11.5px] text-ink-3 font-bold tnum">{Math.round(WEIGHTS[k] * 100)}%</span>
+          <div>
+          <Card className="p-4">
+            <CardHead title="How the score is built" href="/methodology" hrefLabel="Full method" />
+            <ul className="flex flex-col gap-[10px]">
+              {(Object.keys(WEIGHTS) as ScoreKey[]).map((k) => (
+                <li key={k}>
+                  <div className="flex items-baseline gap-2 mb-[6px]">
+                    <span className="text-[12.5px]">{LABELS[k]}</span>
+                    <div className="flex-1" />
+                    <span className="text-[11.5px] text-ink-3 font-bold tnum">{Math.round(WEIGHTS[k] * 100)}%</span>
+                  </div>
+                  <Meter value={WEIGHTS[k] * 100} max={30} />
+                </li>
+              ))}
+            </ul>
+          </Card>
+
+          <Card className="p-4" as="section">
+            <CardHead title="Common questions" />
+            <dl className="flex flex-col">
+              {FAQ.map(({ q, a }) => (
+                <div key={q} className="py-3 border-b border-line-2 last:border-b-0">
+                  <dt className="text-[13.5px] font-semibold mb-[5px]">{q}</dt>
+                  <dd className="text-[12.5px] text-ink-2 leading-[1.8]">{a}</dd>
                 </div>
-                <Meter value={WEIGHTS[k] * 100} max={30} />
-              </li>
-            ))}
-          </ul>
-        </Card>
+              ))}
+            </dl>
+          </Card>
 
-        <Card className="p-4" as="section">
-          <CardHead title="Common questions" />
-          <dl className="flex flex-col">
-            {FAQ.map(({ q, a }) => (
-              <div key={q} className="py-3 border-b border-line-2 last:border-b-0">
-                <dt className="text-[13.5px] font-semibold mb-[5px]">{q}</dt>
-                <dd className="text-[12.5px] text-ink-2 leading-[1.8]">{a}</dd>
-              </div>
-            ))}
-          </dl>
-        </Card>
-
-        <p className="text-[11.5px] text-ink-3 px-1 leading-[1.7]">
-          Looking for something specific?{' '}
-          <Link href="/best/lowest-spread" className="text-brass">lowest cost</Link>,{' '}
-          <Link href="/best/tier-1-regulated" className="text-brass">tier-1 regulated</Link>,{' '}
-          <Link href="/best/low-minimum-deposit" className="text-brass">low minimum deposit</Link>.
-        </p>
+          <p className="text-[11.5px] text-ink-3 gutter leading-[1.7]">
+            Looking for something specific?{' '}
+            <Link href="/best/lowest-spread" className="text-brass">lowest cost</Link>,{' '}
+            <Link href="/best/tier-1-regulated" className="text-brass">tier-1 regulated</Link>,{' '}
+            <Link href="/best/low-minimum-deposit" className="text-brass">low minimum deposit</Link>.
+          </p>
+          </div>
+        </div>
       </main>
       <Footer />
       <JsonLd graph={[

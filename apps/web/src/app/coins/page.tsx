@@ -24,7 +24,7 @@ export default async function CoinsPage() {
   return (
     <>
       <Header active="/coins" />
-      <main id="main" className="px-4 pt-3 pb-6 flex flex-col gap-[13px]">
+      <main id="main" className="shell pt-0 pb-6 lg:pt-3 lg:pb-10 flex flex-col gap-0 lg:gap-4">
         <Breadcrumbs trail={trail} />
         {'error' in data ? (
           <>

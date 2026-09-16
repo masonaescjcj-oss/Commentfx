@@ -31,7 +31,7 @@ export function SiteSearch({ entries }: { entries: SearchEntry[] }) {
 
   return (
     <>
-      <div className="px-1">
+      <div className="gutter">
         <label htmlFor="q" className="sr-only">Search the site</label>
         <input
           id="q"
@@ -50,13 +50,13 @@ export function SiteSearch({ entries }: { entries: SearchEntry[] }) {
       </div>
 
       {groups.length === 0 ? (
-        <p className="text-[13px] text-ink-3 px-1 py-4 leading-[1.8]">
+        <p className="text-[13px] text-ink-3 gutter py-4 leading-[1.8]">
           Nothing matches “{q}”. We only rank companies we hold licence and cost data
           for — if one is missing, it is missing on purpose rather than by accident.
         </p>
       ) : (
         groups.map(({ group, rows }) => (
-          <section key={group} className="px-1">
+          <section key={group} className="gutter">
             <h2 className="text-[12.5px] font-bold text-ink-2 pb-[7px]">
               {group} <span className="text-ink-3 font-normal tnum">({rows.length})</span>
             </h2>

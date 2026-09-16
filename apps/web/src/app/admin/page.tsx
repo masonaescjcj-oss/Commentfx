@@ -31,7 +31,7 @@ export default async function AdminPage() {
 
   return (
     <main className="px-4 py-5 flex flex-col gap-[13px] max-w-[560px] mx-auto">
-      <header className="px-1">
+      <header className="gutter">
         <h1 className="font-[family-name:var(--font-display)] text-[24px] font-bold tracking-[-0.02em]">
           Verification queue
         </h1>

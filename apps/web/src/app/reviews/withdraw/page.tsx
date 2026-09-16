@@ -20,9 +20,9 @@ export default function WithdrawPage() {
   return (
     <>
       <Header />
-      <main id="main" className="px-4 pt-3 pb-6 flex flex-col gap-[13px]">
+      <main id="main" className="shell pt-0 pb-6 lg:pt-3 lg:pb-10 flex flex-col gap-0 lg:gap-4">
         <Breadcrumbs trail={trail} />
-        <header className="px-1">
+        <header className="gutter">
           <h1 className="sr-only">Withdraw a review</h1>
           <p className="text-[13.5px] text-ink-2 leading-[1.75] max-w-[48ch]">
             Paste the code you were shown when you published. It comes off the page

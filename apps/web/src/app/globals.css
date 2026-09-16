@@ -139,3 +139,65 @@
   .menu > summary::marker { content: ''; }
   .menu > summary:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 2px; }
 }
+
+/**
+ * The desktop layout.
+ *
+ * The site was built for a phone and served the same single column to a 1440px
+ * screen, where a broker row stretched until its score sat most of a screen
+ * away from the name it belonged to. Both rules below live here rather than as
+ * breakpoint classes repeated across twenty-two pages, so the measure is one
+ * decision in one place.
+ */
+@layer components {
+  /* The measure. A phone gets the whole screen — the sections inside run edge
+     to edge and pad their own contents, so no width is spent on a gutter around
+     a box. A desktop gets a cap, because a line of text or a row of figures has
+     a width past which it stops being readable however much screen is spare. */
+  .shell {
+    max-width: 1120px;
+    margin-inline: auto;
+  }
+
+  /* A primary column and a rail beside it, for a page that is one main thing
+     plus the material that supports it. The two wrappers are in the markup at
+     every width, so a phone gets the source order — nothing is hidden at one
+     size and shown at another, and there is no second copy to drift. */
+  .split,
+  .split > * {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .shell { padding-inline: 24px; }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 344px;
+      align-items: start;
+      gap: 16px;
+    }
+    .split > * { gap: 16px; }
+
+    /* A record page reads the other way round: who this is, and whether anyone
+       is reporting a problem with them, belongs at the top left where a reader
+       looks first — and the detail, which is most of the page, takes the width.
+       Only the column widths swap, so the source order is still what a phone
+       shows, and it is still the order it was before any of this. */
+    .split.rail-left { grid-template-columns: 344px minmax(0, 1fr); }
+  }
+}
+
+/**
+ * Text that sits directly on the page rather than inside a section: a
+ * breadcrumb, a freshness line, the closing sentence of a ranking. The sections
+ * pad their own contents, so these have to pad themselves now that the page
+ * itself has no gutter on a phone. Above 1024px it is the 4px nudge it always
+ * was, because there the page has a gutter again.
+ */
+@layer components {
+  .gutter { padding-inline: 16px; }
+  @media (min-width: 1024px) { .gutter { padding-inline: 4px; } }
+}

@@ -73,7 +73,7 @@ export default async function AdminRecordPage({ params }: { params: Promise<{ ki
     <main className="px-4 py-5 flex flex-col gap-[13px] max-w-[560px] mx-auto">
       <Link href="/admin" className="text-[12px] text-brass">‹ Queue</Link>
 
-      <header className="px-1">
+      <header className="gutter">
         <h1 className="font-[family-name:var(--font-display)] text-[23px] font-bold tracking-[-0.02em]">{slug}</h1>
         <p className="text-[12.5px] text-ink-2 mt-1">
           {kind} · {cov.verified} of {cov.fields.length} fields verified

@@ -42,7 +42,7 @@ export function CalendarList({ days, todayUtc }: { days: CalendarDay[]; todayUtc
 
   return (
     <>
-      <div className="flex items-center gap-2 px-1">
+      <div className="flex items-center gap-2 gutter">
         {([false, true] as const).map((only) => (
           <button
             key={String(only)}
@@ -63,12 +63,12 @@ export function CalendarList({ days, todayUtc }: { days: CalendarDay[]; todayUtc
       </div>
 
       {shown.length === 0 ? (
-        <p className="text-[13px] text-ink-3 px-1 py-4">
+        <p className="text-[13px] text-ink-3 gutter py-4">
           Nothing scheduled in this fortnight at that impact level.
         </p>
       ) : (
         shown.map((d) => (
-          <section key={d.date} className="px-1">
+          <section key={d.date} className="gutter">
             <h2 className="text-[12.5px] font-bold text-ink-2 pb-[7px] flex items-baseline gap-2">
               {dayLabel(d.date)}
               {d.date === todayUtc && (

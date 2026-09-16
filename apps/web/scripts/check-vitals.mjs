@@ -29,6 +29,11 @@ import { chromium } from 'playwright';
 const BASE = process.env.CHECK_BASE ?? 'http://127.0.0.1:3000';
 const BUDGET = 0.1;
 
+// CHECK_WIDTH measures the desktop layout instead of the phone one. Above
+// 1024px several pages are two columns and the header is a different element,
+// so the shapes that could shift are not the same shapes.
+const WIDTH = Number(process.env.CHECK_WIDTH ?? 390);
+
 /** One of every page shape that carries a lot of text or a long list. */
 const PAGES = ['/', '/brokers', '/brokers/exness', '/props', '/exchanges', '/coins',
   '/coins/bitcoin', '/memecoins', '/calendar', '/reviews', '/search',
@@ -47,7 +52,10 @@ const browser = await chromium.launch({
 });
 
 for (const path of PAGES) {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
+  const ctx = await browser.newContext({
+    viewport: { width: WIDTH, height: WIDTH >= 1024 ? 900 : 844 },
+    deviceScaleFactor: 2,
+  });
   const page = await ctx.newPage();
   const cdp = await ctx.newCDPSession(page);
   await cdp.send('Network.enable');

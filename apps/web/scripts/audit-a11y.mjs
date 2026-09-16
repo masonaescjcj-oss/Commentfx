@@ -1,5 +1,10 @@
 /**
- * Runs axe against the built site on a phone-sized viewport.
+ * Runs axe against the built site, by default on a phone-sized viewport.
+ *
+ * AUDIT_WIDTH runs it at another width, and that is not a nicety: above 1024px
+ * the header swaps its menu for an inline nav and four page shapes become two
+ * columns. That is different markup being exposed, so a pass at 390px says
+ * nothing about it. CI runs both.
  *
  *   pnpm --filter @commentfx/web build
  *   pnpm --filter @commentfx/web start &
@@ -48,7 +53,11 @@ const executablePath = process.env.AUDIT_CHROMIUM || undefined;
 const browser = await chromium.launch({ executablePath });
 // A phone, because the design is mobile-first and that is where the contrast
 // and the tap targets actually have to survive.
-const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
+const WIDTH = Number(process.env.AUDIT_WIDTH ?? 390);
+const ctx = await browser.newContext({
+  viewport: { width: WIDTH, height: WIDTH >= 1024 ? 900 : 844 },
+  deviceScaleFactor: 2,
+});
 const page = await ctx.newPage();
 
 const found = new Map();
@@ -92,7 +101,7 @@ await browser.close();
 const order = { critical: 0, serious: 1, moderate: 2, minor: 3 };
 const list = [...found.entries()].sort((a, b) => (order[a[1].impact] ?? 9) - (order[b[1].impact] ?? 9));
 
-console.log(`\n${audited} of ${PAGES.length} pages audited against ${TAGS.join(', ')}`);
+console.log(`\n${audited} of ${PAGES.length} pages audited at ${WIDTH}px against ${TAGS.join(", ")}`);
 
 if (list.length === 0) {
   console.log('No violations.');

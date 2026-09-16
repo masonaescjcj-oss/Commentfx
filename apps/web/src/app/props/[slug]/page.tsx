@@ -91,114 +91,123 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
   return (
     <>
       <Header active="/props" />
-      <main id="main" className="px-4 pt-3 pb-6 flex flex-col gap-[13px]">
+      <main id="main" className="shell pt-0 pb-6 lg:pt-3 lg:pb-10 flex flex-col gap-0 lg:gap-4">
         <Breadcrumbs trail={trail} />
 
-        <Card className="p-4" as="article">
-          <div className="flex gap-[14px] items-start">
-            <Logo {...f.logo} size={64} />
-            <div className="flex-1 min-w-0">
-              <Tag tone="brass">RANK #{r.rank} OF {all.length}</Tag>
-              <h1 className="font-[family-name:var(--font-display)] text-[23px] font-bold mt-2 tracking-[-0.025em]">
-                {f.name}
-              </h1>
-              <div className="flex items-center gap-[9px] mt-2">
-                <Score value={r.score.total} size="xl" />
-                <span className="text-[11.5px] text-ink-3 leading-[1.4]">
-                  out of 10<br />
-                  <Link href="/methodology" className="text-brass">how we score</Link>
-                </span>
+        {/* Two columns above 1024px, the narrow one first: who this is and
+            what is known about them, then the detail, which is most of the
+            page and wants the width. */}
+        <div className="split rail-left">
+          <div>
+
+          <Card className="p-4" as="article">
+            <div className="flex gap-[14px] items-start">
+              <Logo {...f.logo} size={64} />
+              <div className="flex-1 min-w-0">
+                <Tag tone="brass">RANK #{r.rank} OF {all.length}</Tag>
+                <h1 className="font-[family-name:var(--font-display)] text-[23px] font-bold mt-2 tracking-[-0.025em]">
+                  {f.name}
+                </h1>
+                <div className="flex items-center gap-[9px] mt-2">
+                  <Score value={r.score.total} size="xl" />
+                  <span className="text-[11.5px] text-ink-3 leading-[1.4]">
+                    out of 10<br />
+                    <Link href="/methodology" className="text-brass">how we score</Link>
+                  </span>
+                </div>
               </div>
             </div>
+            <div className="flex gap-[5px] flex-wrap mt-4">
+              <Tag tone={ddTone}>{describeDrawdown(f.rules.drawdownType)} drawdown</Tag>
+              {f.rules.consistencyRule ? <Tag tone="warn">Consistency rule</Tag> : <Tag tone="good">No consistency rule</Tag>}
+              {f.rules.timeLimitDays === null ? <Tag tone="good">No time limit</Tag> : <Tag tone="warn">{f.rules.timeLimitDays}-day limit</Tag>}
+              {f.rules.newsTrading ? <Tag tone="good">News trading</Tag> : <Tag tone="bad">No news trading</Tag>}
+            </div>
+          </Card>
+            <VerificationPanel coverage={cov} />
           </div>
-          <div className="flex gap-[5px] flex-wrap mt-4">
-            <Tag tone={ddTone}>{describeDrawdown(f.rules.drawdownType)} drawdown</Tag>
-            {f.rules.consistencyRule ? <Tag tone="warn">Consistency rule</Tag> : <Tag tone="good">No consistency rule</Tag>}
-            {f.rules.timeLimitDays === null ? <Tag tone="good">No time limit</Tag> : <Tag tone="warn">{f.rules.timeLimitDays}-day limit</Tag>}
-            {f.rules.newsTrading ? <Tag tone="good">News trading</Tag> : <Tag tone="bad">No news trading</Tag>}
+
+          <div>
+          <ScoreBreakdownCard components={r.score.components} skipped={r.score.skipped} />
+
+          <Card className="p-4" as="section">
+            <CardHead title="Challenge rules" />
+            <FactList rows={[
+              ['Steps', f.rules.steps === 'instant' ? 'Instant funding' : `${f.rules.steps}-step`],
+              ['Profit target (phase 1)', `${f.rules.profitTargetPct}%`],
+              ['Daily drawdown', `${f.rules.dailyDrawdownPct}%`],
+              ['Max drawdown', `${f.rules.maxDrawdownPct}%`],
+              ['Drawdown type', describeDrawdown(f.rules.drawdownType)],
+              ['Minimum trading days', f.rules.minTradingDays === 0 ? 'None' : String(f.rules.minTradingDays)],
+              ['Time limit', f.rules.timeLimitDays === null ? 'None' : `${f.rules.timeLimitDays} days`],
+              ['Consistency rule', f.rules.consistencyRule ? 'Yes' : 'No'],
+              ['Weekend holding', f.rules.weekendHolding ? 'Allowed' : 'Not allowed'],
+            ]} />
+          </Card>
+
+          <Card className="p-4" as="section">
+            <CardHead title="Payout and cost" />
+            <FactList rows={[
+              ['Profit split', `${f.payout.splitPct}%`],
+              ['Payout frequency', `Every ${f.payout.frequencyDays} days`],
+              ['First payout after', `${f.payout.firstPayoutDays} days`],
+              ['Challenge fee per $100k', `$${f.feeUsdPer100k}`],
+              ['Verified payout proofs', f.payout.verifiedProofs === 0 ? 'None yet' : String(f.payout.verifiedProofs)],
+              ['Markets', f.markets.join(', ')],
+              ['Platforms', f.platforms.join(', ')],
+            ]} />
+          </Card>
+
+          <Card className="p-4" as="section">
+            <OfficialSite name={f.name} url={f.website} />
+          </Card>
+
+          <Card className="p-4" as="section" id="reviews">
+            <CardHead
+              title="What customers say"
+              aside={<span className="text-[11.5px] text-ink-3 tnum">{reviews.stats.total} published</span>}
+            />
+            <ReviewSummary stats={reviews.stats} kind="prop" />
+            <div className="mt-3"><ReviewList reviews={reviews.list} /></div>
+          </Card>
+
+          <Card className="p-4" as="section">
+            <CardHead title={`Write about ${f.name}`} />
+            <ReviewForm kind="prop" slug={f.slug} name={f.name} />
+          </Card>
+
+          <Card className="p-4" as="section">
+            <CardHead title="Other firms" href="/props" hrefLabel="Full ranking" />
+            <ul>
+              {all.filter((x) => x.firm.slug !== f.slug).slice(0, 4).map((x) => (
+                <li key={x.firm.slug} className="border-b border-line-2 last:border-b-0">
+                  <Link href={`/props/${x.firm.slug}`} className="flex items-center gap-3 py-[11px] group">
+                    <Logo {...x.firm.logo} size={32} />
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-[13.5px] font-semibold group-hover:text-brass">{x.firm.name}</span>
+                      <span className="block text-[11px] text-ink-3">{describeDrawdown(x.firm.rules.drawdownType)} · ${x.firm.feeUsdPer100k}</span>
+                    </span>
+                    <Score value={x.score.total} />
+                    <span aria-hidden className="text-ink-3">›</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Card>
+
+          <Card className="p-4" as="section">
+            <CardHead title={`${f.name} — common questions`} />
+            <dl>
+              {faq.map(({ q, a }) => (
+                <div key={q} className="py-3 border-b border-line-2 last:border-b-0">
+                  <dt className="text-[13.5px] font-semibold mb-[5px]">{q}</dt>
+                  <dd className="text-[12.5px] text-ink-2 leading-[1.8]">{a}</dd>
+                </div>
+              ))}
+            </dl>
+          </Card>
           </div>
-        </Card>
-
-        <VerificationPanel coverage={cov} />
-
-        <ScoreBreakdownCard components={r.score.components} skipped={r.score.skipped} />
-
-        <Card className="p-4" as="section">
-          <CardHead title="Challenge rules" />
-          <FactList rows={[
-            ['Steps', f.rules.steps === 'instant' ? 'Instant funding' : `${f.rules.steps}-step`],
-            ['Profit target (phase 1)', `${f.rules.profitTargetPct}%`],
-            ['Daily drawdown', `${f.rules.dailyDrawdownPct}%`],
-            ['Max drawdown', `${f.rules.maxDrawdownPct}%`],
-            ['Drawdown type', describeDrawdown(f.rules.drawdownType)],
-            ['Minimum trading days', f.rules.minTradingDays === 0 ? 'None' : String(f.rules.minTradingDays)],
-            ['Time limit', f.rules.timeLimitDays === null ? 'None' : `${f.rules.timeLimitDays} days`],
-            ['Consistency rule', f.rules.consistencyRule ? 'Yes' : 'No'],
-            ['Weekend holding', f.rules.weekendHolding ? 'Allowed' : 'Not allowed'],
-          ]} />
-        </Card>
-
-        <Card className="p-4" as="section">
-          <CardHead title="Payout and cost" />
-          <FactList rows={[
-            ['Profit split', `${f.payout.splitPct}%`],
-            ['Payout frequency', `Every ${f.payout.frequencyDays} days`],
-            ['First payout after', `${f.payout.firstPayoutDays} days`],
-            ['Challenge fee per $100k', `$${f.feeUsdPer100k}`],
-            ['Verified payout proofs', f.payout.verifiedProofs === 0 ? 'None yet' : String(f.payout.verifiedProofs)],
-            ['Markets', f.markets.join(', ')],
-            ['Platforms', f.platforms.join(', ')],
-          ]} />
-        </Card>
-
-        <Card className="p-4" as="section">
-          <OfficialSite name={f.name} url={f.website} />
-        </Card>
-
-        <Card className="p-4" as="section" id="reviews">
-          <CardHead
-            title="What customers say"
-            aside={<span className="text-[11.5px] text-ink-3 tnum">{reviews.stats.total} published</span>}
-          />
-          <ReviewSummary stats={reviews.stats} kind="prop" />
-          <div className="mt-3"><ReviewList reviews={reviews.list} /></div>
-        </Card>
-
-        <Card className="p-4" as="section">
-          <CardHead title={`Write about ${f.name}`} />
-          <ReviewForm kind="prop" slug={f.slug} name={f.name} />
-        </Card>
-
-        <Card className="p-4" as="section">
-          <CardHead title="Other firms" href="/props" hrefLabel="Full ranking" />
-          <ul>
-            {all.filter((x) => x.firm.slug !== f.slug).slice(0, 4).map((x) => (
-              <li key={x.firm.slug} className="border-b border-line-2 last:border-b-0">
-                <Link href={`/props/${x.firm.slug}`} className="flex items-center gap-3 py-[11px] group">
-                  <Logo {...x.firm.logo} size={32} />
-                  <span className="flex-1 min-w-0">
-                    <span className="block text-[13.5px] font-semibold group-hover:text-brass">{x.firm.name}</span>
-                    <span className="block text-[11px] text-ink-3">{describeDrawdown(x.firm.rules.drawdownType)} · ${x.firm.feeUsdPer100k}</span>
-                  </span>
-                  <Score value={x.score.total} />
-                  <span aria-hidden className="text-ink-3">›</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </Card>
-
-        <Card className="p-4" as="section">
-          <CardHead title={`${f.name} — common questions`} />
-          <dl>
-            {faq.map(({ q, a }) => (
-              <div key={q} className="py-3 border-b border-line-2 last:border-b-0">
-                <dt className="text-[13.5px] font-semibold mb-[5px]">{q}</dt>
-                <dd className="text-[12.5px] text-ink-2 leading-[1.8]">{a}</dd>
-              </div>
-            ))}
-          </dl>
-        </Card>
+        </div>
       </main>
       <Footer />
       <JsonLd graph={[breadcrumbLd(trail), faqLd(faq)]} />

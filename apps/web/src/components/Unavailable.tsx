@@ -39,7 +39,7 @@ export function Unavailable(
 
 export function Freshness({ at, source }: { at: string; source: string }) {
   return (
-    <p className="text-[11px] text-ink-3 px-1">
+    <p className="text-[11px] text-ink-3 gutter">
       Data from {source} · fetched{' '}
       <time dateTime={at}>{new Date(at).toUTCString().replace('GMT', 'UTC')}</time>
     </p>

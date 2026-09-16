@@ -29,7 +29,7 @@ export default function NotFound() {
   return (
     <>
       <Header />
-      <main id="main" className="px-4 pt-3 pb-6 flex flex-col gap-[13px]">
+      <main id="main" className="shell pt-0 pb-6 lg:pt-3 lg:pb-10 flex flex-col gap-0 lg:gap-4">
         <Card className="p-5" as="section">
           <h1 className="font-[family-name:var(--font-display)] text-[24px] font-bold tracking-[-0.02em] leading-tight">
             We do not have that page

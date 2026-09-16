@@ -2,13 +2,31 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { legibleTile } from '@commentfx/core';
 
+/**
+ * A section of the page.
+ *
+ * On a phone it is not a box. It was — a rounded, bordered card inset from both
+ * edges — and on a 390px screen that spent 32px of a 390px width on margin plus
+ * two more on the border, to draw a shape around something that already had a
+ * heading and blank space above it. The rows inside had less room than the
+ * screen actually offered, for an outline nobody needed. So at that width the
+ * card is edge to edge with a hairline under it, and the padding a caller
+ * passes still keeps the text off the glass.
+ *
+ * From 1024px up it is a box again, and there the border earns its keep: the
+ * page is two columns by then, and a card in a rail beside another column needs
+ * an edge to say where it ends.
+ */
 export function Card({ children, className = '', as: As = 'div', id }: {
   children: ReactNode; className?: string; as?: 'div' | 'section' | 'article';
   /** Set only where the card is a link target, so #reviews lands on it. */
   id?: string;
 }) {
   return (
-    <As id={id} className={`bg-card rounded-[16px] border border-line ${className}`}>
+    <As
+      id={id}
+      className={`bg-card border-b border-line lg:border lg:rounded-[16px] ${className}`}
+    >
       {children}
     </As>
   );

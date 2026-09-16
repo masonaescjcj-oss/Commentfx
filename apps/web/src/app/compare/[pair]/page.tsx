@@ -83,13 +83,13 @@ export default async function ComparePage({ params }: { params: Promise<Params> 
   return (
     <>
       <Header active="/brokers" />
-      <main id="main" className="px-4 pt-3 pb-6 flex flex-col gap-[13px]">
+      <main id="main" className="shell pt-0 pb-6 lg:pt-3 lg:pb-10 flex flex-col gap-0 lg:gap-4">
         <Breadcrumbs trail={trail} />
-        <h1 className="font-[family-name:var(--font-display)] text-[24px] font-bold leading-[1.25] tracking-[-0.02em] px-1 text-balance">
+        <h1 className="font-[family-name:var(--font-display)] text-[24px] font-bold leading-[1.25] tracking-[-0.02em] gutter text-balance">
           {a.broker.name} vs {b.broker.name}
         </h1>
 
-        <div className="flex items-start gap-[10px] px-1">
+        <div className="flex items-start gap-[10px] gutter">
           {[a, b].map((x, i) => (
             <div key={x.broker.slug} className="flex-1 text-center">
               <Logo {...x.broker.logo} size={48} />

@@ -48,7 +48,7 @@ export function ReviewFeed({ items }: { items: FeedItem[] }) {
 
   return (
     <>
-      <div className="flex flex-wrap gap-[6px] px-1">
+      <div className="flex flex-wrap gap-[6px] gutter">
         {FILTERS.map((f) => (
           <button
             key={f.key}
@@ -67,7 +67,7 @@ export function ReviewFeed({ items }: { items: FeedItem[] }) {
       </div>
 
       {shown.length === 0 ? (
-        <p className="text-[13px] text-ink-3 px-1 py-4 leading-[1.8]">
+        <p className="text-[13px] text-ink-3 gutter py-4 leading-[1.8]">
           Nothing here yet under that filter.
         </p>
       ) : (
