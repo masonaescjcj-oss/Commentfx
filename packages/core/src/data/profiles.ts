@@ -157,12 +157,13 @@ const EXNESS: BrokerProfile = {
     },
 
     {
-      heading: 'What we could not check, and why we are telling you',
+      heading: 'Where the cost figures on this page come from',
       paragraphs: [
-        'Exness blocks our servers. Every request we make to exness.com, to the regional sites and to the help '
-        + 'centre comes back 403 — not a page we misread, a door closed to datacentre traffic. So the cost, '
-        + 'minimum deposit and withdrawal figures on this page are the ones the broker publishes, as a person '
-        + 'read them, and the "checked" date beside them is the honest measure of how old that reading is.',
+        'Everything above was read from a document: a filing at Companies House, a regulator’s register, a '
+        + 'regulator’s own advisory. The trading figures could not be, because Exness blocks our servers — every '
+        + 'request to exness.com, to the regional sites and to the help centre comes back 403, a door closed to '
+        + 'datacentre traffic rather than a page we misread. So the cost, minimum deposit and withdrawal figures '
+        + 'here were read by a person off the broker’s published pages, and the date beside them says when.',
 
         'It matters because the published numbers are contested. A review desk that tests accounts rather than '
         + 'reading brochures puts the minimum on the professional account types at $1,000 and on Standard at '
