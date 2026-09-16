@@ -45,7 +45,12 @@ export function NewsList({ items }: { items: NewsItem[] }) {
 
                 Through next/image, so what arrives is 64px of WebP rather than
                 the megabyte original the publisher happens to have: see the
-                images block in next.config.ts for what that cost before. */}
+                images block in next.config.ts for what that cost before.
+
+                No `sizes`. With one, Next reads the image as fluid and writes a
+                srcset of every width it knows — ten URLs up to 3840px for a
+                64px square. Without one, a fixed width and height give exactly
+                the two entries this needs, 64 and 128 for a 2x screen. */}
             {n.image ? (
               <Image
                 src={n.image}
@@ -54,7 +59,6 @@ export function NewsList({ items }: { items: NewsItem[] }) {
                 width={64}
                 height={64}
                 loading="lazy"
-                sizes="64px"
                 className="w-16 h-16 shrink-0 rounded-[11px] object-cover bg-card-2 border border-line"
               />
             ) : null}
