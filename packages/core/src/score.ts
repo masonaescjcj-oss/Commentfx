@@ -59,6 +59,11 @@ export const LABELS: Record<ScoreKey, string> = {
 export function scoreRegulation(b: Broker): number {
   const tiers = b.entities
     .filter(servesRetail)
+    // A licence held by a company that onboards nobody from this brand is not
+    // protection for anybody reading this page. It stays on the map, labelled,
+    // and it scores nothing — the same rule as the professional-only entities,
+    // for the same reason.
+    .filter((e) => e.serves.length > 0)
     .filter((e) => e.licence.status === 'authorised' || e.licence.status === 'registered')
     .map((e) => REGULATORS[e.licence.regulator]?.tier)
     .filter((t): t is 'A' | 'B' | 'C' => Boolean(t));

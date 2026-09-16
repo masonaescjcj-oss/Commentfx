@@ -1320,7 +1320,392 @@ const FXTM: BrokerProfile = {
   ],
 };
 
-export const PROFILES: BrokerProfile[] = [EXNESS, IC_MARKETS, PEPPERSTONE, EIGHTCAP, OCTA, XM, FXTM];
+const ROBOFOREX: BrokerProfile = {
+  slug: 'roboforex',
+  checked: '2026-09-16',
+  verdict:
+    'The licence number this site published for RoboForex is on no document RoboForex publishes. Its own '
+    + 'regulation page names one company, in Belize, under a number we did not have. The group does hold a '
+    + 'CySEC licence and a German one — behind a different brand, on a different website, which roboforex.com '
+    + 'does not mention anywhere.',
+
+  sections: [
+    {
+      heading: 'We had the wrong number',
+      paragraphs: [
+        'This record carried Belize licence 000138/7. RoboForex’s own regulation page says something else: '
+        + '"RoboForex Ltd is a financial brokerage company registered with the Financial Services Commission of '
+        + 'Belize under Licence Number 9759600, Registration Number 000001272" [rf-reg]. One of those is the '
+        + 'broker’s and one is ours, and it is not a close call.',
+
+        'Where 000138/7 came from we do not know, and the honest thing is to say that rather than quietly '
+        + 'swap it. Belize numbers are the ones that circulate wrongly — four different suffixes are published '
+        + 'for XM’s Belize company on another page in this directory — and the register that would settle any of '
+        + 'them is an application we cannot read. This one is at least now the number the broker itself prints.',
+      ],
+    },
+
+    {
+      heading: 'The EU licences are real and they are not on this site',
+      paragraphs: [
+        'RoboMarkets Ltd holds CySEC licence 191/13, and we read that off the register ourselves [cysec]. '
+        + 'RoboMarkets Deutschland GmbH is authorised by BaFin. Both are in the same group as RoboForex Ltd, '
+        + 'and both are behind robomarkets.com rather than roboforex.com.',
+
+        'The interesting thing is what RoboForex’s own regulation page says about them, which is nothing. It '
+        + 'names one company and one licence. There is no group diagram, no "our European entity", no link. A '
+        + 'reader on roboforex.com is being offered exactly one thing: a Belize company.',
+
+        'That is unusual and, in a narrow sense, honest. Most of the brokers in this directory put their '
+        + 'tier-1 licences on the page a reader in Nigeria or Vietnam lands on, and then sign that reader with '
+        + 'an offshore company. RoboForex does not advertise a licence it will not give you. It simply does not '
+        + 'give you one.',
+
+        'Both RoboMarkets rows are on the entity map with the brand beside them and no country against them, '
+        + 'because a licence that onboards nobody from this page protects nobody reading it. They score '
+        + 'nothing, which is why this broker’s regulation component is 2.5 rather than 10.',
+      ],
+    },
+
+    {
+      heading: 'What Belize actually gives you',
+      paragraphs: [
+        'A licence, which is more than St Vincent or Comoros offer, and no compensation scheme. If RoboForex '
+        + 'Ltd fails there is no fund to claim on, and the leverage on offer — far beyond anything a tier-1 '
+        + 'regulator permits a retail client — is the reason the company is there rather than in Cyprus with '
+        + 'its sibling.',
+
+        'Nothing about that is hidden and none of it is illegal. It is the trade, and this page’s job is to '
+        + 'make sure a reader knows they are taking it.',
+
+        'It is worth being precise about what a Belize licence does buy, because "offshore" is used to mean '
+        + 'four different things across this directory and they are not equivalent. Belize licenses under a '
+        + 'securities act, requires capital, and publishes a register — it is supervision, thinly. St Vincent, '
+        + 'where two other brokers here are registered, issues no forex licence at all and says so. The '
+        + 'Comoros body a third claims a licence from is one the Comoros central bank calls fictitious. On that '
+        + 'scale Belize is the top of the bottom, and RoboForex is the best-placed of the four brokers in this '
+        + 'directory whose clients have no compensation scheme.',
+      ],
+    },
+
+    {
+      heading: 'What we searched and did not find',
+      paragraphs: [
+        'No enforcement action against RoboForex Ltd or RoboMarkets Ltd turned up in the registers and outlets '
+        + 'we checked: no fine, no restriction, no warning list entry, no litigation. The conduct component '
+        + 'therefore scores ten, meaning a person looked on 16 September 2026 and found nothing.',
+
+        'Belize remains unreadable from here, so the licence number above is the broker’s claim rather than a '
+        + 'register reading, and the verification panel on this page says so.',
+      ],
+    },
+  ],
+
+  facts: [
+    { label: 'Belize licence, per the broker', value: '9759600, registration 000001272', from: 'rf-reg' },
+    { label: 'What this site published before', value: '000138/7 — on no document RoboForex publishes', from: 'rf-reg' },
+    { label: 'Group CySEC licence', value: 'RoboMarkets Ltd, 191/13, active on the register', from: 'cysec' },
+    { label: 'Mentioned on roboforex.com', value: 'No — its regulation page names one company', from: 'rf-reg' },
+    { label: 'Compensation scheme behind the Belize entity', value: 'None', from: 'rf-reg' },
+    { label: 'Enforcement actions found', value: 'None, searched 16 September 2026', from: 'cysec' },
+  ],
+
+  open: [
+    'Where 000138/7 came from is unknown. It was in this record before anyone checked, and the only thing we '
+    + 'can say is that the broker does not use it.',
+    'Belize’s register is an application we cannot read, so the new number is the broker’s claim and not a '
+    + 'confirmed reading.',
+    'Whether a reader can move from roboforex.com to the RoboMarkets entities, and on what terms, is not '
+    + 'described on either site.',
+  ],
+
+  sources: [
+    {
+      id: 'rf-reg',
+      publisher: 'RoboForex',
+      title: 'Regulation',
+      url: 'https://roboforex.com/about/company/regulation/',
+      read: '2026-09-16',
+      kind: 'broker',
+    },
+    {
+      id: 'cysec',
+      publisher: 'Cyprus Securities and Exchange Commission',
+      title: 'Register of Cyprus Investment Firms — Robomarkets Ltd, licence 191/13',
+      url: 'https://www.cysec.gov.cy/en-GB/entities/investment-firms/cypriot/',
+      read: '2026-09-16',
+      kind: 'register',
+    },
+  ],
+};
+
+const ALPARI: BrokerProfile = {
+  slug: 'alpari',
+  checked: '2026-09-16',
+  verdict:
+    'Alpari is a 1998 brand with a 2015 insolvency behind it, and as of 2025 it is run from the Comoros by '
+    + 'Parlance Trading Ltd on a licence from a body the Comoros central bank has publicly called fictitious. '
+    + 'This site was still describing it as a Mauritius company. That was wrong and this is the correction.',
+
+  sections: [
+    {
+      heading: 'Who runs Alpari now',
+      paragraphs: [
+        'The footer of alpari.com says it plainly: "Alpari, the trading name of Parlance Trading Ltd, Bonovo '
+        + 'Road – Fomboni, Island of Mohéli – Comoros Union, is incorporated under registered number '
+        + 'HY00423015 and licensed by the Mwali International Services Authority, Island of Mohéli as an '
+        + 'International Brokerage and Clearing Company under number T2023236" [alpari].',
+
+        'The Alpari brand left Andrey Dashin’s Exinity group in the first half of 2025 and moved to Parlance '
+        + 'Trading Ltd [fm-split]. Exinity kept FXTM, which is another page in this directory. So the two '
+        + 'brands that were siblings are no longer related, and the record here that described Alpari as a '
+        + 'Mauritius company under an FSC licence described something that no longer exists.',
+      ],
+    },
+    {
+      heading: 'The Mwali licence is not a licence',
+      paragraphs: [
+        'The Mwali International Services Authority issues documents that look like financial licences from '
+        + 'an island of the Comoros. The Union’s own central bank says it should not.',
+
+        'The Banque Centrale des Comores published a communiqué informing the public "about fictitious '
+        + 'structures claiming to issue licenses to banks and financial institutions in the Union of the '
+        + 'Comoros", naming MISA among them; it was republished on the Ministry of Finance website in December '
+        + '2025 [fm-misa]. Under the Union’s constitution, licensing banks and financial institutions is the '
+        + 'central bank’s exclusive competence, not an individual island’s.',
+
+        'So the entity map on this page does not show MISA as a regulator with a weak tier. It shows a company '
+        + 'with no financial licence that claims one from a body which the country says does not have the power '
+        + 'to issue it. The regulation component scores zero, and zero is the honest number — a tier-C 2.5 '
+        + 'would be saying somebody is watching.',
+      ],
+    },
+    {
+      heading: 'Why 2015 still matters here',
+      paragraphs: [
+        'Alpari (UK) Limited applied for insolvency on 19 January 2015, four days after the Swiss National Bank '
+        + 'abandoned its cap on the franc. KPMG were appointed special administrators. The Financial Services '
+        + 'Compensation Scheme paid $51.3m to 11,751 clients, and the final distribution from the estate, more '
+        + 'than two years later, returned about 27 cents in the dollar [fm-admin].',
+
+        'That is the single clearest illustration on this site of what a compensation scheme is for. Clients of '
+        + 'a British broker that failed overnight got most of their money back because the FSCS existed. It is '
+        + 'not in this page’s record of regulatory actions, because an insolvency is not an enforcement action '
+        + 'and no authority acted against the firm — a market moved and the company could not cover it.',
+
+        'It matters because of what the same brand is today. A reader who remembers Alpari as the broker the '
+        + 'FSCS bailed out should know that the company behind the name now has no scheme, no supervisor, and a '
+        + 'licence its own country disowns. The 2015 protection was a property of the jurisdiction, not of the '
+        + 'brand, and the jurisdiction is gone.',
+      ],
+    },
+    {
+      heading: 'What we could not establish',
+      paragraphs: [
+        'We found no enforcement action against Parlance Trading Ltd, which is unsurprising: there is no '
+        + 'authority with jurisdiction to bring one. That is not a clean record in any useful sense, and the '
+        + 'conduct component saying ten here should be read against a regulation component saying zero.',
+
+        'Alpari has also launched instruments its own marketing describes as "up or down", which read as binary '
+        + 'options [fm-split]. Binary options are banned for retail clients across the EU and the UK. We have '
+        + 'not been able to establish what is offered to whom, and it is not in this record.',
+      ],
+    },
+  ],
+
+  facts: [
+    { label: 'Operating company today', value: 'Parlance Trading Ltd, Comoros, HY00423015', from: 'alpari' },
+    { label: 'Claimed licence', value: 'MISA T2023236, Island of Mohéli', from: 'alpari' },
+    { label: 'What the Comoros central bank says', value: 'MISA is among "fictitious structures"', from: 'fm-misa' },
+    { label: 'Left the Exinity group', value: 'First half of 2025', from: 'fm-split' },
+    { label: 'What this site published before', value: 'A Mauritius company under an FSC licence', from: 'alpari' },
+    { label: 'Alpari (UK) Ltd insolvency', value: '19 January 2015, after the Swiss franc unpegged', from: 'fm-admin' },
+    { label: 'FSCS compensation then paid', value: '$51.3m to 11,751 clients', from: 'fm-admin' },
+    { label: 'Final distribution from the estate', value: 'About 27 cents in the dollar', from: 'fm-admin' },
+  ],
+
+  open: [
+    'Whether any entity other than Parlance Trading Ltd takes Alpari clients is not disclosed on alpari.com, '
+    + 'which names one company.',
+    'The "up or down" instruments are described as resembling binary options by the trade press. What they '
+    + 'are, and who may trade them, is not something we have established.',
+    'There is no register anywhere that can confirm or deny the MISA number, which is the whole problem with '
+    + 'it.',
+  ],
+
+  sources: [
+    {
+      id: 'alpari',
+      publisher: 'Alpari',
+      title: 'alpari.com — footer disclosure of the operating entity and licence',
+      url: 'https://alpari.com/en/',
+      read: '2026-09-16',
+      kind: 'broker',
+    },
+    {
+      id: 'fm-misa',
+      publisher: 'Finance Magnates',
+      title: 'Is the end of the Comoros licence mirage coming?',
+      url: 'https://www.financemagnates.com/forex/is-the-end-of-the-comoros-license-mirage-coming/',
+      read: '2026-09-16',
+      kind: 'press',
+    },
+    {
+      id: 'fm-split',
+      publisher: 'Finance Magnates',
+      title: 'Exclusive: Alpari brand seems to have quietly left Exinity',
+      url: 'https://www.financemagnates.com/forex/exclusive-alpari-brand-quietly-leaves-exinity-group/',
+      read: '2026-09-16',
+      kind: 'press',
+    },
+    {
+      id: 'fm-admin',
+      publisher: 'Finance Magnates',
+      title: 'Alpari UK placed in special administration',
+      url: 'https://www.financemagnates.com/forex/brokers/alpari-uk-declared-insolvent-deal-reached/',
+      published: '2015-01-19',
+      read: '2026-09-16',
+      kind: 'press',
+    },
+  ],
+};
+
+const LITEFINANCE: BrokerProfile = {
+  slug: 'litefinance',
+  checked: '2026-09-16',
+  verdict:
+    'LiteFinance publishes three companies and this site had one. The group does hold a live CySEC licence — '
+    + 'and it will not say who that company serves, while the St Vincent company that takes almost everybody '
+    + 'holds no licence at all, because St Vincent issues none for this business.',
+
+  sections: [
+    {
+      heading: 'Three companies, and the group will not say who gets which',
+      paragraphs: [
+        'LiteFinance’s own company page names three: LiteFinance Global LLC in St Vincent, registration 931 LLC '
+        + '2021, with no regulator named; Liteforex (Europe) Ltd in Cyprus, HE230122, a Cyprus Investment Firm '
+        + 'under CySEC licence 093/08; and LiteFinance Investment Limited in Mauritius, 178302, an investment '
+        + 'dealer under FSC licence GB20025921 [lf-company]. This record had the first one.',
+
+        'The CySEC licence is live — we read Liteforex (Europe) Ltd off the register ourselves [cysec]. What the '
+        + 'group does not say anywhere is which clients that company takes. The only routing statement on the '
+        + 'page is a negative one: "LiteFinance Global LLC does not provide services to residents of the EEA '
+        + 'countries, USA, Israel, Russia, and some other countries" [lf-company].',
+
+        'Somebody must serve EEA residents if the St Vincent company does not, and the obvious candidate is the '
+        + 'Cyprus firm. Obvious is not established, and this page does not route anyone to a licence on an '
+        + 'inference. Both extra companies are on the entity map with no country against them, and neither '
+        + 'scores — which is why the regulation component here is zero despite a real CySEC licence sitting in '
+        + 'the group.',
+      ],
+    },
+    {
+      heading: 'St Vincent issues no licence for this at all',
+      paragraphs: [
+        'The company that takes almost every client is registered in St Vincent and the Grenadines, and the '
+        + 'number in its disclosure is a company registration.',
+
+        'The St Vincent Financial Services Authority and Financial Intelligence Unit say so jointly in their '
+        + 'own advisory: "there is no regulation in place for Foreign Exchange (Forex) Trading and '
+        + 'Cryptocurrency offerings in St. Vincent and the Grenadines. Furthermore, no Forex Trading or '
+        + 'Cryptocurrency licenses are issued in St. Vincent and the Grenadines" [svg].',
+
+        'That correction was applied across this whole directory and it costs LiteFinance more than anyone, '
+        + 'because unlike the others it had nothing else on its map. A jurisdiction that issues no licence '
+        + 'cannot be scored as a weak regulator; it has to be scored as none.',
+      ],
+    },
+    {
+      heading: 'The brand history, briefly',
+      paragraphs: [
+        'LiteForex became LiteFinance in November 2021, and from 8 November that year accounts were serviced by '
+        + 'LiteFinance Global LLC in St Vincent [fm-rebrand]. The Cyprus company kept the old name, which is '
+        + 'why a CySEC search for "LiteFinance" returns nothing and a search for "Liteforex" returns a live '
+        + 'licence.',
+
+        'That is worth knowing if you are trying to check this broker yourself: the name on the website and '
+        + 'the name on the register are different words, and the register is the one that matters.',
+      ],
+    },
+    {
+      heading: 'What we searched and did not find',
+      paragraphs: [
+        'No enforcement action against LiteFinance, LiteForex or their companies turned up in the registers and '
+        + 'outlets we checked. The conduct component scores ten on that basis.',
+
+        'Read it against the rest of the page. Ten for conduct means no authority has acted; zero for '
+        + 'regulation means there is no authority in a position to. Those two numbers together are the whole '
+        + 'picture, and either alone is misleading.',
+
+        'The same caution applies to everything else on this record. The spread, the minimum, the withdrawal '
+        + 'time and the platform list are the broker’s published figures, read by a person, and there is no '
+        + 'supervisor anywhere who has to check that they are true. With a CySEC or an FCA firm, a published '
+        + 'figure that turns out to be wrong is a compliance matter; here it is a marketing decision. That '
+        + 'does not make the numbers false and it does change what they are worth.',
+
+        'And the copy trading, which is the reason most people arrive at this broker, is a feature rather than '
+        + 'a protection. Following a profitable stranger does not change which company holds your money or who '
+        + 'you complain to if it stops answering.',
+      ],
+    },
+  ],
+
+  facts: [
+    { label: 'Companies on the broker’s own page', value: 'Three, in St Vincent, Cyprus and Mauritius', from: 'lf-company' },
+    { label: 'What this site had', value: 'One — the St Vincent company', from: 'lf-company' },
+    { label: 'Cyprus licence', value: 'Liteforex (Europe) Ltd, CySEC 093/08, active', from: 'cysec' },
+    { label: 'Who the Cyprus company serves', value: 'Not stated anywhere by the group', from: 'lf-company' },
+    { label: 'St Vincent entity', value: '931 LLC 2021 — a company number, not a licence', from: 'svg' },
+    { label: 'St Vincent FSA on forex licences', value: '“No Forex Trading … licenses are issued”', from: 'svg' },
+    { label: 'Rebrand from LiteForex', value: 'November 2021; accounts moved to the St Vincent company', from: 'fm-rebrand' },
+  ],
+
+  open: [
+    'Which company an EEA resident is actually onboarded to is the central open question here, and only the '
+    + 'broker can answer it. Until it does, the CySEC licence scores nothing on this page.',
+    'The Mauritius company’s role is undisclosed too. Mauritius is on the list of registers this site cannot '
+    + 'read, so its licence has not been confirmed either.',
+  ],
+
+  sources: [
+    {
+      id: 'lf-company',
+      publisher: 'LiteFinance',
+      title: 'About the LiteFinance brand — company and licence disclosures',
+      url: 'https://www.litefinance.org/company/',
+      read: '2026-09-16',
+      kind: 'broker',
+    },
+    {
+      id: 'cysec',
+      publisher: 'Cyprus Securities and Exchange Commission',
+      title: 'Register of Cyprus Investment Firms — Liteforex (Europe) Ltd, licence 093/08',
+      url: 'https://www.cysec.gov.cy/en-GB/entities/investment-firms/cypriot/',
+      read: '2026-09-16',
+      kind: 'register',
+    },
+    {
+      id: 'svg',
+      publisher: 'Financial Services Authority and Financial Intelligence Unit, St Vincent and the Grenadines',
+      title: 'Advisory: foreign exchange (forex) trading and cryptocurrency offerings',
+      url: 'https://svgfiu.com/images/pdf/PressReleases/ADVISORY.pdf',
+      read: '2026-09-16',
+      kind: 'regulator',
+    },
+    {
+      id: 'fm-rebrand',
+      publisher: 'FinanceFeeds',
+      title: 'LiteForex officially changes brand name to LiteFinance',
+      url: 'https://financefeeds.com/liteforex-officially-changes-brand-name-litefinance/',
+      read: '2026-09-16',
+      kind: 'press',
+    },
+  ],
+};
+
+export const PROFILES: BrokerProfile[] = [
+  EXNESS, IC_MARKETS, PEPPERSTONE, EIGHTCAP, OCTA, XM, FXTM, ROBOFOREX, ALPARI, LITEFINANCE,
+];
 
 export const profileFor = (slug: string) => PROFILES.find((p) => p.slug === slug);
 

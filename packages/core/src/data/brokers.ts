@@ -228,7 +228,20 @@ export const BROKERS: Broker[] = [
     slug: 'roboforex', name: 'RoboForex', founded: 2009, headquarters: 'BZ',
     website: 'https://roboforex.com/',
     entities: [
-      { legalName: 'RoboForex Ltd', country: 'BZ', licence: { regulator: 'IFSC-BZ', number: '000138/7', status: 'registered' }, serves: ['*'] },
+      /**
+       * The licence number came from somewhere and it was not RoboForex. Its own
+       * regulation page names one company and one number: RoboForex Ltd, FSC
+       * Belize licence 9759600, registration 000001272. We were publishing
+       * 000138/7, which is on no document the broker publishes.
+       *
+       * The two RoboMarkets rows are real, in the same group, and behind a
+       * different website that roboforex.com never mentions. They are on the
+       * map so a reader knows the group has an EU arm, and they serve nobody
+       * from this page, so they score nothing.
+       */
+      { legalName: 'RoboForex Ltd', country: 'BZ', licence: { regulator: 'IFSC-BZ', number: '9759600', status: 'registered' }, serves: ['*'] },
+      { legalName: 'RoboMarkets Ltd', country: 'CY', licence: { regulator: 'CySEC', number: '191/13', status: 'authorised' }, serves: [], brand: 'RoboMarkets' },
+      { legalName: 'RoboMarkets Deutschland GmbH', country: 'DE', licence: { regulator: 'BaFin', number: '10154068', status: 'authorised' }, serves: [], brand: 'RoboMarkets' },
     ],
     cost: { eurusdSpread: 1.1, commissionPerLot: 0, swapFreeAvailable: true, verifiedAt: null },
     payments: { methods: ['bank', 'card', 'crypto', 'ewallet'], statedWithdrawalHours: 1, minDepositUsd: 10, verifiedAt: null },
@@ -239,17 +252,36 @@ export const BROKERS: Broker[] = [
     logo: { initials: 'RB', bg: '#7C5CD6', fg: '#FFFFFF', img: '/logos/roboforex.png' },
   },
   {
-    slug: 'alpari', name: 'Alpari', founded: 1998, headquarters: 'MU',
+    slug: 'alpari', name: 'Alpari', founded: 1998, headquarters: 'KM',
     website: 'https://alpari.com/',
     entities: [
-      { legalName: 'Alpari International Limited', country: 'MU', licence: { regulator: 'FSC-MU', number: 'C118023544', status: 'registered' }, serves: ['*'] },
+      /**
+       * Everything about this row was out of date, and the correction is the
+       * largest on this site.
+       *
+       * The Alpari brand left Andrey Dashin's Exinity group in the first half
+       * of 2025. alpari.com today says, in its own footer: "Alpari, the trading
+       * name of Parlance Trading Ltd, Bonovo Road – Fomboni, Island of Mohéli –
+       * Comoros Union, is incorporated under registered number HY00423015 and
+       * licensed by the Mwali International Services Authority ... under number
+       * T2023236."
+       *
+       * MISA is not a regulator. The Banque Centrale des Comores published a
+       * communiqué naming it among "fictitious structures claiming to issue
+       * licenses to banks and financial institutions in the Union of the
+       * Comoros", and under the Union's constitution financial licensing is the
+       * central bank's exclusive competence, not an island's. So this is
+       * `unregulated`, and the claimed body is kept in the row so the page can
+       * say what is claimed and who denies it.
+       */
+      { legalName: 'Parlance Trading Ltd', country: 'KM', licence: { regulator: 'MISA', number: 'T2023236', status: 'unregulated' }, serves: ['*'] },
     ],
     cost: { eurusdSpread: 1.2, commissionPerLot: 0, swapFreeAvailable: true, verifiedAt: null },
     payments: { methods: ['bank', 'card', 'crypto', 'ewallet'], statedWithdrawalHours: 48, minDepositUsd: 20, verifiedAt: null },
     platforms: { list: ['mt4', 'mt5', 'web', 'mobile'], execution: 'market', copyTrading: true, maxLeverage: 1000 },
     transparency: { publishesEntityMapping: false, publishesAuditedAccounts: false, segregatedClientFunds: true, publicOwnership: false },
     reviews: { verifiedCount: 0, verifiedAverage: null },
-    why: 'One of the longest-running retail brands; single offshore entity today',
+    why: 'A 1998 brand now run from Comoros on a licence the country’s central bank calls fictitious',
     logo: { initials: 'AL', bg: '#D4404F', fg: '#FFFFFF', img: '/logos/alpari.png' },
   },
   {
@@ -261,6 +293,15 @@ export const BROKERS: Broker[] = [
       // and its regulation score is zero rather than a tier-C 2.5 — which is
       // the difference between "lightly supervised" and "not supervised".
       { legalName: 'LiteFinance Global LLC', country: 'VC', licence: { regulator: 'FSA-SVG', number: '931 LLC 2021', status: 'unregulated' }, serves: ['*'] },
+      /**
+       * Both of these are on LiteFinance's own company page and neither was on
+       * this map. They serve nobody here because the group does not say who
+       * they serve — it says only that the St Vincent company does not take
+       * EEA, US, Israeli or Russian residents, which leaves the question of who
+       * does open. Until that is established they are shown and not counted.
+       */
+      { legalName: 'Liteforex (Europe) Ltd', country: 'CY', licence: { regulator: 'CySEC', number: '093/08', status: 'authorised' }, serves: [], brand: 'LiteForex Europe' },
+      { legalName: 'LiteFinance Investment Limited', country: 'MU', licence: { regulator: 'FSC-MU', number: 'GB20025921', status: 'registered' }, serves: [] },
     ],
     cost: { eurusdSpread: 1.3, commissionPerLot: 0, swapFreeAvailable: false, verifiedAt: null },
     payments: { methods: ['card', 'crypto', 'ewallet'], statedWithdrawalHours: 24, minDepositUsd: 50, verifiedAt: null },

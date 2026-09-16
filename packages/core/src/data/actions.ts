@@ -185,6 +185,9 @@ export const SEARCHED: Record<string, string> = {
   octafx: '2026-09-16',
   xm: '2026-09-16',
   fxtm: '2026-09-16',
+  roboforex: '2026-09-16',
+  alpari: '2026-09-16',
+  litefinance: '2026-09-16',
 };
 
 export const actionsFor = (slug: string): EnforcementAction[] =>

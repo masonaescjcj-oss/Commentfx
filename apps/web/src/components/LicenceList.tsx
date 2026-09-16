@@ -51,10 +51,10 @@ export function LicenceList({ broker, checks }: { broker: Broker; checks: CheckM
                 </span>
                 <Flag code={e.country} w={20} title={e.country} />
                 <span className="min-w-0">
-                  <span className="text-[13.5px] font-bold">{none ? 'No licence' : e.licence.regulator}</span>{' '}
-                  <span className="text-[11.5px] text-ink-3 tnum">
-                    {none ? `company ${e.licence.number}` : e.licence.number}
-                  </span>
+                  <span className="text-[13.5px] font-bold">
+                    {none ? `${e.licence.regulator} — not a regulator` : e.licence.regulator}
+                  </span>{' '}
+                  <span className="text-[11.5px] text-ink-3 tnum">{e.licence.number}</span>
                 </span>
                 <div className="flex-1" />
                 <Tag tone={tone}>{e.licence.status}</Tag>

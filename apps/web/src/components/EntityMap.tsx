@@ -21,7 +21,11 @@ import { Flag } from './Flag';
 function serves(e: BrokerEntity): string {
   if (!servesRetail(e)) return 'Other firms, not retail clients';
   if (e.serves.includes('*')) return 'Everyone not covered above';
-  if (e.serves.length === 0) return 'No country named';
+  if (e.serves.length === 0) {
+    return e.brand
+      ? `Clients of ${e.brand}, which is a different site`
+      : 'Nobody this page sends you to';
+  }
   // Four names and a count. The full list is seven countries on some entities,
   // and a paragraph of country names is the thing nobody reads.
   const names = e.serves.map(countryName);
@@ -44,8 +48,19 @@ export function EntityMap({ broker }: { broker: Broker }) {
          * they can never claim on.
          */
         const unlicensed = e.licence.status === 'unregulated';
+        /**
+         * Name what is claimed, not just what is missing.
+         *
+         * "No financial licence" is true of Alpari and says nothing about the
+         * interesting part, which is that it publishes a licence number from a
+         * body the Comoros central bank calls fictitious. A reader who has seen
+         * that number on the broker's own footer needs this row to be about
+         * that number.
+         */
         const protection = unlicensed
-          ? 'No financial licence anywhere — a company number is not supervision'
+          ? REGULATORS[e.licence.regulator]
+            ? 'Registered only — no financial licence for this business'
+            : `Claims a licence from ${e.licence.regulator}, which is not a financial regulator`
           : !retail
             ? 'Takes no retail clients — this licence is not yours'
             : reg?.compensation ?? 'No investor compensation scheme';
@@ -69,6 +84,11 @@ export function EntityMap({ broker }: { broker: Broker }) {
                 {e.legalName}
               </span>
               <div className="flex-1" />
+              {e.brand ? (
+                <span className="text-[10.5px] font-bold text-ink-3 border border-line rounded-md px-[7px] py-[2px]">
+                  {e.brand}
+                </span>
+              ) : null}
               {!retail && (
                 <span className="text-[10.5px] font-bold text-ink-3 border border-line rounded-md px-[7px] py-[2px]">
                   B2B
@@ -87,7 +107,7 @@ export function EntityMap({ broker }: { broker: Broker }) {
             </p>
             <p className="text-[11.5px] text-ink-3 mt-[3px]">
               {unlicensed
-                ? `Registered in ${countryName(e.country)} as company ${e.licence.number}`
+                ? `${countryName(e.country)} · ${e.licence.regulator} ${e.licence.number}`
                 : `${reg?.name ?? e.licence.regulator} · licence ${e.licence.number}`}
             </p>
             <p className="text-[11.5px] text-ink-3 mt-[2px]">

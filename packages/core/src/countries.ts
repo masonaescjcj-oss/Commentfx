@@ -28,6 +28,7 @@ export const COUNTRIES: Record<string, string> = {
   BS: 'The Bahamas',
   IN: 'India',
   KE: 'Kenya',
+  KM: 'Comoros',
   NL: 'Netherlands',
   NZ: 'New Zealand',
   PL: 'Poland',

@@ -92,7 +92,12 @@ export function brokerReview({ broker: b, rank, of, peers, components }: {
   const best = [...scored].sort((x, y) => y.value - x.value)[0];
   const worst = [...scored].sort((x, y) => x.value - y.value)[0];
   const fallback = b.entities.find((e) => e.serves.includes('*'));
-  const named = b.entities.filter(servesRetail).filter((e) => !e.serves.includes('*'));
+  // Entities that actually name countries. A sibling-brand company with an
+  // empty `serves` is neither the fallback nor a country entity, and counting
+  // it here produced "a reader outside  is" with a hole in the middle.
+  const named = b.entities
+    .filter(servesRetail)
+    .filter((e) => e.serves.length > 0 && !e.serves.includes('*'));
 
   const sections: ReviewSection[] = [];
 

@@ -65,6 +65,16 @@ export interface BrokerEntity {
    * holding it would open an account for you.
    */
   clients?: 'retail' | 'professional';
+  /**
+   * The brand this company trades under, when it is not the broker's own.
+   *
+   * Groups run more than one shop. RoboForex's Belize company is the only one
+   * its regulation page names, while RoboMarkets Ltd holds a CySEC licence in
+   * the same group behind a different website. Leaving that off the map hides a
+   * real entity; listing it without a label implies a reader of this page could
+   * end up there. The name plus an empty `serves` says both true things.
+   */
+  brand?: string;
 }
 
 /** Retail unless the record says otherwise — the common case stays untyped. */
