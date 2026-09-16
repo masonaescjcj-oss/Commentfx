@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { pageMetadata, JsonLd, breadcrumbLd, itemListLd } from '@/lib/seo';
-import { coins, fmtUsd, fmtPct } from '@/lib/market';
+import { coins } from '@/lib/market';
 import { COIN_INDEX } from '@commentfx/core';
 import { Header, Footer, Breadcrumbs } from '@/components/chrome';
 import { Card } from '@/components/primitives';
 import { RankingIntro } from '@/components/ranking';
-import { Sparkline } from '@/components/Sparkline';
+import { CoinRow } from '@/components/CoinRow';
 import { Unavailable, Freshness } from '@/components/Unavailable';
 
 const TITLE = 'Cryptocurrency prices by market cap';
@@ -56,28 +56,7 @@ export default async function CoinsPage() {
           <>
             <RankingIntro title={TITLE} />
             <Card className="px-4">
-              {data.list.map((c) => {
-                const up = (c.change24hPct ?? 0) >= 0;
-                return (
-                  <article key={c.id} className="flex items-center gap-[10px] py-[11px] border-b border-line-2 last:border-b-0">
-                    <span className="w-6 shrink-0 text-center tnum text-[12px] text-ink-3">{c.rank ?? '—'}</span>
-                    {/* Upstream logo, sized to prevent layout shift. */}
-                    <img src={c.image} alt="" width={28} height={28} loading="lazy" decoding="async" className="rounded-full shrink-0" />
-                    <div className="min-w-0">
-                      <h2 className="text-[13.5px] font-semibold leading-tight">
-                        <Link href={`/coins/${c.id}`} className="hover:text-brass">{c.name}</Link>
-                      </h2>
-                      <p className="text-[11px] text-ink-3 tnum">{c.symbol}</p>
-                    </div>
-                    <div className="flex-1" />
-                    <Sparkline points={c.spark} up={(c.change7dPct ?? c.change24hPct ?? 0) >= 0} />
-                    <div className="text-right min-w-[86px]">
-                      <p className="text-[13.5px] font-bold tnum leading-tight">{fmtUsd(c.price)}</p>
-                      <p className={`text-[11.5px] font-bold tnum ${up ? 'text-up' : 'text-down'}`}>{fmtPct(c.change24hPct)}</p>
-                    </div>
-                  </article>
-                );
-              })}
+              {data.list.map((c) => <CoinRow key={c.id} c={c} rank />)}
             </Card>
             <Freshness at={data.at} source="CoinGecko" />
           </>

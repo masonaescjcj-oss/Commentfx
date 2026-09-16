@@ -5,3 +5,4 @@ export * from './goplus.ts';
 export * from './registers/index.ts';
 export * from './calendar/index.ts';
 export * from './sites.ts';
+export * from './news.ts';

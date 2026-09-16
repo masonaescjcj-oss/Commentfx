@@ -9,6 +9,10 @@
  *   127.0.0.1 www.bls.gov
  *   127.0.0.1 www.federalreserve.gov
  *   127.0.0.1 www.ecb.europa.eu
+ *   127.0.0.1 www.coindesk.com
+ *   127.0.0.1 decrypt.co
+ *   127.0.0.1 www.theblock.co
+ *   127.0.0.1 cointelegraph.com
  *   EOF
  *   pnpm --filter @commentfx/web build && pnpm --filter @commentfx/web start &
  *   pnpm --filter @commentfx/web smoke:degraded
@@ -38,6 +42,8 @@ const UPSTREAMS = [
   'https://api.geckoterminal.com/api/v2/networks',
   'https://www.bls.gov/schedule/news_release/2026_sched.htm',
   'https://www.ecb.europa.eu/press/calendars/mgcgc/html/index.en.html',
+  'https://www.coindesk.com/arc/outboundfeeds/rss/',
+  'https://cointelegraph.com/rss',
 ];
 const failures = [];
 
@@ -115,8 +121,25 @@ check('it sends the reader to the publisher', release.body.includes('check the p
 check('it shows no date it could not confirm', release.body.includes('No dates are shown rather than dates we could not confirm'));
 check('it keeps what it can explain without the feed', release.body.includes('Why it matters'));
 
+// ── The front page, which reads three of these at once ───────────────────────
+// It shows prices, the day's moves, headlines and the calendar. With every one
+// of those quiet it has to drop each card rather than print an empty one, and
+// above all it must not reach the reader carrying a number or a headline it
+// could not fetch. The rankings below them are checked-in data and stay.
+const home = await get('/');
+check('the front page serves', home.status === 200, `HTTP ${home.status}`);
+check('it keeps the rankings, which need no feed', home.body.includes('Top brokers'));
+check('it drops the price card rather than emptying it', !home.body.includes('Coin prices'));
+check('it drops the movers card', !home.body.includes('Biggest moves today'));
+check('it drops the news card', !home.body.includes('Crypto news'));
+check('it drops the calendar card', !home.body.includes('Next, worth planning around'));
+check('it links no story it could not read',
+  !/href="https:\/\/(www\.coindesk|decrypt|www\.theblock|cointelegraph)/.test(home.html));
+check('it asks for no picture from a newsroom that is down',
+  !/(cdn\.sanity\.io|decrypt\.co\/wp-content|tbstat\.com|ctmedia\.io)/.test(home.html));
+
 // ── The rest of the site does not care ───────────────────────────────────────
-for (const path of ['/', '/brokers', '/props', '/exchanges', '/reviews', '/status', '/methodology']) {
+for (const path of ['/brokers', '/props', '/exchanges', '/reviews', '/status', '/methodology']) {
   const res = await get(path);
   check(`${path} is unaffected`, res.status === 200, `HTTP ${res.status}`);
 }

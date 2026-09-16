@@ -15,13 +15,21 @@ import type { NextConfig } from 'next';
  * it renders, no user text ever reaches dangerouslySetInnerHTML, and the two
  * places that use it take our own data and escape `<`.
  *
- * Coin logos are served by CoinGecko, which is why img-src is not 'self'.
+ * img-src is not 'self' because two kinds of picture come from elsewhere: coin
+ * logos from CoinGecko, and article thumbnails from the four newsrooms whose
+ * RSS the front page reads. It stays an explicit list rather than `https:` —
+ * the hosts are known, and the list is what makes packages/ingest/src/news.ts
+ * able to drop an image it cannot display instead of asking the browser for one
+ * it will refuse. That file holds the same hosts and its test fails if this
+ * line and that list ever disagree.
  */
 const CSP = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: https://assets.coingecko.com https://coin-images.coingecko.com",
+  "img-src 'self' data: https://assets.coingecko.com https://coin-images.coingecko.com" +
+    ' https://cdn.sanity.io https://cdn.decrypt.co https://img.decrypt.co' +
+    ' https://www.tbstat.com https://s3-images.ctmedia.io',
   "font-src 'self'",
   "connect-src 'self'",
   "object-src 'none'",

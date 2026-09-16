@@ -158,10 +158,22 @@ jobs:
           127.0.0.1 www.bls.gov
           127.0.0.1 www.federalreserve.gov
           127.0.0.1 www.ecb.europa.eu
+          127.0.0.1 www.coindesk.com
+          127.0.0.1 decrypt.co
+          127.0.0.1 www.theblock.co
+          127.0.0.1 cointelegraph.com
           EOF
 
+      # The build must not start from a cache that was filled while the network
+      # worked: Next keeps successful fetches in .next/cache/fetch-cache across
+      # builds, and a run that serves those is a degradation test that proves
+      # nothing. On a fresh runner there is none, and deleting it costs nothing;
+      # the reason it is written down is that it cost an hour locally, where
+      # there is one.
       - name: Build without them
-        run: pnpm build
+        run: |
+          rm -rf apps/web/.next
+          pnpm build
 
       - run: pnpm --filter @commentfx/web exec playwright install --with-deps chromium
 
@@ -178,7 +190,7 @@ jobs:
       # These pages carry copy that no other run renders — unavailable cards,
       # source-down notices — so this is the only place axe ever sees it.
       - name: Accessibility of the degraded pages
-        run: AUDIT_BASE=http://127.0.0.1:3003 AUDIT_PAGES=/coins,/coins/bitcoin,/memecoins,/calendar,/calendar/us-jobs-report pnpm --filter @commentfx/web audit:a11y
+        run: AUDIT_BASE=http://127.0.0.1:3003 AUDIT_PAGES=/,/coins,/coins/bitcoin,/memecoins,/calendar,/calendar/us-jobs-report pnpm --filter @commentfx/web audit:a11y
 
       # And the sitemap does not shrink because an upstream was quiet when it
       # regenerated. It is built from checked-in data for exactly this reason,

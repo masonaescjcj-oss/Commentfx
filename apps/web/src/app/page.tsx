@@ -10,6 +10,10 @@ import { RankRow } from '@/components/ranking';
 import { describeDrawdown, volumeBand, utcDay, releaseForTitle } from '@commentfx/core';
 import { calendarData, upcomingHigh } from '@/lib/calendar';
 import { reviewStats } from '@/lib/reviews';
+import { coins } from '@/lib/market';
+import { news } from '@/lib/news';
+import { CoinRow, MoverChip, movers } from '@/components/CoinRow';
+import { NewsList } from '@/components/NewsList';
 
 export const metadata: Metadata = pageMetadata({
   title: `${SITE.name} — ${SITE.tagline}`,
@@ -17,7 +21,7 @@ export const metadata: Metadata = pageMetadata({
   path: '/',
 });
 
-export const revalidate = 3600;
+export const revalidate = 900;
 
 export default async function HomePage() {
   const stats = await reviewStats();
@@ -25,12 +29,20 @@ export default async function HomePage() {
   const topProps = rankedProps().slice(0, 3);
   const topExchanges = rankedExchanges().slice(0, 3);
 
-  // The calendar is what brings someone back between broker decisions, so it
-  // belongs here. It never throws: a source that did not answer simply means
-  // fewer rows, and an empty list drops the card rather than showing an
-  // apologetic empty state on the front page.
-  const { events } = await calendarData();
-  const ahead = upcomingHigh(events, utcDay(new Date()), 4);
+  // Three live upstreams, asked at once rather than one after another: they do
+  // not depend on each other, and in series their latencies add up on every
+  // revalidation. None of them throws — a source that did not answer means
+  // fewer rows or a dropped card, never a broken front page, which is the whole
+  // reason this site can be built on free tiers at all.
+  const [calendar, market, headlines] = await Promise.all([
+    calendarData(),
+    coins(),
+    news(6),
+  ]);
+
+  const ahead = upcomingHigh(calendar.events, utcDay(new Date()), 4);
+  const topCoins = 'error' in market ? [] : market.list.slice(0, 5);
+  const { gainers, losers } = 'error' in market ? { gainers: [], losers: [] } : movers(market.list);
 
   return (
     <>
@@ -73,6 +85,44 @@ export default async function HomePage() {
               ]} />
           ))}
         </Card>
+
+        {topCoins.length > 0 && (
+          <Card className="px-4 pt-4" as="section">
+            <CardHead title="Coin prices" href="/coins" hrefLabel="Top 100" />
+            {topCoins.map((c) => <CoinRow key={c.id} c={c} />)}
+          </Card>
+        )}
+
+        {/* Both directions, never only the winners. A board of gainers alone is
+            an advertisement; the same board with the day's falls next to it is
+            a market. Below $10m of daily volume nothing qualifies, because one
+            trade can move a thin coin 300% and that is noise wearing a signal's
+            clothes. */}
+        {(gainers.length > 0 || losers.length > 0) && (
+          <Card className="p-4" as="section">
+            <CardHead title="Biggest moves today" href="/coins" hrefLabel="All coins" />
+            <div className="grid grid-cols-2 gap-x-3 gap-y-[6px]">
+              <div className="flex flex-col gap-[6px]">
+                <p className="text-[10.5px] font-bold uppercase tracking-[0.06em] text-ink-3">Up</p>
+                {gainers.map((c) => <MoverChip key={c.id} c={c} />)}
+              </div>
+              <div className="flex flex-col gap-[6px]">
+                <p className="text-[10.5px] font-bold uppercase tracking-[0.06em] text-ink-3">Down</p>
+                {losers.map((c) => <MoverChip key={c.id} c={c} />)}
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {/* The headlines are the publishers' own, linking straight out to them.
+            Four newsrooms have to go quiet at once for this card to disappear,
+            which is why there is no apologetic empty state under it. */}
+        {'error' in headlines ? null : headlines.items.length > 0 && (
+          <Card className="px-4 pt-4" as="section">
+            <CardHead title="Crypto news" />
+            <NewsList items={headlines.items} />
+          </Card>
+        )}
 
         {ahead.length > 0 && (
           <Card className="p-4">

@@ -47,6 +47,36 @@ export async function safeJson<T>(url: string, opts: FetchOptions): Promise<Fetc
   }
 }
 
+/**
+ * The same contract for a source that answers in XML rather than JSON. RSS is
+ * the only unauthenticated way to read a newsroom, and every feed here is one
+ * the publisher offers precisely so it can be read this way.
+ */
+export async function safeText(url: string, opts: FetchOptions): Promise<Fetched<string>> {
+  const { revalidate, timeoutMs = 8000, headers } = opts;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const init: NextRequestInit = {
+      signal: controller.signal,
+      headers: {
+        accept: 'application/rss+xml, application/xml;q=0.9, text/xml;q=0.8, */*;q=0.5',
+        'user-agent': 'CommentFX/0.1 (+https://commentfx.com)',
+        ...headers,
+      },
+      next: { revalidate },
+    };
+    const res = await fetch(url, init);
+    if (!res.ok) return { ok: false, reason: `HTTP ${res.status}` };
+    return { ok: true, data: await res.text(), at: new Date().toISOString() };
+  } catch (err) {
+    const reason = err instanceof Error && err.name === 'AbortError' ? 'timeout' : 'network error';
+    return { ok: false, reason };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 /** Reads a value that an upstream may send as a string, a number, or not at all. */
 export function num(v: unknown): number | null {
   if (typeof v === 'number' && Number.isFinite(v)) return v;

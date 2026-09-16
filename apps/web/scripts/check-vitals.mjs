@@ -35,7 +35,16 @@ const PAGES = ['/', '/brokers', '/brokers/exness', '/props', '/exchanges', '/coi
   '/compare/exness-vs-ic-markets', '/best/lowest-spread'];
 
 const failures = [];
-const browser = await chromium.launch({ executablePath: process.env.CHECK_CHROMIUM || undefined });
+// CHECK_PROXY exists for sandboxes whose outbound traffic goes through one.
+// Without it the third-party images — coin logos and news thumbnails — never
+// load, and a CLS number measured with the pictures missing is the number for a
+// page nobody sees. Unset in normal use.
+const browser = await chromium.launch({
+  executablePath: process.env.CHECK_CHROMIUM || undefined,
+  ...(process.env.CHECK_PROXY
+    ? { proxy: { server: process.env.CHECK_PROXY, bypass: '127.0.0.1,localhost' }, args: ['--ignore-certificate-errors'] }
+    : {}),
+});
 
 for (const path of PAGES) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
