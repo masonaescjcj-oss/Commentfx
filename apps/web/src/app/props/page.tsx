@@ -54,7 +54,7 @@ export default function PropsPage() {
 
         <Card className="p-4" as="section">
           <CardHead title="The top eight" href="#all" hrefLabel="Every firm" />
-          <TopTiles base="/props" items={list.slice(0, 8).map((r) => ({ ...r.firm }))} />
+          <TopTiles base="/props" items={list.slice(0, 8).map((r) => ({ ...r.firm, score: r.score.total }))} />
         </Card>
 
         <Card className="p-4" as="section">

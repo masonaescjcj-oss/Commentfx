@@ -1,4 +1,5 @@
 import { composite, clamp, round1, scale, type Input, type Component, type Composite } from './scoring-kit.ts';
+import type { LogoMark } from './types.ts';
 
 /**
  * How a firm measures drawdown decides more than any other rule whether a
@@ -48,7 +49,7 @@ export interface PropFirm {
     disclosesExecutionBroker: boolean;
   };
   why: string;
-  logo: { initials: string; bg: string; fg: string };
+  logo: LogoMark;
 }
 
 export type PropKey = 'rules' | 'payout' | 'cost' | 'platform' | 'transparency';

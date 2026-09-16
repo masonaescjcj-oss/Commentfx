@@ -1,6 +1,19 @@
 /** Regulator tiers drive the single heaviest component of the broker score. */
 export type RegulatorTier = 'A' | 'B' | 'C';
 
+/**
+ * A brand mark. `img` is a square file the site serves itself; the initials and
+ * the two colours are what shows when there is no file, and they stay in the
+ * data for every record — a logo that has not been added yet, or one that fails
+ * to load, leaves a readable tile rather than a hole.
+ */
+export interface LogoMark {
+  initials: string;
+  bg: string;
+  fg: string;
+  img?: string;
+}
+
 export interface Regulator {
   code: string;            // FCA, CySEC, ASIC …
   name: string;
@@ -86,7 +99,7 @@ export interface Broker {
   reviews: ReviewSummary;
   /** One line saying where this broker's rank comes from. */
   why: string;
-  logo: { initials: string; bg: string; fg: string };
+  logo: LogoMark;
 }
 
 export type ScoreKey =

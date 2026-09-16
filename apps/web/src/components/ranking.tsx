@@ -1,29 +1,26 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import type { Component } from '@commentfx/core';
+import type { Component, LogoMark } from '@commentfx/core';
 import { Card, CardHead, Meter, Logo, RankBadge, Score, Tag } from './primitives';
 
-/** Page intro shared by every ranking list, so the h1/lead/count never drift. */
 /**
- * The heading, and nothing under it.
+ * The page's name, in the markup and not on the screen.
  *
- * It carried a lead paragraph and a count line, and both went on request: the
- * page is the ranking, and a sentence restating what the list plainly is costs
- * a reader the top of their screen to tell them what they can already see. The
- * lead survives where it earns its keep — as the meta description, which is
- * what a search result shows.
+ * This started as a heading with a lead paragraph and a count under it. The
+ * paragraph went, then the count, and now the heading itself: on a ranking page
+ * the list is the page, and a line of type restating what the list plainly is
+ * costs a reader the top of their screen to tell them what they can already
+ * see. Each card names itself, and the breadcrumb above says where you are.
  *
- * The h1 stays. It is one line, it is what a screen reader and a search engine
- * use to say what the page is, and check:seo fails a page without exactly one.
+ * It is hidden, not deleted, and the difference matters. A screen reader still
+ * announces it, the document still has an outline, and check:seo still finds
+ * exactly one h1 — which it would fail without. sr-only is the standard way to
+ * do that: the same markup goes to everyone, it is simply not painted. Deleting
+ * the element would cost the page its name in both the accessibility tree and
+ * the search result, which is a real loss for a line nobody reads anyway.
  */
 export function RankingIntro({ title }: { title: string }) {
-  return (
-    <header className="px-1">
-      <h1 className="font-[family-name:var(--font-display)] text-[26px] font-bold leading-[1.22] tracking-[-0.02em] text-balance">
-        {title}
-      </h1>
-    </header>
-  );
+  return <h1 className="sr-only">{title}</h1>;
 }
 
 /** One row of any ranking: rank, logo, name, score, a why line, then facts. */
@@ -39,7 +36,7 @@ export function RankRow({ rank, href, logo, name, score, why, facts, headingLeve
   headingLevel?: 2 | 3;
   rank: number;
   href: string;
-  logo: { initials: string; bg: string; fg: string };
+  logo: LogoMark;
   name: string;
   score: number;
   why: string;

@@ -70,11 +70,7 @@ export default async function CalendarPage() {
       <main id="main" className="px-4 pt-3 pb-6 flex flex-col gap-[13px]">
         <Breadcrumbs trail={trail} />
 
-        <header className="px-1">
-          <h1 className="font-[family-name:var(--font-display)] text-[26px] font-bold leading-[1.22] tracking-[-0.02em] text-balance">
-            Economic calendar
-          </h1>
-        </header>
+        <h1 className="sr-only">Economic calendar</h1>
 
         {ahead.length > 0 && (
           <Card className="p-4" as="section">

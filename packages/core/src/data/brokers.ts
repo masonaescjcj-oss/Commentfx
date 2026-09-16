@@ -30,7 +30,7 @@ export const BROKERS: Broker[] = [
     transparency: { publishesEntityMapping: true, publishesAuditedAccounts: false, segregatedClientFunds: true, publicOwnership: false },
     reviews: { verifiedCount: 0, verifiedAverage: null },
     why: 'Lowest entry of any tier-1 regulated broker and the fastest stated payout',
-    logo: { initials: 'E', bg: '#FFD84D', fg: '#0D1421' },
+    logo: { initials: 'E', bg: '#FFD84D', fg: '#0D1421', img: '/logos/exness.png' },
   },
   {
     slug: 'ic-markets', name: 'IC Markets', founded: 2007, headquarters: 'AU',
@@ -46,7 +46,7 @@ export const BROKERS: Broker[] = [
     transparency: { publishesEntityMapping: true, publishesAuditedAccounts: false, segregatedClientFunds: true, publicOwnership: false },
     reviews: { verifiedCount: 0, verifiedAverage: null },
     why: 'Tightest raw spread in the directory, if you can fund the $200 minimum',
-    logo: { initials: 'IC', bg: '#14304F', fg: '#FFFFFF' },
+    logo: { initials: 'IC', bg: '#14304F', fg: '#FFFFFF', img: '/logos/ic-markets.png' },
   },
   {
     slug: 'pepperstone', name: 'Pepperstone', founded: 2010, headquarters: 'AU',
@@ -63,7 +63,7 @@ export const BROKERS: Broker[] = [
     transparency: { publishesEntityMapping: true, publishesAuditedAccounts: true, segregatedClientFunds: true, publicOwnership: false },
     reviews: { verifiedCount: 0, verifiedAverage: null },
     why: 'Four tier-1 and tier-2 licences with no offshore fallback entity',
-    logo: { initials: 'PP', bg: '#3E6FD9', fg: '#FFFFFF' },
+    logo: { initials: 'PP', bg: '#3E6FD9', fg: '#FFFFFF', img: '/logos/pepperstone.png' },
   },
   {
     slug: 'xm', name: 'XM', founded: 2009, headquarters: 'CY',
@@ -86,7 +86,7 @@ export const BROKERS: Broker[] = [
     transparency: { publishesEntityMapping: true, publishesAuditedAccounts: false, segregatedClientFunds: true, publicOwnership: false },
     reviews: { verifiedCount: 0, verifiedAverage: null },
     why: 'Widest education programme in the directory; cost is mid-table',
-    logo: { initials: 'XM', bg: '#1F8A70', fg: '#FFFFFF' },
+    logo: { initials: 'XM', bg: '#1F8A70', fg: '#FFFFFF', img: '/logos/xm.png' },
   },
   {
     slug: 'eightcap', name: 'Eightcap', founded: 2009, headquarters: 'AU',
@@ -102,7 +102,7 @@ export const BROKERS: Broker[] = [
     transparency: { publishesEntityMapping: true, publishesAuditedAccounts: false, segregatedClientFunds: true, publicOwnership: false },
     reviews: { verifiedCount: 0, verifiedAverage: null },
     why: 'Raw pricing close to IC Markets at half the minimum deposit',
-    logo: { initials: '8C', bg: '#0F5FA6', fg: '#FFFFFF' },
+    logo: { initials: '8C', bg: '#0F5FA6', fg: '#FFFFFF', img: '/logos/eightcap.png' },
   },
   {
     // Corrected against the company's own regulatory disclosure at
@@ -124,7 +124,7 @@ export const BROKERS: Broker[] = [
     transparency: { publishesEntityMapping: true, publishesAuditedAccounts: false, segregatedClientFunds: true, publicOwnership: false },
     reviews: { verifiedCount: 0, verifiedAverage: null },
     why: 'Multilingual support across 20 languages; offshore fallback for most clients',
-    logo: { initials: 'FX', bg: '#1F6B5A', fg: '#FFFFFF' },
+    logo: { initials: 'FX', bg: '#1F6B5A', fg: '#FFFFFF', img: '/logos/fxtm.png' },
   },
   {
     slug: 'octafx', name: 'OctaFX', founded: 2011, headquarters: 'CY',
@@ -139,7 +139,7 @@ export const BROKERS: Broker[] = [
     transparency: { publishesEntityMapping: false, publishesAuditedAccounts: false, segregatedClientFunds: true, publicOwnership: false },
     reviews: { verifiedCount: 0, verifiedAverage: null },
     why: 'No commission on any account type, but most clients land offshore',
-    logo: { initials: 'OC', bg: '#C4762C', fg: '#FFFFFF' },
+    logo: { initials: 'OC', bg: '#C4762C', fg: '#FFFFFF', img: '/logos/octafx.png' },
   },
   {
     slug: 'roboforex', name: 'RoboForex', founded: 2009, headquarters: 'BZ',
@@ -153,7 +153,7 @@ export const BROKERS: Broker[] = [
     transparency: { publishesEntityMapping: false, publishesAuditedAccounts: false, segregatedClientFunds: true, publicOwnership: false },
     reviews: { verifiedCount: 0, verifiedAverage: null },
     why: 'Six platforms and 1:2000 leverage — on an offshore licence only',
-    logo: { initials: 'RB', bg: '#7C5CD6', fg: '#FFFFFF' },
+    logo: { initials: 'RB', bg: '#7C5CD6', fg: '#FFFFFF', img: '/logos/roboforex.png' },
   },
   {
     slug: 'alpari', name: 'Alpari', founded: 1998, headquarters: 'MU',
@@ -167,7 +167,7 @@ export const BROKERS: Broker[] = [
     transparency: { publishesEntityMapping: false, publishesAuditedAccounts: false, segregatedClientFunds: true, publicOwnership: false },
     reviews: { verifiedCount: 0, verifiedAverage: null },
     why: 'One of the longest-running retail brands; single offshore entity today',
-    logo: { initials: 'AL', bg: '#D4404F', fg: '#FFFFFF' },
+    logo: { initials: 'AL', bg: '#D4404F', fg: '#FFFFFF', img: '/logos/alpari.png' },
   },
   {
     slug: 'litefinance', name: 'LiteFinance', founded: 2005, headquarters: 'VC',
@@ -181,7 +181,7 @@ export const BROKERS: Broker[] = [
     transparency: { publishesEntityMapping: false, publishesAuditedAccounts: false, segregatedClientFunds: false, publicOwnership: false },
     reviews: { verifiedCount: 0, verifiedAverage: null },
     why: 'Built-in copy trading; no compensation scheme behind client money',
-    logo: { initials: 'LF', bg: '#2FA97C', fg: '#FFFFFF' },
+    logo: { initials: 'LF', bg: '#2FA97C', fg: '#FFFFFF', img: '/logos/litefinance.png' },
   },
 ];
 

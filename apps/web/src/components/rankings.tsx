@@ -1,31 +1,46 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import type { LogoMark } from '@commentfx/core';
 import { Card, CardHead, Logo } from './primitives';
 
 export interface TileItem {
   slug: string;
   name: string;
-  logo: { initials: string; bg: string; fg: string };
+  logo: LogoMark;
+  score: number;
 }
 
 /**
- * The top of a ranking as a grid of marks, which is how a reader who already
- * knows the names finds theirs — scanning eight logos is faster than reading
- * eight rows. It is the same order as the list below it, never a separate
- * "featured" set, because a second order is where a paid placement hides.
+ * The top eight, two across.
+ *
+ * It was a four-across grid of bordered tiles with the name under the mark and
+ * a "#3" under that, and at 390px it gave each name 82px to fit in — so half of
+ * them wrapped to two lines or got cut, and every one of them sat inside its own
+ * box inside the card's box. Two columns gives the name the width it needs on
+ * one line, and the row itself is the only thing there: a mark, a name, a score.
+ * The order is the ranking's order, so the position does not need printing.
+ *
+ * It is the same order as the list below it, never a separate "featured" set,
+ * because a second order is where a paid placement hides.
  */
 export function TopTiles({ items, base }: { items: TileItem[]; base: string }) {
   return (
-    <ul className="grid grid-cols-4 gap-[9px]">
-      {items.map((it, i) => (
+    <ul className="grid grid-cols-2 gap-x-3 gap-y-[2px]">
+      {items.map((it) => (
         <li key={it.slug}>
-          <Link
-            href={`${base}/${it.slug}`}
-            className="flex flex-col items-center gap-[6px] py-[11px] px-1 rounded-[13px] border border-line bg-card-2 hover:border-brass"
-          >
-            <Logo {...it.logo} size={34} />
-            <span className="text-[10.5px] text-ink-2 text-center leading-[1.3] line-clamp-2">{it.name}</span>
-            <span className="text-[9.5px] text-ink-3 tnum">#{i + 1}</span>
+          <Link href={`${base}/${it.slug}`} className="flex items-center gap-[10px] py-[9px] group">
+            <Logo {...it.logo} size={42} />
+            <span className="min-w-0">
+              <span className="block text-[14px] font-bold leading-[1.25] truncate group-hover:text-brass">
+                {it.name}
+              </span>
+              <span className="flex items-center gap-[4px] mt-[2px]">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="text-brass shrink-0" aria-hidden>
+                  <path d="m12 2.5 2.9 5.9 6.6.9-4.8 4.6 1.2 6.5L12 17.3 6.1 20.4l1.2-6.5L2.5 9.3l6.6-.9z" />
+                </svg>
+                <span className="text-[13.5px] font-extrabold tnum">{it.score.toFixed(1)}</span>
+              </span>
+            </span>
           </Link>
         </li>
       ))}
@@ -36,7 +51,7 @@ export function TopTiles({ items, base }: { items: TileItem[]; base: string }) {
 export interface StrengthRow {
   slug: string;
   name: string;
-  logo: { initials: string; bg: string; fg: string };
+  logo: LogoMark;
   value: number;
   note: string;
 }

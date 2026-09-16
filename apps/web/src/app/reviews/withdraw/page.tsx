@@ -23,10 +23,8 @@ export default function WithdrawPage() {
       <main id="main" className="px-4 pt-3 pb-6 flex flex-col gap-[13px]">
         <Breadcrumbs trail={trail} />
         <header className="px-1">
-          <h1 className="font-[family-name:var(--font-display)] text-[26px] font-bold leading-[1.22] tracking-[-0.02em]">
-            Withdraw a review
-          </h1>
-          <p className="text-[13.5px] text-ink-2 leading-[1.75] mt-2 max-w-[48ch]">
+          <h1 className="sr-only">Withdraw a review</h1>
+          <p className="text-[13.5px] text-ink-2 leading-[1.75] max-w-[48ch]">
             Paste the code you were shown when you published. It comes off the page
             immediately and stops counting towards anything.
           </p>

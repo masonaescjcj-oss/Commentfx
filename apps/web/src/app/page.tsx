@@ -36,11 +36,7 @@ export default async function HomePage() {
     <>
       <Header />
       <main id="main" className="px-4 pt-4 pb-6 flex flex-col gap-[13px]">
-        <section className="px-1">
-          <h1 className="font-[family-name:var(--font-display)] text-[27px] font-bold leading-[1.22] tracking-[-0.02em] text-balance">
-            Brokers, prop firms and exchanges, ranked
-          </h1>
-        </section>
+        <h1 className="sr-only">Brokers, prop firms and exchanges, ranked</h1>
 
         <Card className="p-4">
           <CardHead title="Top brokers" href="/brokers" hrefLabel="Full ranking" />

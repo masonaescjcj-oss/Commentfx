@@ -1,4 +1,5 @@
 import { composite, clamp, round1, scale, type Input, type Component, type Composite } from './scoring-kit.ts';
+import type { LogoMark } from './types.ts';
 
 export interface Exchange {
   slug: string;
@@ -34,7 +35,7 @@ export interface Exchange {
     publishesIncidentReports: boolean;
   };
   why: string;
-  logo: { initials: string; bg: string; fg: string };
+  logo: LogoMark;
 }
 
 export type ExchangeKey = 'solvency' | 'security' | 'fees' | 'liquidity' | 'transparency';

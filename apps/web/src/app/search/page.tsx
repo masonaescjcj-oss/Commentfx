@@ -21,11 +21,7 @@ export default async function SearchPage() {
       <Header />
       <main id="main" className="px-4 pt-3 pb-6 flex flex-col gap-[13px]">
         <Breadcrumbs trail={trail} />
-        <header className="px-1">
-          <h1 className="font-[family-name:var(--font-display)] text-[26px] font-bold leading-[1.22] tracking-[-0.02em]">
-            Search
-          </h1>
-        </header>
+        <h1 className="sr-only">Search</h1>
 
         <SiteSearch entries={entries} />
       </main>

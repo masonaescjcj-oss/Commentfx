@@ -84,11 +84,7 @@ export default function MethodologyPage() {
       <Header />
       <main id="main" className="px-4 pt-3 pb-6 flex flex-col gap-[13px]">
         <Breadcrumbs trail={trail} />
-        <header className="px-1">
-          <h1 className="font-[family-name:var(--font-display)] text-[26px] font-bold leading-[1.22] tracking-[-0.02em] text-balance">
-            {TITLE}
-          </h1>
-        </header>
+        <h1 className="sr-only">{TITLE}</h1>
 
         <Card className="p-4" as="section">
           <h2 className="text-[15px] font-bold mb-4">Brokers</h2>

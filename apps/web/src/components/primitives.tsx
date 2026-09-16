@@ -67,12 +67,36 @@ export function Tag({ children, tone = 'neutral' }: {
   );
 }
 
-export function Logo({ initials, bg, fg, size = 40 }: {
-  initials: string; bg: string; fg: string; size?: number;
+export function Logo({ initials, bg, fg, img, size = 40 }: {
+  initials: string; bg: string; fg: string; img?: string; size?: number;
 }) {
-  // The brand's own pairing is the preference, not the last word: these colours
-  // arrive as data and several of them put white text on a mid-tone fill that
-  // nobody can read. legibleTile keeps the hue and fixes the rest.
+  // Width and height are set on the element, not just in CSS, so the box exists
+  // before the file arrives and nothing below it moves. The site's CLS budget is
+  // the reason every one of these is the same square.
+  //
+  // The hairline is not decoration: several of these marks are a dark shape on a
+  // white field, and on a white page that is a logo with no edge, floating. It
+  // is the same hairline that edges every card, for the same reason.
+  if (img) {
+    return (
+      <img
+        src={img}
+        alt=""
+        aria-hidden
+        width={size}
+        height={size}
+        loading="lazy"
+        decoding="async"
+        className="shrink-0 rounded-xl object-cover bg-card-2 border border-line"
+        style={{ width: size, height: size }}
+      />
+    );
+  }
+
+  // No file for this record yet. The brand's own pairing is the preference, not
+  // the last word: these colours arrive as data and several of them put white
+  // text on a mid-tone fill that nobody can read. legibleTile keeps the hue and
+  // fixes the rest.
   const tile = legibleTile(bg, fg);
   return (
     <span
