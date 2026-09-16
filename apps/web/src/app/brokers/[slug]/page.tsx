@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { REGULATORS, countryName, effectiveCostPips, hours, leverage } from '@commentfx/core';
+import { REGULATORS, countryName, brokerReview, effectiveCostPips, hours, leverage } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, financialServiceLd, faqLd } from '@/lib/seo';
 import { rankedBrokers, getRanked, alternativesFor } from '@/lib/repo';
 import { coverage } from '@/lib/verify';
@@ -13,8 +13,8 @@ import { VerificationPanel } from '@/components/VerificationPanel';
 import { Header, PageHero, Footer } from '@/components/chrome';
 import { OfficialSite } from '@/components/OfficialSite';
 import { Card, CardHead, Logo, Score, Tag, Meter } from '@/components/primitives';
-import { RecordHero, QuickJump, StickyActions } from '@/components/RecordHero';
-import { IconScore, IconEntity, IconLicence, IconCost, IconStatus, IconReviews, IconCompare, IconFaq } from '@/components/icons';
+import { RecordHero, QuickJump, SectionBar, StickyActions } from '@/components/RecordHero';
+import { IconScore, IconEntity, IconLicence, IconCost, IconStatus, IconReview, IconReviews, IconCompare, IconFaq } from '@/components/icons';
 import { EntityMap } from '@/components/EntityMap';
 import { LicenceList } from '@/components/LicenceList';
 import { ReviewForm } from '@/components/ReviewForm';
@@ -91,6 +91,17 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
         ? { text: 'Offshore', tone: 'plain' as const }
         : null;
 
+  // The long read, generated from the record above rather than typed about it.
+  // See broker-review.ts for why it is generated; the short version is that a
+  // paragraph written by hand stops being true the first time a field changes.
+  const review = brokerReview({
+    broker: b,
+    rank: r.rank,
+    of: all.length,
+    peers: all.map((x) => x.broker),
+    components: r.score.components.map((c) => ({ key: c.key, label: c.label, value: c.value })),
+  });
+
   const faq = [
     {
       q: `Is ${b.name} regulated?`,
@@ -158,6 +169,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
             { href: '#entity', label: 'Entity', icon: <IconEntity /> },
             { href: '#licences', label: 'Licences', icon: <IconLicence /> },
             { href: '#costs', label: 'Costs', icon: <IconCost /> },
+            { href: '#review', label: 'Review', icon: <IconReview /> },
             { href: '#status', label: 'Outages', icon: <IconStatus /> },
             { href: '#reviews', label: 'Reviews', icon: <IconReviews /> },
             { href: '#compare', label: 'Compare', icon: <IconCompare />, ready: alternatives.length > 0 },
@@ -239,6 +251,33 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
               </dl>
             </Card>
 
+            {/* The body of the page for a reader who arrived from a search
+                result: eight headed sections, every sentence of them a reading
+                of a field on this record. It sits after the tables because it
+                explains them, and before the user reviews because it is ours
+                and those are other people's. */}
+            <Card className="p-4 lg:p-6" as="section" id="review">
+              <CardHead title={`${b.name} reviewed`} href="/methodology" hrefLabel="How we score" />
+              <div className="max-w-[68ch]">
+                {review.map((sec) => (
+                  <section key={sec.id} id={sec.id} className="mt-5 first:mt-1">
+                    <h3 className="font-[family-name:var(--font-display)] text-[15.5px] font-bold tracking-[-0.015em] mb-2">
+                      {sec.heading}
+                    </h3>
+                    {sec.paragraphs.map((para) => (
+                      <p key={para.slice(0, 40)} className="text-[13.5px] text-ink-2 leading-[1.9] mb-[10px] last:mb-0">
+                        {para}
+                      </p>
+                    ))}
+                  </section>
+                ))}
+              </div>
+              <p className="text-[11.5px] text-ink-3 leading-[1.75] mt-5 pt-4 border-t border-line-2">
+                Written from the record on this page, not about it. Every sentence above is a reading of a
+                field you can see here, so a correction to the data corrects the text the same day.
+              </p>
+            </Card>
+
             <Card className="p-4 lg:p-6" as="section" id="reviews">
               <CardHead
                 title="What customers say"
@@ -286,6 +325,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
           </div>
         </div>
       </main>
+      <SectionBar name={b.name} items={[{ href: '#score', label: 'Score' }, { href: '#entity', label: 'Entity' }, { href: '#licences', label: 'Licences' }, { href: '#costs', label: 'Costs' }, { href: '#review', label: 'Review' }, { href: '#status', label: 'Outages' }, { href: '#reviews', label: 'Reviews' }, { href: '#compare', label: 'Compare', ready: alternatives.length > 0 }, { href: '#faq', label: 'Questions' }]} />
       <StickyActions compareHref={alternatives.length > 0 ? '#compare' : '#reviews'} writeHref="#write" />
       <Footer />
       <JsonLd graph={[

@@ -5,7 +5,7 @@ import { volumeBand, countryName } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { rankedExchanges, getRankedExchange } from '@/lib/repo';
 import { Header, PageHero, Footer } from '@/components/chrome';
-import { RecordHero, QuickJump, StickyActions } from '@/components/RecordHero';
+import { RecordHero, QuickJump, SectionBar, StickyActions } from '@/components/RecordHero';
 import { IconScore, IconCost, IconLicence, IconReviews, IconCompare, IconFaq } from '@/components/icons';
 import { ReviewForm } from '@/components/ReviewForm';
 import { ReviewList, ReviewSummary } from '@/components/ReviewList';
@@ -220,6 +220,7 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
           </div>
         </div>
       </main>
+      <SectionBar name={e.name} items={[{ href: '#score', label: 'Score' }, { href: '#security', label: 'Solvency' }, { href: '#fees', label: 'Fees' }, { href: '#reviews', label: 'Reviews' }, { href: '#compare', label: 'Others' }, { href: '#faq', label: 'Questions' }]} />
       <StickyActions compareHref="#compare" writeHref="#write" />
       <Footer />
       <JsonLd graph={[breadcrumbLd(trail), faqLd(faq)]} />

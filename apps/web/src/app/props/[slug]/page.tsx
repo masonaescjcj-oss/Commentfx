@@ -5,7 +5,7 @@ import { describeDrawdown, countryName } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { rankedProps, getRankedProp } from '@/lib/repo';
 import { Header, PageHero, Footer } from '@/components/chrome';
-import { RecordHero, QuickJump, StickyActions } from '@/components/RecordHero';
+import { RecordHero, QuickJump, SectionBar, StickyActions } from '@/components/RecordHero';
 import { IconScore, IconCost, IconLicence, IconReviews, IconCompare, IconFaq } from '@/components/icons';
 import { ReviewForm } from '@/components/ReviewForm';
 import { ReviewList, ReviewSummary } from '@/components/ReviewList';
@@ -225,6 +225,7 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
           </div>
         </div>
       </main>
+      <SectionBar name={f.name} items={[{ href: '#score', label: 'Score' }, { href: '#rules', label: 'Rules' }, { href: '#payout', label: 'Payout' }, { href: '#reviews', label: 'Reviews' }, { href: '#compare', label: 'Other firms' }, { href: '#faq', label: 'Questions' }]} />
       <StickyActions compareHref="#compare" writeHref="#write" />
       <Footer />
       <JsonLd graph={[breadcrumbLd(trail), faqLd(faq)]} />
