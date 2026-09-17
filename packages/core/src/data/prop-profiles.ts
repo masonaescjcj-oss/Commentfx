@@ -48,6 +48,17 @@ export interface PropProfile {
   slug: string;
   /** The day a person did this research. */
   checked: string;
+  /**
+   * Whether the firm's own pages answered us at all.
+   *
+   * Four of the eight return 403 or 429 to our requests, so their rules were
+   * never read where they are published — only where somebody else quoted them.
+   * That is a fact about the evidence behind a record, not about the firm's
+   * honesty, and it is the input to the `evidence` component of the score.
+   * Setting it true means a person here opened the firm's own pages and read
+   * them; it is not satisfied by a review site repeating the same figures.
+   */
+  originReadable: boolean;
   verdict: string;
   sections: PropSection[];
   facts: PropFact[];
@@ -61,6 +72,7 @@ export interface PropProfile {
 const FTMO: PropProfile = {
   slug: 'ftmo',
   checked: '2026-09-17',
+  originReadable: true,
   verdict:
     'The oldest and plainest firm here: one Czech company, named in its own terms, on the state '
     + 'register since 2014, with rules that do what they say. Two things on this page were wrong '
@@ -188,6 +200,7 @@ const FTMO: PropProfile = {
 const ALPHA: PropProfile = {
   slug: 'alpha-capital-group',
   checked: '2026-09-17',
+  originReadable: false,
   verdict:
     'A real British company, filed at Companies House as an IT services business, selling trading '
     + 'evaluations. Three fields on this page were wrong and every one of them made the firm look '
@@ -286,6 +299,7 @@ const ALPHA: PropProfile = {
 const THE5ERS: PropProfile = {
   slug: 'the5ers',
   checked: '2026-09-17',
+  originReadable: true,
   verdict:
     'Every rule figure on this page was wrong, and the loudest claim on it — a 100% profit split — '
     + 'was the top of a ladder that starts at 80. The company behind it is real, named in its own '
@@ -409,6 +423,7 @@ const THE5ERS: PropProfile = {
 const FUNDEDNEXT: PropProfile = {
   slug: 'fundednext',
   checked: '2026-09-17',
+  originReadable: true,
   verdict:
     'Four companies in three jurisdictions, and the one that runs your account is registered on an '
     + 'island in the Comoros. The British company — the only one that ever filed under a financial '
@@ -540,6 +555,7 @@ const FUNDEDNEXT: PropProfile = {
 const FUNDINGPIPS: PropProfile = {
   slug: 'fundingpips',
   checked: '2026-09-17',
+  originReadable: false,
   verdict:
     'The second firm in this directory whose simulated accounts are run from the Comoros, behind a '
     + 'Dubai address and a Cyprus support company. Its own terms are clear that nothing trades on a '
@@ -629,6 +645,7 @@ const FUNDINGPIPS: PropProfile = {
 const BREAKOUT: PropProfile = {
   slug: 'breakout',
   checked: '2026-09-17',
+  originReadable: false,
   verdict:
     'The only firm here owned by a company this site ranks somewhere else. Kraken completed its '
     + 'acquisition with effect from 1 September 2025, and the funded programme now runs inside '
@@ -718,6 +735,7 @@ const BREAKOUT: PropProfile = {
 const TOPSTEP: PropProfile = {
   slug: 'topstep',
   checked: '2026-09-17',
+  originReadable: true,
   verdict:
     'The oldest programme in this directory and the one that documents itself best. Its rules are '
     + 'harsher than most here and they are written down precisely, which is a better trade than the '
@@ -830,6 +848,7 @@ const TOPSTEP: PropProfile = {
 const E8: PropProfile = {
   slug: 'e8-markets',
   checked: '2026-09-17',
+  originReadable: false,
   verdict:
     'A Texas company sells the contract and a Saint Lucia company runs the MT5 accounts, which is '
     + 'most of what its traders use. Both are named in its own terms — the disclosure is there, it '

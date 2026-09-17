@@ -173,13 +173,13 @@ export function parsePair(slug: string): [string, string] | null {
 
 /* ── Prop firms ────────────────────────────────────────────────────────── */
 
-import { PROPS, propBySlug, scoreProp, type PropFirm, type PropBreakdown } from '@commentfx/core';
+import { PROPS, propBySlug, scoreProp, propProfileFor, type PropFirm, type PropBreakdown } from '@commentfx/core';
 
 export interface RankedProp { rank: number; firm: PropFirm; score: PropBreakdown }
 
 export function rankedProps(): RankedProp[] {
   return PROPS
-    .map((firm) => ({ firm, score: scoreProp(firm) }))
+    .map((firm) => ({ firm, score: scoreProp(firm, propProfileFor(firm.slug)) }))
     .sort((a, b) => b.score.total - a.score.total || a.firm.name.localeCompare(b.firm.name))
     .map((r, i) => ({ rank: i + 1, ...r }));
 }

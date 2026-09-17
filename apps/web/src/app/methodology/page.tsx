@@ -31,6 +31,19 @@ const WHAT: Record<ScoreKey, string> = {
 
 const REVISIONS: Array<{ date: string; what: string; why: string }> = [
   {
+    date: '17 September 2026',
+    what: 'Prop firms: added the evidence behind a record at 0.10, taken from rules, payout and cost.',
+    why:
+      'Reading all eight prop records back against their sources produced a ranking we could not defend. '
+      + 'Seven had a figure wrong and the corrections went one way — four firms had published a profit split '
+      + 'that was the ceiling of a range rather than what a newly funded trader is paid. But four firms answer '
+      + 'our requests with 403 or 429, so their figures could not be checked at all, and they finished at the '
+      + 'top: the firm nobody could verify ranked first. A model that lets "we could not look" beat "we looked '
+      + 'and it was worse than we thought" is measuring the wrong thing. The confidence behind a record is now '
+      + 'a component with a published weight instead of a caveat nobody reads. Rule fairness went from 0.30 to '
+      + '0.27, payout terms from 0.25 to 0.22, challenge cost from 0.20 to 0.18.',
+  },
+  {
     date: '16 September 2026',
     what: 'Added the regulatory and legal record at 0.10, taken from regulation, platform and reviews.',
     why:
@@ -56,6 +69,7 @@ const PROP_WHAT: Record<PropKey, string> = {
   cost: 'Challenge fee normalised to a $100k account. Firms price many account sizes, so a headline fee compares nothing.',
   platform: 'How many platforms are offered and how many markets can be traded.',
   transparency: 'Three disclosures: a published rule-change history, the legal entity behind the firm, and the broker executing the trades.',
+  evidence: 'How much of this record anybody has been able to confirm, which is a statement about us rather than about the firm. Four points for a firm somebody has researched and written up at all; three more if the firm\u2019s own pages answered our requests, so its rules were read where they are published rather than where a review site repeated them; three more if an independent document \u2014 a company register or a statutory filing \u2014 names the companies behind it. Excluded, not zeroed, where nobody has done the research. A firm that blocks automated readers is not being dishonest, and this does not say it is; it says how far a reader should trust the rest of the row.',
 };
 
 const EXCHANGE_WHAT: Record<ExchangeKey, string> = {

@@ -92,10 +92,30 @@ export interface PropFirm {
   logo: LogoMark;
 }
 
-export type PropKey = 'rules' | 'payout' | 'cost' | 'platform' | 'transparency';
+export type PropKey = 'rules' | 'payout' | 'cost' | 'platform' | 'transparency' | 'evidence';
 
+/**
+ * `evidence` is new, and it is about us rather than about the firm.
+ *
+ * Reading all eight records back against their sources turned up a problem the
+ * ranking could not express. Four firms answer our requests with 403 or 429, so
+ * their rule figures were never read where they are published — and because the
+ * other four were corrected downward against their own terms, the unread
+ * records finished at the top. The firm nobody could check ranked first. A
+ * directory that lets "we could not look" outrank "we looked and it was worse
+ * than we thought" is not measuring what it claims to.
+ *
+ * So the confidence behind a record is a published component with a weight,
+ * visible on every page beside the others, rather than a silent adjustment.
+ * That is the same rule this site applies to a broker's conduct: the gap gets a
+ * number a reader can see and argue with, or it does not count.
+ *
+ * It costs the firm nothing it can control, and that is the honest reading of
+ * it: a Cloudflare rule is not dishonesty. What the component says is narrower
+ * and true — how much of this record anybody has been able to confirm.
+ */
 export const PROP_WEIGHTS: Record<PropKey, number> = {
-  rules: 0.30, payout: 0.25, cost: 0.20, platform: 0.15, transparency: 0.10,
+  rules: 0.27, payout: 0.22, cost: 0.18, platform: 0.13, transparency: 0.10, evidence: 0.10,
 };
 
 export const PROP_LABELS: Record<PropKey, string> = {
@@ -104,6 +124,7 @@ export const PROP_LABELS: Record<PropKey, string> = {
   cost: 'Challenge cost',
   platform: 'Platforms & markets',
   transparency: 'Transparency',
+  evidence: 'Evidence behind this record',
 };
 
 const DD_SCORE: Record<DrawdownType, number> = {
@@ -139,6 +160,42 @@ export function scorePropPlatform(p: PropFirm): number {
   return clamp(round1(Math.min(6, p.platforms.length * 2) + Math.min(4, p.markets.length * 1.2)));
 }
 
+/**
+ * How much of this record anybody has been able to confirm, out of ten.
+ *
+ * Three things, because three things are what separate a checked record from a
+ * plausible one:
+ *
+ *   4  somebody researched this firm at all and wrote down what they read
+ *   3  the firm's own pages answered, so its rules were read where they live
+ *   3  an independent document exists — a company register or a statutory
+ *      filing — that names the companies behind it
+ *
+ * Null when nobody has researched the firm, which excludes the component and
+ * renormalises the rest rather than scoring it zero. That is the same rule the
+ * broker conduct component follows: no data is not a bad score, it is no score.
+ *
+ * The middle three points are the ones that move this directory today. A firm
+ * whose terms are quoted only by review sites has a record built on other
+ * people's reading, and everything downstream of that — the target, the
+ * drawdown, the split — inherits whatever they got wrong.
+ */
+export function scorePropEvidence(p: PropFirm, profile?: PropEvidence): number | null {
+  if (!profile) return null;
+  const independent = profile.sources.some((s) => s.kind === 'register' || s.kind === 'filing');
+  return clamp(round1(4 + (profile.originReadable ? 3 : 0) + (independent ? 3 : 0)));
+}
+
+/**
+ * The part of a researched profile the score reads. Structural rather than an
+ * import, so the scoring file does not depend on the data file that depends on
+ * it.
+ */
+export interface PropEvidence {
+  originReadable: boolean;
+  sources: Array<{ kind: string }>;
+}
+
 export function scorePropTransparency(p: PropFirm): number {
   const t = p.transparency;
   const checks = [t.publishesRuleChanges, t.disclosesLegalEntity, t.disclosesExecutionBroker];
@@ -148,7 +205,7 @@ export function scorePropTransparency(p: PropFirm): number {
 export type PropBreakdown = Composite<PropKey>;
 export type PropComponent = Component<PropKey>;
 
-export function scoreProp(p: PropFirm): PropBreakdown {
+export function scoreProp(p: PropFirm, profile?: PropEvidence): PropBreakdown {
   const ddNote: Record<DrawdownType, string> = {
     'static': 'Static drawdown from starting balance',
     'eod-trailing': 'Trails on end-of-day balance',
@@ -160,8 +217,18 @@ export function scoreProp(p: PropFirm): PropBreakdown {
     { key: 'cost', value: scorePropCost(p), note: `$${p.feeUsdPer100k} per $100k account` },
     { key: 'platform', value: scorePropPlatform(p), note: `${p.platforms.join(', ')} · ${p.markets.length} markets` },
     { key: 'transparency', value: scorePropTransparency(p), note: transparencyNote(p) },
+    { key: 'evidence', value: scorePropEvidence(p, profile), note: evidenceNote(profile) },
   ];
   return composite(inputs, PROP_WEIGHTS, PROP_LABELS);
+}
+
+function evidenceNote(profile?: PropEvidence): string {
+  if (!profile) return 'Nobody has researched this firm yet';
+  const independent = profile.sources.some((s) => s.kind === 'register' || s.kind === 'filing');
+  if (profile.originReadable && independent) return 'Read at the firm’s own pages and against a register';
+  if (profile.originReadable) return 'Read at the firm’s own pages; no register names it';
+  if (independent) return 'A register names it; the firm’s own pages refuse our requests';
+  return 'The firm’s own pages refuse our requests and no register names it';
 }
 
 function transparencyNote(p: PropFirm): string {
