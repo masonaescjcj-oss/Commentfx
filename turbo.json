@@ -13,13 +13,15 @@
         "^build"
       ],
       "env": [
-        "DATABASE_URL",
-        "PGLITE_DIR",
-        "NEXT_PUBLIC_SITE_URL",
         "ADMIN_TOKEN",
-        "REPORT_HASH_SECRET",
-        "GOOGLE_SITE_VERIFICATION",
         "BING_SITE_VERIFICATION",
+        "DATABASE_URL",
+        "DB_POOL_MAX",
+        "GOOGLE_SITE_VERIFICATION",
+        "MIGRATE_DATABASE_URL",
+        "NEXT_PUBLIC_SITE_URL",
+        "PGLITE_DIR",
+        "REPORT_HASH_SECRET",
         "SESSION_SECRET"
       ],
       "outputs": [
@@ -41,6 +43,8 @@
     "test": {
       "env": [
         "DATABASE_URL",
+        "DB_POOL_MAX",
+        "MIGRATE_DATABASE_URL",
         "PGLITE_DIR",
         "REPORT_HASH_SECRET",
         "SESSION_SECRET"

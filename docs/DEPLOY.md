@@ -14,12 +14,52 @@ This page says what each variable buys you, in the order worth adding them.
   a host with corepack enabled installs the right pnpm by itself.
 - **A Postgres database**, if you want anyone to be able to write. Any managed
   Postgres does; the schema is applied by the app on first connect (see
-  [Migrations](#migrations)).
+  [Migrations](#migrations)). On a pooled one, see
+  [On Supabase and Vercel](#on-supabase-and-vercel) — migrations need the
+  direct connection.
 - **Nothing else.** Every upstream this site reads — CoinGecko, GeckoTerminal,
   GoPlus, the BLS, Fed and ECB calendars, and four newsroom RSS feeds — is free
   and unauthenticated. There is no key to buy and no plan to sign up for, and
   that is a constraint the project keeps on purpose: it means no ranking can
   quietly become a function of what we could afford to license.
+
+## On Supabase and Vercel
+
+That pairing is what this is deployed on, and it needs four decisions and no
+extra services. Nothing here is a product recommendation — any managed Postgres
+and any Node host work the same way — but these are the two specifics that will
+bite.
+
+**Use both Supabase connection strings.** Vercel runs this as serverless
+functions, so `DATABASE_URL` wants the **pooler** (Supabase's transaction-mode
+URL, port 6543): dozens of short-lived instances each opening direct
+connections is how a hundred-connection Postgres runs out during a traffic
+spike. Migrations cannot use it. They take a session-held advisory lock, and a
+lock taken on one backend and released on another has locked nothing at all —
+so set `MIGRATE_DATABASE_URL` to the **direct** URL (session mode, port 5432)
+and the app migrates on that and queries on the pooler. With one direct URL and
+no pooler, leave `MIGRATE_DATABASE_URL` unset; it falls back to `DATABASE_URL`.
+
+**`DB_POOL_MAX` defaults to 3**, which is the serverless answer. Behind a real
+long-running server, raise it.
+
+**Seed once**, from anywhere with the direct URL to hand:
+
+```sh
+DATABASE_URL='<direct url>' pnpm --filter @commentfx/db seed
+```
+
+**Schedule the register checks yourself.** `pnpm --filter @commentfx/web
+check-registers` reads the public registers and writes what it found; nothing
+runs it on its own. A GitHub Action with the database URL as a secret is the
+smallest thing that works, and `.github/workflows/sources.yml` is already the
+pattern — it probes every upstream daily and opens an issue when a parser goes
+quiet. Vercel Cron works too, against a route that calls the same code.
+
+What you still need that neither of them provides: **a domain**. What you do
+*not* need, and this is the part worth saying out loud, is an email provider
+(invitations are links an admin copies), object storage (logos are files in the
+repo), a queue, a cache, or a key for any data source.
 
 ## Build and run
 
@@ -198,7 +238,8 @@ actually shaped around.
 
 ## A deployment checklist
 
-1. `DATABASE_URL` set, or you have decided the site is read-only.
+1. `DATABASE_URL` set, or you have decided the site is read-only. On a pooled
+   Postgres, `MIGRATE_DATABASE_URL` set to the direct connection as well.
 2. `REPORT_HASH_SECRET` set to something long and kept.
 3. `SESSION_SECRET` set if anybody is going to edit anything.
 4. `ADMIN_TOKEN` set for as long as it takes to open `/admin/setup` and make the

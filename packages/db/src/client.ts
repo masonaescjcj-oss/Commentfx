@@ -45,8 +45,8 @@ async function makeDb(): Promise<DbHandle> {
   if (url) {
     const { drizzle } = await import('drizzle-orm/node-postgres');
     const { Pool } = await import('pg');
-    const pool = new Pool({ connectionString: url, max: 10 });
-    await migratePostgres(pool);
+    const pool = new Pool({ connectionString: url, max: poolMax() });
+    await migratePostgres(Pool);
     return { db: drizzle(pool, { schema }) as unknown as AppDb, kind: 'postgres', close: () => pool.end() };
   }
 
@@ -67,6 +67,37 @@ async function makeDb(): Promise<DbHandle> {
 const MIGRATION_LOCK = 0x636d6678;
 
 /**
+ * How many connections one instance of this application may hold.
+ *
+ * Ten is right for a long-running server and wrong for a serverless one, which
+ * is what this is deployed as. There, an instance is one request's worth of
+ * work and there may be dozens of them at once — ten each is how a Postgres
+ * with a hundred connections runs out during a traffic spike rather than
+ * during a load test. Three is enough for the handful of queries a page makes
+ * in parallel, and anything with a real server in front of it can say so.
+ */
+const poolMax = () => Number(process.env.DB_POOL_MAX ?? 3);
+
+/**
+ * The connection migrations run on, which is not always the one queries use.
+ *
+ * A pooled Postgres — Supabase's pooler, pgbouncer, anything in transaction
+ * mode — hands each statement whichever backend is free. That is exactly what a
+ * serverless deployment wants for queries and exactly what a migration cannot
+ * have: `pg_advisory_lock` is held by a session, so taking it on one backend
+ * and releasing it on another means the lock never locked anything, and a dozen
+ * cold starts run concurrent DDL against each other. The ledger keeps that from
+ * corrupting anything, but concurrent CREATE TABLE is still how a deploy
+ * deadlocks.
+ *
+ * So: point `MIGRATE_DATABASE_URL` at the direct connection (Supabase calls it
+ * the session-mode or direct URL, port 5432) and `DATABASE_URL` at the pooler.
+ * Unset, this is the same URL as everything else, which is correct for a
+ * Postgres you connect to directly.
+ */
+const migrationUrl = (fallback: string) => process.env.MIGRATE_DATABASE_URL ?? fallback;
+
+/**
  * Real Postgres gets its schema the same way the embedded one does.
  *
  * It did not until a deploy was attempted, and the shape of the mistake is
@@ -84,7 +115,11 @@ const MIGRATION_LOCK = 0x636d6678;
  * connection and released in a finally, so a migration that throws does not
  * leave the next instance waiting.
  */
-async function migratePostgres(pool: import('pg').Pool): Promise<void> {
+async function migratePostgres(Pool: typeof import('pg').Pool): Promise<void> {
+  // Its own pool of one, on the migration URL, closed when this is done. The
+  // query pool may be pointed at a transaction pooler, where a session-held
+  // advisory lock is not held by anything.
+  const pool = new Pool({ connectionString: migrationUrl(process.env.DATABASE_URL!), max: 1 });
   const client = await pool.connect();
   try {
     await client.query('SELECT pg_advisory_lock($1)', [MIGRATION_LOCK]);
@@ -96,6 +131,7 @@ async function migratePostgres(pool: import('pg').Pool): Promise<void> {
     // Best effort: if the connection is already gone the lock went with it.
     await client.query('SELECT pg_advisory_unlock($1)', [MIGRATION_LOCK]).catch(() => {});
     client.release();
+    await pool.end().catch(() => {});
   }
 }
 
