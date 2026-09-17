@@ -213,6 +213,21 @@
        Only the column widths swap, so the source order is still what a phone
        shows, and it is still the order it was before any of this. */
     .split.rail-left { grid-template-columns: 344px minmax(0, 1fr); }
+
+    /* A rail with nothing in it takes no width.
+       What goes in the rail is conditional — the verification panel renders
+       nothing where there is no coverage record, which on a deployment with no
+       database is every page. The column was reserved anyway, so 344px of
+       nothing sat to the left of everything and the page read as though it had
+       slipped off its own centre. Reserving room for something that may not
+       arrive is the same mistake as a layout that shifts when it does.
+
+       `:empty` is exact here: a wrapper whose only child rendered null has no
+       child nodes at all, not even whitespace, because JSX drops the newlines
+       between elements. So this collapses precisely when there is nothing to
+       show and never when there is. */
+    .split.rail-left:has(> :first-child:empty) { grid-template-columns: minmax(0, 1fr); }
+    .split.rail-left > :first-child:empty { display: none; }
   }
 }
 

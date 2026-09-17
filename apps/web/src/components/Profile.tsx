@@ -110,14 +110,26 @@ export function Profile({ profile, name }: { profile: Researched; name: string }
         <CardHead title="The figures, and where each one came from" />
         <dl>
           {profile.facts.map((f) => (
+            /* `shrink-0` on the value used to be here, to stop a short figure
+               wrapping away from its label. It assumed every value was a
+               figure. They are not: a researched fact is as often a sentence —
+               "About $4.3bn across DOJ, FinCEN, OFAC and the CFTC" — and a flex
+               item that may not shrink pushes the whole page wider than the
+               screen. Every exchange page was 544px wide on a 390px phone, so
+               the reader had to zoom out to see any of it.
+
+               Both sides shrink now, and `min-w-0` is what actually lets them:
+               a flex item's default minimum is its content, so without it the
+               text refuses to wrap no matter what the parent does. The label
+               keeps a floor so it cannot be squeezed to one letter per line. */
             <div key={f.label} className="flex justify-between items-baseline gap-4 py-[10px] border-b border-line-2 last:border-b-0">
-              <dt className="text-[12.5px] text-ink-3 leading-[1.6]">
+              <dt className="text-[12.5px] text-ink-3 leading-[1.6] min-w-0 basis-[38%] shrink-0">
                 {f.label}
                 <a href={`#source-${f.from}`} className="inline-block align-super text-[10px] font-bold tnum text-accent ml-[3px] px-[3px] py-[6px] -my-[6px]">
                   {index.get(f.from)}
                 </a>
               </dt>
-              <dd className="text-[13px] font-semibold tnum text-right shrink-0">{f.value}</dd>
+              <dd className="text-[13px] font-semibold tnum text-right leading-[1.6] min-w-0 break-words">{f.value}</dd>
             </div>
           ))}
         </dl>

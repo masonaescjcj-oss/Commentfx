@@ -56,6 +56,19 @@ jobs:
         # playwright` at the repo root finds nothing.
         run: pnpm --filter @commentfx/web exec playwright install --with-deps chromium
 
+      # Two ways a page can be the wrong shape that CLS cannot see, because
+      # nothing moved: wider than the phone holding it, and a column reserved
+      # for something that did not render. Both were reported by a reader
+      # first. It runs against this build, which has no database — the state
+      # the empty rail only appears in.
+      - name: Layout
+        shell: bash
+        run: |
+          pnpm --filter @commentfx/web start &
+          for i in $(seq 1 40); do curl -sf -o /dev/null http://127.0.0.1:3000/ && break; sleep 1; done
+          CHECK_BASE=http://127.0.0.1:3000 pnpm --filter @commentfx/web check:layout
+          kill %1
+
       - name: Accessibility audit
         shell: bash
         run: |
