@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 /**
  * The two things the header does that it cannot do on its own.
@@ -38,17 +39,17 @@ import { useEffect } from 'react';
  *     the bar the wrong colour after a small scroll.
  */
 export function HeaderAutoHide() {
+  // Re-run on every navigation. The listeners are cheap to re-attach, `last`
+  // wants resetting against the new page's scroll position anyway, and it
+  // repaints for a reader who navigates without scrolling afterwards — where
+  // nothing else would call paint at all.
+  const pathname = usePathname();
+
   useEffect(() => {
     const root = document.documentElement;
     const REVEAL_ABOVE = 120;
     const DEAD_ZONE = 6;
     const STOPPED_AFTER = 180;
-
-    const header = document.querySelector<HTMLElement>('.site-header');
-    // Every page opens on one of these. A page without one — the 404 — has
-    // white under the bar from the first pixel, so the bar is white from the
-    // first pixel too.
-    const band = document.querySelector<HTMLElement>('.hero');
 
     let last = window.scrollY;
     let ticking = false;
@@ -56,7 +57,28 @@ export function HeaderAutoHide() {
 
     const show = () => root.removeAttribute('data-chrome-hidden');
 
+    /**
+     * Both elements are looked up here, on every paint, rather than captured
+     * once when the effect runs.
+     *
+     * Capturing them was a bug with a long fuse. A client-side navigation
+     * replaces the band — the old node is detached from the document, and a
+     * detached element's getBoundingClientRect() is all zeros. Zero is less
+     * than the header's height, so the captured reference reported "the band
+     * has gone past" from then on, for ever. The bar went white on the first
+     * scroll of every page after the first one and never came back, and a
+     * reload fixed it, which is why it read as intermittent.
+     *
+     * Every page opens on one of these bands. A page without one — the 404 —
+     * has white under the bar from the first pixel, so the bar is white from
+     * the first pixel too.
+     *
+     * A querySelector on a single class, at most once a frame, is not worth
+     * saving.
+     */
     const paint = () => {
+      const header = document.querySelector<HTMLElement>('.site-header');
+      const band = document.querySelector<HTMLElement>('.hero');
       const past = !band || !header || band.getBoundingClientRect().bottom <= header.offsetHeight;
       root.toggleAttribute('data-chrome-light', past);
     };
@@ -98,7 +120,7 @@ export function HeaderAutoHide() {
       show();
       root.removeAttribute('data-chrome-light');
     };
-  }, []);
+  }, [pathname]);
 
   return null;
 }

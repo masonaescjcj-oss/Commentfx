@@ -16,10 +16,20 @@
  * to the left of every prop and exchange page and the content read as though it
  * had slipped off its own centre.
  *
- * Both are invisible to the CLS budget, because nothing moved: the page was
- * simply the wrong shape from the first paint. And both are invisible to a
- * check that runs against a build made with a database, which is why this one
- * is meant to run against a build made without.
+ * **A header stuck on the wrong colour.** The bar is blue while it stands on
+ * the blue band at the top of a page and white once that band has gone past.
+ * It read the band through a reference captured when the script first ran — and
+ * a client-side navigation replaces the band, leaving that reference pointing
+ * at a detached node whose box is all zeros, which reads as "gone past" for
+ * ever. So the bar went white on the first scroll of every page after the first
+ * and never came back.
+ *
+ * The first two are invisible to the CLS budget, because nothing moved: the
+ * page was simply the wrong shape from the first paint. The third is invisible
+ * to anything that loads one page at a time, because a fresh load is the one
+ * case where the captured reference is correct. And the empty column is
+ * invisible to a check that runs against a build made with a database, which is
+ * why this is meant to run against a build made without.
  */
 import { chromium } from 'playwright';
 
@@ -92,6 +102,42 @@ for (const path of PAGES) {
 check(`no empty column takes width at ${WIDE}px`, reserved.length === 0, reserved.slice(0, 3).join(' · '));
 await ctx.close();
 
+/* ── the header is the colour of what it is standing on ────────────── */
+
+/**
+ * Driven the way a reader does it: arrive, scroll, follow a link, scroll, come
+ * back to the top. Every step of that matters — a fresh load of the second page
+ * behaves correctly, which is exactly why this went unnoticed.
+ */
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const page = await ctx.newPage();
+  const light = () => page.evaluate(() => document.documentElement.hasAttribute('data-chrome-light'));
+  const wheel = async (by, times) => {
+    for (let i = 0; i < times; i++) { await page.mouse.wheel(0, by); await page.waitForTimeout(50); }
+    await page.waitForTimeout(500);
+  };
+
+  await page.goto(`${BASE}/brokers`, { waitUntil: 'load' });
+  await page.waitForTimeout(700);
+  check('the header starts the colour of the band under it', (await light()) === false);
+
+  await wheel(300, 10);
+  check('and turns once the band has gone past', (await light()) === true);
+
+  await page.getByRole('link', { name: /Pepperstone/ }).first().click();
+  await page.waitForTimeout(1500);
+  await wheel(250, 4);
+  check('it turns again on the page you navigated to', (await light()) === true);
+
+  await wheel(-300, 12);
+  check('and turns back when you return to the top',
+    (await light()) === false,
+    'a reference to the previous page’s band would say it never came back');
+
+  await ctx.close();
+}
+
 await browser.close();
 
 console.log('');
@@ -99,4 +145,4 @@ if (failures.length) {
   console.log(`${failures.length} broken: ${failures.join(', ')}`);
   process.exit(1);
 }
-console.log('Every page fits its screen, and no column is reserved for nothing.');
+console.log('Every page fits its screen, no column is reserved for nothing, and the header\nknows what it is standing on.');
