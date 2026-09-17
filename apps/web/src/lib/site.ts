@@ -7,6 +7,15 @@ export const SITE = {
     'Published scoring weights, licence data checked against regulators, and a rank that is not for sale.',
   locale: 'en_US',
   twitter: '@commentfx',
+  /**
+   * Where a reader asks what is held about them, or asks for a correction.
+   *
+   * Empty until somebody publishes one, and the privacy page says so rather
+   * than inventing an address that bounces. A directory that asks strangers to
+   * write about their money and gives them nowhere to write to about their own
+   * data is not finished.
+   */
+  contact: '',
   /** Categories in the header, in order. Also the top-level internal link graph. */
   nav: [
     { href: '/brokers', label: 'Brokers' },

@@ -247,5 +247,49 @@ listProblems('no two pages share a title', dupes(titles).map(([t, p]) => `${p.le
 listProblems('no two pages share a description', dupes(descriptions).map(([d, p]) => `${p.length}× "${d.slice(0, 60)}…"`));
 listProblems('every structured-data block is well formed', problems.ld);
 
+/* ── the picture a shared link shows ────────────────────────────────── */
+
+/**
+ * The social card is a route no page links to, rendered by a different engine
+ * from the rest of the site, and the first anybody would know it was broken is
+ * a blank rectangle in somebody else's chat window. Nothing else here would
+ * ever fetch it.
+ *
+ * It is worth the four requests: Satori refuses a div with more than one child
+ * that has not declared `display: flex`, so `RANK #{rank} OF {of}` — four JSX
+ * children rather than one sentence — renders nothing at all. That is how this
+ * check came to exist.
+ */
+const cards = [];
+for (const path of ['/', '/brokers/exness', '/props/ftmo', '/exchanges/binance']) {
+  const html = await (await fetch(BASE + path)).text();
+  const declared = /<meta property="og:image" content="([^"]+)"/.exec(html)?.[1];
+  if (!declared) { cards.push(`${path}: no og:image at all`); continue; }
+
+  // Caught, because the interesting failure kills the connection rather than
+  // answering: when the renderer throws mid-stream the server hangs up, fetch
+  // rejects, and an uncaught rejection here would take the whole check down
+  // with a socket error instead of naming the page.
+  let res;
+  try {
+    res = await fetch(declared.replace(SITE, BASE));
+  } catch (err) {
+    cards.push(`${path}: og:image never answered — ${err.cause?.code ?? err.message}`);
+    continue;
+  }
+  const type = res.headers.get('content-type') ?? '';
+  let bytes = Number(res.headers.get('content-length') ?? 0);
+  if (!bytes) {
+    try { bytes = (await res.arrayBuffer()).byteLength; }
+    catch { cards.push(`${path}: og:image started and did not finish`); continue; }
+  }
+
+  if (!res.ok) cards.push(`${path}: og:image answered ${res.status}`);
+  else if (!type.startsWith('image/')) cards.push(`${path}: og:image served ${type}`);
+  // A card that rendered but is nearly empty weighs almost nothing.
+  else if (bytes < 5000) cards.push(`${path}: og:image is only ${bytes} bytes`);
+}
+listProblems('every shared link has a picture that renders', cards);
+
 console.log(failures.length ? `\n${failures.length} failed` : '\nall clear');
 process.exit(failures.length ? 1 : 0);

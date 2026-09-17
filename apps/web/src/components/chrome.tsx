@@ -291,7 +291,7 @@ const FOOTER: Array<{ title: string; links: Array<{ href: string; label: string 
       { href: '/learn', label: 'Guides' },
       { href: '/reviews', label: 'Reviews' },
       { href: '/reviews/withdraw', label: 'Withdraw a review' },
-      { href: '/best/crypto-funding', label: 'Crypto funding' },
+      { href: '/privacy', label: 'Privacy' },
     ],
   },
 ];

@@ -39,7 +39,12 @@ export const metadata: Metadata = {
   applicationName: SITE.name,
   referrer: 'strict-origin-when-cross-origin',
   formatDetection: { telephone: false, address: false, email: false },
-  alternates: { canonical: '/' },
+  alternates: {
+    canonical: '/',
+    // How a feed reader finds the feed: from the head of every page, which is
+    // where every one of them looks and the only place they look.
+    types: { 'application/rss+xml': [{ url: '/learn/feed.xml', title: `${SITE.name} — Guides` }] },
+  },
   openGraph: { type: 'website', siteName: SITE.name, locale: SITE.locale, url: SITE.url },
   twitter: { card: 'summary_large_image', site: SITE.twitter },
   /**
