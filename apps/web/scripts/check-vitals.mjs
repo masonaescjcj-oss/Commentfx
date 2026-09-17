@@ -90,8 +90,9 @@ for (const path of PAGES) {
 
   await page.goto(BASE + path, { waitUntil: 'load' });
   await page.waitForTimeout(3000);
-  const { cls, lcp, worst } = await page.evaluate(() => ({
+  const { cls, lcp, worst, scroll } = await page.evaluate(() => ({
     cls: window.__cls, lcp: Math.round(window.__lcp), worst: window.__worst,
+    scroll: window.scrollY,
   }));
   await ctx.close();
 
@@ -101,10 +102,31 @@ for (const path of PAGES) {
     failures.push(path);
     if (worst) console.log(`        worst ${worst.value.toFixed(4)} at ${worst.at}ms — ${worst.what}`);
   }
+
+  /**
+   * And it starts at the top.
+   *
+   * A page that opens part-way down is the same complaint as a page that moves
+   * under your thumb — you are not reading what you asked for — and it is the
+   * one shape of that which CLS cannot see, because nothing shifted. It has
+   * several cheap causes: an autofocused control below the fold, a stray
+   * fragment on a link, a focus() in an effect. None of them is here today, and
+   * this is what keeps it that way.
+   *
+   * A fresh load only. A refresh lands where you were, which is the browser
+   * restoring your position and is right; a #fragment lands at its section,
+   * which is what it is for.
+   */
+  if (scroll > 0) {
+    failures.push(path);
+    console.log(`FAIL  ${path.padEnd(30)} opens ${scroll}px down the page, not at the top`);
+  }
 }
 
 await browser.close();
-console.log(failures.length
-  ? `\n${failures.length} page${failures.length > 1 ? 's' : ''} over the ${BUDGET} budget`
-  : `\nEvery page shape stays under ${BUDGET}.`);
-process.exit(failures.length ? 1 : 0);
+// Deduplicated: a page can fail both checks and is still one broken page.
+const broken = [...new Set(failures)];
+console.log(broken.length
+  ? `\n${broken.length} page${broken.length > 1 ? 's' : ''} either moves or does not open at the top: ${broken.join(', ')}`
+  : `\nEvery page shape stays under ${BUDGET}, and every page opens at the top.`);
+process.exit(broken.length ? 1 : 0);
