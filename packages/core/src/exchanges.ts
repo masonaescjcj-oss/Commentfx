@@ -1,4 +1,5 @@
 import { composite, clamp, round1, scale, type Input, type Component, type Composite } from './scoring-kit.ts';
+import { conductScore, actionsFor } from './data/actions.ts';
 import type { LogoMark } from './types.ts';
 
 export interface Exchange {
@@ -38,15 +39,32 @@ export interface Exchange {
   logo: LogoMark;
 }
 
-export type ExchangeKey = 'solvency' | 'security' | 'fees' | 'liquidity' | 'transparency';
+export type ExchangeKey =
+  | 'solvency' | 'security' | 'conduct' | 'fees' | 'liquidity' | 'transparency';
 
+/**
+ * `conduct` carries more here than on the broker side, and the reason is what
+ * the research turned up rather than a view about crypto.
+ *
+ * Three of these eight have pleaded guilty to a US federal offence or been
+ * fined billions: Binance took a $3.4bn civil money penalty and a five-year
+ * monitor, OKX's operator pleaded guilty and paid about $505m, KuCoin's
+ * pleaded guilty, paid $297m and left the country. A model that ranked those
+ * companies on fee tiers and reported volume while saying nothing about any of
+ * it would be answering a question nobody asked — the same failure the broker
+ * side fixed when it added conduct at 0.10.
+ *
+ * It reads the same register the brokers do, with the same rule: a firm nobody
+ * has searched is excluded rather than given ten.
+ */
 export const EXCHANGE_WEIGHTS: Record<ExchangeKey, number> = {
-  solvency: 0.30, security: 0.25, fees: 0.20, liquidity: 0.15, transparency: 0.10,
+  solvency: 0.27, security: 0.22, conduct: 0.15, fees: 0.16, liquidity: 0.12, transparency: 0.08,
 };
 
 export const EXCHANGE_LABELS: Record<ExchangeKey, string> = {
   solvency: 'Solvency evidence',
   security: 'Security record',
+  conduct: 'Regulatory and legal record',
   fees: 'Trading fees',
   liquidity: 'Liquidity',
   transparency: 'Transparency',
@@ -92,6 +110,21 @@ export function scoreLiquidity(e: Exchange): number {
   return scale(Math.log10(v), 7, 10.3);
 }
 
+/**
+ * What the number is saying, in the reader's terms. "Nobody has looked" and
+ * "somebody looked and found nothing" are different sentences and the
+ * component renders them differently, because a blank where a warning should
+ * be is the failure this note exists to prevent.
+ */
+function conductNote(e: Exchange): string {
+  const acted = actionsFor(e.slug);
+  if (conductScore(e.slug) === null) return 'Nobody here has searched for actions against this exchange';
+  if (acted.length === 0) return 'Searched, and nothing on record';
+  const live = acted.filter((a) => a.stage !== 'dismissed');
+  if (live.length === 0) return `${acted.length} brought and dismissed, nothing decided`;
+  return `${live.length} on record: ${[...new Set(live.map((a) => a.kind))].join(', ')}`;
+}
+
 export function scoreExchangeTransparency(e: Exchange): number {
   const t = e.transparency;
   const checks = [t.publishesFeeSchedule, t.disclosesLegalEntity, t.publishesIncidentReports];
@@ -107,6 +140,7 @@ export function scoreExchange(e: Exchange): ExchangeBreakdown {
     { key: 'security', value: scoreSecurity(e), note: securityNote(e) },
     { key: 'fees', value: scoreFees(e), note: `${e.takerFeePct}% taker · ${e.makerFeePct}% maker` },
     { key: 'liquidity', value: scoreLiquidity(e), note: `${volumeBand(e.spotVolumeUsd)} reported 24h spot volume` },
+    { key: 'conduct', value: conductScore(e.slug), note: conductNote(e) },
     { key: 'transparency', value: scoreExchangeTransparency(e), note: transparencyNote(e) },
   ];
   return composite(inputs, EXCHANGE_WEIGHTS, EXCHANGE_LABELS);

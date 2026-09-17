@@ -46,10 +46,30 @@ export type ActionStage =
   /** An authority decided it. */
   | 'decided'
   /** Decided, and being appealed. */
-  | 'under-appeal';
+  | 'under-appeal'
+  /**
+   * Brought and then dropped, with nothing decided against the firm.
+   *
+   * The crypto records made this necessary and it is the fairest thing in the
+   * file. The SEC sued Coinbase and Kraken and then dismissed both, one with
+   * prejudice and neither with a finding or a penalty. A reader searching for
+   * "Coinbase SEC lawsuit" should find the outcome here rather than an
+   * impression left by headlines from 2023 — and it must cost the score
+   * nothing, because nothing was decided. Leaving it out would be the quieter
+   * error: a register that records only accusations is a register that treats
+   * being cleared as though it never happened.
+   */
+  | 'dismissed';
 
 export interface EnforcementAction {
-  brokerSlug: string;
+  /**
+   * The slug of whatever this was done to — a broker, an exchange, in time a
+   * prop firm. One register rather than one per vertical, because enforcement
+   * is enforcement and three copies of these rules would be three chances to
+   * write them down differently. Slugs do not collide across the verticals and
+   * a test holds that.
+   */
+  subject: string;
   /** The body that acted, in full. */
   authority: string;
   /** ISO-3166 alpha-2 of that body. */
@@ -71,7 +91,7 @@ export interface EnforcementAction {
 export const ACTIONS: EnforcementAction[] = [
   /* ── Exness ──────────────────────────────────────────── */
   {
-    brokerSlug: 'exness',
+    subject: 'exness',
     authority: 'Kanto Local Finance Bureau, Financial Services Agency of Japan',
     country: 'JP',
     kind: 'warning',
@@ -94,7 +114,7 @@ export const ACTIONS: EnforcementAction[] = [
     primary: true,
   },
   {
-    brokerSlug: 'exness',
+    subject: 'exness',
     authority: 'Securities and Exchange Commission of the Philippines',
     country: 'PH',
     kind: 'warning',
@@ -113,9 +133,281 @@ export const ACTIONS: EnforcementAction[] = [
     primary: false,
   },
 
+  /* ── Crypto exchanges ──────────────────────────────────────────────────── */
+  {
+    subject: 'binance',
+    authority: 'Financial Crimes Enforcement Network, US Department of the Treasury',
+    country: 'US',
+    kind: 'fine',
+    stage: 'decided',
+    date: '2023-11-21',
+    summary:
+      'FinCEN assessed a $3.4bn civil money penalty on Binance — the largest in its own and the '
+      + 'Treasury Department’s history — and imposed a five-year monitorship, as part of a roughly '
+      + '$4.3bn resolution across four US agencies in which the company and its founder pleaded '
+      + 'guilty.',
+    detail:
+      'Binance admitted wilfully violating the Bank Secrecy Act: it failed to register as a money '
+      + 'services business while claiming to have left the United States years earlier, kept US '
+      + 'users and other significant US ties, and failed to report more than 100,000 suspicious '
+      + 'transactions. The resolution was coordinated between the Department of Justice, FinCEN, '
+      + 'OFAC and the CFTC; Changpeng Zhao pleaded guilty personally and resigned as chief '
+      + 'executive. The monitor reviews compliance with the Bank Secrecy Act and US sanctions and '
+      + 'the settlement requires the company’s complete exit from the United States. None of this '
+      + 'concerns customer funds going missing — it is about who the exchange let trade and what it '
+      + 'did not report.',
+    sourcePublisher: 'Financial Crimes Enforcement Network',
+    sourceUrl: 'https://www.fincen.gov/system/files/enforcement_action/2023-11-21/FinCEN_Consent_Order_2023-04_FINAL508.pdf',
+    primary: true,
+  },
+  {
+    subject: 'okx',
+    authority: 'US Attorney’s Office for the Southern District of New York',
+    country: 'US',
+    kind: 'prosecution',
+    stage: 'decided',
+    date: '2025-02-24',
+    summary:
+      'Aux Cayes FinTech Co Ltd, which operates OKX, pleaded guilty to running an unlicensed money '
+      + 'transmitting business and agreed to pay about $505m: an $84.4m fine and $420.3m in '
+      + 'forfeited fees.',
+    detail:
+      'Prosecutors said that from 2018 until early 2024 the exchange broke its own policy against '
+      + 'serving people in the United States and facilitated more than $5bn of suspicious '
+      + 'transactions and criminal proceeds. The company must keep an external compliance '
+      + 'consultant in place until February 2027, and received a 25% reduction on the fine for '
+      + 'cooperating. A guilty plea is a decided matter rather than an allegation, which is why it '
+      + 'is filed here as one. The Department of Justice’s own page for this does not answer our '
+      + 'servers, so the link goes to the reporting and the sources say so.',
+    sourcePublisher: 'CNBC',
+    sourceUrl: 'https://www.cnbc.com/2025/02/24/us-says-okx-crypto-exchange-operator-enters-505-million-guilty-plea.html',
+    primary: false,
+  },
+  {
+    subject: 'kucoin',
+    authority: 'US Attorney’s Office for the Southern District of New York',
+    country: 'US',
+    kind: 'prosecution',
+    stage: 'decided',
+    date: '2025-01-27',
+    summary:
+      'Peken Global Ltd, the operator of KuCoin, pleaded guilty to operating an unlicensed money '
+      + 'transmitting business, agreed to more than $297m in fine and forfeiture, and undertook to '
+      + 'leave the United States for at least two years.',
+    detail:
+      'The penalty is a $112.9m criminal fine and $184.5m of forfeiture. The company admitted '
+      + 'failing to run the anti-money-laundering and know-your-customer programmes US law requires, '
+      + 'and prosecutors said the exchange was used to move billions of dollars of suspicious '
+      + 'transactions including proceeds of darknet markets, ransomware and fraud. Two of its '
+      + 'founders, Chun Gan and Ke Tang, gave up any role in running it. Sources disagree about '
+      + 'where Peken Global is incorporated — the Seychelles in some accounts, the Turks and Caicos '
+      + 'in others — and we have not been able to settle it, so this page does not say.',
+    sourcePublisher: 'CoinDesk',
+    sourceUrl: 'https://www.coindesk.com/policy/2025/01/28/kucoin-hit-with-nearly-usd300-million-fine-after-pleading-guilty-to-u-s-doj-charges',
+    primary: false,
+  },
+  {
+    subject: 'kucoin',
+    authority: 'Commodity Futures Trading Commission',
+    country: 'US',
+    kind: 'restriction',
+    stage: 'decided',
+    date: '2026-03-30',
+    summary:
+      'A federal court entered a CFTC consent order permanently barring KuCoin’s operator from '
+      + 'letting US participants trade on its system unless it first registers as a foreign board '
+      + 'of trade, with a $500,000 civil penalty.',
+    detail:
+      'The CFTC had sued Peken Global and three related companies — Mek Global Ltd, PhoenixFin Pte '
+      + 'Ltd and Flashdot Ltd — in March 2024, alleging an unregistered digital asset derivatives '
+      + 'exchange, a failure to register as a futures commission merchant, and know-your-customer '
+      + 'procedures the agency called a sham. The money here is small; the bar is not, and it is '
+      + 'permanent unless the registration happens.',
+    sourcePublisher: 'CoinDesk',
+    sourceUrl: 'https://www.coindesk.com/policy/2026/03/31/kucoin-permanently-barred-from-u-s-after-cftc-order-following-usd297-million-doj-case',
+    primary: false,
+  },
+  {
+    subject: 'kraken',
+    authority: 'Securities and Exchange Commission',
+    country: 'US',
+    kind: 'fine',
+    stage: 'decided',
+    date: '2023-02-09',
+    summary:
+      'Payward Ventures Inc and Payward Trading Ltd agreed to pay $30m and to stop offering their '
+      + 'crypto staking-as-a-service programme to US customers, settling SEC charges that it was an '
+      + 'unregistered offer and sale of securities.',
+    detail:
+      'The SEC said the programme, run since 2019, advertised returns as high as 21% a year, and '
+      + 'that customers handing over tokens "lose control of those tokens and take on risks '
+      + 'associated with those platforms, with very little protection". The $30m is disgorgement, '
+      + 'prejudgment interest and civil penalties together. It is a registration and disclosure '
+      + 'matter about one product, not a finding about customer funds.',
+    sourcePublisher: 'Securities and Exchange Commission',
+    sourceUrl: 'https://www.sec.gov/newsroom/press-releases/2023-25',
+    primary: true,
+  },
+  {
+    subject: 'kraken',
+    authority: 'Securities and Exchange Commission',
+    country: 'US',
+    kind: 'prosecution',
+    stage: 'dismissed',
+    date: '2025-03-03',
+    summary:
+      'The SEC dismissed, with prejudice, its November 2023 suit alleging Kraken ran an unregistered '
+      + 'exchange — no penalty, no admission, and no change required to the business.',
+    detail:
+      'The complaint was filed on 11 November 2023 and survived a motion to dismiss in August 2024, '
+      + 'so this was a live case rather than a weak one. The Commission said the dismissal rests on '
+      + 'its judgment that it will help reform its approach to the crypto industry and "not on any '
+      + 'assessment of the merits of the claims alleged". It costs this record nothing, because '
+      + 'nothing was decided against the company — but a reader who remembers the headlines is '
+      + 'entitled to find the ending here.',
+    sourcePublisher: 'Securities and Exchange Commission',
+    sourceUrl: 'https://www.sec.gov/enforcement-litigation/litigation-releases/lr-26278',
+    primary: true,
+  },
+  {
+    subject: 'coinbase',
+    authority: 'Securities and Exchange Commission',
+    country: 'US',
+    kind: 'prosecution',
+    stage: 'dismissed',
+    date: '2025-02-27',
+    summary:
+      'The SEC dismissed its June 2023 action against Coinbase with prejudice and imposed no '
+      + 'penalty, ending the registration case it had brought over the exchange’s listings.',
+    detail:
+      'Commissioner Hester Peirce’s statement records it plainly: "Today the Commission settled its '
+      + 'case against Coinbase by dismissing it with prejudice." The reason given is the formation '
+      + 'of the Commission’s Crypto Task Force and a move away from making policy by enforcement, '
+      + 'rather than any conclusion about Coinbase. Filed here at zero cost for the same reason as '
+      + 'the Kraken dismissal: a register that records accusations and not acquittals is not a '
+      + 'record, it is a rumour column with dates.',
+    sourcePublisher: 'Securities and Exchange Commission',
+    sourceUrl: 'https://www.sec.gov/newsroom/speeches-statements/peirce-statement-coinbase-022725',
+    primary: true,
+  },
+
+  {
+    subject: 'bitget',
+    authority: 'Financial Services Agency of Japan',
+    country: 'JP',
+    kind: 'warning',
+    stage: 'decided',
+    date: '2024-11-28',
+    summary:
+      'Japan issued a warning to Bitget Limited for conducting crypto-asset exchange business with '
+      + 'Japanese residents over the internet without registration, and published its name on the '
+      + 'list of unregistered operators.',
+    detail:
+      'The FSA\u2019s published list of persons conducting virtual currency exchange business without '
+      + 'registration names the operator at Singapore, with Gracy Chen as its representative, for having "conducted crypto-asset exchange '
+      + 'business with residents of Japan as counterparties through the internet" in breach of '
+      + 'article 63-2 of the Payment Services Act. The same list carries an earlier entry against the same company from March 2023. Keep it in proportion: Japan registers no '
+      + 'offshore exchange that will not accept its rules, so this is about market access rather '
+      + 'than about customer money, and four of the eight exchanges ranked here are on the same '
+      + 'list. It is still a regulator naming a company in public and leaving it there.',
+    sourcePublisher: 'Financial Services Agency of Japan',
+    sourceUrl: 'https://www.fsa.go.jp/policy/virtual_currency/angoushisan_mutouroku.pdf',
+    primary: true,
+  },
+  {
+    subject: 'bybit',
+    authority: 'Financial Services Agency of Japan',
+    country: 'JP',
+    kind: 'warning',
+    stage: 'decided',
+    date: '2024-11-28',
+    summary:
+      'Japan issued a warning to Bybit Fintech Limited for conducting crypto-asset exchange business with '
+      + 'Japanese residents over the internet without registration, and published its name on the '
+      + 'list of unregistered operators.',
+    detail:
+      'The FSA\u2019s published list of persons conducting virtual currency exchange business without '
+      + 'registration names the operator at Dubai, with Ben Zhou as its representative, for having "conducted crypto-asset exchange '
+      + 'business with residents of Japan as counterparties through the internet" in breach of '
+      + 'article 63-2 of the Payment Services Act. Keep it in proportion: Japan registers no '
+      + 'offshore exchange that will not accept its rules, so this is about market access rather '
+      + 'than about customer money, and four of the eight exchanges ranked here are on the same '
+      + 'list. It is still a regulator naming a company in public and leaving it there.',
+    sourcePublisher: 'Financial Services Agency of Japan',
+    sourceUrl: 'https://www.fsa.go.jp/policy/virtual_currency/angoushisan_mutouroku.pdf',
+    primary: true,
+  },
+  {
+    subject: 'mexc',
+    authority: 'Financial Services Agency of Japan',
+    country: 'JP',
+    kind: 'warning',
+    stage: 'decided',
+    date: '2024-11-28',
+    summary:
+      'Japan issued a warning to MEXC Global for conducting crypto-asset exchange business with '
+      + 'Japanese residents over the internet without registration, and published its name on the '
+      + 'list of unregistered operators.',
+    detail:
+      'The FSA\u2019s published list of persons conducting virtual currency exchange business without '
+      + 'registration names the operator at Singapore, with John Chen Ju as its representative, for having "conducted crypto-asset exchange '
+      + 'business with residents of Japan as counterparties through the internet" in breach of '
+      + 'article 63-2 of the Payment Services Act. The same list carries an earlier entry against the same company from March 2023. Keep it in proportion: Japan registers no '
+      + 'offshore exchange that will not accept its rules, so this is about market access rather '
+      + 'than about customer money, and four of the eight exchanges ranked here are on the same '
+      + 'list. It is still a regulator naming a company in public and leaving it there.',
+    sourcePublisher: 'Financial Services Agency of Japan',
+    sourceUrl: 'https://www.fsa.go.jp/policy/virtual_currency/angoushisan_mutouroku.pdf',
+    primary: true,
+  },
+  {
+    subject: 'kucoin',
+    authority: 'Financial Services Agency of Japan',
+    country: 'JP',
+    kind: 'warning',
+    stage: 'decided',
+    date: '2024-11-28',
+    summary:
+      'Japan issued a warning to KuCoin for conducting crypto-asset exchange business with '
+      + 'Japanese residents over the internet without registration, and published its name on the '
+      + 'list of unregistered operators.',
+    detail:
+      'The FSA\u2019s published list of persons conducting virtual currency exchange business without '
+      + 'registration names the operator at the Seychelles, with Johnny Lyu as its representative, for having "conducted crypto-asset exchange '
+      + 'business with residents of Japan as counterparties through the internet" in breach of '
+      + 'article 63-2 of the Payment Services Act. Keep it in proportion: Japan registers no '
+      + 'offshore exchange that will not accept its rules, so this is about market access rather '
+      + 'than about customer money, and four of the eight exchanges ranked here are on the same '
+      + 'list. It is still a regulator naming a company in public and leaving it there.',
+    sourcePublisher: 'Financial Services Agency of Japan',
+    sourceUrl: 'https://www.fsa.go.jp/policy/virtual_currency/angoushisan_mutouroku.pdf',
+    primary: true,
+  },
+  {
+    subject: 'mexc',
+    authority: 'Virtual Assets Regulatory Authority, Dubai',
+    country: 'AE',
+    kind: 'fine',
+    stage: 'decided',
+    date: '2026-06-22',
+    summary:
+      'Dubai\u2019s virtual asset regulator fined MX Global Ltd, which operates MEXC, and ordered it to '
+      + 'cease and desist from all unlicensed virtual asset activity in or from Dubai.',
+    detail:
+      'VARA found the company "providing Virtual Asset Broker-Dealer and/or Exchange Services to '
+      + 'customers in Dubai without obtaining the necessary licence from VARA" between 2022 and '
+      + 'April 2026, and separately that it had onboarded users without meeting the '
+      + 'know-your-customer obligations UAE law requires. The notice records that the company '
+      + 'cooperated fully and said it intends to seek a licence, and it does not state the amount '
+      + 'of the fine, so neither does this page.',
+    sourcePublisher: 'Virtual Assets Regulatory Authority, Dubai',
+    sourceUrl: 'https://www.vara.ae/en/regulations/regulatory-notices/vara-notice-of-fines-mx-global-ltd-mexc/',
+    primary: true,
+  },
+
   /* ── Octa ──────────────────────────────────────────────────────────── */
   {
-    brokerSlug: 'octafx',
+    subject: 'octafx',
     authority: 'Directorate of Enforcement',
     country: 'IN',
     kind: 'prosecution',
@@ -137,7 +429,7 @@ export const ACTIONS: EnforcementAction[] = [
     primary: true,
   },
   {
-    brokerSlug: 'octafx',
+    subject: 'octafx',
     authority: 'Cyprus Securities and Exchange Commission',
     country: 'CY',
     kind: 'restriction',
@@ -158,7 +450,7 @@ export const ACTIONS: EnforcementAction[] = [
 
   /* ── IC Markets ────────────────────────────────────────────────────── */
   {
-    brokerSlug: 'ic-markets',
+    subject: 'ic-markets',
     authority: 'Cyprus Securities and Exchange Commission',
     country: 'CY',
     kind: 'fine',
@@ -175,7 +467,7 @@ export const ACTIONS: EnforcementAction[] = [
     primary: true,
   },
   {
-    brokerSlug: 'ic-markets',
+    subject: 'ic-markets',
     authority: 'Federal Court of Australia',
     country: 'AU',
     kind: 'civil-claim',
@@ -193,7 +485,7 @@ export const ACTIONS: EnforcementAction[] = [
 
   /* ── Pepperstone ───────────────────────────────────────────────────── */
   {
-    brokerSlug: 'pepperstone',
+    subject: 'pepperstone',
     authority: 'Supreme Court of New South Wales',
     country: 'AU',
     kind: 'civil-claim',
@@ -222,6 +514,17 @@ export const ACTIONS: EnforcementAction[] = [
  * component already follows: no data is not a good score.
  */
 export const SEARCHED: Record<string, string> = {
+  /* ── crypto exchanges ── */
+  binance: '2026-09-17',
+  coinbase: '2026-09-17',
+  kraken: '2026-09-17',
+  okx: '2026-09-17',
+  bybit: '2026-09-17',
+  bitget: '2026-09-17',
+  kucoin: '2026-09-17',
+  mexc: '2026-09-17',
+
+  /* ── brokers ── */
   exness: '2026-09-16',
   'ic-markets': '2026-09-16',
   pepperstone: '2026-09-16',
@@ -235,7 +538,7 @@ export const SEARCHED: Record<string, string> = {
 };
 
 export const actionsFor = (slug: string): EnforcementAction[] =>
-  ACTIONS.filter((a) => a.brokerSlug === slug).sort((a, b) => b.date.localeCompare(a.date));
+  ACTIONS.filter((a) => a.subject === slug).sort((a, b) => b.date.localeCompare(a.date));
 
 /**
  * The ones that would change a reader's mind, which is not the same as the
@@ -272,7 +575,7 @@ export const CONDUCT_COST: Record<ActionKind, number> = {
  * until the appeal says otherwise.
  */
 export const STAGE_FACTOR: Record<ActionStage, number> = {
-  alleged: 0.8, decided: 1, 'under-appeal': 0.85,
+  alleged: 0.8, decided: 1, 'under-appeal': 0.85, dismissed: 0,
 };
 
 /**

@@ -5,7 +5,9 @@ import {
   CONDUCT_COST, STAGE_FACTOR, SEARCHED,
 } from './actions.ts';
 import { WEIGHTS, LABELS } from '../score.ts';
-import { brokerBySlug } from './brokers.ts';
+import { BROKERS, brokerBySlug } from './brokers.ts';
+import { EXCHANGES, exchangeBySlug } from './exchanges.ts';
+import { PROPS, propBySlug } from './props.ts';
 import { profileFor } from './profiles.ts';
 
 /**
@@ -13,20 +15,35 @@ import { profileFor } from './profiles.ts';
  * can tell an allegation from a finding, so the rules are about that.
  */
 
-test('every action belongs to a broker we rank', () => {
-  for (const a of ACTIONS) assert.ok(brokerBySlug(a.brokerSlug), `${a.brokerSlug} is not a broker`);
+/**
+ * One register serves every vertical, so the rule is that a subject is
+ * something this site actually ranks — and that no two verticals use the same
+ * slug, which is the assumption the single register rests on.
+ */
+test('every action belongs to a record we rank', () => {
+  for (const a of ACTIONS) {
+    assert.ok(
+      brokerBySlug(a.subject) || exchangeBySlug(a.subject) || propBySlug(a.subject),
+      `${a.subject} is not a broker, an exchange or a prop firm`,
+    );
+  }
+});
+
+test('no two verticals claim the same slug, which one register depends on', () => {
+  const slugs = [...BROKERS.map((b) => b.slug), ...EXCHANGES.map((e) => e.slug), ...PROPS.map((p) => p.slug)];
+  assert.equal(new Set(slugs).size, slugs.length, 'a slug is used by two verticals');
 });
 
 test('every action names a body, a date and a document', () => {
   const iso = /^\d{4}-\d{2}-\d{2}$/;
   for (const a of ACTIONS) {
-    assert.ok(a.authority.trim().length > 4, `${a.brokerSlug}: authority`);
-    assert.match(a.date, iso, `${a.brokerSlug}/${a.authority}: date`);
-    assert.ok(Date.parse(`${a.date}T00:00:00Z`) <= Date.now(), `${a.brokerSlug}: dated in the future`);
-    assert.match(a.sourceUrl, /^https:\/\//, `${a.brokerSlug}: ${a.sourceUrl}`);
-    assert.ok(a.sourcePublisher.trim(), `${a.brokerSlug}: no publisher`);
-    assert.ok(a.summary.length > 60 && a.detail.length > 80, `${a.brokerSlug}: too thin to be useful`);
-    assert.ok(/^[A-Z]{2}$/.test(a.country), `${a.brokerSlug}: ${a.country}`);
+    assert.ok(a.authority.trim().length > 4, `${a.subject}: authority`);
+    assert.match(a.date, iso, `${a.subject}/${a.authority}: date`);
+    assert.ok(Date.parse(`${a.date}T00:00:00Z`) <= Date.now(), `${a.subject}: dated in the future`);
+    assert.match(a.sourceUrl, /^https:\/\//, `${a.subject}: ${a.sourceUrl}`);
+    assert.ok(a.sourcePublisher.trim(), `${a.subject}: no publisher`);
+    assert.ok(a.summary.length > 60 && a.detail.length > 80, `${a.subject}: too thin to be useful`);
+    assert.ok(/^[A-Z]{2}$/.test(a.country), `${a.subject}: ${a.country}`);
   }
 });
 
@@ -40,12 +57,12 @@ test('an undecided case is never described as decided', () => {
     const text = `${a.summary} ${a.detail}`;
     if (a.stage === 'alleged') {
       assert.match(text, /alleg|says|claims|pleading|filed|complaint|not.*decided/i,
-        `${a.brokerSlug}/${a.authority}: an allegation that never says so`);
+        `${a.subject}/${a.authority}: an allegation that never says so`);
       assert.ok(!/\bfound that\b|\bwas found\b/i.test(text),
-        `${a.brokerSlug}/${a.authority}: an allegation written as a finding`);
+        `${a.subject}/${a.authority}: an allegation written as a finding`);
     }
     if (a.stage === 'under-appeal') {
-      assert.match(text, /appeal/i, `${a.brokerSlug}/${a.authority}: under appeal and never says so`);
+      assert.match(text, /appeal/i, `${a.subject}/${a.authority}: under appeal and never says so`);
     }
   }
 });
@@ -71,7 +88,10 @@ test('actions come back newest first', () => {
 test('a broker with an action on record has a researched profile', () => {
   for (const a of ACTIONS) {
     if (!bearsOnClients(a)) continue;
-    assert.ok(profileFor(a.brokerSlug), `${a.brokerSlug} has ${a.authority} on record and no profile`);
+    // Brokers only: the other verticals carry their research in their own
+    // profile tables, and each of those enforces the same rule for itself.
+    if (!brokerBySlug(a.subject)) continue;
+    assert.ok(profileFor(a.subject), `${a.subject} has ${a.authority} on record and no profile`);
   }
 });
 

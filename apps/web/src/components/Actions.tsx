@@ -16,11 +16,19 @@ import { Flag } from './Flag';
  * under appeal says so. Calling a charge a finding would be as wrong as burying
  * a finding in the word "claims", and the second mistake is the one review
  * sites make.
+ *
+ * "Dismissed" is the fourth and it is the one this component exists to get
+ * right as much as any of them. The SEC sued Coinbase and Kraken and dropped
+ * both, with prejudice and with no penalty. Rendering that in the same red as
+ * a guilty plea would tell a reader the opposite of what happened, so it is
+ * the only stage drawn in the good tone — a case that ended in the company's
+ * favour reads as one.
  */
-const STAGE: Record<ActionStage, { tone: 'bad' | 'warn' | 'neutral'; label: string; gloss: string }> = {
+const STAGE: Record<ActionStage, { tone: 'bad' | 'warn' | 'neutral' | 'good'; label: string; gloss: string }> = {
   alleged: { tone: 'warn', label: 'Alleged', gloss: 'Filed or charged. Nothing decided.' },
   decided: { tone: 'bad', label: 'Decided', gloss: 'The authority made this finding.' },
   'under-appeal': { tone: 'warn', label: 'Under appeal', gloss: 'Decided, and being challenged.' },
+  dismissed: { tone: 'good', label: 'Dismissed', gloss: 'Brought and dropped. Nothing decided against the firm.' },
 };
 
 const asDate = (iso: string) =>

@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { volumeBand, countryName } from '@commentfx/core';
+import { volumeBand, countryName, actionsFor } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { rankedExchanges, getRankedExchange } from '@/lib/repo';
 import { Header, PageHero, Footer } from '@/components/chrome';
 import { Faq } from '@/components/Faq';
 import { RecordHero, QuickJump, StickyActions } from '@/components/RecordHero';
+import { ActionList } from '@/components/Actions';
 import { IconScore, IconCost, IconLicence, IconReviews, IconCompare, IconFaq } from '@/components/icons';
 import { ReviewForm } from '@/components/ReviewForm';
 import { ReviewList, ReviewSummary } from '@/components/ReviewList';
@@ -56,6 +57,7 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
   const r = getRankedExchange(slug);
   if (!r) notFound();
 
+  const actions = actionsFor(r.exchange.slug);
   const e = r.exchange;
   const all = rankedExchanges();
   const [cov, reviews] = await Promise.all([
@@ -124,6 +126,7 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
         <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
           <QuickJump items={[
             { href: '#score', label: 'Score', icon: <IconScore /> },
+            ...(actions.length > 0 ? [{ href: '#record', label: 'On the record', icon: <IconLicence /> }] : []),
             { href: '#security', label: 'Solvency', icon: <IconLicence /> },
             { href: '#fees', label: 'Fees', icon: <IconCost /> },
             { href: '#reviews', label: 'Reviews', icon: <IconReviews /> },
@@ -140,6 +143,10 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
             </div>
 
             <div>
+            {/* Before the score, as on a broker page: what an authority has
+                done outranks what the exchange charges. */}
+            <ActionList actions={actions} name={e.name} />
+
             <div id="score" className="contents"><ScoreBreakdownCard components={r.score.components} skipped={r.score.skipped} /></div>
 
             <Card className="p-4 lg:p-6" as="section" id="fees">
