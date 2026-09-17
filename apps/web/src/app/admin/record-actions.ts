@@ -28,6 +28,9 @@ function revalidateFor(kind: Kind, slug: string) {
   revalidatePath(publicPath(kind, slug));
   revalidatePath(`/${kind === 'broker' ? 'brokers' : kind === 'prop' ? 'props' : 'exchanges'}`);
   revalidatePath('/');
+  // The sitemap reads the same merged view, so a record that has just appeared
+  // or gone is asked for, or withdrawn, in the same breath.
+  revalidatePath('/sitemap.xml');
   revalidatePath(`/admin/records/${kind}/${slug}`);
   revalidatePath('/admin/records');
 }

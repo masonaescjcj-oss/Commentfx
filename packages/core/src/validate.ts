@@ -1,3 +1,5 @@
+import type { Article } from './data/articles.ts';
+import { articleLinks, articleWordCount } from './data/articles.ts';
 import type { Broker, BrokerEntity } from './types.ts';
 import { servesRetail } from './types.ts';
 import type { PropFirm } from './props.ts';
@@ -305,3 +307,151 @@ export function mergeRecord<T extends object>(base: T, patch: Record<string, unk
 }
 
 export { servesRetail };
+
+/* ── articles ──────────────────────────────────────────────────────────── */
+
+/**
+ * docs/SEO.md §5.3 is a list of rules for what an article must be, and
+ * `articles.test.ts` has held the published ones to it since there were two of
+ * them. An editor writing through a form has no test run, so the same rules are
+ * here, with the reasons in the messages: a writer who is told "at least three
+ * internal links" and not why will add three links to the same page.
+ *
+ * These are the rules, not a house style. An article that cannot meet them is
+ * one this site has no business publishing — the category is "your money or
+ * your life", where the ranking factor that matters most is trust, and a thin
+ * page under a money query costs more than no page at all.
+ */
+const FILLER = /\b(click here|read more|learn more|find out more|see here|this page|this link)\b/i;
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+const sentencesIn = (s: string) => s.split(/(?<=[.!?])\s+/).filter(Boolean);
+
+export function validateArticle(a: Partial<Article>, knownSlugs: readonly string[] = []): Problem[] {
+  const out: Problem[] = [];
+
+  if (typeof a.slug !== 'string' || !slugLike.test(a.slug)) {
+    out.push({ field: 'slug', message: 'A slug is lowercase words joined by single hyphens.' });
+  }
+  // Google truncates a title around 60 characters and a description around 160.
+  // Over is not an error; it is a sentence the reader never sees.
+  if (!a.title?.trim()) out.push({ field: 'title', message: 'A title is required.' });
+  else if (a.title.length > 72) {
+    out.push({ field: 'title', message: `${a.title.length} characters — a result page shows about 60.` });
+  }
+  if (!a.heading?.trim()) out.push({ field: 'heading', message: 'The h1, which may differ from the title.' });
+  if (!a.description?.trim()) out.push({ field: 'description', message: 'A description is required.' });
+  else if (a.description.length < 110 || a.description.length > 175) {
+    out.push({
+      field: 'description',
+      message: `${a.description.length} characters. Between 110 and 175 — shorter wastes the space, longer is cut off.`,
+    });
+  }
+
+  if (!a.question?.trim().endsWith('?')) {
+    out.push({ field: 'question', message: 'One question, in the reader’s own words, ending in a question mark.' });
+  }
+  if (!a.answer?.trim()) {
+    out.push({ field: 'answer', message: 'Answer it before anything else on the page.' });
+  } else {
+    if (sentencesIn(a.answer).length > 2) {
+      out.push({ field: 'answer', message: `${sentencesIn(a.answer).length} sentences. The answer comes in the first two.` });
+    }
+    if (a.answer.length <= 80) out.push({ field: 'answer', message: 'Too short to be an answer.' });
+  }
+
+  if (!a.author?.trim()) {
+    out.push({ field: 'author', message: 'A named author. An unsigned article in this category is worth nothing.' });
+  }
+  for (const key of ['published', 'updated'] as const) {
+    const v = a[key];
+    if (!v || !ISO_DATE.test(v) || !Number.isFinite(Date.parse(`${v}T00:00:00Z`))) {
+      out.push({ field: key, message: 'A date, as YYYY-MM-DD.' });
+    }
+  }
+  if (a.published && a.updated && ISO_DATE.test(a.published) && ISO_DATE.test(a.updated)
+      && Date.parse(`${a.updated}T00:00:00Z`) < Date.parse(`${a.published}T00:00:00Z`)) {
+    out.push({ field: 'updated', message: 'Last checked before it was published.' });
+  }
+
+  const blocks = a.blocks ?? [];
+  if (blocks.length === 0) {
+    out.push({ field: 'blocks', message: 'The article itself is empty.' });
+  }
+
+  const full = { ...(a as Article), blocks, answer: a.answer ?? '' };
+
+  const words = articleWordCount(full);
+  if (words < 500) {
+    out.push({
+      field: 'blocks',
+      message: `${words} words. Below 500 it is a paragraph competing with the record pages for the same queries.`,
+    });
+  }
+
+  const links = articleLinks(full);
+  if (links.length < 3) {
+    out.push({ field: 'blocks', message: `${links.length} internal links. Three, to three different pages.` });
+  } else if (new Set(links.map((l) => l.path)).size < 3) {
+    out.push({ field: 'blocks', message: 'Three links, but fewer than three destinations.' });
+  }
+  for (const { label, path } of links) {
+    if (!path.startsWith('/') || path.includes('//')) {
+      out.push({ field: 'blocks', message: `"${path}" is not an internal path.` });
+    }
+    if (label.split(/\s+/).filter(Boolean).length < 2 || FILLER.test(label)) {
+      out.push({ field: 'blocks', message: `The anchor "${label}" says nothing about where it goes.` });
+    }
+    if (path.startsWith('/learn/')) {
+      const slug = path.slice('/learn/'.length);
+      if (slug === a.slug) out.push({ field: 'blocks', message: 'The article links to itself.' });
+      else if (knownSlugs.length > 0 && !knownSlugs.includes(slug)) {
+        out.push({ field: 'blocks', message: `/learn/${slug} is not an article.` });
+      }
+    }
+  }
+
+  const examples = blocks.flatMap((b) => (b.example ? [b.example] : []));
+  if (examples.length === 0) {
+    out.push({ field: 'blocks', message: 'No worked example. One, with real numbers in it.' });
+  }
+  for (const e of examples) {
+    if (e.rows.length < 3) out.push({ field: 'blocks', message: `"${e.title}" has ${e.rows.length} rows; three is the minimum.` });
+    if (e.rows.some(([k, v]) => !k.trim() || !v.trim())) {
+      out.push({ field: 'blocks', message: `"${e.title}" has an empty cell.` });
+    }
+  }
+
+  const faq = a.faq ?? [];
+  if (faq.length < 3) out.push({ field: 'faq', message: `${faq.length} questions. Three is the minimum.` });
+  for (const { q, a: answer } of faq) {
+    if (!q.trim().endsWith('?')) out.push({ field: 'faq', message: `"${q}" is not a question.` });
+    if (answer.trim().length <= 60) out.push({ field: 'faq', message: `The answer to "${q}" is a shrug.` });
+    if (a.question && q.toLowerCase() === a.question.toLowerCase()) {
+      out.push({ field: 'faq', message: 'The FAQ repeats the headline question.' });
+    }
+  }
+
+  // The same half-written-markup guard the published articles are held to. An
+  // unclosed bracket renders as its own source code on a page about trust.
+  const lines = [
+    a.title ?? '', a.heading ?? '', a.description ?? '', a.question ?? '', a.answer ?? '',
+    ...blocks.flatMap((b) => [
+      ...(b.heading ? [b.heading] : []),
+      ...b.paragraphs,
+      ...(b.list?.items ?? []),
+      ...(b.example ? [b.example.title, ...b.example.rows.flat(), b.example.note ?? ''] : []),
+    ]),
+    ...faq.flatMap((f) => [f.q, f.a]),
+  ];
+  for (const line of lines) {
+    if (/undefined|NaN|\[object/.test(line)) {
+      out.push({ field: 'blocks', message: `Something went wrong in "${line.slice(0, 50)}".` });
+    }
+    if ((line.match(/\[/g) ?? []).length !== (line.match(/\]/g) ?? []).length
+        || (line.match(/\*\*/g) ?? []).length % 2 !== 0) {
+      out.push({ field: 'blocks', message: `Unclosed markup in "${line.slice(0, 50)}".` });
+    }
+  }
+
+  return out.length ? out : ok;
+}

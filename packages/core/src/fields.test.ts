@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import { FIELDS, fieldsFor, readPath, writePath, sameValue, showValue } from './fields.ts';
 import { mergeRecord, validateRecord } from './validate.ts';
 import { BROKERS } from './data/brokers.ts';
+import { ARTICLES } from './data/articles.ts';
+import { parseArticleBody, formatArticleBody } from './article-text.ts';
 import { PROPS } from './data/props.ts';
 import { EXCHANGES } from './data/exchanges.ts';
 
@@ -165,4 +167,37 @@ test('yes and no are the only answers a boolean takes', () => {
   assert.deepEqual(parseField(spec({ type: 'boolean' }), 'yes'), { value: true });
   assert.deepEqual(parseField(spec({ type: 'boolean' }), 'no'), { value: false });
   assert.ok(parseField(spec({ type: 'boolean' }), 'true').problem);
+});
+
+/* ── comparing structures ──────────────────────────────────────────────── */
+
+import { sameDeep } from './fields.ts';
+
+/**
+ * The bug this exists because of: the article editor compared parsed prose
+ * against the code with JSON.stringify, and `{heading, paragraphs}` versus
+ * `{paragraphs, heading}` is the same block and a different string. Every
+ * unchanged article came back "edited" and stored a patch saying it now says
+ * what it already said — which would then shadow the next correction made in
+ * the data file. Nothing looked broken.
+ */
+test('two structures that differ only in key order are the same structure', () => {
+  assert.ok(sameDeep({ heading: 'H', paragraphs: ['a'] }, { paragraphs: ['a'], heading: 'H' }));
+  assert.ok(sameDeep([{ a: 1, b: 2 }], [{ b: 2, a: 1 }]));
+});
+
+test('and two that actually differ are not', () => {
+  assert.ok(!sameDeep({ a: 1 }, { a: 2 }));
+  assert.ok(!sameDeep({ a: 1 }, { a: 1, b: 2 }));
+  assert.ok(!sameDeep({ a: 1, b: 2 }, { a: 1 }));
+  assert.ok(!sameDeep([1, 2], [2, 1]));
+  assert.ok(!sameDeep([1], [1, 2]));
+  assert.ok(!sameDeep(null, {}));
+  assert.ok(!sameDeep(1, '1'));
+});
+
+test('every published article compares equal to itself through the text format', () => {
+  for (const a of ARTICLES) {
+    assert.ok(sameDeep(parseArticleBody(formatArticleBody(a.blocks)), a.blocks), a.slug);
+  }
 });

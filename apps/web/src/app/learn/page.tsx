@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { ARTICLES, articleWordCount } from '@commentfx/core';
+import { articleWordCount } from '@commentfx/core';
+import { liveArticles } from '@/lib/records';
 import { pageMetadata, JsonLd, breadcrumbLd, itemListLd } from '@/lib/seo';
 import { Header, PageHero, Footer } from '@/components/chrome';
 import { Card, CardHead } from '@/components/primitives';
@@ -18,7 +19,8 @@ export const metadata: Metadata = pageMetadata({
   path: '/learn',
 });
 
-export default function LearnIndex() {
+export default async function LearnIndex() {
+  const articles = await liveArticles();
   const trail = [
     { name: 'Home', path: '/' },
     { name: 'Guides', path: '/learn' },
@@ -42,7 +44,7 @@ export default function LearnIndex() {
 
           <Card className="px-4 lg:px-6" as="section">
             <ul className="flex flex-col">
-              {ARTICLES.map((a) => (
+              {articles.map((a) => (
                 <li key={a.slug} className="border-b border-line-2 last:border-b-0">
                   <Link href={`/learn/${a.slug}`} className="block py-5 group">
                     <h2 className="font-[family-name:var(--font-display)] text-[17px] lg:text-[19px] font-bold tracking-[-0.025em] leading-[1.25] group-hover:text-accent text-balance">
@@ -112,7 +114,7 @@ export default function LearnIndex() {
       <Footer />
       <JsonLd graph={[
         breadcrumbLd(trail),
-        itemListLd(TITLE, ARTICLES.map((a) => ({ name: a.heading, path: `/learn/${a.slug}` })), 'unordered'),
+        itemListLd(TITLE, articles.map((a) => ({ name: a.heading, path: `/learn/${a.slug}` })), 'unordered'),
       ]} />
     </>
   );

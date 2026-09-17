@@ -315,6 +315,31 @@ form deliberately does not edit is the entity map, the research write-ups and
 the logos — each carries rules a flat form cannot express, so each is still
 code.
 
+## Writing articles
+
+`/admin/articles` is the same machinery for the guides under `/learn`, with one
+difference: an article is prose, so the editor works in text and
+`packages/core/src/article-text.ts` converts between that and the structure the
+page renders. The format is the smallest one that carries everything the
+published articles use — headings, lists, worked examples, the one closing block
+that has no heading — and `article-text.test.ts` round-trips every published
+article through both directions. That test is the reason it is safe to open an
+existing article at all: a format that could not carry some part of one would
+drop it silently, in a form that looked like it had worked.
+
+The rules in docs/SEO.md §5.3 are enforced at the form rather than left as
+advice. One question, answered in the first two sentences. Three links to three
+different pages, with anchors that say where they go. A worked example with real
+numbers. Five hundred words. A named author and two dates. `validateArticle`
+refuses a save that misses any of them and says which — the same rules
+`articles.test.ts` has held the published articles to since there were two of
+them, in one place now so the form and the test cannot drift apart.
+
+Both editors keep what you typed when a save is refused. That sounds like a
+detail and is not: React resets an uncontrolled form once a form action returns,
+so the first version threw a whole article away because a description was 109
+characters instead of 110.
+
 ## Running it
 
 ```sh
@@ -413,8 +438,10 @@ it, recording a field verification and watching the count move, and renewing an
 expired one — a verification lapses after 90 days, so renewing has to update
 rather than add.
 
-`smoke:records` drives the record editor, which can change what the site
-publishes and is therefore the highest-consequence screen here. It asserts the
+`smoke:articles` drives the article editor, and its first assertion is the one
+that matters: opening an article that already exists and pressing save changes
+nothing. `smoke:records` drives the record editor, which can change what the
+site publishes and is therefore the highest-consequence screen here. It asserts the
 contract the override design rests on, in the order a reader would care about: a
 draft changes nothing, publishing changes the page and the ranking, a value the
 build would have rejected cannot be saved at all, discarding restores the record

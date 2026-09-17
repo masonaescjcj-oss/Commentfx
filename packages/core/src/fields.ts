@@ -217,6 +217,33 @@ export function writePath(patch: Record<string, unknown>, path: string, value: u
   cur[last] = value;
 }
 
+/**
+ * Deep equality that does not care what order the keys were written in.
+ *
+ * Comparing two structures with `JSON.stringify` is the obvious thing and it is
+ * wrong: `{heading, paragraphs}` and `{paragraphs, heading}` are the same block
+ * and different strings. The article editor did exactly that and reported every
+ * unchanged article as edited — it stored a patch that said "this article now
+ * says what it already said", which would then shadow the next correction made
+ * in the data file. Nothing looked broken; the site just quietly stopped
+ * tracking its own source.
+ */
+export function sameDeep(a: unknown, b: unknown): boolean {
+  if (a === b) return true;
+  if (typeof a !== typeof b || a === null || b === null) return false;
+  if (Array.isArray(a) || Array.isArray(b)) {
+    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+    return a.every((v, i) => sameDeep(v, b[i]));
+  }
+  if (typeof a !== 'object') return false;
+  const ka = Object.keys(a as object);
+  const kb = Object.keys(b as object);
+  if (ka.length !== kb.length) return false;
+  return ka.every((k) =>
+    Object.hasOwn(b as object, k)
+    && sameDeep((a as Record<string, unknown>)[k], (b as Record<string, unknown>)[k]));
+}
+
 /** Two values, as a human would compare them: `[3]` and `3` are not different. */
 export function sameValue(a: unknown, b: unknown): boolean {
   if (Array.isArray(a) && Array.isArray(b)) {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, useState } from 'react';
-import { FIELDS, showValue, type FieldSpec } from '@commentfx/core';
+import { FIELDS, readPath, showValue, type FieldSpec } from '@commentfx/core';
 import { saveRecord, type EditResult } from './record-actions';
 
 /**
@@ -10,21 +10,43 @@ import { saveRecord, type EditResult } from './record-actions';
  * options, whether it may be empty — comes from the same spec the save action
  * parses with, so a control and its parser cannot disagree about what a field
  * is.
+ *
+ * Every control is **controlled**, holding its value in React state, and that
+ * is not a style preference. React resets an uncontrolled form after a form
+ * action returns, so the first version of this threw away everything an editor
+ * had typed the moment a save was refused — which is precisely the moment they
+ * most need it back, and precisely when they are least likely to have it
+ * anywhere else. A form that punishes you for getting a field wrong is a form
+ * people stop using.
  */
 
 const box = 'w-full bg-card-2 border border-line rounded-lg px-3 py-2 text-[13px]';
 
-function Control({ spec, value, invalid }: { spec: FieldSpec; value: unknown; invalid: boolean }) {
+type Value = string | string[];
+
+function Control({ spec, value, onChange, invalid }: {
+  spec: FieldSpec; value: Value; onChange: (v: Value) => void; invalid: boolean;
+}) {
   const name = `f:${spec.path}`;
   const border = invalid ? ' border-down' : '';
+  const text = Array.isArray(value) ? '' : value;
 
   if (spec.type === 'multi') {
-    const selected = new Set((Array.isArray(value) ? value : []).map(String));
+    const selected = Array.isArray(value) ? value : [];
     return (
       <div className="flex flex-wrap gap-x-4 gap-y-[6px] pt-1">
         {(spec.options ?? []).map((o) => (
           <label key={o} className="flex items-center gap-[6px] text-[12.5px]">
-            <input type="checkbox" name={name} value={o} defaultChecked={selected.has(o)} className="accent-[var(--accent)]" />
+            <input
+              type="checkbox"
+              name={name}
+              value={o}
+              checked={selected.includes(o)}
+              onChange={(e) => onChange(
+                e.target.checked ? [...selected, o] : selected.filter((x) => x !== o),
+              )}
+              className="accent-[var(--accent)]"
+            />
             {o}
           </label>
         ))}
@@ -33,9 +55,8 @@ function Control({ spec, value, invalid }: { spec: FieldSpec; value: unknown; in
   }
 
   if (spec.type === 'boolean') {
-    const current = value === true ? 'yes' : value === false ? 'no' : '';
     return (
-      <select name={name} defaultValue={current} className={box + border}>
+      <select name={name} value={text} onChange={(e) => onChange(e.target.value)} className={box + border}>
         {spec.nullable && <option value="">— not applicable —</option>}
         <option value="yes">yes</option>
         <option value="no">no</option>
@@ -45,7 +66,7 @@ function Control({ spec, value, invalid }: { spec: FieldSpec; value: unknown; in
 
   if (spec.type === 'select') {
     return (
-      <select name={name} defaultValue={value === null || value === undefined ? '' : String(value)} className={box + border}>
+      <select name={name} value={text} onChange={(e) => onChange(e.target.value)} className={box + border}>
         {spec.nullable && <option value="">—</option>}
         {(spec.options ?? []).map((o) => <option key={o} value={o}>{o}</option>)}
       </select>
@@ -54,12 +75,7 @@ function Control({ spec, value, invalid }: { spec: FieldSpec; value: unknown; in
 
   if (spec.type === 'longtext') {
     return (
-      <textarea
-        name={name}
-        rows={3}
-        defaultValue={value === null || value === undefined ? '' : String(value)}
-        className={box + border}
-      />
+      <textarea name={name} rows={3} value={text} onChange={(e) => onChange(e.target.value)} className={box + border} />
     );
   }
 
@@ -70,10 +86,18 @@ function Control({ spec, value, invalid }: { spec: FieldSpec; value: unknown; in
       step={spec.step}
       inputMode={spec.type === 'number' ? 'decimal' : undefined}
       maxLength={spec.type === 'country' ? 2 : undefined}
-      defaultValue={value === null || value === undefined ? '' : String(value)}
+      value={text}
+      onChange={(e) => onChange(e.target.value)}
       className={box + border + (spec.type === 'number' || spec.type === 'country' ? ' tnum' : '')}
     />
   );
+}
+
+/** What a stored value looks like in a form control. */
+function toForm(spec: FieldSpec, raw: unknown): Value {
+  if (spec.type === 'multi') return Array.isArray(raw) ? raw.map(String) : [];
+  if (spec.type === 'boolean') return raw === true ? 'yes' : raw === false ? 'no' : '';
+  return raw === null || raw === undefined ? '' : String(raw);
 }
 
 export function RecordForm({ kind, slug, record, base, isNew, status }: {
@@ -88,24 +112,12 @@ export function RecordForm({ kind, slug, record, base, isNew, status }: {
 }) {
   const [state, action, pending] = useActionState<EditResult | null, FormData>(saveRecord, null);
   const [newSlug, setNewSlug] = useState(slug);
+  const [values, setValues] = useState<Record<string, Value>>(() =>
+    Object.fromEntries(
+      FIELDS[kind].flatMap((g) => g.fields).map((spec) => [spec.path, toForm(spec, readPath(record, spec.path))]),
+    ),
+  );
   const problems = state?.problems ?? {};
-
-  const readBase = (path: string): unknown => {
-    let cur: unknown = base;
-    for (const key of path.split('.')) {
-      if (cur === null || typeof cur !== 'object') return undefined;
-      cur = (cur as Record<string, unknown>)[key];
-    }
-    return cur;
-  };
-  const read = (path: string): unknown => {
-    let cur: unknown = record;
-    for (const key of path.split('.')) {
-      if (cur === null || typeof cur !== 'object') return undefined;
-      cur = (cur as Record<string, unknown>)[key];
-    }
-    return cur;
-  };
 
   return (
     <form action={action} className="flex flex-col gap-[13px]">
@@ -133,21 +145,24 @@ export function RecordForm({ kind, slug, record, base, isNew, status }: {
           <h2 className="text-[13.5px] font-bold mb-3">{group.title}</h2>
           <div className="flex flex-col gap-[11px]">
             {group.fields.map((spec) => {
-              const value = read(spec.path);
-              const wasValue = readBase(spec.path);
-              const overridden = base !== null && JSON.stringify(value) !== JSON.stringify(wasValue);
+              const wasValue = base === null ? undefined : readPath(base, spec.path);
+              const overridden = base !== null
+                && JSON.stringify(values[spec.path]) !== JSON.stringify(toForm(spec, wasValue));
               const problem = problems[spec.path];
               return (
                 <label key={spec.path} className="block">
                   <span className="flex items-baseline gap-2 mb-1">
                     <span className="text-[11.5px] text-ink-2 font-semibold">{spec.label}</span>
                     {overridden && (
-                      <span className="text-[10.5px] text-warn">
-                        code says {showValue(wasValue)}
-                      </span>
+                      <span className="text-[10.5px] text-warn">code says {showValue(wasValue)}</span>
                     )}
                   </span>
-                  <Control spec={spec} value={value} invalid={problem !== undefined} />
+                  <Control
+                    spec={spec}
+                    value={values[spec.path] ?? ''}
+                    onChange={(v) => setValues((prev) => ({ ...prev, [spec.path]: v }))}
+                    invalid={problem !== undefined}
+                  />
                   {problem && <span className="block text-[11px] text-down mt-1">{problem}</span>}
                   {spec.help && !problem && (
                     <span className="block text-[11px] text-ink-3 mt-1 leading-[1.65]">{spec.help}</span>

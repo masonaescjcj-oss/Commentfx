@@ -230,6 +230,32 @@ export const recordOverrides = pgTable('record_overrides', {
   index('record_overrides_status_idx').on(t.status),
 ]);
 
+/**
+ * An article an editor has written or changed.
+ *
+ * Its own table rather than a row in `record_overrides`, because the
+ * alternative was adding 'article' to `entity_kind` — the enum that also says
+ * what can carry a verification, a review and a status report. An article
+ * carries none of those, and widening a shared enum to store one thing that is
+ * not like the others is how a schema stops meaning anything.
+ *
+ * Otherwise the rules are the same: a patch over whatever the code says, one
+ * row per slug, drafts invisible to readers, and every write in the audit log.
+ */
+export const articleOverrides = pgTable('article_overrides', {
+  id: serial('id').primaryKey(),
+  slug: text('slug').notNull(),
+  patch: jsonb('patch').notNull(),
+  isNew: boolean('is_new').notNull().default(false),
+  status: overrideStatus('status').notNull().default('draft'),
+  note: text('note'),
+  updatedBy: text('updated_by').notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('article_overrides_slug_idx').on(t.slug),
+  index('article_overrides_status_idx').on(t.status),
+]);
+
 /* ──────────────────────────── users & audit ───────────────────────── */
 
 export const userRole = pgEnum('user_role', ['admin', 'editor', 'moderator', 'viewer']);
@@ -247,7 +273,13 @@ export const auditLog = pgTable('audit_log', {
   id: serial('id').primaryKey(),
   actor: text('actor').notNull(),
   action: text('action').notNull(),         // create, update, publish, unpublish, delete, verify
-  kind: entityKind('kind').notNull(),
+  /**
+   * Null where the thing acted on is not a record — an article, for instance.
+   * Writing 'broker' into the trail so the column could stay NOT NULL would put
+   * a false fact in the one table nothing may delete from; the action says what
+   * it was about instead.
+   */
+  kind: entityKind('kind'),
   slug: text('slug').notNull(),
   field: text('field'),
   before: text('before'),

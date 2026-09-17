@@ -6,6 +6,7 @@ export * from './avatar.ts';
 export * from './indexing.ts';
 export * from './validate.ts';
 export * from './fields.ts';
+export * from './article-text.ts';
 export * from './data/articles.ts';
 export * from './data/profiles.ts';
 export * from './score.ts';

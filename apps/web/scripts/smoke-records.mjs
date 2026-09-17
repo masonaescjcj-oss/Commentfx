@@ -108,6 +108,12 @@ check('a value the build would reject cannot be saved',
 check('the refusal says which field and why, on the field',
   await page.getByText(/top of a ladder/i).count() > 0);
 
+// And the refused value is still in the box. React resets an uncontrolled form
+// once a form action returns, which would mean a refusal silently reverted every
+// other edit on the page as well — see the note in RecordForm.
+check('a refused save does not throw away what was typed',
+  (await split.inputValue()) === '100', await split.inputValue());
+
 /**
  * And nothing was written. Asserted against the admin rather than the public
  * page: a refused save would leave a draft, and a draft is invisible to a
@@ -181,6 +187,7 @@ await page.waitForTimeout(2500);
 
 check('publishing it gives it a page', await settlesTo(page, `/exchanges/${NEW_SLUG}`, 'Smoke Exchange', true));
 check('and a place in the ranking', await settlesTo(page, '/exchanges', 'Smoke Exchange', true));
+check('and the front page knows about it', await settlesTo(page, '/', 'Smoke Exchange', true));
 
 await page.goto(`${BASE}/admin/records/exchange/${NEW_SLUG}`, { waitUntil: 'domcontentloaded' });
 page.once('dialog', (d) => d.accept());
@@ -191,6 +198,23 @@ await page.waitForTimeout(2500);
 
 const gone = await page.goto(`${BASE}/exchanges/${NEW_SLUG}`, { waitUntil: 'domcontentloaded' });
 check('deleting it takes the page with it', gone?.status() === 404, `HTTP ${gone?.status()}`);
+
+/**
+ * And nothing still links to it.
+ *
+ * This pair exists because a run of check-seo once found the front page still
+ * linking a record that had been deleted — `/exchanges` and the sitemap had
+ * both updated, and `/` had not, for minutes. The obvious suspect was the
+ * revalidate call; breaking it deliberately did not reproduce it, so that was
+ * not the cause, and the likeliest remaining one is a regeneration that could
+ * not finish because the front page's live upstreams were not answering, which
+ * is by design: stale beats broken.
+ *
+ * Either way it is worth holding, so it is asserted in both directions —
+ * appearing as well as disappearing, which is what stops this passing because
+ * the record was never on the front page at all.
+ */
+check('and the front page stops linking to it', await settlesTo(page, '/', 'Smoke Exchange', false));
 
 /* ── the trail ─────────────────────────────────────────────────────── */
 check('every step is in the audit log under a name',

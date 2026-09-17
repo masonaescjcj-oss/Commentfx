@@ -1,6 +1,6 @@
 import { eq, and, desc } from 'drizzle-orm';
 import type { AppDb } from './client.ts';
-import { recordOverrides, auditLog } from './schema.ts';
+import { recordOverrides, articleOverrides, auditLog } from './schema.ts';
 import type { Kind } from './verification.ts';
 
 /**
@@ -187,4 +187,138 @@ export async function deleteOverride(db: AppDb, kind: Kind, slug: string, actor:
 /** What an editor has been doing, newest first. */
 export async function recentEdits(db: AppDb, limit = 50) {
   return db.select().from(auditLog).orderBy(desc(auditLog.at)).limit(limit);
+}
+
+/* ── articles ──────────────────────────────────────────────────────────── */
+
+export interface ArticleOverrideRow {
+  id: number;
+  slug: string;
+  patch: Record<string, unknown>;
+  isNew: boolean;
+  status: 'draft' | 'live';
+  note: string | null;
+  updatedBy: string;
+  updatedAt: Date;
+}
+
+const asArticleRow = (r: typeof articleOverrides.$inferSelect): ArticleOverrideRow => ({
+  id: r.id,
+  slug: r.slug,
+  patch: (r.patch ?? {}) as Record<string, unknown>,
+  isNew: r.isNew,
+  status: r.status,
+  note: r.note,
+  updatedBy: r.updatedBy,
+  updatedAt: r.updatedAt,
+});
+
+/** Every live article patch, keyed by slug. */
+export async function liveArticlePatches(db: AppDb): Promise<Map<string, ArticleOverrideRow>> {
+  const rows = await db.select().from(articleOverrides).where(eq(articleOverrides.status, 'live'));
+  return new Map(rows.map((r) => [r.slug, asArticleRow(r)]));
+}
+
+export async function allArticleOverrides(db: AppDb): Promise<ArticleOverrideRow[]> {
+  const rows = await db.select().from(articleOverrides).orderBy(desc(articleOverrides.updatedAt));
+  return rows.map(asArticleRow);
+}
+
+export async function getArticleOverride(db: AppDb, slug: string): Promise<ArticleOverrideRow | null> {
+  const rows = await db.select().from(articleOverrides).where(eq(articleOverrides.slug, slug)).limit(1);
+  return rows[0] ? asArticleRow(rows[0]) : null;
+}
+
+export interface SaveArticleOverride {
+  slug: string;
+  patch: Record<string, unknown>;
+  isNew?: boolean;
+  status?: 'draft' | 'live';
+  note?: string | null;
+  actor: string;
+}
+
+export async function saveArticleOverride(db: AppDb, input: SaveArticleOverride): Promise<ArticleOverrideRow> {
+  const before = await getArticleOverride(db, input.slug);
+  const values = {
+    slug: input.slug,
+    patch: input.patch,
+    isNew: input.isNew ?? before?.isNew ?? false,
+    status: input.status ?? before?.status ?? ('draft' as const),
+    note: input.note ?? null,
+    updatedBy: input.actor,
+    updatedAt: new Date(),
+  };
+
+  const [row] = await db
+    .insert(articleOverrides)
+    .values(values)
+    .onConflictDoUpdate({
+      target: articleOverrides.slug,
+      set: {
+        patch: values.patch,
+        isNew: values.isNew,
+        status: values.status,
+        note: values.note,
+        updatedBy: values.updatedBy,
+        updatedAt: values.updatedAt,
+      },
+    })
+    .returning();
+
+  await db.insert(auditLog).values({
+    actor: input.actor,
+    action: before ? 'update article' : 'create article',
+    kind: null,
+    slug: input.slug,
+    field: Object.keys(input.patch).sort().join(', ') || null,
+    before: before ? JSON.stringify(before.patch).slice(0, 2000) : null,
+    after: JSON.stringify(input.patch).slice(0, 2000),
+  });
+
+  return asArticleRow(row!);
+}
+
+export async function setArticleStatus(
+  db: AppDb,
+  slug: string,
+  status: 'draft' | 'live',
+  actor: string,
+): Promise<ArticleOverrideRow | null> {
+  const before = await getArticleOverride(db, slug);
+  if (!before) return null;
+
+  const [row] = await db
+    .update(articleOverrides)
+    .set({ status, updatedBy: actor, updatedAt: new Date() })
+    .where(eq(articleOverrides.slug, slug))
+    .returning();
+
+  await db.insert(auditLog).values({
+    actor,
+    action: status === 'live' ? 'publish article' : 'unpublish article',
+    kind: null,
+    slug,
+    field: 'status',
+    before: before.status,
+    after: status,
+  });
+  return row ? asArticleRow(row) : null;
+}
+
+export async function deleteArticleOverride(db: AppDb, slug: string, actor: string): Promise<boolean> {
+  const before = await getArticleOverride(db, slug);
+  if (!before) return false;
+
+  await db.delete(articleOverrides).where(eq(articleOverrides.slug, slug));
+  await db.insert(auditLog).values({
+    actor,
+    action: 'delete article',
+    kind: null,
+    slug,
+    field: null,
+    before: JSON.stringify(before.patch).slice(0, 2000),
+    after: null,
+  });
+  return true;
 }

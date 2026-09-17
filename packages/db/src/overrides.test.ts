@@ -113,3 +113,54 @@ test('setting the status of a record with no override does nothing', async () =>
   assert.equal((await db.select().from(schema.auditLog)).length, 0);
   await close();
 });
+
+/* ── articles ──────────────────────────────────────────────────────────── */
+
+import {
+  saveArticleOverride, getArticleOverride, liveArticlePatches, allArticleOverrides,
+  setArticleStatus, deleteArticleOverride,
+} from './overrides.ts';
+
+test('an article follows the same draft-then-publish path a record does', async () => {
+  const { db, close } = await makeTestDb();
+  await saveArticleOverride(db, { slug: 'a-new-guide', patch: { title: 'Draft' }, isNew: true, actor: 'ed@x' });
+
+  assert.equal((await getArticleOverride(db, 'a-new-guide'))?.status, 'draft');
+  assert.equal((await liveArticlePatches(db)).size, 0);
+
+  await setArticleStatus(db, 'a-new-guide', 'live', 'ed@x');
+  assert.equal((await liveArticlePatches(db)).size, 1);
+
+  assert.equal(await deleteArticleOverride(db, 'a-new-guide', 'ed@x'), true);
+  assert.equal((await liveArticlePatches(db)).size, 0);
+  await close();
+});
+
+test('one row per article, so the merge never picks', async () => {
+  const { db, close } = await makeTestDb();
+  await saveArticleOverride(db, { slug: 'g', patch: { title: 'One' }, actor: 'a@x' });
+  await saveArticleOverride(db, { slug: 'g', patch: { title: 'Two' }, actor: 'b@x' });
+
+  const rows = await allArticleOverrides(db);
+  assert.equal(rows.length, 1);
+  assert.deepEqual(rows[0]?.patch, { title: 'Two' });
+  await close();
+});
+
+/**
+ * The audit rule again, with the part that is specific to articles: the trail
+ * must not claim an article is a broker. `kind` is null and the action says
+ * what was touched.
+ */
+test('an article edit is logged without pretending to be a record', async () => {
+  const { db, close } = await makeTestDb();
+  await saveArticleOverride(db, { slug: 'g', patch: { title: 'One' }, actor: 'a@x' });
+  await setArticleStatus(db, 'g', 'live', 'a@x');
+  await deleteArticleOverride(db, 'g', 'a@x');
+
+  const log = await db.select().from(schema.auditLog);
+  assert.deepEqual(log.map((r) => r.action), ['create article', 'publish article', 'delete article']);
+  assert.ok(log.every((r) => r.kind === null), 'an article is not an entity kind');
+  assert.ok(log.every((r) => r.slug === 'g'));
+  await close();
+});

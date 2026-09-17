@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { ARTICLES, articleBySlug, type ArticleBlock } from '@commentfx/core';
+import { ARTICLES, type ArticleBlock } from '@commentfx/core';
+import { liveArticle, liveArticles } from '@/lib/records';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd, articleLd } from '@/lib/seo';
 import { Header, PageHero, Footer } from '@/components/chrome';
 import { Card, CardHead } from '@/components/primitives';
@@ -23,7 +24,7 @@ export const revalidate = 86400;
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params;
-  const a = articleBySlug(slug);
+  const a = await liveArticle(slug);
   if (!a) return {};
   return pageMetadata({
     title: a.title,
@@ -114,7 +115,8 @@ function Block({ block }: { block: ArticleBlock }) {
 
 export default async function ArticlePage({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
-  const a = articleBySlug(slug);
+  const all = await liveArticles();
+  const a = all.find((x) => x.slug === slug);
   if (!a) notFound();
 
   const trail = [
@@ -123,7 +125,7 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
     { name: a.heading, path: `/learn/${a.slug}` },
   ];
   const headings = a.blocks.map((b) => b.heading).filter((h): h is string => Boolean(h));
-  const others = ARTICLES.filter((x) => x.slug !== a.slug);
+  const others = all.filter((x) => x.slug !== a.slug);
 
   return (
     <>

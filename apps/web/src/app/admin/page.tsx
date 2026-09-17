@@ -35,8 +35,9 @@ export default async function AdminPage() {
         <h1 className="font-[family-name:var(--font-display)] text-[24px] font-bold tracking-[-0.02em]">
           Verification queue
         </h1>
-        <p className="text-[12.5px] mt-2">
+        <p className="text-[12.5px] mt-2 flex gap-3">
           <Link href="/admin/records" className="text-accent font-semibold">Edit records →</Link>
+          <Link href="/admin/articles" className="text-accent font-semibold">Articles →</Link>
         </p>
         <p className="text-[13px] text-ink-2 leading-[1.7] mt-2">
           {outstanding === 0

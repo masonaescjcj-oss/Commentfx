@@ -207,3 +207,99 @@ test('a null in a patch does clear the value, because some fields mean null', ()
   const out = mergeRecord(base, { lastBreachYear: null });
   assert.equal(out.lastBreachYear, null);
 });
+
+/* ── articles ──────────────────────────────────────────────────────────── */
+
+import { validateArticle } from './validate.ts';
+import { ARTICLES } from './data/articles.ts';
+
+const SLUGS = ARTICLES.map((a) => a.slug);
+const article = () => structuredClone(ARTICLES[0]!);
+
+test('every published article passes its own validator', () => {
+  for (const a of ARTICLES) {
+    assert.deepEqual(validateArticle(a, SLUGS), [], `${a.slug}: ${JSON.stringify(validateArticle(a, SLUGS))}`);
+  }
+});
+
+test('an article that does not answer its question in two sentences is rejected', () => {
+  const a = article();
+  a.answer = 'One. Two. Three. Four.';
+  assert.ok(fields(validateArticle(a, SLUGS)).includes('answer'));
+});
+
+test('a headline that is not a question is rejected', () => {
+  const a = article();
+  a.question = 'How to check a licence';
+  assert.ok(fields(validateArticle(a, SLUGS)).includes('question'));
+});
+
+/**
+ * The link rules, which are the ones a writer is most likely to meet halfway:
+ * three links to the same page is three links, and "click here" is an anchor.
+ */
+test('three links to one page is not three links', () => {
+  const a = article();
+  a.blocks = [{
+    paragraphs: [
+      'See [the broker rankings](/brokers) and [the broker rankings](/brokers) and [the broker rankings](/brokers).',
+    ],
+  }];
+  assert.ok(validateArticle(a, SLUGS).some((p) => /fewer than three destinations/.test(p.message)));
+});
+
+test('an anchor that says nothing is rejected', () => {
+  const a = article();
+  a.blocks[0]!.paragraphs.push('For the rankings, [click here](/brokers).');
+  assert.ok(validateArticle(a, SLUGS).some((p) => /says nothing/.test(p.message)));
+});
+
+test('an article linking to an article that does not exist is rejected', () => {
+  const a = article();
+  a.blocks[0]!.paragraphs.push('See [our guide to nothing](/learn/no-such-article) for the rest.');
+  assert.ok(validateArticle(a, SLUGS).some((p) => /is not an article/.test(p.message)));
+});
+
+test('an article that links to itself is rejected', () => {
+  const a = article();
+  a.blocks[0]!.paragraphs.push(`Read [this very article](/learn/${a.slug}) again.`);
+  assert.ok(validateArticle(a, SLUGS).some((p) => /links to itself/.test(p.message)));
+});
+
+test('an article with no worked example is rejected', () => {
+  const a = article();
+  for (const b of a.blocks) delete b.example;
+  assert.ok(validateArticle(a, SLUGS).some((p) => /worked example/.test(p.message)));
+});
+
+test('a description that a result page would cut off is rejected', () => {
+  const a = article();
+  a.description = 'Short.';
+  assert.ok(fields(validateArticle(a, SLUGS)).includes('description'));
+  a.description = 'x'.repeat(200);
+  assert.ok(fields(validateArticle(a, SLUGS)).includes('description'));
+});
+
+test('an article last checked before it was published is rejected', () => {
+  const a = article();
+  a.updated = '2020-01-01';
+  assert.ok(fields(validateArticle(a, SLUGS)).includes('updated'));
+});
+
+test('an unsigned article is rejected', () => {
+  const a = article();
+  a.author = '  ';
+  assert.ok(fields(validateArticle(a, SLUGS)).includes('author'));
+});
+
+test('unclosed markup is caught before it renders as its own source', () => {
+  const a = article();
+  a.blocks[0]!.paragraphs.push('An [unclosed link(/brokers) in the middle of a sentence.');
+  assert.ok(validateArticle(a, SLUGS).some((p) => /Unclosed markup/.test(p.message)));
+});
+
+test('an article too short to be worth a page of its own is rejected', () => {
+  const a = article();
+  a.blocks = [{ paragraphs: ['Three [real links](/brokers) to [three pages](/props) here [and here](/exchanges).'] }];
+  assert.ok(validateArticle(a, SLUGS).some((p) => /words/.test(p.message)));
+});

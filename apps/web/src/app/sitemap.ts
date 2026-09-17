@@ -1,7 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { absoluteUrl } from '@/lib/site';
 import { rankedBrokers, rankedProps, rankedExchanges, BEST_CRITERIA, comparePairs, propComparePairs, canonicalPairSlug } from '@/lib/repo';
-import { brokerBySlug, propBySlug, ARTICLES } from '@commentfx/core';
+import { brokerBySlug, propBySlug } from '@commentfx/core';
+import { livePatchMap, liveArticles } from '@/lib/records';
 import {
   RELEASES, brokerIndexable, propIndexable, exchangeIndexable, compareIndexable, propCompareIndexable, pathIndexable,
 } from '@commentfx/core';
@@ -19,11 +20,26 @@ import {
  * they are not asking to compete with the source of the prices they show. See
  * docs/SEO.md §3.
  */
-export default function sitemap(): MetadataRoute.Sitemap {
+/**
+ * Regenerated rather than frozen at build.
+ *
+ * It reads the same merged view the pages do, and an article or a record added
+ * through the admin is on the site the moment it is published. A sitemap
+ * prerendered once and never again would list what the site had at deploy time
+ * and keep saying so — the one file whose whole job is to be current.
+ */
+export const revalidate = 3600;
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  const brokers = rankedBrokers();
-  const props = rankedProps();
-  const exchanges = rankedExchanges();
+  // The same merged view the pages render, so a record or an article added
+  // through the admin is asked to be indexed and one taken down stops being.
+  // A sitemap generated from the code while the site serves something else is
+  // a sitemap that is wrong about the site.
+  const [patches, articles] = await Promise.all([livePatchMap(), liveArticles()]);
+  const brokers = rankedBrokers(undefined, patches);
+  const props = rankedProps(patches);
+  const exchanges = rankedExchanges(patches);
 
   return [
     { url: absoluteUrl('/'), lastModified: now, changeFrequency: 'daily', priority: 1 },
@@ -42,7 +58,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // "now". An article changes when someone edits it, and the date is in the
     // file; everything above is generated from data that moves on its own, so
     // there is nothing truer than the build to point at yet. See docs/SEO.md §4.
-    ...ARTICLES.map((a) => ({
+    ...articles.map((a) => ({
       url: absoluteUrl(`/learn/${a.slug}`),
       lastModified: new Date(`${a.updated}T00:00:00Z`),
       changeFrequency: 'monthly' as const,

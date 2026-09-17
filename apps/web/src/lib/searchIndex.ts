@@ -1,7 +1,7 @@
-import { COIN_INDEX, RELEASES, scheduleNoun, ARTICLES } from '@commentfx/core';
+import { COIN_INDEX, RELEASES, scheduleNoun, ARTICLES, type Article } from '@commentfx/core';
 import {
   rankedBrokers, rankedProps, rankedExchanges, BEST_CRITERIA, comparePairs, pairSlug, getBroker,
-  type ReviewStats,
+  type ReviewStats, type Patches,
 } from './repo';
 
 export interface SearchEntry {
@@ -23,10 +23,14 @@ export interface SearchEntry {
  * of everything we publish -- including the pages a reader would otherwise only
  * reach through three clicks of ranking tables.
  */
-export function searchIndex(stats?: ReviewStats): SearchEntry[] {
+export function searchIndex(
+  stats?: ReviewStats,
+  patches?: Patches,
+  articles: readonly Article[] = ARTICLES,
+): SearchEntry[] {
   const entries: SearchEntry[] = [];
 
-  for (const r of rankedBrokers(stats)) {
+  for (const r of rankedBrokers(stats, patches)) {
     const b = r.broker;
     entries.push({
       path: `/brokers/${b.slug}`,
@@ -38,7 +42,7 @@ export function searchIndex(stats?: ReviewStats): SearchEntry[] {
     });
   }
 
-  for (const r of rankedProps()) {
+  for (const r of rankedProps(patches)) {
     entries.push({
       path: `/props/${r.firm.slug}`,
       title: r.firm.name,
@@ -49,7 +53,7 @@ export function searchIndex(stats?: ReviewStats): SearchEntry[] {
     });
   }
 
-  for (const r of rankedExchanges()) {
+  for (const r of rankedExchanges(patches)) {
     entries.push({
       path: `/exchanges/${r.exchange.slug}`,
       title: r.exchange.name,
@@ -122,7 +126,7 @@ export function searchIndex(stats?: ReviewStats): SearchEntry[] {
    * for the word in our title, and a directory whose own search cannot find its
    * own answers has written them for nobody.
    */
-  for (const a of ARTICLES) {
+  for (const a of articles) {
     entries.push({
       path: `/learn/${a.slug}`,
       title: a.heading,
