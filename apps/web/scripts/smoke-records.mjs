@@ -11,6 +11,7 @@
  * exactly as the code has it.
  */
 import { chromium } from 'playwright';
+import { signInAdmin } from './lib/admin-session.mjs';
 
 const BASE = process.env.SMOKE_BASE ?? 'http://127.0.0.1:3000';
 const TOKEN = process.env.SMOKE_ADMIN_TOKEN ?? 'demo';
@@ -35,17 +36,30 @@ async function settlesTo(page, path, text, present, tries = 40) {
 }
 
 const browser = await chromium.launch({ executablePath: process.env.SMOKE_CHROMIUM || undefined });
-const ctx = await browser.newContext({
-  viewport: { width: 390, height: 900 },
-  extraHTTPHeaders: { authorization: `Bearer ${TOKEN}` },
-});
-const page = await ctx.newPage();
+// Signed in as a real account, because every write action now asks who is
+// making the change and the shared token is nobody.
+const { page } = await signInAdmin(browser, BASE, TOKEN);
 page.on('pageerror', (e) => check('no uncaught page errors', false, String(e).split('\n')[0]));
 
 /* ── the gate, again: this screen writes ───────────────────────────── */
-const anon = await (await browser.newContext()).newPage();
-const refused = await anon.goto(`${BASE}/admin/records`, { waitUntil: 'domcontentloaded' });
-check('the record editor refuses a request with no token', refused?.status() === 401, `HTTP ${refused?.status()}`);
+const refused = await fetch(`${BASE}/admin/records`, { headers: { accept: 'application/json' } });
+check('the record editor refuses a request with no credentials', refused.status === 401, `HTTP ${refused.status}`);
+
+/**
+ * And the shared token, which reaches the screen, cannot write through it. This
+ * is the claim accounts were added for: a change has to have a name on it, and
+ * the token has none.
+ */
+const tokenOnly = await (await browser.newContext({
+  extraHTTPHeaders: { authorization: `Bearer ${TOKEN}` },
+})).newPage();
+await tokenOnly.goto(`${BASE}/admin/records/broker/${SLUG}`, { waitUntil: 'domcontentloaded' });
+await tokenOnly.locator('input[name="f:cost.eurusdSpread"]').fill('0.11');
+await tokenOnly.getByRole('button', { name: /^Save$/ }).click();
+await tokenOnly.waitForTimeout(2000);
+check('the shared token can reach the editor and cannot write through it',
+  await tokenOnly.getByText(/Sign in first/i).count() > 0,
+  (await tokenOnly.locator('[role="status"]').first().innerText().catch(() => '')).trim());
 
 /* ── the list ──────────────────────────────────────────────────────── */
 const list = await page.goto(`${BASE}/admin/records`, { waitUntil: 'domcontentloaded' });
@@ -59,7 +73,6 @@ check('the form is filled from the record as it stands',
   (await spread.inputValue()) === CODE_SPREAD, await spread.inputValue());
 
 await spread.fill(EDITED_SPREAD);
-await page.locator('form').filter({ has: spread }).locator('input[name="actor"]').fill('smoke@commentfx');
 await page.locator('form').filter({ has: spread }).locator('input[name="note"]').fill('Smoke test.');
 await page.getByRole('button', { name: /^Save$/ }).click();
 await page.waitForTimeout(2000);
@@ -85,7 +98,6 @@ check('a draft changes nothing a reader sees',
 /* ── publishing ────────────────────────────────────────────────────── */
 await page.goto(`${BASE}/admin/records/broker/${SLUG}`, { waitUntil: 'domcontentloaded' });
 const controls = page.locator('form').filter({ has: page.getByRole('button', { name: 'Publish' }) });
-await controls.locator('input[name="actor"]').fill('smoke@commentfx');
 await controls.getByRole('button', { name: 'Publish' }).click();
 await page.waitForTimeout(2500);
 
@@ -99,7 +111,6 @@ await page.goto(`${BASE}/admin/records/prop/ftmo`, { waitUntil: 'domcontentloade
 const split = page.locator('input[name="f:payout.splitPct"]');
 const before = await split.inputValue();
 await split.fill('100');
-await page.locator('form').filter({ has: split }).locator('input[name="actor"]').fill('smoke@commentfx');
 await page.getByRole('button', { name: /^Save$/ }).click();
 await page.waitForTimeout(2000);
 
@@ -131,7 +142,6 @@ check('nothing was stored when the save was refused',
 await page.goto(`${BASE}/admin/records/broker/${SLUG}`, { waitUntil: 'domcontentloaded' });
 page.once('dialog', (d) => d.accept());
 const live = page.locator('form').filter({ has: page.getByRole('button', { name: 'Discard changes' }) });
-await live.locator('input[name="actor"]').fill('smoke@commentfx');
 await live.getByRole('button', { name: 'Discard changes' }).click();
 await page.waitForTimeout(2500);
 
@@ -165,7 +175,6 @@ const VALUES = {
 for (const [name, value] of Object.entries(VALUES)) {
   await page.locator(`[name="${name}"]`).fill(value);
 }
-await page.locator('input[name="actor"]').fill('smoke@commentfx');
 await page.getByRole('button', { name: /Create as draft/ }).click();
 await page.waitForTimeout(2500);
 
@@ -181,7 +190,6 @@ check('a draft record has no public page yet', fresh?.status() === 404, `HTTP ${
 
 await page.goto(`${BASE}/admin/records/exchange/${NEW_SLUG}`, { waitUntil: 'domcontentloaded' });
 const newControls = page.locator('form').filter({ has: page.getByRole('button', { name: 'Publish' }) });
-await newControls.locator('input[name="actor"]').fill('smoke@commentfx');
 await newControls.getByRole('button', { name: 'Publish' }).click();
 await page.waitForTimeout(2500);
 
@@ -192,7 +200,6 @@ check('and the front page knows about it', await settlesTo(page, '/', 'Smoke Exc
 await page.goto(`${BASE}/admin/records/exchange/${NEW_SLUG}`, { waitUntil: 'domcontentloaded' });
 page.once('dialog', (d) => d.accept());
 const del = page.locator('form').filter({ has: page.getByRole('button', { name: 'Delete record' }) });
-await del.locator('input[name="actor"]').fill('smoke@commentfx');
 await del.getByRole('button', { name: 'Delete record' }).click();
 await page.waitForTimeout(2500);
 

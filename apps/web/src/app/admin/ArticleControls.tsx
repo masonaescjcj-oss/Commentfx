@@ -12,12 +12,6 @@ export function ArticleControls({ slug, status, isNew }: {
   return (
     <form action={action} className="flex flex-col gap-2">
       <input type="hidden" name="slug" value={slug} />
-      <label className="block">
-        <span className="block text-[11px] text-ink-3 mb-1">Editor</span>
-        <input name="actor" required placeholder="you@commentfx"
-          className="w-full bg-card-2 border border-line rounded-lg px-3 py-2 text-[13px]" />
-      </label>
-
       <div className="flex items-center gap-2 flex-wrap">
         {status === 'draft' ? (
           <button name="action" value="publish" type="submit" disabled={pending}

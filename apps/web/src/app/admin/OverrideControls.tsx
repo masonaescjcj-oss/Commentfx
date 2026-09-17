@@ -21,11 +21,6 @@ export function OverrideControls({ kind, slug, status, isNew }: {
       <input type="hidden" name="kind" value={kind} />
       <input type="hidden" name="slug" value={slug} />
 
-      <label className="block">
-        <span className="block text-[11px] text-ink-3 mb-1">Editor</span>
-        <input name="actor" required placeholder="you@commentfx" className="w-full bg-card-2 border border-line rounded-lg px-3 py-2 text-[13px]" />
-      </label>
-
       <div className="flex items-center gap-2 flex-wrap">
         {status === 'draft' ? (
           <button

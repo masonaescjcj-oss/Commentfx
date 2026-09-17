@@ -7,7 +7,7 @@ import { mergeRecord } from '@commentfx/core';
 import { baseRecord } from '@/lib/records';
 import { whereToCheck } from '@/lib/whereToCheck';
 import { Card, CardHead, Tag, Meter } from '@/components/primitives';
-import { VerifyForm } from '../../VerifyForm';
+import { VerifyForm } from '../../../VerifyForm';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 export const dynamic = 'force-dynamic';

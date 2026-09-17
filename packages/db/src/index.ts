@@ -5,3 +5,4 @@ export * from './status.ts';
 export * from './registers.ts';
 export * from './reviews.ts';
 export * from './overrides.ts';
+export * from './auth.ts';

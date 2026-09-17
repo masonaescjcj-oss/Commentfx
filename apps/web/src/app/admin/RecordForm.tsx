@@ -176,10 +176,6 @@ export function RecordForm({ kind, slug, record, base, isNew, status }: {
 
       <section className="bg-card border border-line rounded-xl p-4 flex flex-col gap-[11px]">
         <label className="block">
-          <span className="block text-[11px] text-ink-3 mb-1">Editor</span>
-          <input name="actor" required placeholder="you@commentfx" className={box} />
-        </label>
-        <label className="block">
           <span className="block text-[11px] text-ink-3 mb-1">
             Why — what changed and what you read to decide it. This is what the next editor sees.
           </span>

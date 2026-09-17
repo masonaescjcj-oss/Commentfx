@@ -6,8 +6,8 @@ import {
   articleBySlug, mergeRecord, formatArticleBody, formatArticleFaq, type Article,
 } from '@commentfx/core';
 import { Card, CardHead, Tag } from '@/components/primitives';
-import { ArticleForm } from '../../ArticleForm';
-import { ArticleControls } from '../../ArticleControls';
+import { ArticleForm } from '../../../ArticleForm';
+import { ArticleControls } from '../../../ArticleControls';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 export const dynamic = 'force-dynamic';

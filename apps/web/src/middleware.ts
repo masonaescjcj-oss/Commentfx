@@ -1,19 +1,24 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { readSessionCookie, SESSION_COOKIE } from '@/lib/cookie';
 
 /**
- * The admin fails CLOSED. With no ADMIN_TOKEN configured every /admin route is
- * rewritten to a 404, so an accidental deploy exposes nothing at all rather
- * than an open editing surface.
+ * The admin fails CLOSED. With neither SESSION_SECRET nor ADMIN_TOKEN
+ * configured every /admin route is rewritten to a 404, so an accidental deploy
+ * exposes nothing at all rather than an open editing surface.
  *
- * This is a deliberate stopgap, not an auth system: a shared bearer token has
- * no per-user identity, no revocation and no session. It must be replaced with
- * real accounts before the admin is exposed to anyone but its author — which is
- * also why every write records an actor and lands in an append-only audit log.
- */
-/**
- * Constant time, so the length and prefix of the real token cannot be read off
- * the response times. A shared bearer token is already the weakest part of this
- * admin; it should at least not leak itself.
+ * Two ways in, and they are not equals.
+ *
+ * A **session cookie** is an account: a name, a role, a session that can be
+ * ended from another browser. The middleware checks only that the signature is
+ * ours, which is enough to keep unsigned traffic off these pages and is all it
+ * can check — whether the session still exists, whether it has expired and
+ * whether the account is still enabled are database facts, read by the page.
+ *
+ * The **shared token** is break-glass. It is how the first admin is created on
+ * a fresh deployment and how somebody gets back in after locking themselves
+ * out. It has no name and no role, so it reaches the screens and writes
+ * nothing: every action asks `requireCapability`, which asks who you are. A
+ * deployment that has finished setting up can unset it and lose nothing.
  */
 function sameSecret(a: string | undefined, b: string): boolean {
   if (a === undefined || a.length !== b.length) return false;
@@ -22,21 +27,41 @@ function sameSecret(a: string | undefined, b: string): boolean {
   return diff === 0;
 }
 
-export function middleware(req: NextRequest) {
+/** Reachable without being signed in, because they are how you sign in. */
+const OPEN = ['/admin/login', '/admin/setup', '/admin/invite'];
+
+export async function middleware(req: NextRequest) {
   const token = process.env.ADMIN_TOKEN;
-  if (!token) return NextResponse.rewrite(new URL('/not-found', req.url), { status: 404 });
+  const secret = process.env.SESSION_SECRET;
+  if (!token && !secret) return NextResponse.rewrite(new URL('/not-found', req.url), { status: 404 });
+
+  const path = req.nextUrl.pathname;
+
+  if (secret) {
+    const signedIn = await readSessionCookie(req.cookies.get(SESSION_COOKIE)?.value, secret);
+    if (signedIn) return NextResponse.next();
+    if (OPEN.some((p) => path === p || path.startsWith(`${p}/`))) return NextResponse.next();
+  }
 
   const provided =
     req.cookies.get('cfx_admin')?.value ??
     req.headers.get('authorization')?.replace(/^Bearer\s+/i, '');
 
-  if (!sameSecret(provided, token)) {
-    return new NextResponse('Unauthorized', {
-      status: 401,
-      headers: { 'WWW-Authenticate': 'Bearer realm="CommentFX admin"' },
-    });
+  if (token && sameSecret(provided, token)) return NextResponse.next();
+
+  // A browser gets a page it can act on; a script gets the status code it can
+  // read. Sending a redirect to something holding a bearer token would turn a
+  // clear 401 into a confusing 200 on a login page.
+  if (secret && req.headers.get('accept')?.includes('text/html')) {
+    const to = new URL('/admin/login', req.url);
+    if (path !== '/admin') to.searchParams.set('next', path);
+    return NextResponse.redirect(to);
   }
-  return NextResponse.next();
+
+  return new NextResponse('Unauthorized', {
+    status: 401,
+    headers: { 'WWW-Authenticate': 'Bearer realm="CommentFX admin"' },
+  });
 }
 
 export const config = { matcher: '/admin/:path*' };

@@ -26,15 +26,6 @@ export function VerifyForm({ kind, slug, field, current, lastValue, suggestedSou
             className="w-full bg-card-2 border border-line rounded-lg px-3 py-2 text-[13px] tnum"
           />
         </label>
-        <label className="w-[132px]">
-          <span className="block text-[11px] text-ink-3 mb-1">Checked by</span>
-          <input
-            name="actor"
-            required
-            placeholder="you@commentfx"
-            className="w-full bg-card-2 border border-line rounded-lg px-3 py-2 text-[13px]"
-          />
-        </label>
       </div>
 
       <label>

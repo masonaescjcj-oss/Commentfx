@@ -9,6 +9,7 @@
  * were exercised at the database layer and nowhere else.
  */
 import { chromium } from 'playwright';
+import { signInAdmin, ADMIN } from './lib/admin-session.mjs';
 
 const BASE = process.env.SMOKE_BASE ?? 'http://127.0.0.1:3000';
 const TOKEN = process.env.SMOKE_ADMIN_TOKEN ?? 'demo';
@@ -51,26 +52,51 @@ async function eventually(page, path, text, tries = 60) {
 const browser = await chromium.launch({ executablePath: process.env.SMOKE_CHROMIUM || undefined });
 
 /* ── the gate ──────────────────────────────────────────────────────── */
+
+/**
+ * A browser with no credentials is sent to sign in; a script with none gets the
+ * status code it can read. Both matter: redirecting something holding a bearer
+ * token would turn a clear 401 into a 200 on a login page, which is the kind of
+ * thing a monitoring check quietly reports as healthy forever.
+ */
 const anon = await (await browser.newContext()).newPage();
-const noToken = await anon.goto(`${BASE}/admin`, { waitUntil: 'domcontentloaded' });
-check('the admin refuses a request with no token', noToken?.status() === 401, `HTTP ${noToken?.status()}`);
+await anon.goto(`${BASE}/admin`, { waitUntil: 'domcontentloaded' });
+check('a browser with no credentials lands on the sign-in page',
+  new URL(anon.url()).pathname.startsWith('/admin/login') || new URL(anon.url()).pathname === '/admin/setup',
+  anon.url());
+check('and the admin itself is not rendered behind it',
+  await anon.getByText('Verification queue').count() === 0);
 
-const wrong = await (await browser.newContext({
-  extraHTTPHeaders: { authorization: 'Bearer not-the-token' },
-})).newPage();
-const wrongRes = await wrong.goto(`${BASE}/admin`, { waitUntil: 'domcontentloaded' });
-check('the admin refuses a wrong token', wrongRes?.status() === 401, `HTTP ${wrongRes?.status()}`);
+const scripted = await fetch(`${BASE}/admin`, { headers: { accept: 'application/json' } });
+check('a request that is not a browser is refused outright', scripted.status === 401, `HTTP ${scripted.status}`);
 
-/* ── an editor with the token ──────────────────────────────────────── */
-const ctx = await browser.newContext({
-  viewport: { width: 390, height: 900 },
-  extraHTTPHeaders: { authorization: `Bearer ${TOKEN}` },
+const wrong = await fetch(`${BASE}/admin`, {
+  headers: { authorization: 'Bearer not-the-token', accept: 'application/json' },
 });
-const page = await ctx.newPage();
+check('a wrong token is refused', wrong.status === 401, `HTTP ${wrong.status}`);
+
+/**
+ * The shared token reaches the screens and writes nothing.
+ *
+ * It has no name to put in an audit row and no role to check, so it is a way
+ * in and not a way to change anything — which is the claim the whole accounts
+ * change rests on, and the one worth driving before anything else here.
+ */
+const tokenOnly = await (await browser.newContext({
+  extraHTTPHeaders: { authorization: `Bearer ${TOKEN}` },
+})).newPage();
+const reached = await tokenOnly.goto(`${BASE}/admin`, { waitUntil: 'domcontentloaded' });
+check('the shared token reaches the admin', reached?.status() === 200, `HTTP ${reached?.status()}`);
+check('and the page says it is nobody',
+  await tokenOnly.getByText(/no name and no role/i).count() > 0);
+
+/* ── an editor with an account ─────────────────────────────────────── */
+const { page } = await signInAdmin(browser, BASE, TOKEN);
 page.on('pageerror', (e) => check('no uncaught page errors', false, String(e).split('\n')[0]));
 
 const ok = await page.goto(`${BASE}/admin`, { waitUntil: 'domcontentloaded' });
-check('the admin opens with the right token', ok?.status() === 200, `HTTP ${ok?.status()}`);
+check('the admin opens for a signed-in account', ok?.status() === 200, `HTTP ${ok?.status()}`);
+check('and says who is signed in', await page.getByText(ADMIN.name).count() > 0);
 
 /* ── something to check: a review written the public way ───────────── */
 const MARK = `ADMIN-${Date.now()}`;
@@ -100,7 +126,6 @@ if (published) {
   await page.goto(`${BASE}/admin`, { waitUntil: 'domcontentloaded' });
   await page.waitForTimeout(600);
   const row = page.locator('li', { hasText: MARK }).last();
-  await row.locator('input[name="actor"]').fill('smoke@commentfx');
   await row.getByRole('button', { name: /Checked/ }).click();
   await page.waitForTimeout(2500);
 
@@ -148,7 +173,6 @@ if (await unchecked.count() > 0) {
   const prefilled = await unchecked.locator('input[name="sourceUrl"]').inputValue();
   check('the source box is prefilled with where to look', prefilled.startsWith('http'), prefilled);
 
-  await unchecked.locator('input[name="actor"]').fill('smoke@commentfx');
   await unchecked.getByRole('button', { name: /Record check/ }).click();
   await page.waitForTimeout(2500);
 
@@ -195,7 +219,6 @@ if (await unchecked.count() > 0) {
   await page.waitForTimeout(600);
   const after = await countNow();
   const done = page.locator('section').filter({ hasText: 'verified' }).first();
-  await done.locator('input[name="actor"]').fill('smoke-again@commentfx');
   await done.getByRole('button', { name: /Record check/ }).click();
   await page.waitForTimeout(2500);
   await page.goto(`${BASE}/admin/broker/${SLUG}`, { waitUntil: 'domcontentloaded' });

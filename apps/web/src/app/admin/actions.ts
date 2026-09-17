@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { and, eq } from 'drizzle-orm';
 import { getDb, schema, verifyReview, hideReview, type Kind } from '@commentfx/db';
 import { DB_ENABLED, NO_DB_MESSAGE } from '@/lib/db-available';
+import { requireCapability } from '@/lib/session';
 
 export interface RecordResult { ok: boolean; message: string }
 
@@ -11,26 +12,33 @@ const publicPath = (kind: Kind, slug: string) =>
   `/${kind === 'broker' ? 'brokers' : kind === 'prop' ? 'props' : 'exchanges'}/${slug}`;
 
 /**
- * Records one field as checked. Three things are non-negotiable and enforced
- * here rather than in the form: a source URL (a verification with no source is
- * an opinion), the value exactly as seen at that source (so later drift is
- * detectable), and an audit row, which the admin has no route to delete.
+ * Records one field as checked. Four things are non-negotiable and enforced
+ * here rather than in the form: an account with the right to do it, a source
+ * URL (a verification with no source is an opinion), the value exactly as seen
+ * at that source (so later drift is detectable), and an audit row, which the
+ * admin has no route to delete.
+ *
+ * The actor is the signed-in account, not a box somebody filled in. That is the
+ * difference accounts make to this file: "verified by" used to be whatever was
+ * typed, which is a claim, and is now who was signed in, which is a fact.
  */
 export async function recordVerification(
   _prev: RecordResult | null,
   form: FormData,
 ): Promise<RecordResult> {
+  if (!DB_ENABLED) return { ok: false, message: NO_DB_MESSAGE };
+  const gate = await requireCapability('verify');
+  if (!gate.ok) return gate;
+  const actor = gate.user.email;
+
   const kind = String(form.get('kind') ?? '') as Kind;
   const slug = String(form.get('slug') ?? '').trim();
   const field = String(form.get('field') ?? '').trim();
   const valueSeen = String(form.get('valueSeen') ?? '').trim();
   const sourceUrl = String(form.get('sourceUrl') ?? '').trim();
   const note = String(form.get('note') ?? '').trim() || null;
-  const actor = String(form.get('actor') ?? '').trim();
 
-  if (!DB_ENABLED) return { ok: false, message: NO_DB_MESSAGE };
   if (!kind || !slug || !field) return { ok: false, message: 'Missing target.' };
-  if (!actor) return { ok: false, message: 'Who is making this check?' };
   if (!valueSeen) return { ok: false, message: 'Record the value exactly as the source shows it.' };
 
   let url: URL;
@@ -90,16 +98,18 @@ export async function recordVerification(
  * is one nobody can be argued out of.
  */
 export async function moderateReview(_prev: RecordResult | null, form: FormData): Promise<RecordResult> {
+  if (!DB_ENABLED) return { ok: false, message: NO_DB_MESSAGE };
+  const gate = await requireCapability('reviews');
+  if (!gate.ok) return gate;
+  const actor = gate.user.email;
+
   const id = Number(form.get('id'));
   const kind = String(form.get('kind') ?? 'broker').trim() as Kind;
   const slug = String(form.get('slug') ?? '').trim();
   const action = String(form.get('action') ?? '');
-  const actor = String(form.get('actor') ?? '').trim();
   const reason = String(form.get('reason') ?? '').trim();
 
-  if (!DB_ENABLED) return { ok: false, message: NO_DB_MESSAGE };
   if (!Number.isInteger(id)) return { ok: false, message: 'Missing review.' };
-  if (!actor) return { ok: false, message: 'Say who is making this call.' };
 
   try {
     const { db } = await getDb();

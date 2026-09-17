@@ -17,6 +17,7 @@
  * article; this is the same claim through the actual screen.
  */
 import { chromium } from 'playwright';
+import { signInAdmin } from './lib/admin-session.mjs';
 
 const BASE = process.env.SMOKE_BASE ?? 'http://127.0.0.1:3000';
 const TOKEN = process.env.SMOKE_ADMIN_TOKEN ?? 'demo';
@@ -39,11 +40,7 @@ async function settlesTo(page, path, text, present, tries = 40) {
 }
 
 const browser = await chromium.launch({ executablePath: process.env.SMOKE_CHROMIUM || undefined });
-const ctx = await browser.newContext({
-  viewport: { width: 390, height: 900 },
-  extraHTTPHeaders: { authorization: `Bearer ${TOKEN}` },
-});
-const page = await ctx.newPage();
+const { page } = await signInAdmin(browser, BASE, TOKEN);
 page.on('pageerror', (e) => check('no uncaught page errors', false, String(e).split('\n')[0]));
 
 /* ── opening an existing article must not damage it ────────────────── */
@@ -54,7 +51,6 @@ check('an existing article opens as text', body.includes('## '), `${body.length}
 check('and its worked example survived the conversion', body.includes(':::'));
 check('and its list survived it', /\n- |\n1\. /.test(body));
 
-await page.locator('input[name="actor"]').fill('smoke@commentfx');
 await page.getByRole('button', { name: /^Save$/ }).click();
 await page.waitForTimeout(2000);
 check('saving it unchanged stores nothing, because nothing changed',
@@ -76,7 +72,6 @@ await page.locator('textarea[name="answer"]').fill(
   'Yes, and it refuses an article that does not meet the rules before it refuses anything else about it.',
 );
 await page.locator('textarea[name="body"]').fill('## A heading\n\nOne short paragraph and nothing else.');
-await page.locator('input[name="actor"]').fill('smoke@commentfx');
 await page.getByRole('button', { name: /Create as draft/ }).click();
 await page.waitForTimeout(2000);
 
@@ -155,7 +150,6 @@ const FAQ = [
 
 await page.locator('textarea[name="body"]').fill(BODY);
 await page.locator('textarea[name="faq"]').fill(FAQ);
-await page.locator('input[name="actor"]').fill('smoke@commentfx');
 await page.getByRole('button', { name: /Create as draft/ }).click();
 await page.waitForTimeout(2500);
 
@@ -170,7 +164,6 @@ check('a draft article has no public page', drafted?.status() === 404, `HTTP ${d
 
 await page.goto(`${BASE}/admin/articles/${SLUG}`, { waitUntil: 'domcontentloaded' });
 const controls = page.locator('form').filter({ has: page.getByRole('button', { name: 'Publish' }) });
-await controls.locator('input[name="actor"]').fill('smoke@commentfx');
 await controls.getByRole('button', { name: 'Publish' }).click();
 await page.waitForTimeout(2500);
 
@@ -196,7 +189,6 @@ check('and it is in the sitemap', inMap);
 await page.goto(`${BASE}/admin/articles/${SLUG}`, { waitUntil: 'domcontentloaded' });
 page.once('dialog', (d) => d.accept());
 const del = page.locator('form').filter({ has: page.getByRole('button', { name: 'Delete article' }) });
-await del.locator('input[name="actor"]').fill('smoke@commentfx');
 await del.getByRole('button', { name: 'Delete article' }).click();
 await page.waitForTimeout(2500);
 

@@ -260,13 +260,78 @@ export const articleOverrides = pgTable('article_overrides', {
 
 export const userRole = pgEnum('user_role', ['admin', 'editor', 'moderator', 'viewer']);
 
+/**
+ * The people who can get into the admin.
+ *
+ * The shared bearer token this replaces had no identity, no revocation and no
+ * way to give one person less than everything. Every write already recorded an
+ * actor, but the actor was whatever the person typed into a box — a name, not a
+ * fact about who was signed in. These rows are what make it a fact.
+ *
+ * `passwordHash` is null between being invited and accepting, which is the one
+ * state that is neither "no account" nor "can sign in", and the sign-in path
+ * treats it as the second of those rather than the first: an invited account
+ * with no password is not a way in.
+ *
+ * Disabling rather than deleting, because a deleted user takes their name off
+ * every audit row that refers to them, and the whole point of that table is
+ * that it still means something in a year.
+ */
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
   email: text('email').notNull(),
   name: text('name').notNull(),
   role: userRole('role').notNull().default('viewer'),
+  /** scrypt, as `N:r:p:salt:hash`. Null until an invite is accepted. */
+  passwordHash: text('password_hash'),
+  disabledAt: timestamp('disabled_at', { withTimezone: true }),
+  lastSeenAt: timestamp('last_seen_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [uniqueIndex('users_email_idx').on(t.email)]);
+
+/**
+ * A signed-in session.
+ *
+ * The row is the authority and the cookie is only a claim: the cookie carries
+ * an id and a signature proving we issued it, and every admin page loads this
+ * row to find out who that is and whether it still counts. That split is what
+ * makes revocation real — deleting the row ends the session on the next
+ * request, which a self-contained signed token cannot do at all.
+ */
+export const sessions = pgTable('sessions', {
+  id: text('id').primaryKey(),
+  userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  /** What the browser said it was, so a session list means something to read. */
+  userAgent: text('user_agent'),
+}, (t) => [index('sessions_user_idx').on(t.userId), index('sessions_expiry_idx').on(t.expiresAt)]);
+
+/**
+ * An invitation, which is how an account comes to exist.
+ *
+ * There is no email here and there is not going to be one: this site runs on
+ * free tiers and unauthenticated APIs, and adding a mail provider to hand
+ * somebody a link is a dependency bought for one sentence. An admin creates the
+ * invite, copies the link, and sends it however they already talk to that
+ * person. The token is stored hashed for the same reason a password is — a
+ * database dump should not be a set of working invitations.
+ */
+export const invites = pgTable('invites', {
+  id: serial('id').primaryKey(),
+  email: text('email').notNull(),
+  name: text('name').notNull(),
+  role: userRole('role').notNull().default('editor'),
+  /** sha-256 of the token in the link. The token itself is shown once. */
+  tokenHash: text('token_hash').notNull(),
+  invitedBy: text('invited_by').notNull(),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  acceptedAt: timestamp('accepted_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('invites_token_idx').on(t.tokenHash),
+  index('invites_email_idx').on(t.email),
+]);
 
 /** Append-only. Nothing in the admin may delete from this table. */
 export const auditLog = pgTable('audit_log', {

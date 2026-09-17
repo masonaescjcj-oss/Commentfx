@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import type { Kind } from '@commentfx/db';
 import { Card, CardHead } from '@/components/primitives';
-import { RecordForm } from '../../../RecordForm';
+import { RecordForm } from '../../../../RecordForm';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 export const dynamic = 'force-dynamic';

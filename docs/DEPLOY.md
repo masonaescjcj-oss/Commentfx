@@ -67,23 +67,35 @@ allowance, which is harmless but pointless.
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
+### `SESSION_SECRET`
+
+What signs the session cookie, and the switch that turns accounts on. Generate
+it the same way as the one above and keep it: changing it signs everybody out,
+which is harmless and annoying.
+
+Unset, there are no accounts on the deployment — the admin is reachable only
+with the shared token below, and nothing can be written through it, because
+every write asks who is signed in.
+
 ### `ADMIN_TOKEN`
 
-The bearer token for `/admin`, where an editor verifies a field or checks a
-review.
+Break-glass for `/admin`. It is how the first account is created on a fresh
+deployment and how somebody gets back in after locking themselves out.
 
-**With no token set, every `/admin` route rewrites to a 404** — the whole
-surface is invisible, so an accidental deploy exposes nothing. That is the
-correct default and you should leave it unset until you actually need the
-editor.
+**With neither this nor `SESSION_SECRET` set, every `/admin` route rewrites to a
+404** — the whole surface is invisible, so an accidental deploy exposes nothing.
 
-It is a stopgap and the README says so: a shared bearer token has no per-user
-identity, no revocation and no sessions. It is compared in constant time and
-every write records an actor into an append-only audit log, which is what makes
-it survivable in the short term, not what makes it good. Replace it with real
-accounts before more than one person has it.
+It has no name to put in an audit row and no role to check, so it reaches every
+screen and writes nothing. Send it as `Authorization: Bearer <token>`, or set a
+`cfx_admin` cookie, open `/admin/setup`, make the first admin account, and then
+unset it. A deployment with accounts on it loses nothing by having no token, and
+keeping one around is keeping a key that nobody's name is on.
 
-Send it as `Authorization: Bearer <token>`, or set a `cfx_admin` cookie.
+Note that a deployment with `SESSION_SECRET`, no `ADMIN_TOKEN` and no accounts
+has no way in at all. That is deliberate rather than a gap: whoever can set one
+environment variable can set the other, and the alternative — letting anyone who
+finds the URL first become the admin of somebody else's site — is not a
+trade worth making.
 
 ### `NEXT_PUBLIC_SITE_URL`
 
@@ -188,10 +200,12 @@ actually shaped around.
 
 1. `DATABASE_URL` set, or you have decided the site is read-only.
 2. `REPORT_HASH_SECRET` set to something long and kept.
-3. `ADMIN_TOKEN` **unset**, unless an editor needs it today.
-4. `NEXT_PUBLIC_SITE_URL` set if this is not the production domain.
-5. Seed once.
-6. Open `/status` and `/brokers/exness`, write a review, withdraw it with the
+3. `SESSION_SECRET` set if anybody is going to edit anything.
+4. `ADMIN_TOKEN` set for as long as it takes to open `/admin/setup` and make the
+   first account, then unset.
+5. `NEXT_PUBLIC_SITE_URL` set if this is not the production domain.
+6. Seed once.
+7. Open `/status` and `/brokers/exness`, write a review, withdraw it with the
    code you are given. That is the one path that touches the database in both
    directions, and it is the only check that has ever caught the two worst bugs
    this project has had.

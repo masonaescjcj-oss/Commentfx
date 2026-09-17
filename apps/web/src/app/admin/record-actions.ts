@@ -9,6 +9,7 @@ import {
   mergeRecord, validateRecord, type Problem,
 } from '@commentfx/core';
 import { DB_ENABLED, NO_DB_MESSAGE } from '@/lib/db-available';
+import { requireCapability } from '@/lib/session';
 import { baseRecord } from '@/lib/records';
 
 export interface EditResult {
@@ -51,15 +52,20 @@ const byField = (problems: Problem[]): Record<string, string> =>
  * files reaches the page instead of being shadowed by a year-old copy of it.
  */
 export async function saveRecord(_prev: EditResult | null, form: FormData): Promise<EditResult> {
+  if (!DB_ENABLED) return { ok: false, message: NO_DB_MESSAGE };
+  // Who, before what. The name on an audit row is the account that was signed
+  // in, never a box somebody filled in — that was the whole problem with the
+  // shared token this replaced.
+  const gate = await requireCapability('records');
+  if (!gate.ok) return gate;
+  const actor = gate.user.email;
+
   const kind = String(form.get('kind') ?? '') as Kind;
   const slug = String(form.get('slug') ?? '').trim().toLowerCase();
-  const actor = String(form.get('actor') ?? '').trim();
   const note = String(form.get('note') ?? '').trim() || null;
 
-  if (!DB_ENABLED) return { ok: false, message: NO_DB_MESSAGE };
   if (!KINDS.has(kind)) return { ok: false, message: 'Unknown kind.' };
   if (!slug) return { ok: false, message: 'A slug is required — it is the page’s URL.' };
-  if (!actor) return { ok: false, message: 'Who is making this change?' };
 
   const base = baseRecord(kind, slug);
   const isNew = base === undefined;
@@ -144,14 +150,16 @@ function fillNewRecordDefaults(kind: Kind, patch: Record<string, unknown>) {
 
 /** Publish, unpublish, or throw the patch away. */
 export async function changeOverride(_prev: EditResult | null, form: FormData): Promise<EditResult> {
+  if (!DB_ENABLED) return { ok: false, message: NO_DB_MESSAGE };
+  const gate = await requireCapability('records');
+  if (!gate.ok) return gate;
+  const actor = gate.user.email;
+
   const kind = String(form.get('kind') ?? '') as Kind;
   const slug = String(form.get('slug') ?? '').trim();
-  const actor = String(form.get('actor') ?? '').trim();
   const action = String(form.get('action') ?? '');
 
-  if (!DB_ENABLED) return { ok: false, message: NO_DB_MESSAGE };
   if (!KINDS.has(kind) || !slug) return { ok: false, message: 'Unknown record.' };
-  if (!actor) return { ok: false, message: 'Say who is making this call.' };
 
   const db = await dbOf();
   const existing = await getOverride(db, kind, slug);

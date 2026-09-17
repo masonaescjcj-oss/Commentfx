@@ -270,11 +270,60 @@ run is not proof that every link points where it should. Six of the 26 sites
 also refuse this host outright, so they are not checked at all rather than
 quietly counted as fine.
 
-The admin that records these **fails closed**: with no `ADMIN_TOKEN` configured,
-every `/admin` route 404s, so an accidental deploy exposes nothing. The token is
-a deliberate stopgap and not an auth system — it has no per-user identity and no
-revocation — which is why every write records an actor into an append-only audit
-log. Replace it with real accounts before anyone but its author touches it.
+The admin **fails closed**: with neither `SESSION_SECRET` nor `ADMIN_TOKEN`
+configured, every `/admin` route 404s, so an accidental deploy exposes nothing.
+
+## Accounts
+
+There are two ways in and they are not equals.
+
+A **session cookie** is an account: a name, a role, a session that can be ended
+from another browser. Sign-in is a password and nothing else — no mail provider,
+no OAuth app, no hosted service, because this site is built to run on free tiers
+with no account anywhere. Passwords are scrypt with the cost stored alongside
+the hash, so it can be raised later without a forced reset for everyone; the
+rule on what makes a good one is length and only length, because a rule
+demanding a digit and a symbol produces `Password1!` on every account it
+touches.
+
+An account comes into existence by **invitation**: an admin makes one, copies
+the link, and sends it however they already talk to that person. The token is
+shown once and stored only as a SHA-256 hash, so a database dump is not a set of
+working invitations. It lasts seven days and works once.
+
+The **shared token** is break-glass. It is how the first admin is created on a
+fresh deployment and how somebody gets back in after locking themselves out. It
+has no name and no role, so it reaches the screens and writes nothing — every
+action asks `requireCapability`, which asks who you are. A deployment that has
+finished setting up can unset it and lose nothing.
+
+Four roles, in one table in `packages/db/src/auth.ts` rather than recalled at
+each call site: an **editor** changes what the site says, a **moderator** judges
+what readers said and records what was checked, an **admin** also decides who
+else gets in, and a **viewer** can look at every screen and move nothing.
+
+Three things about this are worth saying because each is a way it could be
+quietly wrong:
+
+- **The middleware is not the authority.** It runs on the edge with no database,
+  so it checks only that a session cookie's signature is ours. Whether that
+  session still exists, whether it has expired, and whether the account was
+  turned off five minutes ago are database facts, read by the page — which is
+  why there is a layout over the signed-in routes as well as a check in every
+  write. Without the layout a disabled account could still *read* the admin
+  until its cookie lapsed.
+- **Disabling drops the sessions in the same call.** Setting a flag and leaving
+  the sessions alive is the difference between revoking access and asking for it
+  back.
+- **A failed sign-in says the same thing whatever was wrong with it**, and
+  verifies a hash even when there is no such account, so neither the words nor
+  the response time is a directory of who works here.
+
+Accounts are disabled rather than deleted: a deleted user takes their name off
+every audit row that refers to them, and the point of that table is that it
+still means something in a year. The actor on every row is the account that was
+signed in — the shared token this replaced recorded whatever name somebody typed
+into a box, which is a claim rather than a fact.
 
 ## Editing records
 
@@ -437,6 +486,12 @@ It drives the token gate, checking a review and watching the public page relabel
 it, recording a field verification and watching the count move, and renewing an
 expired one — a verification lapses after 90 days, so renewing has to update
 rather than add.
+
+`smoke:accounts` drives sign-in, invitations and roles, and three of its
+assertions are the ones that would be quietly wrong otherwise: a role actually
+stops somebody at the editor rather than only in the capability table, an
+invitation link works once and then does not, and turning an account off logs it
+out of the browser it was already signed into.
 
 `smoke:articles` drives the article editor, and its first assertion is the one
 that matters: opening an article that already exists and pressing save changes

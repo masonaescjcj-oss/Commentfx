@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { ArticleForm } from '../../ArticleForm';
+import { ArticleForm } from '../../../ArticleForm';
 
 export const metadata: Metadata = { title: 'New article', robots: { index: false, follow: false } };
 export const dynamic = 'force-dynamic';

@@ -8,7 +8,9 @@ import { pendingReviews, pathForKind, KIND_LABEL } from '@/lib/reviews';
 import { rankedBrokers, rankedProps, rankedExchanges } from '@/lib/repo';
 import { Card, CardHead, Meter, Tag } from '@/components/primitives';
 import { TOPIC_LABELS } from '@commentfx/core';
-import { ModerateReview } from './ModerateReview';
+import { ModerateReview } from '../ModerateReview';
+import { SignOutLink } from '../AuthForms';
+import { currentUser, usingBreakGlass, ACCOUNTS_ENABLED } from '@/lib/session';
 
 export const metadata: Metadata = { title: 'Verification queue', robots: { index: false, follow: false } };
 export const dynamic = 'force-dynamic';
@@ -20,6 +22,7 @@ const SECTIONS: Array<{ kind: Kind; label: string; slugs: () => string[] }> = [
 ];
 
 export default async function AdminPage() {
+  const [me, breakGlass] = await Promise.all([currentUser(), usingBreakGlass()]);
   const sections = await Promise.all(
     SECTIONS.map(async (s) => ({ ...s, rows: await queue(s.kind, s.slugs()) })),
   );
@@ -35,10 +38,35 @@ export default async function AdminPage() {
         <h1 className="font-[family-name:var(--font-display)] text-[24px] font-bold tracking-[-0.02em]">
           Verification queue
         </h1>
-        <p className="text-[12.5px] mt-2 flex gap-3">
+        <p className="text-[12.5px] mt-2 flex gap-3 flex-wrap items-center">
           <Link href="/admin/records" className="text-accent font-semibold">Edit records →</Link>
           <Link href="/admin/articles" className="text-accent font-semibold">Articles →</Link>
+          <Link href="/admin/people" className="text-accent font-semibold">People →</Link>
         </p>
+
+        {me ? (
+          // A div rather than a p: the sign-out control is a form, and a form
+          // inside a paragraph is closed by the parser before it gets there,
+          // which is a hydration mismatch rather than a style problem.
+          <div className="text-[11.5px] text-ink-3 mt-2 flex gap-2 items-center">
+            <span>Signed in as <b className="text-ink-2">{me.name}</b> · {me.role}</span>
+            <SignOutLink />
+          </div>
+        ) : (
+          /**
+           * The shared token is nobody: no name to put in an audit row, no role
+           * to check. It reaches every screen here and writes nothing, and this
+           * is where that is said out loud rather than discovered at the first
+           * refused save.
+           */
+          <p className="text-[11.5px] text-warn mt-2 leading-[1.7]">
+            You are here on the shared token, which has no name and no role — every screen is
+            readable and nothing can be changed.{' '}
+            {ACCOUNTS_ENABLED
+              ? <Link href="/admin/login" className="text-accent font-semibold">Sign in</Link>
+              : <span>Set <code className="text-[11px]">SESSION_SECRET</code> to turn accounts on.</span>}
+          </p>
+        )}
         <p className="text-[13px] text-ink-2 leading-[1.7] mt-2">
           {outstanding === 0
             ? 'Every record is fully verified.'

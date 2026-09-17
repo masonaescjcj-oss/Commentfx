@@ -15,12 +15,6 @@ export function ModerateReview({ id, kind, slug }: { id: number; kind: string; s
       <input type="hidden" name="slug" value={slug} />
       <input type="hidden" name="action" value={mode} />
 
-      <input
-        name="actor"
-        required
-        placeholder="you@commentfx"
-        className="w-[138px] bg-card-2 border border-line rounded-lg px-[10px] py-[6px] text-[12px]"
-      />
 
       {mode === 'hide' && (
         <input

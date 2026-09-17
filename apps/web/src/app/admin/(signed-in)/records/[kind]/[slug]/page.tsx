@@ -5,8 +5,8 @@ import { getDb, getOverride, type Kind } from '@commentfx/db';
 import { mergeRecord, fieldsFor, readPath, showValue, sameValue } from '@commentfx/core';
 import { baseRecord } from '@/lib/records';
 import { Card, CardHead, Tag } from '@/components/primitives';
-import { RecordForm } from '../../../RecordForm';
-import { OverrideControls } from '../../../OverrideControls';
+import { RecordForm } from '../../../../RecordForm';
+import { OverrideControls } from '../../../../OverrideControls';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 export const dynamic = 'force-dynamic';

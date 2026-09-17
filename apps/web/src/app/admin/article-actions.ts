@@ -9,6 +9,7 @@ import {
   parseArticleBody, parseArticleFaq, sameDeep, type Article, type Problem,
 } from '@commentfx/core';
 import { DB_ENABLED, NO_DB_MESSAGE } from '@/lib/db-available';
+import { requireCapability } from '@/lib/session';
 import type { EditResult } from './record-actions';
 
 /**
@@ -40,13 +41,15 @@ function revalidateArticle(slug: string) {
 const SCALARS = ['title', 'heading', 'description', 'question', 'answer', 'author', 'published', 'updated'] as const;
 
 export async function saveArticle(_prev: EditResult | null, form: FormData): Promise<EditResult> {
+  if (!DB_ENABLED) return { ok: false, message: NO_DB_MESSAGE };
+  const gate = await requireCapability('articles');
+  if (!gate.ok) return gate;
+  const actor = gate.user.email;
+
   const slug = String(form.get('slug') ?? '').trim().toLowerCase();
-  const actor = String(form.get('actor') ?? '').trim();
   const note = String(form.get('note') ?? '').trim() || null;
 
-  if (!DB_ENABLED) return { ok: false, message: NO_DB_MESSAGE };
   if (!slug) return { ok: false, message: 'A slug is required — it is the article’s URL.' };
-  if (!actor) return { ok: false, message: 'Who is writing this?' };
 
   const base = articleBySlug(slug);
   const isNew = base === undefined;
@@ -96,13 +99,15 @@ export async function saveArticle(_prev: EditResult | null, form: FormData): Pro
 }
 
 export async function changeArticle(_prev: EditResult | null, form: FormData): Promise<EditResult> {
+  if (!DB_ENABLED) return { ok: false, message: NO_DB_MESSAGE };
+  const gate = await requireCapability('articles');
+  if (!gate.ok) return gate;
+  const actor = gate.user.email;
+
   const slug = String(form.get('slug') ?? '').trim();
-  const actor = String(form.get('actor') ?? '').trim();
   const action = String(form.get('action') ?? '');
 
-  if (!DB_ENABLED) return { ok: false, message: NO_DB_MESSAGE };
   if (!slug) return { ok: false, message: 'Unknown article.' };
-  if (!actor) return { ok: false, message: 'Say who is making this call.' };
 
   const db = await dbOf();
   const existing = await getArticleOverride(db, slug);
