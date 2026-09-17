@@ -150,17 +150,7 @@ export function alternativesFor(slug: string, stats?: ReviewStats): RankedBroker
  * most "X vs Y" links on the site were 404s. Anything linked is built.
  */
 export function comparePairs(): Array<[string, string]> {
-  const seen = new Set<string>();
-  const pairs: Array<[string, string]> = [];
-  for (const r of rankedBrokers()) {
-    for (const alt of alternativesFor(r.broker.slug)) {
-      const key = pairSlug(r.broker.slug, alt.broker.slug);
-      if (seen.has(key)) continue;
-      seen.add(key);
-      pairs.push([r.broker.slug, alt.broker.slug]);
-    }
-  }
-  return pairs;
+  return canonicalPairs(rankedBrokers().map((r) => [r.broker.slug, alternativesFor(r.broker.slug).map((a) => a.broker.slug)]));
 }
 
 export const pairSlug = (a: string, b: string) => `${a}-vs-${b}`;
@@ -178,6 +168,31 @@ export const canonicalPair = (a: string, b: string): [string, string] =>
   a.localeCompare(b) <= 0 ? [a, b] : [b, a];
 
 export const canonicalPairSlug = (a: string, b: string) => pairSlug(...canonicalPair(a, b));
+
+/**
+ * Each comparison once, in its canonical direction.
+ *
+ * This used to key the "seen" set on the slug as written, which is
+ * order-dependent, so A-vs-B and B-vs-A both survived it — two prerendered
+ * pages and two sitemap entries for one comparison. Every page now links the
+ * canonical direction, so the other one need not be built at all: dynamic
+ * params are deliberately left on, and a reverse URL from somewhere else still
+ * renders and still says which page it is.
+ */
+function canonicalPairs(from: Array<[string, string[]]>): Array<[string, string]> {
+  const seen = new Set<string>();
+  const pairs: Array<[string, string]> = [];
+  for (const [slug, alternatives] of from) {
+    for (const alt of alternatives) {
+      const [a, b] = canonicalPair(slug, alt);
+      const key = pairSlug(a, b);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      pairs.push([a, b]);
+    }
+  }
+  return pairs;
+}
 
 export function parsePair(slug: string): [string, string] | null {
   const parts = slug.split('-vs-');
@@ -212,17 +227,7 @@ export function propAlternativesFor(slug: string): RankedProp[] {
 }
 
 export function propComparePairs(): Array<[string, string]> {
-  const seen = new Set<string>();
-  const pairs: Array<[string, string]> = [];
-  for (const r of rankedProps()) {
-    for (const alt of propAlternativesFor(r.firm.slug)) {
-      const key = pairSlug(r.firm.slug, alt.firm.slug);
-      if (seen.has(key)) continue;
-      seen.add(key);
-      pairs.push([r.firm.slug, alt.firm.slug]);
-    }
-  }
-  return pairs;
+  return canonicalPairs(rankedProps().map((r) => [r.firm.slug, propAlternativesFor(r.firm.slug).map((a) => a.firm.slug)]));
 }
 
 /* ── Exchanges ─────────────────────────────────────────────────────────── */

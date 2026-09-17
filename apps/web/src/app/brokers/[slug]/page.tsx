@@ -6,7 +6,7 @@ import {
   servesRetail, actionsFor, BROKERS,
 } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, financialServiceLd, faqLd, reviewLd } from '@/lib/seo';
-import { rankedBrokers, getRanked, alternativesFor } from '@/lib/repo';
+import { rankedBrokers, getRanked, alternativesFor, canonicalPairSlug } from '@/lib/repo';
 import { coverage } from '@/lib/verify';
 import { brokerStatus } from '@/lib/status';
 import { registerChecksFor } from '@/lib/registers';
@@ -357,7 +357,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
               <ul className="flex flex-col">
                 {alternatives.map((a) => (
                   <li key={a.broker.slug} className="border-b border-line-2 last:border-b-0">
-                    <Link href={`/compare/${b.slug}-vs-${a.broker.slug}`} className="flex items-center gap-3 py-[11px] group">
+                    <Link href={`/compare/${canonicalPairSlug(b.slug, a.broker.slug)}`} className="flex items-center gap-3 py-[11px] group">
                       <Logo {...a.broker.logo} size={32} />
                       <span className="flex-1 text-[13.5px] font-semibold group-hover:text-accent">
                         {b.name} vs {a.broker.name}

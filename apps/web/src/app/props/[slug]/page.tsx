@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { describeDrawdown, countryName, countryInProse, propProfileFor, possessive, indefinite } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
-import { rankedProps, getRankedProp, propAlternativesFor, pairSlug } from '@/lib/repo';
+import { rankedProps, getRankedProp, propAlternativesFor, canonicalPairSlug } from '@/lib/repo';
 import { Header, PageHero, Footer } from '@/components/chrome';
 import { Faq } from '@/components/Faq';
 import { RecordHero, QuickJump, StickyActions } from '@/components/RecordHero';
@@ -283,7 +283,7 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
                 {propAlternativesFor(f.slug).map((x) => (
                   <li key={x.firm.slug}>
                     <Link
-                      href={`/props/compare/${pairSlug(f.slug, x.firm.slug)}`}
+                      href={`/props/compare/${canonicalPairSlug(f.slug, x.firm.slug)}`}
                       className="inline-block text-[11.5px] text-ink-2 border border-line rounded-full px-[10px] py-[5px] hover:border-ink hover:text-ink"
                     >
                       {f.name} vs {x.firm.name}
