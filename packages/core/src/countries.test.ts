@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { COUNTRIES, countryName } from './countries.ts';
+import { COUNTRIES, countryName, countryInProse } from './countries.ts';
 import { BROKERS } from './data/brokers.ts';
 import { PROPS } from './data/props.ts';
 import { EXCHANGES } from './data/exchanges.ts';
@@ -43,4 +43,23 @@ test('an unknown code falls back to itself rather than to a guess', () => {
 test('no two codes share a name', () => {
   const names = Object.values(COUNTRIES);
   assert.equal(new Set(names).size, names.length);
+});
+
+/**
+ * Written because "registered in United States" was on a live page. A label
+ * beside a flag and a noun inside a sentence are not the same string.
+ */
+test('a country name inside a sentence takes its article', () => {
+  assert.equal(countryInProse('US'), 'the United States');
+  assert.equal(countryInProse('GB'), 'the United Kingdom');
+  assert.equal(countryInProse('NL'), 'the Netherlands');
+  assert.equal(countryInProse('KM'), 'the Comoros');
+  // And the ones that do not, because "the Cyprus" is the same bug backwards.
+  assert.equal(countryInProse('CY'), 'Cyprus');
+  assert.equal(countryInProse('SC'), 'Seychelles');
+  assert.equal(countryInProse('CZ'), 'Czechia');
+  // The Bahamas carries its article in the name itself, not by this rule.
+  assert.equal(countryInProse('BS'), 'The Bahamas');
+  // An unknown code still falls back to itself rather than gaining an article.
+  assert.equal(countryInProse('XX'), 'XX');
 });

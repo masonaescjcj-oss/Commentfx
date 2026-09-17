@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { describeDrawdown, countryName, propProfileFor } from '@commentfx/core';
+import { describeDrawdown, countryName, countryInProse, propProfileFor, possessive, indefinite } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { rankedProps, getRankedProp } from '@/lib/repo';
 import { Header, PageHero, Footer } from '@/components/chrome';
@@ -84,14 +84,63 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
     },
     {
       q: `Does ${f.name} have a consistency rule?`,
+      // "No" is a strong claim, and on a firm whose own pages we could not read
+      // it is a claim the profile below may be openly disputing — E8 is exactly
+      // that case. So the record's answer is given with the standing behind it
+      // rather than flatly, and the two halves of the page stop contradicting
+      // each other.
       a: f.rules.consistencyRule
         ? `Yes. ${f.name} caps how much of your total profit a single day may contribute, so one outsized day can disqualify an otherwise passing account.`
-        : `No. ${f.name} does not cap how much any single day contributes to your total profit.`,
+        : profile && !profile.originReadable
+          ? `Not on our record — but ${possessive(f.name)} own pages refuse our requests, so nobody here has confirmed that where the rules are published. Treat it as unchecked rather than settled.`
+          : `No. ${f.name} does not cap how much any single day contributes to your total profit.`,
     },
     {
-      q: `What does a ${f.name} challenge cost?`,
+      q: `What does ${indefinite(f.name)} ${f.name} challenge cost?`,
       a: `Normalised to a $100k account, $${f.feeUsdPer100k}. ${f.name} prices several account sizes; comparing per $100k is the only way to compare firms directly.`,
     },
+    {
+      q: `Is ${f.name} regulated?`,
+      a:
+        `No, and no prop firm is. ${f.name} sells access to a simulated account rather than a financial `
+        + 'service, which is outside what financial regulators license. That is why the company behind it, '
+        + 'and the country it is registered in, is the whole of what a trader could ever act on.',
+    },
+    {
+      // Generated from the entity map so it cannot drift from it, and phrased
+      // to answer the question a trader actually has: who owes me.
+      q: `Which company would I be contracting with at ${f.name}?`,
+      a: (() => {
+        const contracting = f.entities.find((e) => e.role === 'contracting');
+        const trading = f.entities.find((e) => e.role === 'trading');
+        if (!contracting) {
+          return `Nobody here has read ${possessive(f.name)} terms for the companies behind it yet, so this page does `
+            + 'not say. Where a firm names none, the country in the header is where it says it is based, '
+            + 'which is not the same thing.';
+        }
+        const first = `${contracting.legalName}, registered in ${countryInProse(contracting.country)}`;
+        return trading && trading.legalName !== contracting.legalName
+          ? `${first} — but your account is run by ${trading.legalName} in ${countryInProse(trading.country)}. `
+            + `${f.name} names ${f.entities.length} companies in its own terms, and which one owes you `
+            + 'depends on what went wrong.'
+          : `${first}. It is the company whose terms you accept when you buy the challenge.`;
+      })(),
+    },
+    {
+      q: `What profit split does ${f.name} actually pay?`,
+      a:
+        `${f.payout.splitPct}% to a newly funded trader, which is not always the number a prop firm leads `
+        + 'with — four of the eight firms ranked here advertise a higher share that is the top of a range, '
+        + 'or in one case a paid upgrade. The figure on this page is what you start on.',
+    },
+    ...(profile && !profile.originReadable ? [{
+      q: `Have these ${f.name} figures been checked?`,
+      a:
+        `Not at the source. ${possessive(f.name)} own pages refuse our requests, so the rules and costs above were `
+        + 'not read where they are published — only where others have quoted them. That is scored openly as '
+        + 'the evidence component rather than left as a footnote, and it is a fact about our reading rather '
+        + 'than about the firm.',
+    }] : []),
   ];
 
   return (

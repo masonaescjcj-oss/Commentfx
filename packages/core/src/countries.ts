@@ -44,3 +44,22 @@ export const COUNTRIES: Record<string, string> = {
 
 export const countryName = (code: string): string =>
   Object.hasOwn(COUNTRIES, code) ? COUNTRIES[code]! : code;
+
+/**
+ * The countries whose names take "the" in a sentence.
+ *
+ * `countryName` is right for a label beside a flag and wrong inside prose: a
+ * generated FAQ shipped reading "registered in United States". These are the
+ * codes in this data whose English names need the article; the rest do not, and
+ * adding it to them ("the Cyprus") is the opposite mistake.
+ *
+ * The Bahamas already carries its article in COUNTRIES, because it is part of
+ * the country's name rather than a grammatical addition, so it is not here.
+ */
+const TAKES_THE = new Set(['US', 'GB', 'AE', 'NL', 'PH', 'KM']);
+
+/** The country's name as it belongs in a sentence rather than on a chip. */
+export const countryInProse = (code: string): string => {
+  const name = countryName(code);
+  return TAKES_THE.has(code) ? `the ${name}` : name;
+};
