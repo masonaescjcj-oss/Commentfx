@@ -76,16 +76,45 @@ for (const route of Object.keys(manifest.routes)) {
 }
 
 // ── Each page says whether it wants indexing, and the sitemap must agree ─────
+/**
+ * Three states, not two.
+ *
+ * A page can want indexing, refuse it, or defer to another URL. The third is a
+ * comparison: "a-vs-b" and "b-vs-a" are both linked, both answer, and both are
+ * the same page, so one carries a canonical pointing at the other. A page that
+ * defers belongs OUT of the sitemap — listing a URL you have told Google not to
+ * index is the contradiction this check exists to catch — and it is not
+ * noindex, because a canonical consolidates the two while noindex would throw
+ * one away.
+ *
+ * So a self-canonical page must be in the map, a noindex page must not be, and
+ * a cross-canonical page must be out of the map with its target in it. The
+ * third clause is the one that matters: without it, canonicalising the reverse
+ * direction of every comparison would quietly drop 29 pages out of this check's
+ * idea of correct.
+ */
 const NOINDEX = /<meta name="robots" content="[^"]*noindex/;
+const CANONICAL = /<link rel="canonical" href="([^"]+)"/;
 const missing = [];
 const wrongly = [];
+const orphaned = [];
 for (const path of built) {
   const res = await fetch(BASE + path);
   const html = await res.text();
   const noindex = NOINDEX.test(html);
-  if (!noindex && !sitemap.has(path)) missing.push(path);
+  const canonical = CANONICAL.exec(html)?.[1];
+  const canonicalPath = canonical ? (canonical.replace(SITE, '') || '/') : path;
+  const defers = canonicalPath !== path;
+
+  if (!noindex && !defers && !sitemap.has(path)) missing.push(path);
   if (noindex && sitemap.has(path)) wrongly.push(path);
+  // A page pointing its canonical somewhere must point it somewhere real, and
+  // that target is what the sitemap should carry.
+  if (defers && !sitemap.has(canonicalPath)) orphaned.push(`${path} → ${canonicalPath}`);
+  if (defers && sitemap.has(path)) wrongly.push(`${path} (canonical is ${canonicalPath})`);
 }
+if (orphaned.length) listed('every canonical points at a url the sitemap carries', orphaned);
+else check('every canonical points at a url the sitemap carries', true, `${built.length} checked`);
 if (missing.length) listed('every indexable page is in the sitemap', missing);
 else check('every indexable page is in the sitemap', true, `${built.length} checked`);
 if (wrongly.length) listed('no noindex page is in the sitemap', wrongly);

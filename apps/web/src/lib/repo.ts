@@ -165,6 +165,20 @@ export function comparePairs(): Array<[string, string]> {
 
 export const pairSlug = (a: string, b: string) => `${a}-vs-${b}`;
 
+/**
+ * The one of the two directions that is the real page.
+ *
+ * "exness-vs-ic-markets" and "ic-markets-vs-exness" are the same comparison,
+ * and both are linked from the two record pages, so both have to answer. Only
+ * one may be canonical, or the site is bidding against itself for its own
+ * query. Alphabetical, because it needs to be stable and nothing else about the
+ * choice matters.
+ */
+export const canonicalPair = (a: string, b: string): [string, string] =>
+  a.localeCompare(b) <= 0 ? [a, b] : [b, a];
+
+export const canonicalPairSlug = (a: string, b: string) => pairSlug(...canonicalPair(a, b));
+
 export function parsePair(slug: string): [string, string] | null {
   const parts = slug.split('-vs-');
   if (parts.length !== 2 || !parts[0] || !parts[1]) return null;
@@ -186,6 +200,30 @@ export function rankedProps(): RankedProp[] {
 
 export const getRankedProp = (slug: string) => rankedProps().find((r) => r.firm.slug === slug);
 export const getProp = propBySlug;
+
+/**
+ * The comparison pages the prop side builds, derived the same way the broker
+ * side derives its own — from the alternatives each page already links, so a
+ * link and a built page cannot come apart. The brokers learned that once, when
+ * pages linked three alternatives each and only the top six got built.
+ */
+export function propAlternativesFor(slug: string): RankedProp[] {
+  return rankedProps().filter((r) => r.firm.slug !== slug).slice(0, ALTERNATIVES);
+}
+
+export function propComparePairs(): Array<[string, string]> {
+  const seen = new Set<string>();
+  const pairs: Array<[string, string]> = [];
+  for (const r of rankedProps()) {
+    for (const alt of propAlternativesFor(r.firm.slug)) {
+      const key = pairSlug(r.firm.slug, alt.firm.slug);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      pairs.push([r.firm.slug, alt.firm.slug]);
+    }
+  }
+  return pairs;
+}
 
 /* ── Exchanges ─────────────────────────────────────────────────────────── */
 

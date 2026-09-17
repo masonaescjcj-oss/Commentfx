@@ -71,6 +71,19 @@ export function exchangeIndexable(e: Exchange): IndexDecision {
 }
 
 /**
+ * The same rule for prop firms. "FTMO vs FundedNext" is a question people
+ * actually type, and answering it with half a record is worse than not
+ * answering it.
+ */
+export function propCompareIndexable(a: PropFirm, b: PropFirm): IndexDecision {
+  const left = propIndexable(a);
+  const right = propIndexable(b);
+  if (!left.indexable) return no(`${a.name}: ${left.reason}`);
+  if (!right.indexable) return no(`${b.name}: ${right.reason}`);
+  return INDEXABLE;
+}
+
+/**
  * A comparison is worth indexing when both sides are, and not otherwise: half a
  * comparison is a page that answers its own title with a shrug.
  */

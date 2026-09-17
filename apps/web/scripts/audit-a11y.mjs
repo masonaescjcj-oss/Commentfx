@@ -32,6 +32,9 @@ const DEFAULT_PAGES = [
   '/calendar', '/calendar/us-jobs-report', '/reviews', '/reviews/withdraw',
   '/search', '/status', '/methodology', '/best/lowest-spread',
   '/compare/exness-vs-ic-markets',
+  // A prop comparison is its own page shape — its own table, its own caveat
+  // card — so a pass on the broker one says nothing about it.
+  '/props/compare/ftmo-vs-fundingpips',
   '/learn', '/learn/what-a-spread-really-costs',
   // The page a reader gets for a coin or company we do not have. It answers 404
   // on purpose, so its expected status is stated rather than letting the guard

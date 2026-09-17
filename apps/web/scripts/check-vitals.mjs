@@ -37,8 +37,8 @@ const WIDTH = Number(process.env.CHECK_WIDTH ?? 390);
 /** One of every page shape that carries a lot of text or a long list. */
 const PAGES = ['/', '/brokers', '/brokers/exness', '/props', '/exchanges', '/coins',
   '/coins/bitcoin', '/memecoins', '/calendar', '/reviews', '/search',
-  '/compare/exness-vs-ic-markets', '/best/lowest-spread',
-  '/learn', '/learn/what-a-spread-really-costs'];
+  '/compare/exness-vs-ic-markets', '/props/compare/ftmo-vs-fundingpips', '/best/lowest-spread',
+  '/learn', '/learn/what-a-spread-really-costs', '/learn/who-is-behind-your-prop-firm'];
 
 const failures = [];
 // CHECK_PROXY exists for sandboxes whose outbound traffic goes through one.

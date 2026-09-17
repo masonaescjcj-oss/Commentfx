@@ -1,9 +1,9 @@
 import type { MetadataRoute } from 'next';
 import { absoluteUrl } from '@/lib/site';
-import { rankedBrokers, rankedProps, rankedExchanges, BEST_CRITERIA, comparePairs, pairSlug } from '@/lib/repo';
-import { brokerBySlug, ARTICLES } from '@commentfx/core';
+import { rankedBrokers, rankedProps, rankedExchanges, BEST_CRITERIA, comparePairs, propComparePairs, canonicalPairSlug } from '@/lib/repo';
+import { brokerBySlug, propBySlug, ARTICLES } from '@commentfx/core';
 import {
-  RELEASES, brokerIndexable, propIndexable, exchangeIndexable, compareIndexable, pathIndexable,
+  RELEASES, brokerIndexable, propIndexable, exchangeIndexable, compareIndexable, propCompareIndexable, pathIndexable,
 } from '@commentfx/core';
 
 /**
@@ -84,17 +84,39 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     })),
 
-    ...comparePairs()
-      .filter(([a, b]) => {
-        const left = brokerBySlug(a);
-        const right = brokerBySlug(b);
-        return Boolean(left && right && compareIndexable(left, right).indexable);
-      })
-      .map(([a, b]) => ({
-        url: absoluteUrl(`/compare/${pairSlug(a, b)}`),
-        lastModified: now,
-        changeFrequency: 'weekly' as const,
-        priority: 0.6,
-      })),
+    // Both directions of a comparison are linked and both answer, but they are
+    // one page and the canonical says so — so the map lists each once. Without
+    // the Set every pair appeared twice under the same URL, which is the sort
+    // of thing a sitemap is supposed to be the fix for rather than the source.
+    ...uniqueUrls(
+      comparePairs()
+        .filter(([a, b]) => {
+          const left = brokerBySlug(a);
+          const right = brokerBySlug(b);
+          return Boolean(left && right && compareIndexable(left, right).indexable);
+        })
+        .map(([a, b]) => absoluteUrl(`/compare/${canonicalPairSlug(a, b)}`)),
+      now,
+    ),
+
+    ...uniqueUrls(
+      propComparePairs()
+        .filter(([a, b]) => {
+          const left = propBySlug(a);
+          const right = propBySlug(b);
+          return Boolean(left && right && propCompareIndexable(left, right).indexable);
+        })
+        .map(([a, b]) => absoluteUrl(`/props/compare/${canonicalPairSlug(a, b)}`)),
+      now,
+    ),
   ];
+}
+
+function uniqueUrls(urls: string[], now: Date) {
+  return [...new Set(urls)].map((url) => ({
+    url,
+    lastModified: now,
+    changeFrequency: 'weekly' as const,
+    priority: 0.6,
+  }));
 }

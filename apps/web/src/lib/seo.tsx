@@ -10,7 +10,15 @@ interface PageSeo {
   publishedTime?: string;
   modifiedTime?: string;
   authors?: string[];
-  /** Filtered or paginated views point their canonical at the clean URL. */
+  /**
+   * Where this page's canonical should point when it is not its own URL.
+   *
+   * A comparison exists at both "a-vs-b" and "b-vs-a" — both are linked, both
+   * have to work — and they are the same page. Without this they are two URLs
+   * competing for one query, which is the shape of duplicate content a new
+   * domain can least afford. One direction is canonical and the other says so.
+   */
+  canonicalPath?: string;
   noindex?: boolean;
 }
 
@@ -23,7 +31,7 @@ export function pageMetadata(seo: PageSeo): Metadata {
   return {
     title: seo.title,
     description: seo.description,
-    alternates: { canonical: url },
+    alternates: { canonical: absoluteUrl(seo.canonicalPath ?? seo.path) },
     robots: seo.noindex
       ? { index: false, follow: true }
       : { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 },

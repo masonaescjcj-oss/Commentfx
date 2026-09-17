@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { effectiveCostPips, hours, leverage } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd } from '@/lib/seo';
-import { comparePairs, pairSlug, parsePair, getRanked, type RankedBroker } from '@/lib/repo';
+import { comparePairs, pairSlug, canonicalPairSlug, parsePair, getRanked, type RankedBroker } from '@/lib/repo';
 import { reviewStats } from '@/lib/reviews';
 import { Header, PageHero, Footer } from '@/components/chrome';
 import { Card, Logo, Score } from '@/components/primitives';
@@ -59,6 +59,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
       `${a.broker.name} scores ${a.score.total.toFixed(1)}, ${b.broker.name} scores ${b.score.total.toFixed(1)}. ` +
       `Side-by-side on cost, licences, minimum deposit, withdrawals and platforms.`,
     path: `/compare/${pair}`,
+    // Both directions are linked and both must answer; only one is the page.
+    canonicalPath: `/compare/${canonicalPairSlug(parsed[0], parsed[1])}`,
   });
 }
 
