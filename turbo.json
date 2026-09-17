@@ -4,7 +4,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "env": ["DATABASE_URL", "PGLITE_DIR", "NEXT_PUBLIC_SITE_URL", "ADMIN_TOKEN", "REPORT_HASH_SECRET"],
+      "env": ["DATABASE_URL", "PGLITE_DIR", "NEXT_PUBLIC_SITE_URL", "ADMIN_TOKEN", "REPORT_HASH_SECRET", "GOOGLE_SITE_VERIFICATION", "BING_SITE_VERIFICATION"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "dev": { "cache": false, "persistent": true },

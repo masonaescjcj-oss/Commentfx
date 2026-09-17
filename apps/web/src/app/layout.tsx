@@ -42,6 +42,26 @@ export const metadata: Metadata = {
   alternates: { canonical: '/' },
   openGraph: { type: 'website', siteName: SITE.name, locale: SITE.locale, url: SITE.url },
   twitter: { card: 'summary_large_image', site: SITE.twitter },
+  /**
+   * Search Console and Bing Webmaster Tools prove ownership by looking for a
+   * meta tag on the homepage. Both are read from the environment rather than
+   * committed, because the token is per-property: it changes if the property is
+   * re-created, and a stale one hard-coded here would fail verification with
+   * nothing on the page to explain why.
+   *
+   * Set GOOGLE_SITE_VERIFICATION to the content value Search Console gives you
+   * for the "HTML tag" method, redeploy, then press Verify. Unset, nothing is
+   * rendered — an empty verification tag is worse than none, because it looks
+   * like it should work.
+   */
+  verification: {
+    ...(process.env.GOOGLE_SITE_VERIFICATION
+      ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+      : {}),
+    ...(process.env.BING_SITE_VERIFICATION
+      ? { other: { 'msvalidate.01': process.env.BING_SITE_VERIFICATION } }
+      : {}),
+  },
 };
 
 export const viewport: Viewport = {

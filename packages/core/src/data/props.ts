@@ -23,13 +23,21 @@ import type { PropFirm } from '../props.ts';
  * announce it, so every record still needs the rule-change job watching it.
  */
 /**
- * Logos are each firm's own icon, taken from its own site at the largest square
- * it publishes, then squared to 100px on white so one <img> rule fits every
- * record. Four of the eight are missing on purpose: FundingPips, Alpha Capital
- * Group, E8 Markets and Breakout all sit behind a bot check that refuses an
- * automated request, and those four fall back to the initials tile — which is
- * what the tile is for. Do not re-try them blind; if one is wanted, save the
- * file by hand.
+ * Logos are each firm's own icon, squared to 100px so one <img> rule fits every
+ * record. Four of them — FundingPips, Alpha Capital Group, E8 Markets and
+ * Breakout — could not be taken from the firms' own sites, which answer an
+ * automated request with 403 or 429, and this file used to say so and leave
+ * them as initials tiles.
+ *
+ * They now come from Google's public favicon endpoint, which is a different
+ * source rather than a way around the first one: the same shape of decision as
+ * taking the exchange logos from CoinGecko's public API instead of from eight
+ * exchange websites. Each was looked at before it was used — all four are the
+ * firm's real mark, not a screenshot or a placeholder — and each keeps its own
+ * background, as FTMO's and Topstep's do.
+ *
+ * The initials tile is still the fallback and still worth keeping legible: a
+ * firm added tomorrow may have no icon anywhere.
  */
 export const PROPS: PropFirm[] = [
   {
@@ -73,7 +81,7 @@ export const PROPS: PropFirm[] = [
     feeUsdPer100k: 439, platforms: ['MT5', 'cTrader', 'Match-Trader'],
     transparency: { publishesRuleChanges: true, disclosesLegalEntity: true, disclosesExecutionBroker: false },
     why: 'Cheapest static-drawdown challenge in the directory',
-    logo: { initials: 'FP', bg: '#3E5AD4', fg: '#FFFFFF' },
+    logo: { initials: 'FP', bg: '#3E5AD4', fg: '#FFFFFF', img: '/logos/fundingpips.png' },
   },
   {
     slug: 'fundednext', name: 'FundedNext', founded: 2022, headquarters: 'AE',
@@ -120,7 +128,7 @@ export const PROPS: PropFirm[] = [
     feeUsdPer100k: 599, platforms: ['MT5', 'cTrader'],
     transparency: { publishesRuleChanges: false, disclosesLegalEntity: true, disclosesExecutionBroker: false },
     why: 'A British company behind the brand, and a 40% best-day rule behind the target',
-    logo: { initials: 'AC', bg: '#7C5CD6', fg: '#FFFFFF' },
+    logo: { initials: 'AC', bg: '#7C5CD6', fg: '#FFFFFF', img: '/logos/alpha-capital-group.png' },
   },
   {
     slug: 'topstep', name: 'Topstep', founded: 2012, headquarters: 'US',
@@ -151,7 +159,7 @@ export const PROPS: PropFirm[] = [
     feeUsdPer100k: 588, platforms: ['MT5', 'Match-Trader'],
     transparency: { publishesRuleChanges: false, disclosesLegalEntity: true, disclosesExecutionBroker: false },
     why: 'Flexible rules offset by a lower split and end-of-day trailing drawdown',
-    logo: { initials: 'E8', bg: '#0F5FA6', fg: '#FFFFFF' },
+    logo: { initials: 'E8', bg: '#0F5FA6', fg: '#FFFFFF', img: '/logos/e8-markets.png' },
   },
   {
     slug: 'the5ers', name: 'The5%ers', founded: 2016, headquarters: 'IL',
@@ -197,7 +205,7 @@ export const PROPS: PropFirm[] = [
     feeUsdPer100k: 499, platforms: ['Proprietary'],
     transparency: { publishesRuleChanges: false, disclosesLegalEntity: false, disclosesExecutionBroker: false },
     why: 'Crypto-only and cheap, but intraday trailing drawdown is the strictest form',
-    logo: { initials: 'BR', bg: '#2FA97C', fg: '#FFFFFF' },
+    logo: { initials: 'BR', bg: '#2FA97C', fg: '#FFFFFF', img: '/logos/breakout.png' },
   },
 ];
 

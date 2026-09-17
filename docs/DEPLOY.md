@@ -96,6 +96,31 @@ structured data are built from, so a preview deploy with the default is telling
 search engines that the production site is the canonical copy of the page they
 are looking at. Harmless if the preview is `noindex`, wrong otherwise.
 
+### `GOOGLE_SITE_VERIFICATION` and `BING_SITE_VERIFICATION`
+
+Optional. The content value each webmaster tool gives you for its "HTML tag"
+verification method — not the whole tag, just the string inside `content="…"`.
+
+Set it, redeploy, then press Verify in the console. Unset, nothing is rendered:
+an empty verification tag is worse than none, because it looks like it ought to
+work and fails without saying why.
+
+Both are read at **build** time, not at runtime — Next bakes root metadata into
+the output — and Turborepo only passes through the variables named in
+`turbo.json`, which these are. Setting one on the running process and restarting
+does nothing; it has to be present for the build. This cost a confused half hour
+the first time and is the only surprising thing about either of them.
+
+Neither is committed, because the token is per-property. It changes if the
+property is deleted and re-created, and a stale one in the repository would fail
+verification with nothing on the page to explain it.
+
+Once verified, submit `https://<your domain>/sitemap.xml` in Search Console. It
+is generated from the data and lists only the pages that pass the indexing gate
+in `packages/core/src/indexing.ts`, so it is always in step with the `noindex`
+each page carries — `pnpm --filter @commentfx/web check:seo` fails the build if
+the two ever disagree.
+
 ## Migrations
 
 There is no separate migration step and no `drizzle-kit push` to remember.
