@@ -1,5 +1,6 @@
 import { composite, clamp, round1, scale, type Input, type Component, type Composite } from './scoring-kit.ts';
 import type { LogoMark } from './types.ts';
+import { evidenceScore, evidenceNote as sharedEvidenceNote, type EvidenceInput } from './data/research.ts';
 
 /**
  * How a firm measures drawdown decides more than any other rule whether a
@@ -181,20 +182,11 @@ export function scorePropPlatform(p: PropFirm): number {
  * drawdown, the split — inherits whatever they got wrong.
  */
 export function scorePropEvidence(p: PropFirm, profile?: PropEvidence): number | null {
-  if (!profile) return null;
-  const independent = profile.sources.some((s) => s.kind === 'register' || s.kind === 'filing');
-  return clamp(round1(4 + (profile.originReadable ? 3 : 0) + (independent ? 3 : 0)));
+  return evidenceScore(profile);
 }
 
-/**
- * The part of a researched profile the score reads. Structural rather than an
- * import, so the scoring file does not depend on the data file that depends on
- * it.
- */
-export interface PropEvidence {
-  originReadable: boolean;
-  sources: Array<{ kind: string }>;
-}
+/** @deprecated shape kept for the call sites; see EvidenceInput in research.ts. */
+export type PropEvidence = EvidenceInput;
 
 export function scorePropTransparency(p: PropFirm): number {
   const t = p.transparency;
@@ -222,14 +214,7 @@ export function scoreProp(p: PropFirm, profile?: PropEvidence): PropBreakdown {
   return composite(inputs, PROP_WEIGHTS, PROP_LABELS);
 }
 
-function evidenceNote(profile?: PropEvidence): string {
-  if (!profile) return 'Nobody has researched this firm yet';
-  const independent = profile.sources.some((s) => s.kind === 'register' || s.kind === 'filing');
-  if (profile.originReadable && independent) return 'Read at the firm’s own pages and against a register';
-  if (profile.originReadable) return 'Read at the firm’s own pages; no register names it';
-  if (independent) return 'A register names it; the firm’s own pages refuse our requests';
-  return 'The firm’s own pages refuse our requests and no register names it';
-}
+const evidenceNote = sharedEvidenceNote;
 
 function transparencyNote(p: PropFirm): string {
   const t = p.transparency;

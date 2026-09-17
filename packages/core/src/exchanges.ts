@@ -1,5 +1,6 @@
 import { composite, clamp, round1, scale, type Input, type Component, type Composite } from './scoring-kit.ts';
 import { conductScore, actionsFor } from './data/actions.ts';
+import { evidenceScore, evidenceNote, type EvidenceInput } from './data/research.ts';
 import type { LogoMark } from './types.ts';
 
 export interface Exchange {
@@ -40,7 +41,7 @@ export interface Exchange {
 }
 
 export type ExchangeKey =
-  | 'solvency' | 'security' | 'conduct' | 'fees' | 'liquidity' | 'transparency';
+  | 'solvency' | 'security' | 'conduct' | 'fees' | 'liquidity' | 'transparency' | 'evidence';
 
 /**
  * `conduct` carries more here than on the broker side, and the reason is what
@@ -58,7 +59,8 @@ export type ExchangeKey =
  * has searched is excluded rather than given ten.
  */
 export const EXCHANGE_WEIGHTS: Record<ExchangeKey, number> = {
-  solvency: 0.27, security: 0.22, conduct: 0.15, fees: 0.16, liquidity: 0.12, transparency: 0.08,
+  solvency: 0.25, security: 0.20, conduct: 0.15, fees: 0.14, liquidity: 0.10, transparency: 0.08,
+  evidence: 0.08,
 };
 
 export const EXCHANGE_LABELS: Record<ExchangeKey, string> = {
@@ -68,6 +70,7 @@ export const EXCHANGE_LABELS: Record<ExchangeKey, string> = {
   fees: 'Trading fees',
   liquidity: 'Liquidity',
   transparency: 'Transparency',
+  evidence: 'Evidence behind this record',
 };
 
 /**
@@ -134,7 +137,7 @@ export function scoreExchangeTransparency(e: Exchange): number {
 export type ExchangeBreakdown = Composite<ExchangeKey>;
 export type ExchangeComponent = Component<ExchangeKey>;
 
-export function scoreExchange(e: Exchange): ExchangeBreakdown {
+export function scoreExchange(e: Exchange, profile?: EvidenceInput): ExchangeBreakdown {
   const inputs: Input<ExchangeKey>[] = [
     { key: 'solvency', value: scoreSolvency(e), note: solvencyNote(e) },
     { key: 'security', value: scoreSecurity(e), note: securityNote(e) },
@@ -142,6 +145,7 @@ export function scoreExchange(e: Exchange): ExchangeBreakdown {
     { key: 'liquidity', value: scoreLiquidity(e), note: `${volumeBand(e.spotVolumeUsd)} reported 24h spot volume` },
     { key: 'conduct', value: conductScore(e.slug), note: conductNote(e) },
     { key: 'transparency', value: scoreExchangeTransparency(e), note: transparencyNote(e) },
+    { key: 'evidence', value: evidenceScore(profile), note: evidenceNote(profile) },
   ];
   return composite(inputs, EXCHANGE_WEIGHTS, EXCHANGE_LABELS);
 }

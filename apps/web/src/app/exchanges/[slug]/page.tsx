@@ -1,13 +1,14 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { volumeBand, countryName, actionsFor } from '@commentfx/core';
+import { volumeBand, countryName, actionsFor, exchangeProfileFor } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { rankedExchanges, getRankedExchange } from '@/lib/repo';
 import { Header, PageHero, Footer } from '@/components/chrome';
 import { Faq } from '@/components/Faq';
 import { RecordHero, QuickJump, StickyActions } from '@/components/RecordHero';
 import { ActionList } from '@/components/Actions';
+import { Profile } from '@/components/Profile';
 import { IconScore, IconCost, IconLicence, IconReviews, IconCompare, IconFaq } from '@/components/icons';
 import { ReviewForm } from '@/components/ReviewForm';
 import { ReviewList, ReviewSummary } from '@/components/ReviewList';
@@ -58,6 +59,7 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
   if (!r) notFound();
 
   const actions = actionsFor(r.exchange.slug);
+  const profile = exchangeProfileFor(r.exchange.slug);
   const e = r.exchange;
   const all = rankedExchanges();
   const [cov, reviews] = await Promise.all([
@@ -129,6 +131,7 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
             ...(actions.length > 0 ? [{ href: '#record', label: 'On the record', icon: <IconLicence /> }] : []),
             { href: '#security', label: 'Solvency', icon: <IconLicence /> },
             { href: '#fees', label: 'Fees', icon: <IconCost /> },
+            ...(exchangeProfileFor(e.slug) ? [{ href: '#research', label: 'Research', icon: <IconLicence /> }] : []),
             { href: '#reviews', label: 'Reviews', icon: <IconReviews /> },
             { href: '#compare', label: 'Others', icon: <IconCompare /> },
             { href: '#faq', label: 'Questions', icon: <IconFaq /> },
@@ -179,6 +182,9 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
             <Card className="p-4 lg:p-6" as="section">
               <OfficialSite name={e.name} url={e.website} />
             </Card>
+
+            {/* The researched half, after the figures it argues about. */}
+            {profile ? <Profile profile={profile} name={e.name} /> : null}
 
             <Card className="p-4 lg:p-6" as="section" id="reviews">
               <CardHead

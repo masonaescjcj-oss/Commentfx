@@ -232,13 +232,13 @@ export function propComparePairs(): Array<[string, string]> {
 
 /* ── Exchanges ─────────────────────────────────────────────────────────── */
 
-import { EXCHANGES, exchangeBySlug, scoreExchange, type Exchange, type ExchangeBreakdown } from '@commentfx/core';
+import { EXCHANGES, exchangeBySlug, scoreExchange, exchangeProfileFor, type Exchange, type ExchangeBreakdown } from '@commentfx/core';
 
 export interface RankedExchange { rank: number; exchange: Exchange; score: ExchangeBreakdown }
 
 export function rankedExchanges(): RankedExchange[] {
   return EXCHANGES
-    .map((exchange) => ({ exchange, score: scoreExchange(exchange) }))
+    .map((exchange) => ({ exchange, score: scoreExchange(exchange, exchangeProfileFor(exchange.slug)) }))
     .sort((a, b) => b.score.total - a.score.total || a.exchange.name.localeCompare(b.exchange.name))
     .map((r, i) => ({ rank: i + 1, ...r }));
 }

@@ -1,4 +1,3 @@
-import type { Source } from './profiles.ts';
 
 /**
  * The hand-researched layer for prop firms.
@@ -32,40 +31,11 @@ import type { Source } from './profiles.ts';
  * seeded from marketing and never read back against the source.
  */
 
-export interface PropFact {
-  label: string;
-  value: string;
-  /** Source.id */
-  from: string;
-}
+import type { ResearchProfile } from './research.ts';
+export type { ResearchFact as PropFact, ResearchSection as PropSection } from './research.ts';
 
-export interface PropSection {
-  heading: string;
-  paragraphs: string[];
-}
-
-export interface PropProfile {
-  slug: string;
-  /** The day a person did this research. */
-  checked: string;
-  /**
-   * Whether the firm's own pages answered us at all.
-   *
-   * Four of the eight return 403 or 429 to our requests, so their rules were
-   * never read where they are published — only where somebody else quoted them.
-   * That is a fact about the evidence behind a record, not about the firm's
-   * honesty, and it is the input to the `evidence` component of the score.
-   * Setting it true means a person here opened the firm's own pages and read
-   * them; it is not satisfied by a review site repeating the same figures.
-   */
-  originReadable: boolean;
-  verdict: string;
-  sections: PropSection[];
-  facts: PropFact[];
-  /** Questions this research opened and did not close. */
-  open: string[];
-  sources: Source[];
-}
+/** A prop firm's researched record. The shape is shared; see research.ts. */
+export type PropProfile = ResearchProfile;
 
 /* ── FTMO ─────────────────────────────────────────────────────────────────── */
 
@@ -600,8 +570,8 @@ const FUNDINGPIPS: PropProfile = {
       paragraphs: [
         'FundingPips answers our servers with 429 and 403 — rate limiting and a refusal — so no '
         + 'page of its site was read directly by anything of ours. The entity detail above comes '
-        + 'from its terms as indexed and quoted elsewhere, which is weaker evidence than a page we '
-        + 'fetched ourselves, and the sources list says which is which.',
+        + 'from its terms as indexed and quoted elsewhere [fp-terms], which is weaker evidence than '
+        + 'a page we fetched ourselves, and the sources list says which is which.',
 
         'Nothing in this record’s rule figures or fee has therefore been confirmed against the '
         + 'firm’s own live pages on this pass. They remain what the record held, and the '
@@ -684,7 +654,7 @@ const BREAKOUT: PropProfile = {
         + 'a Saint Vincent registration numbered 2242 BC 2023, a separate registration number '
         + 'against the same name, and a distinct company said to hold funded trader agreements. We '
         + 'are not publishing a company number we could not verify, so the entity map above carries '
-        + 'the names that Kraken’s own announcement supports and no numbers at all.',
+        + 'only the names Kraken’s own announcement supports [bw] and no numbers at all.',
 
         'The drawdown on this record is intraday trailing, which is the strictest form there is and '
         + 'the reason this firm scores where it does on rules. That figure predates the acquisition '
@@ -952,19 +922,4 @@ export const PROP_PROFILES: PropProfile[] = [
 
 export const propProfileFor = (slug: string) => PROP_PROFILES.find((p) => p.slug === slug);
 
-const CITE = /\[([a-z0-9-]+)\]/g;
-
-/** Every source id a profile's prose refers to. */
-export function propProfileCitations(p: PropProfile): string[] {
-  const text = p.sections.flatMap((s) => s.paragraphs).join(' ');
-  return [...new Set([...text.matchAll(CITE)].map((m) => m[1]!))];
-}
-
-export function propProfileWordCount(p: PropProfile): number {
-  return p.sections
-    .flatMap((s) => s.paragraphs)
-    .join(' ')
-    .replace(CITE, '')
-    .split(/\s+/)
-    .filter(Boolean).length;
-}
+export { researchCitations as propProfileCitations, researchWordCount as propProfileWordCount } from './research.ts';

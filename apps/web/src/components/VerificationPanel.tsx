@@ -22,20 +22,17 @@ const LABELS: Record<string, string> = {
  * What a reader is owed: which facts on this page a person actually checked,
  * against what source, and how long ago. An unverified field is named as
  * unverified rather than quietly presented as fact.
+ *
+ * With no verifications at all this renders nothing, by the owner's decision.
+ * It used to open every record page with a banner saying nothing on it was
+ * editor-verified, which was true of the machine-checked fields and read as a
+ * disclaimer over the whole page — including, by the time it was removed, the
+ * researched half underneath it, where every claim carries a source and the day
+ * somebody read it. The per-field state below is unchanged: a field nobody has
+ * checked still says so, next to the field.
  */
 export function VerificationPanel({ coverage }: { coverage: Coverage | null }) {
-  if (!coverage) {
-    return (
-      <Card className="p-4 lg:p-6 bg-warn-bg shadow-none border border-[#F3E3C2]" as="section">
-        <h2 className="text-[14px] font-bold text-warn mb-[6px]">Nothing on this page is editor-verified yet</h2>
-        <p className="text-[12.5px] text-[#8A6420] leading-[1.8]">
-          These figures come from the company&rsquo;s own published pages and have not
-          been checked against a primary source by an editor. Verify anything you plan
-          to act on.
-        </p>
-      </Card>
-    );
-  }
+  if (!coverage) return null;
 
   const { verified, stale, unverified, fields, ratio } = coverage;
   const tone = ratio === 1 ? 'up' : ratio >= 0.5 ? 'accent' : 'warn';

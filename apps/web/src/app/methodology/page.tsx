@@ -79,6 +79,7 @@ const EXCHANGE_WHAT: Record<ExchangeKey, string> = {
   fees: 'The taker fee actually charged at the lowest tier.',
   liquidity: 'Reported spot volume, on a logarithmic scale and used only as a band. Volume is self-reported and has been inflated industry-wide for years, which is why it carries the least weight here.',
   transparency: 'Three disclosures: a public fee schedule, the legal entity, and incident reports.',
+  evidence: 'How much of this record anybody has been able to confirm, on the same rule the prop firms use: four points for a record somebody has researched and written up, three more if the company\u2019s own pages answered our requests, three more if an outside document \u2014 a regulator\u2019s notice, a court filing, a company register \u2014 names it. Excluded rather than zeroed where nobody has done the research. It carries less weight here than on the prop side because these companies are unusually well documented by other people: a guilty plea is a stronger record than anything a firm publishes about itself.',
 };
 
 const MEME_WHAT: Record<MemeKey, string> = {

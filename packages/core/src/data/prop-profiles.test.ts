@@ -146,3 +146,16 @@ test('the split on record is what a newly funded trader gets, not the ceiling', 
   assert.equal(alpha.rules.minTradingDays, 3, 'Alpha Capital requires three trading days per phase');
   assert.equal(alpha.rules.consistencyRule, true, 'Alpha Capital applies a 40% best-day rule');
 });
+
+/**
+ * The same rule the exchange layer needed: a section that cites nothing is a
+ * paragraph nobody has to stand behind. Added there after it caught five, and
+ * here because this layer had the same hole.
+ */
+test('every section cites at least one source', () => {
+  for (const p of PROP_PROFILES) {
+    for (const s of p.sections) {
+      assert.ok(/\[([a-z0-9-]+)\]/.test(s.paragraphs.join(' ')), `${p.slug}: "${s.heading}" cites nothing`);
+    }
+  }
+});

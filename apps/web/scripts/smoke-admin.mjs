@@ -156,13 +156,30 @@ if (await unchecked.count() > 0) {
     await settlesTo(page, `/admin/broker/${SLUG}`, `${before + 1} of 6 fields verified`, true),
     `was ${before}`);
 
-  // The public panel has two shapes: a warning card when nothing is checked and
-  // the field list once something is. Asserting on the heading alone would pass
-  // in both, so assert on the count.
-  check('the public page shows the new count, not the nothing-checked card',
+  check('the public page shows the new count',
     await settlesTo(page, `/brokers/${SLUG}`, `${before + 1} of 6`, true));
-  check('the nothing-checked warning is gone',
-    !(await page.getByText('Nothing on this page is editor-verified yet').count()));
+
+  // The panel used to have two shapes — a warning card when nothing was checked
+  // and the field list once something was — and this asserted the warning had
+  // gone. The warning was removed from the product, which left that assertion
+  // passing against a string the site can no longer print: a check that cannot
+  // fail. What is worth holding instead is the other half of the same rule, so
+  // it now reads a record nobody has verified and asserts the panel is absent
+  // there while present here.
+  // Two wrong versions of this before the right one, both worth recording.
+  // The first looked for "fields verified", a string the panel never prints,
+  // so it passed everywhere. The second pointed at another broker — but a
+  // broker always has a coverage record, so the panel renders there with every
+  // field marked not checked, which is correct and not what this is testing.
+  //
+  // What was removed is the card shown where there is no coverage record at
+  // all, which is prop firms and exchanges. So that is where to look.
+  await page.goto(`${BASE}/props/ftmo`, { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(400);
+  const banner = await page.getByText('editor-verified').count();
+  const panel = await page.getByText('What has been checked').count();
+  check('a page with no coverage record shows no verification card',
+    banner === 0 && panel === 0, `banner ${banner}, panel ${panel}`);
 
   // A verification expires after 90 days, so renewing one has to work — and it
   // must update rather than add.
