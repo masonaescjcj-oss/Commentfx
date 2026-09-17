@@ -376,6 +376,134 @@ export const ARTICLES: Article[] = [
       },
     ],
   },
+  {
+    slug: 'who-is-behind-your-prop-firm',
+    title: 'Who is actually behind your prop firm',
+    heading: 'Who is actually behind your prop firm',
+    description:
+      'A prop firm holds no financial licence, so the company name on its terms is the whole of your ' +
+      'recourse. Here is how to find it, and what we found behind eight of them.',
+    published: '2026-09-17',
+    updated: '2026-09-17',
+    author: 'CommentFX',
+    question: 'Who am I actually contracting with when I buy a prop firm challenge?',
+    answer:
+      'Usually not the company in the marketing. A prop firm holds no financial licence anywhere, so there ' +
+      'is no regulator to complain to — the legal name and country on its terms is the entirety of what you ' +
+      'could ever act on.',
+    blocks: [
+      {
+        heading: 'What you are buying, in one firm’s own words',
+        paragraphs: [
+          'FTMO states it plainly in its own FAQ: "all accounts we provide to our clients are demo accounts ' +
+          'with fictitious funds and any trading is in a simulated environment only". That is the product ' +
+          'across the whole category, not one firm’s small print.',
+          'It is also why no regulator licenses any of this. A broker takes your deposit into the real market ' +
+          'and is supervised for it; a prop firm sells you access to a simulation and a contract promising a ' +
+          'share of what the simulation says you earned. Nothing wrong with that — but it changes completely ' +
+          'what happens when something goes wrong.',
+          'If a licensed broker refuses your withdrawal, you have a regulator, an ombudsman and sometimes a ' +
+          'compensation scheme. If a prop firm refuses your payout, you have a contract with a company, in ' +
+          'whatever country that company is registered in. That is the whole list. Which is why the name and ' +
+          'the country are not trivia, and why every firm in our ' +
+          '[prop firm ranking](/props) now opens with the companies behind it.',
+        ],
+      },
+      {
+        heading: 'It is rarely one company',
+        paragraphs: [
+          'When we read all eight firms in this directory back against their own terms in September 2026, the ' +
+          'single most common finding was that the arrangement is split across jurisdictions — and that the ' +
+          'address in the marketing belongs to the least important of them.',
+          'FundedNext is the clearest example, and it publishes all of it honestly in its terms. Four ' +
+          'companies, three live, in three countries:',
+        ],
+        example: {
+          title: 'The companies behind one prop firm',
+          rows: [
+            ['The terms you accept', 'GrowthNext – F.Z.E., reg. 28831, Ajman Free Zone, UAE'],
+            ['The company running your account', 'FundedNext Ltd, HY01023052, Mohéli, Comoros'],
+            ['The company charging your card', 'Incenteco Trading Ltd, HE 307114, Limassol, Cyprus'],
+            ['The company that used to exist', 'FundedNext Ltd, 14492007, England — dissolved 30 April 2024'],
+          ],
+          note:
+            'Read from the firm’s own terms and from Companies House. The full working is on our ' +
+            '[FundedNext record](/props/fundednext).',
+        },
+      },
+      {
+        heading: 'How to check it yourself, in about ten minutes',
+        paragraphs: [
+          'You do not need us for this. Every step below is a free public source, and the whole point is that ' +
+          'a firm dealing straight will survive it.',
+        ],
+        list: {
+          ordered: true,
+          items: [
+            'Find the terms of service — not the FAQ, not the rules page. Look for a heading like "the ' +
+            'parties" or "who we are". Every firm in this directory names its companies somewhere in there.',
+            'Write down every company name, registration number and country you find. If there is more than ' +
+            'one, note which does what: takes the money, runs the account, holds the contract.',
+            'Search the register of the country named. Companies House (UK), ARES (Czechia) and most EU ' +
+            'registers are free and instant. If a company is real, you will find it in under a minute.',
+            'Check the classification the company filed under. It is one line and it tells you what the ' +
+            'company says it is: Alpha Capital Group is filed as an IT services business, The5%ers as human ' +
+            'resources provision.',
+            'If a company is registered somewhere with no searchable public register — the Comoros, St ' +
+            'Vincent, Mohéli — you have reached the end of what anyone can verify. That is not proof of ' +
+            'anything bad. It is the limit of what you will ever be able to check.',
+          ],
+        },
+      },
+      {
+        heading: 'The number in the headline is usually the ceiling',
+        paragraphs: [
+          'The other thing that research turned up: of eight firms, four published a profit split that was ' +
+          'the top of a range rather than what a newly funded trader is paid. FTMO advertises 90% and pays ' +
+          '80 until you have traded four months, made 10% net and taken two payouts. The5%ers advertises ' +
+          '100% and starts at 80. FundedNext’s 95% is partly a paid upgrade — it costs a further 20% on the ' +
+          'price of the challenge.',
+          'None of that is hidden. Every one of those firms publishes the real terms on its own site, in the ' +
+          'scaling plan or the programme page. It is simply that the number on the homepage and the number ' +
+          'in your contract are different numbers, and only one of them is the one you get.',
+          'The same habit runs through broker marketing, where the licence in the advertising is often held ' +
+          'by a company that would not open an account for you — the subject of our guide on ' +
+          '[which entity you sign with](/learn/which-entity-are-you-signing-with), and visible on every ' +
+          '[broker record we publish](/brokers).',
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: 'Are prop firms regulated?',
+        a:
+          'No, and not because they are evading anything. They sell access to a simulated account rather than ' +
+          'a financial service, which falls outside what financial regulators license. A firm claiming to be ' +
+          '"regulated" is usually pointing at a separate brokerage company in the same group.',
+      },
+      {
+        q: 'Is a demo account a problem?',
+        a:
+          'Not by itself — it is the product, and the serious firms say so in their own terms. What it means ' +
+          'is that your claim is contractual rather than regulatory, so the company you are contracting with, ' +
+          'and where it is registered, is the thing worth checking before you pay.',
+      },
+      {
+        q: 'What does it mean if a firm is registered in the Comoros?',
+        a:
+          'It means the company exists on a register nobody outside can search, so its registration number ' +
+          'cannot be independently confirmed. Two firms in this directory run their accounts from there. It ' +
+          'is not evidence of wrongdoing; it is the point past which no reader can verify anything.',
+      },
+      {
+        q: 'Why do some prop firms score lower on your rankings for reasons that are not their fault?',
+        a:
+          'Four of the eight refuse automated requests, so their rules could not be read where they are ' +
+          'published. That is a fact about our evidence, not their honesty, and it is scored as a separate ' +
+          'published component so a reader can see exactly what it cost and disagree with us.',
+      },
+    ],
+  },
 ];
 
 export const articleBySlug = (slug: string) => ARTICLES.find((a) => a.slug === slug);

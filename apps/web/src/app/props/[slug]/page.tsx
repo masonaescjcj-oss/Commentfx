@@ -181,6 +181,13 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
                 ['Markets', f.markets.join(', ')],
                 ['Platforms', f.platforms.join(', ')],
               ]} />
+              <p className="text-[11.5px] text-ink-3 mt-3 leading-[1.8]">
+                The split here is what a newly funded trader is paid, not the best number the firm
+                advertises — on four of the eight in this directory those are different numbers.{' '}
+                <Link href="/learn/who-is-behind-your-prop-firm" className="text-accent font-semibold">
+                  Why the headline is usually a ceiling
+                </Link>.
+              </p>
             </Card>
 
             {/* The researched half, after the figures it argues about. */}

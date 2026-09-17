@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { PropFirm, PropEntity } from '@commentfx/core';
 import { countryName } from '@commentfx/core';
 import { Card, CardHead, Tag } from './primitives';
@@ -101,7 +102,10 @@ export function PropEntities({ firm }: { firm: PropFirm }) {
             Read off the firm’s own terms and, where one exists, the company register of the
             country named. A prop firm holds no financial licence, so there is no regulator to
             check these against — which is the reason to know the names rather than a reason not
-            to publish them.
+            to publish them.{' '}
+            <Link href="/learn/who-is-behind-your-prop-firm" className="text-accent font-semibold">
+              How to check this yourself
+            </Link>.
           </p>
         </>
       )}
