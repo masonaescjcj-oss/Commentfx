@@ -159,27 +159,35 @@ if (await unchecked.count() > 0) {
   check('the public page shows the new count',
     await settlesTo(page, `/brokers/${SLUG}`, `${before + 1} of 6`, true));
 
-  // The panel used to have two shapes — a warning card when nothing was checked
-  // and the field list once something was — and this asserted the warning had
-  // gone. The warning was removed from the product, which left that assertion
-  // passing against a string the site can no longer print: a check that cannot
-  // fail. What is worth holding instead is the other half of the same rule, so
-  // it now reads a record nobody has verified and asserts the panel is absent
-  // there while present here.
-  // Two wrong versions of this before the right one, both worth recording.
-  // The first looked for "fields verified", a string the panel never prints,
-  // so it passed everywhere. The second pointed at another broker — but a
-  // broker always has a coverage record, so the panel renders there with every
-  // field marked not checked, which is correct and not what this is testing.
-  //
-  // What was removed is the card shown where there is no coverage record at
-  // all, which is prop firms and exchanges. So that is where to look.
-  await page.goto(`${BASE}/props/ftmo`, { waitUntil: 'domcontentloaded' });
-  await page.waitForTimeout(400);
-  const banner = await page.getByText('editor-verified').count();
+  /**
+   * Four wrong versions of this before the right one, and each was wrong in a
+   * way worth keeping.
+   *
+   * The first looked for "fields verified", a string the panel never prints, so
+   * it passed everywhere. The second pointed at another broker — but a broker
+   * always has a coverage record, so the panel renders there with every field
+   * marked not checked, which is correct and not what this was testing. The
+   * third asserted the panel was absent on a prop firm, on the theory that prop
+   * firms have no coverage record. They do: `coverage()` returns one for any
+   * record whenever a database is configured, and null only when there is none.
+   *
+   * The fourth looked for the banner on that prop page and passed — because a
+   * file-backed PGlite aborts under the build's parallel workers, so the
+   * prerender fell back to no coverage and rendered neither the banner nor the
+   * panel. A page that renders nothing cannot tell you what it would have said.
+   *
+   * So it is asserted here instead, on this broker page, in the one state this
+   * script has just put it in: a record with one field verified out of six. The
+   * panel is provably on it — the count above was read off it — and the claim
+   * is that nothing on it disclaims the page as a whole. A page-level "nothing
+   * here is verified" over a page where something is, is the exact thing that
+   * was removed.
+   */
   const panel = await page.getByText('What has been checked').count();
-  check('a page with no coverage record shows no verification card',
-    banner === 0 && panel === 0, `banner ${banner}, panel ${panel}`);
+  check('the panel is on a page with a coverage record', panel > 0);
+  check('and says which fields, not that the page is unverified',
+    await page.getByText('Not checked').count() > 0
+    && await page.getByText('editor-verified').count() === 0);
 
   // A verification expires after 90 days, so renewing one has to work — and it
   // must update rather than add.

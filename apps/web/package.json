@@ -16,7 +16,8 @@
     "smoke:degraded": "node scripts/smoke-degraded.mjs",
     "check:seo": "node scripts/check-seo.mjs",
     "smoke:search": "node scripts/smoke-search.mjs",
-    "check:vitals": "node scripts/check-vitals.mjs"
+    "check:vitals": "node scripts/check-vitals.mjs",
+    "smoke:records": "node scripts/smoke-records.mjs"
   },
   "dependencies": {
     "@commentfx/core": "workspace:*",

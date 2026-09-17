@@ -276,6 +276,45 @@ a deliberate stopgap and not an auth system — it has no per-user identity and 
 revocation — which is why every write records an actor into an append-only audit
 log. Replace it with real accounts before anyone but its author touches it.
 
+## Editing records
+
+The curated records are TypeScript literals compiled into the build, and that is
+what lets the test suite hold forty-odd invariants over them before anything
+ships. A form cannot edit those files at runtime, so `/admin/records` writes a
+**patch** instead: the fields somebody changed, stored in `record_overrides`,
+merged over the code record when a page renders.
+
+Three things follow, and all three are the reason it is built this way.
+
+1. **Turning it off restores the site exactly.** Nothing was overwritten, so
+   there is nothing to undo — an empty table is the code's own output.
+2. **A later correction in the data files still reaches the page.** Only the
+   changed fields are stored, so everything nobody edited keeps tracking the
+   code. A patch that copied the whole record would shadow the next fix to it.
+3. **A value that could not survive CI cannot be saved.** The merged record is
+   validated by `packages/core/src/validate.ts` — the same functions the test
+   suite runs over the curated data — so a licence with no number, two companies
+   claiming the same fallback, a 100% profit split or a daily drawdown larger
+   than the overall one is refused at the form with the reason on the field.
+   Until this existed the admin would have been a way to put a licence number on
+   the site that no test ever looked at, which is the exact failure this site was
+   built to catch other people making.
+
+Saving stores a **draft**, which is listed in the admin and invisible to a
+reader; publishing is a separate act, and it re-runs validation because the code
+record may have moved under a draft written weeks ago. A record can also be
+created here with no code behind it at all — it starts with no companies, no
+research and an initials logo, which is exactly what the indexing rules read as
+"not ready to be in the sitemap".
+
+The form is generated from `packages/core/src/fields.ts` rather than written out
+three times, and `fields.test.ts` walks every spec against the curated records:
+a control whose path is on no record is a save that silently does nothing, and a
+record value the form never offers is a field an editor cannot enter. What the
+form deliberately does not edit is the entity map, the research write-ups and
+the logos — each carries rules a flat form cannot express, so each is still
+code.
+
 ## Running it
 
 ```sh
@@ -373,6 +412,14 @@ It drives the token gate, checking a review and watching the public page relabel
 it, recording a field verification and watching the count move, and renewing an
 expired one — a verification lapses after 90 days, so renewing has to update
 rather than add.
+
+`smoke:records` drives the record editor, which can change what the site
+publishes and is therefore the highest-consequence screen here. It asserts the
+contract the override design rests on, in the order a reader would care about: a
+draft changes nothing, publishing changes the page and the ranking, a value the
+build would have rejected cannot be saved at all, discarding restores the record
+exactly, and a record created from nothing gets a page when it is published and
+loses it when it is deleted.
 
 ## Degraded flows
 

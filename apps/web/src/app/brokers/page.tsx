@@ -5,6 +5,7 @@ import { pageMetadata, JsonLd, breadcrumbLd, itemListLd, faqLd } from '@/lib/seo
 import { rankedBrokers } from '@/lib/repo';
 import { Header, PageHero, Footer } from '@/components/chrome';
 import { reviewStats } from '@/lib/reviews';
+import { livePatchMap } from '@/lib/records';
 import { Card, CardHead, Meter } from '@/components/primitives';
 import { BrokerRow } from '@/components/BrokerRow';
 import { TopTiles, Tabset, StrengthList, CompareTable } from '@/components/rankings';
@@ -44,8 +45,8 @@ const SHORT: Record<(typeof TAB_KEYS)[number], string> = {
 };
 
 export default async function BrokersPage() {
-  const stats = await reviewStats();
-  const list = rankedBrokers(stats);
+  const [stats, patches] = await Promise.all([reviewStats(), livePatchMap()]);
+  const list = rankedBrokers(stats, patches);
   // A commission is part of the price. $10 per pip on a standard lot is the
   // conversion that makes "0.0 + $7" and "1.2 + nothing" the same number.
   const byCost = [...list].sort((a, b) =>

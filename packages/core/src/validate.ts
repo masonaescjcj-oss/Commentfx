@@ -1,0 +1,307 @@
+import type { Broker, BrokerEntity } from './types.ts';
+import { servesRetail } from './types.ts';
+import type { PropFirm } from './props.ts';
+import type { Exchange } from './exchanges.ts';
+import { REGULATORS } from './regulators.ts';
+import { COUNTRIES } from './countries.ts';
+
+/**
+ * The rules a record has to satisfy, in one place, so the admin cannot publish
+ * something the build would have rejected.
+ *
+ * Until now these lived only as assertions in the test suite, which was fine
+ * while every record was a TypeScript literal compiled into the build: a bad
+ * value could not reach production without going red in CI first. An editor
+ * saving a record through a form has no CI. Without this module the admin would
+ * be a way to put a licence number on the site that no test ever looked at,
+ * which is the exact failure this site was built to catch other people making.
+ *
+ * So the rules moved here and both callers use them. The tests assert that a
+ * curated record passes; the admin refuses a save that does not. When they
+ * disagree it is a bug in one place rather than a drift between two.
+ *
+ * What belongs here: anything that makes a record *wrong* rather than merely
+ * thin. A broker with no entities is wrong. A broker whose spread is high is
+ * not — that is a fact about the broker, and the score already says it. The
+ * indexing gate in `indexing.ts` is the other half of this: it decides whether
+ * a correct-but-thin record should be indexed, which is a different question
+ * from whether it may exist.
+ */
+export interface Problem {
+  /** Dotted path into the record, so a form can put the message on the field. */
+  field: string;
+  message: string;
+}
+
+const ok: Problem[] = [];
+const iso2 = /^[A-Z]{2}$/;
+const httpsUrl = (s: unknown) => typeof s === 'string' && /^https:\/\/\S+$/.test(s);
+const slugLike = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+/** Shared by every kind: the fields that identify a record at all. */
+function validateIdentity(r: { slug?: unknown; name?: unknown; website?: unknown; headquarters?: unknown }): Problem[] {
+  const out: Problem[] = [];
+  if (typeof r.slug !== 'string' || !slugLike.test(r.slug)) {
+    out.push({ field: 'slug', message: 'A slug is lowercase words joined by single hyphens.' });
+  }
+  if (typeof r.name !== 'string' || r.name.trim().length < 2) {
+    out.push({ field: 'name', message: 'A name is required.' });
+  }
+  if (!httpsUrl(r.website)) {
+    out.push({ field: 'website', message: 'The company’s own site, as an https URL.' });
+  }
+  if (typeof r.headquarters !== 'string' || !iso2.test(r.headquarters)) {
+    out.push({ field: 'headquarters', message: 'A two-letter country code, e.g. CY.' });
+  } else if (!Object.hasOwn(COUNTRIES, r.headquarters)) {
+    out.push({
+      field: 'headquarters',
+      message: `${r.headquarters} has no name or flag on this site yet. Add it to countries.ts and Flag.tsx first, or the page renders a blank box.`,
+    });
+  }
+  return out;
+}
+
+/**
+ * The entity map is the most consequential thing on a broker page and the
+ * easiest to get wrong, so it carries the most rules. Every one of these
+ * corresponds to a mistake the September 2026 research actually found on a
+ * record that had shipped.
+ */
+function validateEntity(e: BrokerEntity, i: number): Problem[] {
+  const out: Problem[] = [];
+  const at = (f: string) => `entities.${i}.${f}`;
+
+  if (typeof e.legalName !== 'string' || e.legalName.trim().length < 3) {
+    out.push({ field: at('legalName'), message: 'The company’s registered name, in full.' });
+  }
+  if (!iso2.test(e.country ?? '')) {
+    out.push({ field: at('country'), message: 'A two-letter country code.' });
+  } else if (!Object.hasOwn(COUNTRIES, e.country)) {
+    out.push({ field: at('country'), message: `${e.country} has no name or flag on this site yet.` });
+  }
+  if (!e.licence?.regulator) {
+    out.push({ field: at('licence.regulator'), message: 'Name the body on the licence, even if it is not a regulator.' });
+  }
+  // A licence number is what makes a claim checkable. The one exception is a
+  // company that holds no financial licence at all, which the record says with
+  // status 'unregulated' — Eightcap's St Vincent company is the live example.
+  if (e.licence?.status !== 'unregulated' && !String(e.licence?.number ?? '').trim()) {
+    out.push({
+      field: at('licence.number'),
+      message: 'A licence number, or mark the status unregulated. A licence nobody can look up is not evidence.',
+    });
+  }
+  // Found on Exness: an FCA licence held by a B2B company sat against ['GB']
+  // next to "FSCS up to £85,000", promising a protection that reader cannot have.
+  if (e.clients === 'professional' && (e.serves?.length ?? 0) > 0) {
+    out.push({
+      field: at('serves'),
+      message: 'A professional-only company serves nobody on this site. Clear the countries or change who it takes.',
+    });
+  }
+  for (const c of e.serves ?? []) {
+    if (c === '*') continue;
+    if (!iso2.test(c)) out.push({ field: at('serves'), message: `"${c}" is not a country code.` });
+    else if (!Object.hasOwn(COUNTRIES, c)) out.push({ field: at('serves'), message: `${c} has no name on this site yet.` });
+  }
+  return out;
+}
+
+const BROKER_GROUPS = ['cost', 'payments', 'platforms', 'transparency', 'reviews', 'why'] as const;
+const PROP_GROUPS = ['rules', 'payout', 'feeUsdPer100k', 'platforms', 'markets', 'transparency', 'why'] as const;
+const EXCHANGE_GROUPS = ['takerFeePct', 'spotVolumeUsd', 'reserves', 'security', 'transparency', 'why'] as const;
+
+/**
+ * Every group a scorer reads has to be there.
+ *
+ * This is the rule that makes a validator refuse a record of the wrong shape
+ * rather than merely a record with a bad value in it. A prop firm with no
+ * `rules` is not a thin prop firm, it is a record that will throw the first
+ * time the ranking tries to read its drawdown — and a form that saves one has
+ * put a page on the site that cannot render. The lists below are exactly what
+ * the scoring functions dereference, so a field arrives here when a component
+ * starts reading it and not before.
+ */
+function requireGroups(r: Record<string, unknown>, fields: readonly string[], noun: string): Problem[] {
+  const out: Problem[] = [];
+  for (const f of fields) {
+    const v = r[f];
+    const missing = v === undefined || v === null
+      || (Array.isArray(v) && v.length === 0)
+      || (typeof v === 'string' && !v.trim());
+    if (missing) {
+      out.push({ field: f, message: `Every ${noun} needs ${f}; the ranking reads it and an empty one has no page.` });
+    }
+  }
+  return out;
+}
+
+export function validateBroker(b: Partial<Broker>): Problem[] {
+  const out = [...validateIdentity(b)];
+  out.push(...requireGroups(b as Record<string, unknown>, BROKER_GROUPS, 'broker'));
+
+  const entities = b.entities ?? [];
+  if (entities.length === 0) {
+    out.push({ field: 'entities', message: 'At least one company. A broker with no entity is a logo.' });
+  }
+  entities.forEach((e, i) => out.push(...validateEntity(e, i)));
+
+  // Exactly one fallback, or a reader outside the named countries lands nowhere
+  // — and two would make "which entity am I under" unanswerable.
+  const fallbacks = entities.filter((e) => e.serves?.includes('*'));
+  if (entities.length > 0 && fallbacks.length === 0) {
+    out.push({ field: 'entities', message: 'No entity takes everyone else. Mark one with * so the map answers for a reader anywhere.' });
+  }
+  if (fallbacks.length > 1) {
+    out.push({ field: 'entities', message: `${fallbacks.length} entities claim to be the fallback. Only one can be.` });
+  }
+
+  // Two entities cannot hold the same licence, and a duplicated number is
+  // almost always a copy-paste rather than a fact.
+  const seen = new Map<string, number>();
+  entities.forEach((e, i) => {
+    const key = `${e.licence?.regulator}|${e.licence?.number}`;
+    if (!e.licence?.number) return;
+    if (seen.has(key)) {
+      out.push({ field: `entities.${i}.licence.number`, message: `The same licence is already on entity ${seen.get(key)! + 1}.` });
+    } else seen.set(key, i);
+  });
+
+  // A regulator we do not know is allowed — Alpari cites MISA, which is not a
+  // financial regulator and must not be added to the table — but it is worth
+  // saying out loud, because the usual cause is a typo in a real code.
+  for (const [i, e] of entities.entries()) {
+    const code = e.licence?.regulator;
+    if (code && !Object.hasOwn(REGULATORS, code) && e.licence?.status !== 'unregulated') {
+      out.push({
+        field: `entities.${i}.licence.regulator`,
+        message: `${code} is not in the regulator table. If that is deliberate, set the status to unregulated so the page says so.`,
+      });
+    }
+  }
+
+  if (b.cost && (b.cost.eurusdSpread ?? -1) < 0) {
+    out.push({ field: 'cost.eurusdSpread', message: 'A spread cannot be negative.' });
+  }
+  if (b.payments && (b.payments.minDepositUsd ?? 0) < 0) {
+    out.push({ field: 'payments.minDepositUsd', message: 'A minimum deposit cannot be negative.' });
+  }
+  if (b.founded !== undefined && (b.founded < 1970 || b.founded > new Date().getFullYear())) {
+    out.push({ field: 'founded', message: 'A founding year between 1970 and now.' });
+  }
+  return out.length ? out : ok;
+}
+
+export function validateProp(f: Partial<PropFirm>): Problem[] {
+  const out = [...validateIdentity(f)];
+  out.push(...requireGroups(f as Record<string, unknown>, PROP_GROUPS, 'prop firm'));
+
+  for (const [i, e] of (f.entities ?? []).entries()) {
+    if (!e.legalName?.trim()) out.push({ field: `entities.${i}.legalName`, message: 'The company’s registered name.' });
+    if (!iso2.test(e.country ?? '')) out.push({ field: `entities.${i}.country`, message: 'A two-letter country code.' });
+    else if (!Object.hasOwn(COUNTRIES, e.country)) {
+      out.push({ field: `entities.${i}.country`, message: `${e.country} has no name or flag on this site yet.` });
+    }
+  }
+  const contracting = (f.entities ?? []).filter((e) => e.role === 'contracting');
+  if (contracting.length > 1) {
+    out.push({ field: 'entities', message: `${contracting.length} companies claim to hold the contract. Only one can.` });
+  }
+
+  const r = f.rules;
+  if (r) {
+    if (r.profitTargetPct !== undefined && (r.profitTargetPct <= 0 || r.profitTargetPct > 50)) {
+      out.push({ field: 'rules.profitTargetPct', message: 'A profit target between 0 and 50 per cent.' });
+    }
+    if (r.maxDrawdownPct !== undefined && r.dailyDrawdownPct !== undefined
+        && r.dailyDrawdownPct > r.maxDrawdownPct) {
+      out.push({
+        field: 'rules.dailyDrawdownPct',
+        message: 'The daily limit is larger than the overall one, which would make it unreachable.',
+      });
+    }
+  }
+  // The finding that made this research worth doing: four of eight firms had a
+  // split on record that was the top of a range rather than what a newly funded
+  // trader is paid. 100 is possible and it is almost never the starting figure.
+  if (f.payout?.splitPct !== undefined) {
+    const s = f.payout.splitPct;
+    if (s <= 0 || s > 100) out.push({ field: 'payout.splitPct', message: 'A split between 1 and 100 per cent.' });
+    else if (s === 100) {
+      out.push({
+        field: 'payout.splitPct',
+        message: 'A 100% split is the top of a ladder at every firm ranked here. Record what a newly funded trader is paid, and put the route to 100 in the profile.',
+      });
+    }
+  }
+  if (f.feeUsdPer100k !== undefined && f.feeUsdPer100k <= 0) {
+    out.push({ field: 'feeUsdPer100k', message: 'A challenge fee, normalised to a $100k account.' });
+  }
+  return out.length ? out : ok;
+}
+
+export function validateExchange(e: Partial<Exchange>): Problem[] {
+  const out = [...validateIdentity(e)];
+  out.push(...requireGroups(e as Record<string, unknown>, EXCHANGE_GROUPS, 'exchange'));
+
+  if (e.takerFeePct !== undefined && (e.takerFeePct < 0 || e.takerFeePct > 5)) {
+    out.push({ field: 'takerFeePct', message: 'A taker fee between 0 and 5 per cent.' });
+  }
+  if (e.makerFeePct !== undefined && (e.makerFeePct < -1 || e.makerFeePct > 5)) {
+    out.push({ field: 'makerFeePct', message: 'A maker fee between -1 and 5 per cent. Negative means a rebate.' });
+  }
+  if (e.spotVolumeUsd !== undefined && e.spotVolumeUsd < 0) {
+    out.push({ field: 'spotVolumeUsd', message: 'Volume cannot be negative.' });
+  }
+  const year = new Date().getFullYear();
+  const b = e.security?.lastBreachYear;
+  if (b !== undefined && b !== null && (b < 2009 || b > year)) {
+    out.push({ field: 'security.lastBreachYear', message: `A year between 2009 and ${year}, or empty for none on record.` });
+  }
+  // "Made whole" only means something if something was lost.
+  if ((b === null || b === undefined) && e.security?.madeUsersWhole !== null && e.security?.madeUsersWhole !== undefined) {
+    out.push({
+      field: 'security.madeUsersWhole',
+      message: 'There is no breach on record, so whether users were made whole has nothing to describe. Leave it empty.',
+    });
+  }
+  return out.length ? out : ok;
+}
+
+/** Whichever validator fits the kind. */
+export function validateRecord(kind: 'broker' | 'prop' | 'exchange', record: unknown): Problem[] {
+  if (kind === 'broker') return validateBroker(record as Partial<Broker>);
+  if (kind === 'prop') return validateProp(record as Partial<PropFirm>);
+  return validateExchange(record as Partial<Exchange>);
+}
+
+/**
+ * Merge an editor's patch over a code record.
+ *
+ * Shallow per top-level key, with one level of object merge underneath, because
+ * that is the shape of these records: `cost` and `payments` are flat groups of
+ * scalars, and `entities` is a list that must be replaced whole rather than
+ * merged item by item. Merging a shorter entity list into a longer one would
+ * silently keep entities the editor deleted, which is the one merge mistake
+ * that would put a removed licence back on the page.
+ */
+export function mergeRecord<T extends object>(base: T, patch: Record<string, unknown>): T {
+  const out: Record<string, unknown> = { ...(base as Record<string, unknown>) };
+  for (const [key, value] of Object.entries(patch)) {
+    if (value === undefined) continue;
+    const current = out[key];
+    const mergeable =
+      value !== null
+      && typeof value === 'object'
+      && !Array.isArray(value)
+      && current !== null
+      && typeof current === 'object'
+      && !Array.isArray(current);
+    out[key] = mergeable
+      ? { ...(current as object), ...(value as object) }
+      : value;
+  }
+  return out as T;
+}
+
+export { servesRetail };

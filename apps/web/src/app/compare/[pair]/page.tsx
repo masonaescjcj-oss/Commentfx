@@ -5,6 +5,7 @@ import { effectiveCostPips, hours, leverage } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd } from '@/lib/seo';
 import { comparePairs, pairSlug, canonicalPairSlug, parsePair, getRanked, type RankedBroker } from '@/lib/repo';
 import { reviewStats } from '@/lib/reviews';
+import { livePatchMap } from '@/lib/records';
 import { Header, PageHero, Footer } from '@/components/chrome';
 import { Card, Logo, Score } from '@/components/primitives';
 
@@ -50,8 +51,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const { pair } = await params;
   const parsed = parsePair(pair);
   if (!parsed) return {};
-  const stats = await reviewStats();
-  const [a, b] = [getRanked(parsed[0], stats), getRanked(parsed[1], stats)];
+  const [stats, patches] = await Promise.all([reviewStats(), livePatchMap()]);
+  const [a, b] = [getRanked(parsed[0], stats, patches), getRanked(parsed[1], stats, patches)];
   if (!a || !b) return {};
   return pageMetadata({
     title: `${a.broker.name} vs ${b.broker.name} — which is the better broker?`,
@@ -68,9 +69,9 @@ export default async function ComparePage({ params }: { params: Promise<Params> 
   const { pair } = await params;
   const parsed = parsePair(pair);
   if (!parsed) notFound();
-  const stats = await reviewStats();
-  const a = getRanked(parsed[0], stats);
-  const b = getRanked(parsed[1], stats);
+  const [stats, patches] = await Promise.all([reviewStats(), livePatchMap()]);
+  const a = getRanked(parsed[0], stats, patches);
+  const b = getRanked(parsed[1], stats, patches);
   if (!a || !b) notFound();
 
   const table = rows(a, b);

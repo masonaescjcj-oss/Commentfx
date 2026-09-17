@@ -1,7 +1,60 @@
 import {
   BROKERS, brokerBySlug, scoreBroker, effectiveCostPips,
+  mergeRecord, validateRecord,
   type Broker, type ScoreBreakdown, type ReviewSummaryStats,
 } from '@commentfx/core';
+
+/* ── Editor overrides ───────────────────────────────────────────── */
+
+/**
+ * What an editor has changed, keyed `kind:slug`.
+ *
+ * Threaded through the same way review counts are, and for the same reason: a
+ * function that reaches for a database on its own cannot be called from a
+ * sitemap, a static param or a test. The caller decides whether this render
+ * knows about overrides, and everything downstream stays a pure function of
+ * its arguments.
+ */
+export type Patches = Map<string, { patch: Record<string, unknown>; isNew: boolean }>;
+
+export const patchKey = (kind: 'broker' | 'prop' | 'exchange', slug: string) => `${kind}:${slug}`;
+
+/**
+ * Code records with the live patches merged over them, plus any record that
+ * exists only in the database.
+ *
+ * The validation pass is not belt and braces. A patch is written through a
+ * form that validates, but it is stored as JSON and a row can be changed by
+ * anything with the database credentials — a migration, a restore, somebody at
+ * a psql prompt. A merged record that does not validate is dropped back to
+ * what the code says, so the worst a bad row can do is have no effect. The
+ * alternative is a page that throws, and a directory whose broker page 500s
+ * because somebody fat-fingered a JSON field is worse than one that quietly
+ * shows the last known-good figures.
+ */
+function withPatches<T extends { slug: string }>(
+  kind: 'broker' | 'prop' | 'exchange',
+  base: readonly T[],
+  patches: Patches | undefined,
+): T[] {
+  if (!patches?.size) return base as T[];
+
+  const out = base.map((record) => {
+    const entry = patches.get(patchKey(kind, record.slug));
+    if (!entry || entry.isNew) return record;
+    const merged = mergeRecord(record, entry.patch);
+    return validateRecord(kind, merged).length === 0 ? merged : record;
+  });
+
+  for (const [key, entry] of patches) {
+    if (!entry.isNew || !key.startsWith(`${kind}:`)) continue;
+    const slug = key.slice(kind.length + 1);
+    if (out.some((r) => r.slug === slug)) continue;
+    const record = { ...(entry.patch as object), slug } as T;
+    if (validateRecord(kind, record).length === 0) out.push(record);
+  }
+  return out;
+}
 
 /**
  * Live verified-review counts, keyed by slug.
@@ -34,16 +87,16 @@ export interface RankedBroker {
  * home page, "best for" pages, the compare page — reads from here, so a broker
  * can never appear at a different rank in two places.
  */
-export function rankedBrokers(stats?: ReviewStats): RankedBroker[] {
-  return BROKERS
+export function rankedBrokers(stats?: ReviewStats, patches?: Patches): RankedBroker[] {
+  return withPatches('broker', BROKERS, patches)
     .map((b) => withReviews(b, stats))
     .map((broker) => ({ broker, score: scoreBroker(broker) }))
     .sort((a, b) => b.score.total - a.score.total || a.broker.name.localeCompare(b.broker.name))
     .map((r, i) => ({ rank: i + 1, ...r }));
 }
 
-export function getRanked(slug: string, stats?: ReviewStats): RankedBroker | undefined {
-  return rankedBrokers(stats).find((r) => r.broker.slug === slug);
+export function getRanked(slug: string, stats?: ReviewStats, patches?: Patches): RankedBroker | undefined {
+  return rankedBrokers(stats, patches).find((r) => r.broker.slug === slug);
 }
 
 export const getBroker = brokerBySlug;
@@ -124,8 +177,8 @@ export const BEST_CRITERIA: BestCriterion[] = [
 
 export const bestCriterion = (slug: string) => BEST_CRITERIA.find((c) => c.slug === slug);
 
-export function bestList(c: BestCriterion, stats?: ReviewStats): RankedBroker[] {
-  return rankedBrokers(stats)
+export function bestList(c: BestCriterion, stats?: ReviewStats, patches?: Patches): RankedBroker[] {
+  return rankedBrokers(stats, patches)
     .filter((r) => c.rank(r.broker) !== null)
     .sort((a, b) => (c.rank(b.broker)! - c.rank(a.broker)!) || b.score.total - a.score.total)
     .map((r, i) => ({ ...r, rank: i + 1 }));
@@ -137,8 +190,8 @@ export function bestList(c: BestCriterion, stats?: ReviewStats): RankedBroker[] 
 export const ALTERNATIVES = 3;
 
 /** The brokers a page suggests instead: the highest-ranked ones that are not it. */
-export function alternativesFor(slug: string, stats?: ReviewStats): RankedBroker[] {
-  return rankedBrokers(stats).filter((r) => r.broker.slug !== slug).slice(0, ALTERNATIVES);
+export function alternativesFor(slug: string, stats?: ReviewStats, patches?: Patches): RankedBroker[] {
+  return rankedBrokers(stats, patches).filter((r) => r.broker.slug !== slug).slice(0, ALTERNATIVES);
 }
 
 /**
@@ -206,14 +259,15 @@ import { PROPS, propBySlug, scoreProp, propProfileFor, type PropFirm, type PropB
 
 export interface RankedProp { rank: number; firm: PropFirm; score: PropBreakdown }
 
-export function rankedProps(): RankedProp[] {
-  return PROPS
+export function rankedProps(patches?: Patches): RankedProp[] {
+  return withPatches('prop', PROPS, patches)
     .map((firm) => ({ firm, score: scoreProp(firm, propProfileFor(firm.slug)) }))
     .sort((a, b) => b.score.total - a.score.total || a.firm.name.localeCompare(b.firm.name))
     .map((r, i) => ({ rank: i + 1, ...r }));
 }
 
-export const getRankedProp = (slug: string) => rankedProps().find((r) => r.firm.slug === slug);
+export const getRankedProp = (slug: string, patches?: Patches) =>
+  rankedProps(patches).find((r) => r.firm.slug === slug);
 export const getProp = propBySlug;
 
 /**
@@ -222,8 +276,8 @@ export const getProp = propBySlug;
  * link and a built page cannot come apart. The brokers learned that once, when
  * pages linked three alternatives each and only the top six got built.
  */
-export function propAlternativesFor(slug: string): RankedProp[] {
-  return rankedProps().filter((r) => r.firm.slug !== slug).slice(0, ALTERNATIVES);
+export function propAlternativesFor(slug: string, patches?: Patches): RankedProp[] {
+  return rankedProps(patches).filter((r) => r.firm.slug !== slug).slice(0, ALTERNATIVES);
 }
 
 export function propComparePairs(): Array<[string, string]> {
@@ -236,12 +290,13 @@ import { EXCHANGES, exchangeBySlug, scoreExchange, exchangeProfileFor, type Exch
 
 export interface RankedExchange { rank: number; exchange: Exchange; score: ExchangeBreakdown }
 
-export function rankedExchanges(): RankedExchange[] {
-  return EXCHANGES
+export function rankedExchanges(patches?: Patches): RankedExchange[] {
+  return withPatches('exchange', EXCHANGES, patches)
     .map((exchange) => ({ exchange, score: scoreExchange(exchange, exchangeProfileFor(exchange.slug)) }))
     .sort((a, b) => b.score.total - a.score.total || a.exchange.name.localeCompare(b.exchange.name))
     .map((r, i) => ({ rank: i + 1, ...r }));
 }
 
-export const getRankedExchange = (slug: string) => rankedExchanges().find((r) => r.exchange.slug === slug);
+export const getRankedExchange = (slug: string, patches?: Patches) =>
+  rankedExchanges(patches).find((r) => r.exchange.slug === slug);
 export const getExchange = exchangeBySlug;

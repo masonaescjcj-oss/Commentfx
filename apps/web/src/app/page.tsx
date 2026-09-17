@@ -10,6 +10,7 @@ import { RankRow } from '@/components/ranking';
 import { describeDrawdown, volumeBand, utcDay, releaseForTitle } from '@commentfx/core';
 import { calendarData, upcomingHigh } from '@/lib/calendar';
 import { reviewStats } from '@/lib/reviews';
+import { livePatchMap } from '@/lib/records';
 import { coins } from '@/lib/market';
 import { news } from '@/lib/news';
 import { CoinRow, MoverChip, movers } from '@/components/CoinRow';
@@ -26,10 +27,10 @@ export const metadata: Metadata = pageMetadata({
 export const revalidate = 900;
 
 export default async function HomePage() {
-  const stats = await reviewStats();
-  const top = rankedBrokers(stats).slice(0, 5);
-  const topProps = rankedProps().slice(0, 3);
-  const topExchanges = rankedExchanges().slice(0, 3);
+  const [stats, patches] = await Promise.all([reviewStats(), livePatchMap()]);
+  const top = rankedBrokers(stats, patches).slice(0, 5);
+  const topProps = rankedProps(patches).slice(0, 3);
+  const topExchanges = rankedExchanges(patches).slice(0, 3);
 
   // Three live upstreams, asked at once rather than one after another: they do
   // not depend on each other, and in series their latencies add up on every

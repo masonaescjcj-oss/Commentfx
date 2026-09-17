@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { PROP_WEIGHTS, PROP_LABELS, describeDrawdown, type PropKey } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, itemListLd, faqLd } from '@/lib/seo';
 import { rankedProps } from '@/lib/repo';
+import { livePatchMap } from '@/lib/records';
 import { Header, PageHero, Footer } from '@/components/chrome';
 import { Card, CardHead, Meter } from '@/components/primitives';
 import { RankRow } from '@/components/ranking';
@@ -54,8 +55,8 @@ const SHORT: Record<(typeof TAB_KEYS)[number], string> = {
   evidence: 'How well checked',
 };
 
-export default function PropsPage() {
-  const list = rankedProps();
+export default async function PropsPage() {
+  const list = rankedProps(await livePatchMap());
   const byFee = [...list].sort((a, b) => a.firm.feeUsdPer100k - b.firm.feeUsdPer100k);
   const trail = [{ name: 'Home', path: '/' }, { name: 'Prop Firms', path: '/props' }];
 

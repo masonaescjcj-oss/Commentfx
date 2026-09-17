@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { pageMetadata, JsonLd, breadcrumbLd, itemListLd } from '@/lib/seo';
 import { BEST_CRITERIA, bestCriterion, bestList } from '@/lib/repo';
+import { livePatchMap } from '@/lib/records';
 import { reviewStats } from '@/lib/reviews';
 import { Header, PageHero, Footer } from '@/components/chrome';
 import { Card, CardHead } from '@/components/primitives';
@@ -40,7 +41,8 @@ export default async function BestPage({ params }: { params: Promise<Params> }) 
   const c = bestCriterion(criterion);
   if (!c) notFound();
 
-  const list = bestList(c, await reviewStats());
+  const [stats, patches] = await Promise.all([reviewStats(), livePatchMap()]);
+  const list = bestList(c, stats, patches);
   const trail = [
     { name: 'Home', path: '/' },
     { name: 'Brokers', path: '/brokers' },

@@ -177,6 +177,59 @@ export const verifications = pgTable('verifications', {
   index('verifications_age_idx').on(t.verifiedAt),
 ]);
 
+/* ────────────────────────── editor overrides ──────────────────────── */
+
+export const overrideStatus = pgEnum('override_status', ['draft', 'live']);
+
+/**
+ * What an editor has changed about a record, on top of what the code says.
+ *
+ * The curated records live in `packages/core/src/data` and are compiled into
+ * the build, which is what lets the test suite hold ~forty invariants over them
+ * before anything ships — citations resolve, licence numbers exist, flags are
+ * drawn, scores stay in range. Editing those files is not something an admin
+ * panel can do at runtime.
+ *
+ * So an override is a patch, not a replacement. A page renders the code record
+ * with this merged over the top, and `patch` holds only the fields an editor
+ * actually changed. Three things fall out of that and all three are the point:
+ *
+ * 1. Turning the feature off restores the site exactly, because the base record
+ *    is untouched. There is no migration to undo.
+ * 2. A patch is small enough to show a reviewer as a diff.
+ * 3. The merged result is validated by the same functions the build tests call,
+ *    so a value that could not survive CI cannot be saved here either. That is
+ *    the whole reason this is a patch table and not a second copy of the data.
+ *
+ * One row per record — the unique index — so the merge never has to choose
+ * between two patches, and `status` decides whether that row is merged at all.
+ * A draft is stored, listed in the admin and invisible to a reader; going live
+ * is a separate action on the same row. Editing a row that is already live
+ * therefore changes the site as soon as it saves, which is what an editor
+ * pressing save on a published page means by it. Every version it used to hold
+ * is in auditLog, which nothing may delete from.
+ */
+export const recordOverrides = pgTable('record_overrides', {
+  id: serial('id').primaryKey(),
+  kind: entityKind('kind').notNull(),
+  slug: text('slug').notNull(),
+  /** A partial record: only the fields an editor changed. */
+  patch: jsonb('patch').notNull(),
+  /**
+   * True when this record exists nowhere in code and the patch is the whole of
+   * it. The merge treats it as a complete record rather than a diff, and
+   * validation is stricter for exactly that reason.
+   */
+  isNew: boolean('is_new').notNull().default(false),
+  status: overrideStatus('status').notNull().default('draft'),
+  note: text('note'),
+  updatedBy: text('updated_by').notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('record_overrides_target_idx').on(t.kind, t.slug),
+  index('record_overrides_status_idx').on(t.status),
+]);
+
 /* ──────────────────────────── users & audit ───────────────────────── */
 
 export const userRole = pgEnum('user_role', ['admin', 'editor', 'moderator', 'viewer']);
@@ -193,7 +246,7 @@ export const users = pgTable('users', {
 export const auditLog = pgTable('audit_log', {
   id: serial('id').primaryKey(),
   actor: text('actor').notNull(),
-  action: text('action').notNull(),         // 'update' | 'verify' | 'create' | 'delete'
+  action: text('action').notNull(),         // create, update, publish, unpublish, delete, verify
   kind: entityKind('kind').notNull(),
   slug: text('slug').notNull(),
   field: text('field'),

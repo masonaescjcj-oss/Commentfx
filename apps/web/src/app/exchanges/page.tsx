@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { EXCHANGE_WEIGHTS, EXCHANGE_LABELS, volumeBand, type ExchangeKey } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, itemListLd, faqLd } from '@/lib/seo';
 import { rankedExchanges } from '@/lib/repo';
+import { livePatchMap } from '@/lib/records';
 import { Header, PageHero, Footer } from '@/components/chrome';
 import { Card, CardHead, Meter } from '@/components/primitives';
 import { RankRow } from '@/components/ranking';
@@ -29,8 +30,8 @@ const FAQ = [
   },
 ];
 
-export default function ExchangesPage() {
-  const list = rankedExchanges();
+export default async function ExchangesPage() {
+  const list = rankedExchanges(await livePatchMap());
   const trail = [{ name: 'Home', path: '/' }, { name: 'Exchanges', path: '/exchanges' }];
 
   return (

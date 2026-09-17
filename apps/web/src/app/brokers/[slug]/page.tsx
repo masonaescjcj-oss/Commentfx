@@ -11,6 +11,7 @@ import { coverage } from '@/lib/verify';
 import { brokerStatus } from '@/lib/status';
 import { registerChecksFor } from '@/lib/registers';
 import { recordReviews, reviewStats } from '@/lib/reviews';
+import { livePatchMap } from '@/lib/records';
 import { StatusBlock } from '@/components/StatusBlock';
 import { VerificationPanel } from '@/components/VerificationPanel';
 import { Header, PageHero, Footer } from '@/components/chrome';
@@ -51,14 +52,15 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const { slug } = await params;
   // The same live review counts the page body uses. A title that advertises a
   // score the page does not show is the kind of drift nobody notices for weeks.
-  const r = getRanked(slug, await reviewStats());
+  const [stats, patches] = await Promise.all([reviewStats(), livePatchMap()]);
+  const r = getRanked(slug, stats, patches);
   if (!r) return {};
   const b = r.broker;
   return pageMetadata({
     title: `${b.name} review — score ${r.score.total.toFixed(1)}, licences and real costs`,
     description:
       `${b.name} scores ${r.score.total.toFixed(1)} out of 10 and ranks #${r.rank} of ` +
-      `${rankedBrokers().length}. Which legal entity you are onboarded to, its licence ` +
+      `${rankedBrokers(stats, patches).length}. Which legal entity you are onboarded to, its licence ` +
       `checked against the regulator's own register, and the published cost of trading.`,
     path: `/brokers/${b.slug}`,
   });
@@ -66,19 +68,19 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 
 export default async function BrokerPage({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
-  const stats = await reviewStats();
-  const r = getRanked(slug, stats);
+  const [stats, patches] = await Promise.all([reviewStats(), livePatchMap()]);
+  const r = getRanked(slug, stats, patches);
   if (!r) notFound();
 
   const b = r.broker;
-  const all = rankedBrokers(stats);
+  const all = rankedBrokers(stats, patches);
   const [cov, status, checks, reviews] = await Promise.all([
     coverage('broker', b.slug),
     brokerStatus(b.slug),
     registerChecksFor(b.slug),
     recordReviews('broker', b.slug),
   ]);
-  const alternatives = alternativesFor(b.slug, stats);
+  const alternatives = alternativesFor(b.slug, stats, patches);
   const trail = [
     { name: 'Home', path: '/' },
     { name: 'Brokers', path: '/brokers' },

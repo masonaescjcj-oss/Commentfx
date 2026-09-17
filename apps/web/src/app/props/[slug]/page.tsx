@@ -11,6 +11,7 @@ import { IconScore, IconCost, IconLicence, IconReviews, IconCompare, IconFaq } f
 import { ReviewForm } from '@/components/ReviewForm';
 import { ReviewList, ReviewSummary } from '@/components/ReviewList';
 import { recordReviews } from '@/lib/reviews';
+import { livePatchMap } from '@/lib/records';
 import { OfficialSite } from '@/components/OfficialSite';
 import { Card, CardHead, Logo, Score, Tag } from '@/components/primitives';
 import { coverage } from '@/lib/verify';
@@ -40,13 +41,14 @@ export const revalidate = 3600;
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params;
-  const r = getRankedProp(slug);
+  const patches = await livePatchMap();
+  const r = getRankedProp(slug, patches);
   if (!r) return {};
   const f = r.firm;
   return pageMetadata({
     title: `${f.name} review — rules, payout terms and the real cost`,
     description:
-      `${f.name} scores ${r.score.total.toFixed(1)} and ranks #${r.rank} of ${rankedProps().length}. ` +
+      `${f.name} scores ${r.score.total.toFixed(1)} and ranks #${r.rank} of ${rankedProps(patches).length}. ` +
       `${describeDrawdown(f.rules.drawdownType)} drawdown, ${f.payout.splitPct}% split, ` +
       `$${f.feeUsdPer100k} per $100k account. Every rule that decides whether you pass.`,
     path: `/props/${f.slug}`,
@@ -55,12 +57,13 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 
 export default async function PropPage({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
-  const r = getRankedProp(slug);
+  const patches = await livePatchMap();
+  const r = getRankedProp(slug, patches);
   if (!r) notFound();
 
   const f = r.firm;
   const profile = propProfileFor(f.slug);
-  const all = rankedProps();
+  const all = rankedProps(patches);
   const [cov, reviews] = await Promise.all([
     coverage('prop', f.slug),
     recordReviews('prop', f.slug),

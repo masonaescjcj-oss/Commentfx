@@ -13,6 +13,7 @@ import { IconScore, IconCost, IconLicence, IconReviews, IconCompare, IconFaq } f
 import { ReviewForm } from '@/components/ReviewForm';
 import { ReviewList, ReviewSummary } from '@/components/ReviewList';
 import { recordReviews } from '@/lib/reviews';
+import { livePatchMap } from '@/lib/records';
 import { OfficialSite } from '@/components/OfficialSite';
 import { Card, CardHead, Logo, Score, Tag } from '@/components/primitives';
 import { coverage } from '@/lib/verify';
@@ -40,13 +41,14 @@ export const revalidate = 3600;
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params;
-  const r = getRankedExchange(slug);
+  const patches = await livePatchMap();
+  const r = getRankedExchange(slug, patches);
   if (!r) return {};
   const e = r.exchange;
   return pageMetadata({
     title: `${e.name} review — fees, reserves and security record`,
     description:
-      `${e.name} scores ${r.score.total.toFixed(1)} and ranks #${r.rank} of ${rankedExchanges().length}. ` +
+      `${e.name} scores ${r.score.total.toFixed(1)} and ranks #${r.rank} of ${rankedExchanges(patches).length}. ` +
       `${e.takerFeePct}% taker fee, ${volumeBand(e.spotVolumeUsd)} reported volume, and what evidence ` +
       `exists that customer funds are actually there.`,
     path: `/exchanges/${e.slug}`,
@@ -55,13 +57,14 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 
 export default async function ExchangePage({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
-  const r = getRankedExchange(slug);
+  const patches = await livePatchMap();
+  const r = getRankedExchange(slug, patches);
   if (!r) notFound();
 
   const actions = actionsFor(r.exchange.slug);
   const profile = exchangeProfileFor(r.exchange.slug);
   const e = r.exchange;
-  const all = rankedExchanges();
+  const all = rankedExchanges(patches);
   const [cov, reviews] = await Promise.all([
     coverage('exchange', e.slug),
     recordReviews('exchange', e.slug),

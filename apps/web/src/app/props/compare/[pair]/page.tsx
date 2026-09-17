@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { describeDrawdown, countryInProse, propProfileFor, propCompareIndexable } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd } from '@/lib/seo';
 import { propComparePairs, pairSlug, canonicalPairSlug, parsePair, getRankedProp, type RankedProp } from '@/lib/repo';
+import { livePatchMap } from '@/lib/records';
 import { Header, PageHero, Footer } from '@/components/chrome';
 import { Card, Logo, Score } from '@/components/primitives';
 
@@ -70,7 +71,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const { pair } = await params;
   const parsed = parsePair(pair);
   if (!parsed) return {};
-  const [a, b] = [getRankedProp(parsed[0]), getRankedProp(parsed[1])];
+  const patches = await livePatchMap();
+  const [a, b] = [getRankedProp(parsed[0], patches), getRankedProp(parsed[1], patches)];
   if (!a || !b) return {};
   return pageMetadata({
     title: `${a.firm.name} vs ${b.firm.name} — which prop firm is better?`,
@@ -87,8 +89,9 @@ export default async function PropComparePage({ params }: { params: Promise<Para
   const { pair } = await params;
   const parsed = parsePair(pair);
   if (!parsed) notFound();
-  const a = getRankedProp(parsed[0]);
-  const b = getRankedProp(parsed[1]);
+  const patches = await livePatchMap();
+  const a = getRankedProp(parsed[0], patches);
+  const b = getRankedProp(parsed[1], patches);
   if (!a || !b) notFound();
 
   const table = rows(a, b);

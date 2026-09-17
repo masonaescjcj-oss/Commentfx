@@ -35,6 +35,9 @@ export default async function AdminPage() {
         <h1 className="font-[family-name:var(--font-display)] text-[24px] font-bold tracking-[-0.02em]">
           Verification queue
         </h1>
+        <p className="text-[12.5px] mt-2">
+          <Link href="/admin/records" className="text-accent font-semibold">Edit records →</Link>
+        </p>
         <p className="text-[13px] text-ink-2 leading-[1.7] mt-2">
           {outstanding === 0
             ? 'Every record is fully verified.'

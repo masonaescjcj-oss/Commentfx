@@ -2,8 +2,9 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { and, desc, eq } from 'drizzle-orm';
-import { getDb, schema, coverageFor, type Kind } from '@commentfx/db';
-import { getBroker, getProp, getExchange } from '@/lib/repo';
+import { getDb, schema, coverageFor, getOverride, type Kind } from '@commentfx/db';
+import { mergeRecord } from '@commentfx/core';
+import { baseRecord } from '@/lib/records';
 import { whereToCheck } from '@/lib/whereToCheck';
 import { Card, CardHead, Tag, Meter } from '@/components/primitives';
 import { VerifyForm } from '../../VerifyForm';
@@ -30,11 +31,17 @@ const LABEL: Record<string, string> = {
   'security.lastBreachYear': 'Last breach year',
 };
 
-/** The value the site currently publishes, so a checker can see drift at a glance. */
-function currentValue(kind: Kind, slug: string, field: string): string {
-  const b = kind === 'broker' ? getBroker(slug) : null;
-  const p = kind === 'prop' ? getProp(slug) : null;
-  const e = kind === 'exchange' ? getExchange(slug) : null;
+/**
+ * The value the site currently publishes, so a checker can see drift at a
+ * glance — the record as a reader sees it, with any live editor override
+ * already merged in. Reading the code record here instead would show a checker
+ * a figure that is not on the page, which is the one thing this line must not
+ * do.
+ */
+function currentValue(record: object | undefined, kind: Kind, field: string): string {
+  const b = kind === 'broker' ? (record as import('@commentfx/core').Broker | undefined) : undefined;
+  const p = kind === 'prop' ? (record as import('@commentfx/core').PropFirm | undefined) : undefined;
+  const e = kind === 'exchange' ? (record as import('@commentfx/core').Exchange | undefined) : undefined;
   const map: Record<string, () => unknown> = {
     'cost.eurusdSpread': () => b?.cost.eurusdSpread,
     'cost.commissionPerLot': () => b?.cost.commissionPerLot,
@@ -62,6 +69,11 @@ export default async function AdminRecordPage({ params }: { params: Promise<{ ki
 
   const { db } = await getDb();
   const cov = await coverageFor(db, kind, slug);
+  const base = baseRecord(kind, slug);
+  const override = await getOverride(db, kind, slug);
+  const published = override?.status === 'live'
+    ? (base ? mergeRecord(base as object, override.patch) : (override.patch as object))
+    : base;
   const history = await db
     .select()
     .from(schema.auditLog)
@@ -76,7 +88,8 @@ export default async function AdminRecordPage({ params }: { params: Promise<{ ki
       <header className="gutter">
         <h1 className="font-[family-name:var(--font-display)] text-[23px] font-bold tracking-[-0.02em]">{slug}</h1>
         <p className="text-[12.5px] text-ink-2 mt-1">
-          {kind} · {cov.verified} of {cov.fields.length} fields verified
+          {kind} · {cov.verified} of {cov.fields.length} fields verified ·{' '}
+          <Link href={`/admin/records/${kind}/${slug}`} className="text-accent">edit this record</Link>
         </p>
         <div className="mt-2"><Meter value={cov.ratio * 100} max={100} tone={cov.ratio >= 0.5 ? 'accent' : 'warn'} /></div>
       </header>
@@ -93,7 +106,7 @@ export default async function AdminRecordPage({ params }: { params: Promise<{ ki
           </div>
 
           <p className="text-[11.5px] text-ink-3 mt-2">
-            Site currently publishes: <b className="text-ink tnum">{currentValue(kind, slug, f.field) || '—'}</b>
+            Site currently publishes: <b className="text-ink tnum">{currentValue(published, kind, f.field) || '—'}</b>
           </p>
           {f.sourceUrl && (
             <p className="text-[11.5px] text-ink-3 mt-1 truncate">
@@ -119,7 +132,7 @@ export default async function AdminRecordPage({ params }: { params: Promise<{ ki
             kind={kind}
             slug={slug}
             field={f.field}
-            current={currentValue(kind, slug, f.field)}
+            current={currentValue(published, kind, f.field)}
             lastValue={null}
             suggestedSource={sources[0]?.url ?? ''}
           />
