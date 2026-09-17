@@ -1,4 +1,4 @@
-import type { BrokerProfile, Source } from '@commentfx/core';
+import type { Source } from '@commentfx/core';
 import { Card, CardHead, Tag } from './primitives';
 
 /**
@@ -16,6 +16,21 @@ import { Card, CardHead, Tag } from './primitives';
  * thumb, that moves the page to the source. A citation nobody can follow is
  * decoration.
  */
+/**
+ * Structural, not nominal, because a broker profile and a prop-firm profile are
+ * the same object doing the same job for two categories whose evidence differs.
+ * Widening this was cheaper and more honest than a second copy of the component
+ * that would drift from this one within a month.
+ */
+export interface Researched {
+  checked: string;
+  verdict: string;
+  sections: Array<{ heading: string; paragraphs: string[] }>;
+  facts: Array<{ label: string; value: string; from: string }>;
+  open: string[];
+  sources: Source[];
+}
+
 const CITE = /\[([a-z0-9-]+)\]/g;
 
 const KIND: Record<Source['kind'], string> = {
@@ -59,7 +74,7 @@ function Cited({ text, index }: { text: string; index: Map<string, number> }) {
   return <>{out}</>;
 }
 
-export function Profile({ profile, name }: { profile: BrokerProfile; name: string }) {
+export function Profile({ profile, name }: { profile: Researched; name: string }) {
   const sources = [...profile.sources].sort((a, b) => WEIGHT[a.kind] - WEIGHT[b.kind]);
   const index = new Map(sources.map((s, i) => [s.id, i + 1]));
 

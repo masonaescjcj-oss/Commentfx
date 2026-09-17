@@ -23,6 +23,7 @@ const SHAPES: Record<string, string> = {
   CZ: '<rect width="20" height="7" fill="#fff"/><rect y="7" width="20" height="7" fill="#D7141A"/><path d="M0 0l8.2 7L0 14z" fill="#11457E"/>',
   JP: '<rect width="20" height="14" fill="#fff"/><circle cx="10" cy="7" r="4.2" fill="#BC002D"/>',
   PH: '<rect width="20" height="14" fill="#0038A8"/><rect y="7" width="20" height="7" fill="#CE1126"/><path d="M0 0 8.2 7 0 14Z" fill="#fff"/><circle cx="2.6" cy="7" r="1.5" fill="#FCD116"/>',
+  LC: '<rect width="20" height="14" fill="#66CCFF"/><path d="M10 2 15 12H5Z" fill="#FFCE00"/><path d="M10 3.6 13.6 11H6.4Z" fill="#000"/><path d="M10 6.2 12.1 11H7.9Z" fill="#fff"/>',
   IL: '<rect width="20" height="14" fill="#fff"/><rect y="2" width="20" height="1.8" fill="#0038B8"/><rect y="10.2" width="20" height="1.8" fill="#0038B8"/><path d="M10 4.6l2.6 4.5H7.4z" fill="none" stroke="#0038B8" stroke-width=".9"/><path d="M10 9.9 7.4 5.4h5.2z" fill="none" stroke="#0038B8" stroke-width=".9"/>',
 };
 

@@ -21,7 +21,10 @@ test('every country the data names has a name', () => {
       for (const c of e.serves) if (c !== '*') codes.add(c);
     }
   }
-  for (const p of PROPS) codes.add(p.headquarters);
+  for (const p of PROPS) {
+    codes.add(p.headquarters);
+    for (const e of p.entities) codes.add(e.country);
+  }
   for (const e of EXCHANGES) codes.add(e.headquarters);
   for (const r of Object.values(REGULATORS)) codes.add(r.country);
   for (const a of ACTIONS) codes.add(a.country);

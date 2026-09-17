@@ -23,6 +23,7 @@ export const COUNTRIES: Record<string, string> = {
   GB: 'United Kingdom',
   IL: 'Israel',
   IT: 'Italy',
+  LC: 'St Lucia',
   MT: 'Malta',
   MU: 'Mauritius',
   BS: 'The Bahamas',

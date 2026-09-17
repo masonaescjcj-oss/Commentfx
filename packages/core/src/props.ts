@@ -30,6 +30,40 @@ export interface PropPayout {
   verifiedProofs: number;
 }
 
+/**
+ * A company in the arrangement, and what it actually does in it.
+ *
+ * The broker side of this site learned the lesson first: the name on the
+ * homepage is rarely the name on the agreement, and a reader who does not know
+ * which company is which cannot know what they are owed. Prop firms are the
+ * same shape and worse, because there is no licence anywhere to anchor it — so
+ * the only honest thing to publish is the list of companies the firm itself
+ * names, each with where it is registered and what it is for.
+ *
+ * `role` is the whole point. A UK company that takes the payment, a Comoros
+ * company that runs the simulated accounts and a Cyprus company that moves the
+ * money are three different counterparties to three different obligations, and
+ * flattening them into "headquartered in London" is the error this field
+ * exists to make impossible.
+ */
+export interface PropEntity {
+  legalName: string;
+  country: string;
+  role:
+    /** The company whose terms a trader accepts. */
+    | 'contracting'
+    /** The company that runs the evaluation or the funded account. */
+    | 'trading'
+    /** The company that takes the fee or sends the payout. */
+    | 'payments'
+    /** Named by the firm, doing something else — a brand, a parent, an owner. */
+    | 'group'
+    /** Named in the firm's own material and no longer on the register. */
+    | 'dissolved';
+  /** Company number as the firm's own terms or a register gives it. */
+  registration?: string;
+}
+
 export interface PropFirm {
   slug: string;
   name: string;
@@ -37,6 +71,12 @@ export interface PropFirm {
   headquarters: string;
   /** The company's own site — where an editor checks the figures on this record. */
   website: string;
+  /**
+   * Every company the firm names in its own terms, in the order they matter to
+   * a trader. Empty where nobody has read the terms yet, which the page says
+   * rather than hides.
+   */
+  entities: PropEntity[];
   markets: Array<'forex' | 'futures' | 'crypto' | 'indices' | 'stocks'>;
   rules: PropRules;
   payout: PropPayout;

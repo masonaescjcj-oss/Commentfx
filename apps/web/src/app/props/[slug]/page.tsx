@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { describeDrawdown, countryName } from '@commentfx/core';
+import { describeDrawdown, countryName, propProfileFor } from '@commentfx/core';
 import { pageMetadata, JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
 import { rankedProps, getRankedProp } from '@/lib/repo';
 import { Header, PageHero, Footer } from '@/components/chrome';
@@ -16,6 +16,8 @@ import { Card, CardHead, Logo, Score, Tag } from '@/components/primitives';
 import { coverage } from '@/lib/verify';
 import { VerificationPanel } from '@/components/VerificationPanel';
 import { ScoreBreakdownCard, FactList } from '@/components/ranking';
+import { PropEntities } from '@/components/PropEntities';
+import { Profile } from '@/components/Profile';
 
 type Params = { slug: string };
 
@@ -57,6 +59,7 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
   if (!r) notFound();
 
   const f = r.firm;
+  const profile = propProfileFor(f.slug);
   const all = rankedProps();
   const [cov, reviews] = await Promise.all([
     coverage('prop', f.slug),
@@ -128,8 +131,10 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
         <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
           <QuickJump items={[
             { href: '#score', label: 'Score', icon: <IconScore /> },
+            { href: '#entities', label: 'Companies', icon: <IconLicence /> },
             { href: '#rules', label: 'Rules', icon: <IconLicence /> },
             { href: '#payout', label: 'Payout', icon: <IconCost /> },
+            ...(propProfileFor(f.slug) ? [{ href: '#research', label: 'Research', icon: <IconLicence /> }] : []),
             { href: '#reviews', label: 'Reviews', icon: <IconReviews /> },
             { href: '#compare', label: 'Other firms', icon: <IconCompare /> },
             { href: '#faq', label: 'Questions', icon: <IconFaq /> },
@@ -145,6 +150,10 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
 
             <div>
             <div id="score" className="contents"><ScoreBreakdownCard components={r.score.components} skipped={r.score.skipped} /></div>
+
+            {/* Before the rules, because which company you are dealing with
+                decides who the rules bind. */}
+            <PropEntities firm={f} />
 
             <Card className="p-4 lg:p-6" as="section" id="rules">
               <CardHead title="Challenge rules" />
@@ -173,6 +182,9 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
                 ['Platforms', f.platforms.join(', ')],
               ]} />
             </Card>
+
+            {/* The researched half, after the figures it argues about. */}
+            {profile ? <Profile profile={profile} name={f.name} /> : null}
 
             <Card className="p-4 lg:p-6" as="section">
               <OfficialSite name={f.name} url={f.website} />

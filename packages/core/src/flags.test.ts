@@ -38,7 +38,12 @@ test('every country the data names has a flag', () => {
     codes.add(b.headquarters);
     for (const e of b.entities) codes.add(e.country);
   }
-  for (const p of PROPS) codes.add(p.headquarters);
+  for (const p of PROPS) {
+    codes.add(p.headquarters);
+    // Prop entities name countries no headquarters does — Saint Lucia arrived
+    // this way, and the entity map draws a flag for every one of them.
+    for (const e of p.entities) codes.add(e.country);
+  }
   for (const e of EXCHANGES) codes.add(e.headquarters);
   for (const r of Object.values(REGULATORS)) codes.add(r.country);
   // Actions name countries no broker record does — India came in this way and
