@@ -19,7 +19,8 @@
     "check:vitals": "node scripts/check-vitals.mjs",
     "smoke:records": "node scripts/smoke-records.mjs",
     "smoke:articles": "node scripts/smoke-articles.mjs",
-    "smoke:accounts": "node scripts/smoke-accounts.mjs"
+    "smoke:accounts": "node scripts/smoke-accounts.mjs",
+    "check:trace": "node scripts/check-trace.mjs"
   },
   "dependencies": {
     "@commentfx/core": "workspace:*",

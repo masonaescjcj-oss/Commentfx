@@ -1,3 +1,4 @@
+import { join } from 'node:path';
 import type { NextConfig } from 'next';
 
 /**
@@ -76,6 +77,27 @@ const config: NextConfig = {
   },
 
   serverExternalPackages: ['@electric-sql/pglite', 'pg'],
+
+  /**
+   * The migrations have to travel with the server, and nothing works that out.
+   *
+   * `applyMigrations` reads `packages/db/migrations` off disk at runtime, with
+   * readdirSync on a path it builds itself. Next traces what a bundle needs by
+   * following imports, and a directory read through a computed path is not an
+   * import — so the .sql files were in no trace at all. On a host that ships
+   * only the traced files, that is a deployment which installs cleanly, builds
+   * cleanly, serves every read-only page, and throws ENOENT the first time
+   * anybody writes. The same shape of failure the migration code's own comment
+   * describes, one layer further out.
+   *
+   * The root is pinned as well, because in a workspace Next guesses it from the
+   * nearest lockfile and a guess that lands on apps/web makes these paths point
+   * at nothing.
+   */
+  outputFileTracingRoot: join(import.meta.dirname, '..', '..'),
+  outputFileTracingIncludes: {
+    '/**': ['../../packages/db/migrations/*.sql'],
+  },
   poweredByHeader: false,
   transpilePackages: ['@commentfx/core', '@commentfx/ingest', '@commentfx/db'],
   experimental: { optimizePackageImports: ['@commentfx/core', '@commentfx/ingest'] },

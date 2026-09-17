@@ -25,7 +25,7 @@ This page says what each variable buys you, in the order worth adding them.
 
 ## On Supabase and Vercel
 
-That pairing is what this is deployed on, and it needs four decisions and no
+That pairing is what this is deployed on, and it needs five decisions and no
 extra services. Nothing here is a product recommendation — any managed Postgres
 and any Node host work the same way — but these are the two specifics that will
 bite.
@@ -49,12 +49,22 @@ long-running server, raise it.
 DATABASE_URL='<direct url>' pnpm --filter @commentfx/db seed
 ```
 
-**Schedule the register checks yourself.** `pnpm --filter @commentfx/web
-check-registers` reads the public registers and writes what it found; nothing
-runs it on its own. A GitHub Action with the database URL as a secret is the
-smallest thing that works, and `.github/workflows/sources.yml` is already the
-pattern — it probes every upstream daily and opens an issue when a parser goes
-quiet. Vercel Cron works too, against a route that calls the same code.
+**Set the Vercel project's root directory to `apps/web`.** This is a pnpm
+workspace, so with the default root Vercel finds no application to build. With
+`apps/web` it detects Next.js and needs nothing else: the workspace packages are
+consumed as TypeScript source through `transpilePackages`, so there is no
+separate build step for them, and "include files outside the root directory"
+(on by default for workspaces) is what lets the build reach them. Node 22.
+
+**Give the repository a `DATABASE_URL` secret** if you want the register
+findings in the admin. The daily job in `.github/workflows/sources.yml` already
+compares every published licence against its register; with the secret it also
+records what it found, so a finding appears beside the record it is about.
+Without it the step skips and says why — a fork is not a broken deployment.
+
+It runs there rather than on the host on purpose. It makes a dozen requests to
+government websites that are slow on their best day, and a serverless function
+killed at its timeout would record half a run as a whole one.
 
 What you still need that neither of them provides: **a domain**. What you do
 *not* need, and this is the part worth saying out loud, is an email provider

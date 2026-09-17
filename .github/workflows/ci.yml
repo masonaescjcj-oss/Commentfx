@@ -38,6 +38,14 @@ jobs:
       - name: Build
         run: pnpm build
 
+      # What a host actually ships is what the build traced, and the build
+      # traces what the code imports. The migrations are read by path rather
+      # than imported, so they were in no trace at all — a deploy that installs,
+      # builds, serves every read-only page and throws ENOENT the first time
+      # anybody writes. Found by hand; it would have been found by nobody.
+      - name: Everything the server reads at runtime is in the build
+        run: pnpm --filter @commentfx/web check:trace
+
       # A palette that looks restrained on a designer's monitor can be
       # unreadable on a phone outdoors. The first run of this found twenty
       # distinct failing colour pairs, body text among them at 2.2:1, so it

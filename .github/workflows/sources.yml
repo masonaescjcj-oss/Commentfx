@@ -140,6 +140,30 @@ jobs:
         shell: bash
         run: node --experimental-strip-types packages/ingest/src/registers/report.ts | tee registers.txt
 
+      # The same comparison, recorded where an editor will see it.
+      #
+      # The step above reports to whoever watches this repository; this one
+      # writes into the database, so the findings appear in the admin under
+      # "Register findings" beside the record they are about. Neither edits a
+      # broker record — a register disagreeing with us is a finding for an
+      # editor to act on, not a fact to overwrite ours with.
+      #
+      # It runs here rather than on the host because this makes a dozen requests
+      # to government websites that are slow on their best day, and a serverless
+      # function killed at its timeout would record half a run as a whole one.
+      #
+      # Without the secret there is nowhere to write, and a repository that has
+      # not been given one is not broken — it is a fork, or a deployment that has
+      # not happened yet. Skipping quietly beats a red cross every morning that
+      # everybody learns to ignore.
+      - name: Record the findings for the admin
+        if: ${{ env.DATABASE_URL != '' }}
+        continue-on-error: true
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        shell: bash
+        run: pnpm --filter @commentfx/web check-registers
+
       - name: Report findings
         uses: actions/github-script@v8
         with:
