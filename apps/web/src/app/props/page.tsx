@@ -29,15 +29,29 @@ const FAQ = [
     q: 'Why compare challenge fees per $100k?',
     a: 'Firms price many account sizes, so a headline fee tells you nothing on its own. Normalising to a $100k account is the only way to compare them directly.',
   },
+  {
+    q: 'Are prop firms regulated?',
+    a: 'No, and none of them is. A prop firm sells access to a simulated account rather than a financial service, which is outside what financial regulators license — so the company named in its terms, and the country that company is registered in, is the whole of what a trader could act on if a payout is refused.',
+  },
+  {
+    q: 'Why do some firms score lower for reasons that are not their fault?',
+    a: 'Four of these eight refuse automated requests, so their rules could not be read where they are published — only where other sites quote them. That is scored as a separate published component, because a ranking where "nobody could check this" beats "we checked and it was worse than we thought" is measuring the wrong thing. It says nothing about the firm\u2019s honesty.',
+  },
 ];
 
-/** Transparency is in the score but is three booleans — a thin list of its own. */
-const TAB_KEYS = ['rules', 'payout', 'cost', 'platform'] as const;
+/**
+ * Transparency is in the score but is three booleans — a thin list of its own.
+ * Evidence is here because "which of these has anybody actually checked" is a
+ * question worth being able to sort by, and because a component that changes
+ * the ranking should be somewhere a reader can see it doing that.
+ */
+const TAB_KEYS = ['rules', 'payout', 'cost', 'platform', 'evidence'] as const;
 const SHORT: Record<(typeof TAB_KEYS)[number], string> = {
   rules: 'Rule fairness',
   payout: 'Payout terms',
   cost: 'Challenge cost',
   platform: 'Platforms',
+  evidence: 'How well checked',
 };
 
 export default function PropsPage() {
