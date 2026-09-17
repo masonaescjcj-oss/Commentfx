@@ -8,3 +8,11 @@ dist/
 .DS_Store
 .pglite/
 .pglite-*/
+
+# Added by the Vercel CLI when the project was linked. `.env.example` is kept
+# on purpose: it is the documentation of what this deployment reads, and a
+# blanket .env* would hide it from anybody cloning this fresh.
+.vercel
+.env
+.env.*
+!.env.example
