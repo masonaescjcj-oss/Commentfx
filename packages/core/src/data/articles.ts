@@ -504,6 +504,142 @@ export const ARTICLES: Article[] = [
       },
     ],
   },
+  {
+    slug: 'what-proof-of-reserves-proves',
+    title: 'What a proof of reserves proves, and what it does not',
+    heading: 'What a proof of reserves actually proves',
+    description:
+      'Seven of the eight exchanges ranked here publish a proof of reserves. Two have an audit by '
+      + 'somebody else. That gap is the whole of what the phrase is worth.',
+    published: '2026-09-18',
+    updated: '2026-09-18',
+    author: 'CommentFX',
+    question: 'Does a proof of reserves mean my money is safe on an exchange?',
+    answer:
+      'No — it shows what an exchange holds, not what it owes, on a date the exchange picks itself. '
+      + 'Seven of the eight exchanges ranked here publish one, so on its own it barely tells you '
+      + 'which to choose.',
+    blocks: [
+      {
+        heading: 'What the thing actually is',
+        paragraphs: [
+          'A proof of reserves is a snapshot. The exchange publishes a list of wallet addresses it '
+          + 'says are its own, on a date it chooses, usually with a Merkle tree so that any customer '
+          + 'can check their own balance was included in the total. Nothing about that is fake and '
+          + 'nothing about it is nothing. It is genuinely more than the exchanges of ten years ago '
+          + 'offered, which was a sentence on a website.',
+          'But read what it claims: these coins existed, in these wallets, at that moment. Every '
+          + 'word of that can be true at an exchange which is insolvent, and the reason is that it '
+          + 'is one side of a balance sheet published without the other.',
+        ],
+      },
+      {
+        heading: 'The three questions it does not answer',
+        paragraphs: [
+          'Each of these is the difference between an exchange that can pay everybody and one that '
+          + 'cannot, and a reserves page addresses none of them.',
+        ],
+        list: {
+          items: [
+            'What is owed. Assets without liabilities is not a solvency statement. An exchange '
+            + 'holding a billion dollars of bitcoin and owing its customers two billion passes a '
+            + 'proof of reserves with room to spare.',
+            'Whether the coins stayed. The snapshot is taken on a chosen date. An exchange that '
+            + 'borrows assets to be holding them on the day of the snapshot publishes a true page '
+            + 'about a false position, and nothing in the format would show it.',
+            'Who owns them if the company fails. Whether customer coins are your property or part '
+            + 'of the estate is decided by the terms you accepted and the law where the company is '
+            + 'registered, and a wallet snapshot has nothing to say about either.',
+          ],
+        },
+      },
+      {
+        heading: 'What the eight exchanges here actually have',
+        paragraphs: [
+          'This is our own record, and it is the reason the phrase is nearly useless as a way to '
+          + 'choose. Almost everybody has one. Almost nobody has the thing it is a substitute for.',
+        ],
+        example: {
+          title: 'Solvency evidence across the eight exchanges ranked here',
+          rows: [
+            ['Publish a proof of reserves', '7 of 8 — all except Coinbase'],
+            ['Audited by a named third party', '2 of 8 — Coinbase and Kraken'],
+            ['Listed on a public market', '1 of 8 — Coinbase'],
+            ['Score for a proof of reserves alone', '4 points out of 10'],
+            ['Score for an audit, or for a listing', '4 points, and 3 points'],
+          ],
+          note: 'A signal that seven of eight competitors also have cannot tell them apart. That is '
+            + 'why it is worth four points here and not ten.',
+        },
+      },
+      {
+        heading: 'The exchange that publishes none of it and still beats six that do',
+        paragraphs: [
+          'Coinbase publishes no proof of reserves at all and scores 7.0 on solvency evidence in '
+          + '[the exchange rankings](/exchanges) — ahead of all six exchanges that publish one and '
+          + 'have nothing else. That is not a mistake in the model, it is the point of it.',
+          'A company listed on a US exchange files audited accounts on a schedule somebody else '
+          + 'enforces, with both sides of the balance sheet in them, signed by an auditor who can be '
+          + 'sued for signing. That is a continuous obligation to a regulator rather than a page the '
+          + 'company chooses to publish. The thing a proof of reserves is a substitute for is the '
+          + 'thing a filed annual report already is. You can read the reasoning on '
+          + '[the Coinbase record](/exchanges/coinbase).',
+          'The highest score on this component is Kraken’s 8.0, and it is worth understanding why: '
+          + 'a proof of reserves and an audit by a named third party, but no public listing. Two '
+          + 'kinds of evidence beat one kind plus a listing, on our weights. Reasonable people would '
+          + 'weigh those differently, which is the reason the weights are printed rather than '
+          + 'described.',
+        ],
+      },
+      {
+        heading: 'How to use it, then',
+        paragraphs: [
+          'Treat it as a floor and not a finding. An exchange that publishes nothing at all in 2026 '
+          + 'is telling you something; an exchange that publishes a reserves page is telling you '
+          + 'almost nothing, because so does nearly everyone.',
+          'What separates them is the evidence that somebody outside the company had to sign: an '
+          + 'audit, a listing, a regulator with a filing deadline. That is what [our solvency '
+          + 'scoring](/methodology) weighs, and why the component is called solvency evidence rather '
+          + 'than solvency — nobody outside an exchange can know it is solvent, and a directory that '
+          + 'implied otherwise would be selling a certainty it does not have.',
+        ],
+      },
+      {
+        paragraphs: [
+          'The question underneath all of this is the one that runs through every record on this '
+          + 'site: which company is actually holding your money, and what is it obliged to do. For '
+          + 'brokers that argument is set out in [which company you are signing with]'
+          + '(/learn/which-entity-are-you-signing-with), and it is the same argument here.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: 'Is a proof of reserves an audit?',
+        a: 'No. An audit is performed by a third party who examines both assets and liabilities and '
+          + 'puts their name to the result. A proof of reserves is published by the exchange about '
+          + 'itself, covers assets only, and in most cases nobody outside the company has checked it.',
+      },
+      {
+        q: 'What is the Merkle tree for?',
+        a: 'It lets an individual customer verify that their own balance was counted in the total '
+          + 'the exchange published. That is a real check and a narrow one: it proves you were '
+          + 'included in a sum, not that the sum covers what the exchange owes everybody.',
+      },
+      {
+        q: 'Should I avoid an exchange that does not publish one?',
+        a: 'Not automatically. Coinbase publishes none and still scores above the six exchanges that '
+          + 'publish one and have nothing else, because a public listing forces audited accounts '
+          + 'covering far more. What matters is what evidence exists, not the format it arrives in.',
+      },
+      {
+        q: 'Why is this only worth four points out of ten in the score?',
+        a: 'Because seven of the eight exchanges ranked here have one, and a signal almost everybody '
+          + 'has cannot separate them. An audit by a named third party is worth another four, and a '
+          + 'public listing three, because those are the parts somebody outside the company signed.',
+      },
+    ],
+  },
 ];
 
 export const articleBySlug = (slug: string) => ARTICLES.find((a) => a.slug === slug);

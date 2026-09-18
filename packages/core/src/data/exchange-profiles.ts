@@ -108,13 +108,20 @@ const COINBASE: ExchangeProfile = {
         + 'in this directory, because it says nothing about liabilities — what the exchange owes '
         + 'against what it holds.',
 
-        'Coinbase does not publish one, and scores highest on solvency anyway. A company listed on a '
-        + 'US exchange files audited accounts on a schedule somebody else enforces, with both sides '
-        + 'of the balance sheet in them and an auditor who can be sued; Coinbase files with the SEC '
-        + 'like any other issuer, which is where the 8-K above came from [8k]. That is why '
-        + 'the record marks it as having no proof of reserves and still puts it at the top of that '
-        + 'component: the thing proof of reserves is a substitute for is the thing this company '
-        + 'actually does.',
+        'Coinbase does not publish one and scores 7.0 on that component anyway — ahead of the six '
+        + 'exchanges here that publish one and have nothing else. A company listed on a US exchange '
+        + 'files audited accounts on a schedule somebody else enforces, with both sides of the '
+        + 'balance sheet in them and an auditor who can be sued; Coinbase files with the SEC like '
+        + 'any other issuer, which is where the 8-K above came from [8k]. The thing a proof of '
+        + 'reserves is a substitute for is the thing this company already does.',
+
+        'This paragraph said "scores highest on solvency" until an article was written off the back '
+        + 'of it and the arithmetic was checked. It does not: Kraken scores 8.0, on a proof of '
+        + 'reserves plus a third-party audit, against Coinbase’s audit plus a listing. The claim '
+        + 'this record was making — that the strongest evidence here is a public filing — is not '
+        + 'what the weights say, and the weights are the published part. Corrected rather than '
+        + 'quietly deleted, because a record that overstates its own best case is the failure this '
+        + 'directory exists to point at in other people.',
       ],
     },
   ],
