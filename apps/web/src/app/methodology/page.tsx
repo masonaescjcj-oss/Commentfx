@@ -325,11 +325,21 @@ export default function MethodologyPage() {
           <Card className="p-4 lg:p-6 border-[1.5px] border-accent shadow-none" as="section">
             <h2 className="text-[14px] font-bold text-accent-2 mb-2">Money, and what it does not buy</h2>
             <p className="text-[12.5px] text-ink-2 leading-[1.85]">
-              We earn commission from some brokers when a reader opens an account. That is
-              disclosed on every link that carries it. Commission is not an input to any
-              component above, and no broker has ever been moved, added to, or removed from
-              a list because of a commercial relationship. If that ever changes, this page
-              changes first.
+              Nothing, today. There is no affiliate link on this site, no paid placement, no
+              advertising and no commercial relationship with any company ranked here. Every link
+              to a company goes to that company’s own address, carries{' '}
+              <code className="text-[12px]">rel=&quot;nofollow&quot;</code>, and earns nothing.
+            </p>
+            <p className="text-[12.5px] text-ink-2 leading-[1.85] mt-3">
+              This paragraph used to say the opposite — that commission was earned and disclosed on
+              the links carrying it — which was written for a state the site has never been in. It
+              is corrected here rather than quietly deleted, because a page about how a score is
+              made is the last place to be loose about money.
+            </p>
+            <p className="text-[12.5px] text-ink-2 leading-[1.85] mt-3">
+              If it ever changes, this page changes first, before a single link does, and every
+              link carrying commission says so where it is clicked. Commission will not be an input
+              to any component above — the moment it is, none of the rest of this is worth reading.
             </p>
           </Card>
         </div>

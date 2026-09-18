@@ -16,6 +16,19 @@ export const SITE = {
    * data is not finished.
    */
   contact: '',
+  /**
+   * Who runs this. One person, and the about page says so either way.
+   *
+   * Empty, the page discloses that nobody has put their name to it and says
+   * plainly that a reader should trust it less for that — which is the honest
+   * version, and better than a name invented to fill the gap. Set it and the
+   * page names them instead.
+   */
+  editor: {
+    name: '',
+    /** One line: what they did before this, and why that is relevant. */
+    background: '',
+  },
   /** Categories in the header, in order. Also the top-level internal link graph. */
   nav: [
     { href: '/brokers', label: 'Brokers' },
