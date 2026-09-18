@@ -211,7 +211,7 @@ test('a null in a patch does clear the value, because some fields mean null', ()
 /* ── articles ──────────────────────────────────────────────────────────── */
 
 import { validateArticle } from './validate.ts';
-import { ARTICLES } from './data/articles.ts';
+import { ARTICLES, PLANNED } from './data/articles.ts';
 
 const SLUGS = ARTICLES.map((a) => a.slug);
 const article = () => structuredClone(ARTICLES[0]!);
@@ -266,6 +266,50 @@ test('an article that links to itself is rejected', () => {
   assert.ok(validateArticle(a, SLUGS).some((p) => /links to itself/.test(p.message)));
 });
 
+/**
+ * The figure rules. A diagram here is an argument, so it is held to the same
+ * standard as a sentence — and the alt rule is the one that would rot quietly,
+ * because nothing on a screen looks wrong when the alt text is the word
+ * "diagram".
+ */
+const withFigure = (fig: Partial<import('./data/articles.ts').ArticleFigure>) => {
+  const a = article();
+  a.blocks[0]!.figure = {
+    src: '/learn/x/y.webp',
+    alt: 'Two columns, one filled and one empty.',
+    w: 1600,
+    h: 900,
+    ...fig,
+  };
+  return a;
+};
+
+test('a figure whose description says nothing is rejected', () => {
+  assert.ok(withFigure({ alt: 'A diagram.' }).blocks[0]!.figure);
+  assert.ok(validateArticle(withFigure({ alt: 'A diagram.' }), SLUGS)
+    .some((p) => /Say what the diagram shows/.test(p.message)));
+  assert.ok(validateArticle(withFigure({ alt: '' }), SLUGS)
+    .some((p) => /Say what the diagram shows/.test(p.message)));
+});
+
+test('a figure with no size is rejected, because it would move the page', () => {
+  assert.ok(validateArticle(withFigure({ w: 0 }), SLUGS)
+    .some((p) => /would move the page/.test(p.message)));
+  assert.ok(validateArticle(withFigure({ h: Number.NaN }), SLUGS)
+    .some((p) => /would move the page/.test(p.message)));
+});
+
+test('a figure pointing off this site is rejected', () => {
+  assert.ok(validateArticle(withFigure({ src: 'https://example.com/a.webp' }), SLUGS)
+    .some((p) => /not a path this site serves/.test(p.message)));
+});
+
+test('a diagram line the format could not read is caught before it prints itself', () => {
+  const a = article();
+  a.blocks[0]!.paragraphs.push('![two columns](/learn/x/y.webp)');
+  assert.ok(validateArticle(a, SLUGS).some((p) => /looks like a diagram/.test(p.message)));
+});
+
 test('an article with no worked example is rejected', () => {
   const a = article();
   for (const b of a.blocks) delete b.example;
@@ -302,4 +346,23 @@ test('an article too short to be worth a page of its own is rejected', () => {
   const a = article();
   a.blocks = [{ paragraphs: ['Three [real links](/brokers) to [three pages](/props) here [and here](/exchanges).'] }];
   assert.ok(validateArticle(a, SLUGS).some((p) => /words/.test(p.message)));
+});
+
+/**
+ * The guides page lists what is coming next. It listed an article that had
+ * already shipped — published, linked two cards above, and still promised as
+ * being written. Nobody reads a "coming soon" list looking for that.
+ */
+test('nothing on the being-written list has already been published', () => {
+  for (const p of PLANNED) {
+    assert.ok(
+      !SLUGS.includes(p.slug),
+      `"${p.title}" is published at /learn/${p.slug} and still promised as being written.`,
+    );
+  }
+  assert.ok(new Set(PLANNED.map((p) => p.slug)).size === PLANNED.length, 'A slug is promised twice.');
+  for (const p of PLANNED) {
+    assert.ok(/^[a-z0-9]+(-[a-z0-9]+)*$/.test(p.slug), `"${p.slug}" is not a slug.`);
+    assert.ok(p.title.trim().split(/\s+/).length >= 5, `"${p.title}" does not say what it will be.`);
+  }
 });

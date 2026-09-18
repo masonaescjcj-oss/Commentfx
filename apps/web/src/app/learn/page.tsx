@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { articleWordCount } from '@commentfx/core';
+import { articleWordCount, PLANNED } from '@commentfx/core';
 import { liveArticles } from '@/lib/records';
 import { pageMetadata, JsonLd, breadcrumbLd, itemListLd } from '@/lib/seo';
 import { Header, PageHero, Footer } from '@/components/chrome';
@@ -33,6 +33,17 @@ export default async function LearnIndex() {
         <PageHero title="Guides" trail={trail} />
         <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
           <Card className="p-4 lg:p-6" as="section">
+            {/* Decorative: the lead under it says the same thing in words, and an
+                alt repeating that would make a screen reader read the sentence
+                twice. An empty alt is the correct way to say so — a missing one
+                would make it guess at the filename. */}
+            <img
+              src="/learn/guides.webp"
+              alt=""
+              width={1600}
+              height={900}
+              className="w-full h-auto rounded-[14px] border border-line bg-[#081228] mb-4 max-w-[560px]"
+            />
             <p className="text-[14px] leading-[1.8] text-ink-2 max-w-[64ch]">{LEAD}</p>
             <p className="text-[12px] leading-[1.75] text-ink-3 mt-3 max-w-[64ch]">
               Each one answers a single question in its first two sentences, shows the arithmetic
@@ -72,20 +83,16 @@ export default async function LearnIndex() {
             </ul>
           </Card>
 
-          {/* One every week or two, in the order docs/SEO.md §5.2 sets out. It
-              is written here rather than promised vaguely, because a reader who
-              can see what is coming can tell whether it arrived. */}
+          {/* One every week or two, in the order docs/SEO.md §5.2 sets out,
+              read from the same file the articles live in. A reader who can see
+              what is coming can tell whether it arrived — which only works if
+              the list cannot go on promising something already published. */}
           <Card className="p-4 lg:p-6" as="section">
             <CardHead title="Being written" />
             <ul className="flex flex-col">
-              {[
-                'Static drawdown and trailing drawdown, and which one ends more accounts',
-                'What proof of reserves proves, and the part of the balance sheet it leaves out',
-                'How a compensation scheme actually pays out when a broker fails',
-                'Reading an economic calendar release without being caught by the revision',
-              ].map((t) => (
-                <li key={t} className="text-[13px] text-ink-3 leading-[1.6] py-[10px] border-b border-line-2 last:border-b-0">
-                  {t}
+              {PLANNED.map((t) => (
+                <li key={t.slug} className="text-[13px] text-ink-3 leading-[1.6] py-[10px] border-b border-line-2 last:border-b-0">
+                  {t.title}
                 </li>
               ))}
             </ul>

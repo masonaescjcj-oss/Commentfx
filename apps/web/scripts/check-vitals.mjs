@@ -38,7 +38,10 @@ const WIDTH = Number(process.env.CHECK_WIDTH ?? 390);
 const PAGES = ['/', '/brokers', '/brokers/exness', '/props', '/exchanges', '/coins',
   '/coins/bitcoin', '/memecoins', '/calendar', '/reviews', '/search',
   '/compare/exness-vs-ic-markets', '/props/compare/ftmo-vs-fundingpips', '/best/lowest-spread',
-  '/learn', '/learn/what-a-spread-really-costs', '/learn/who-is-behind-your-prop-firm'];
+  '/learn', '/learn/what-a-spread-really-costs', '/learn/who-is-behind-your-prop-firm',
+  // The one article carrying diagrams. Pictures are how a page starts
+  // shifting, and on Slow 4G they arrive long after the text has been read.
+  '/learn/what-proof-of-reserves-proves'];
 
 const failures = [];
 // CHECK_PROXY exists for sandboxes whose outbound traffic goes through one.
@@ -90,10 +93,33 @@ for (const path of PAGES) {
 
   await page.goto(BASE + path, { waitUntil: 'load' });
   await page.waitForTimeout(3000);
-  const { cls, lcp, worst, scroll } = await page.evaluate(() => ({
+  // Where the page starts, before anything is scrolled. The assertion at the
+  // bottom is about the first paint, not about where reading leaves you.
+  const opensAt = await page.evaluate(() => window.scrollY);
+
+  /**
+   * Then read it, the way a reader does.
+   *
+   * A picture below the fold is lazy, so measuring three seconds after load
+   * measures a page whose images were never requested. Scrolling exercises
+   * them, which is worth doing and is not free of a caveat: it does not catch a
+   * diagram with no declared width and height. Taking those off every figure in
+   * an article leaves this at 0.0000, because the images finish arriving below
+   * the fold before the scroll reaches them, and CLS only counts what shifts
+   * inside the viewport. The rule that catches it is a static one — see
+   * "every picture says how big it is" in check-layout.mjs. This measures what
+   * a reader who keeps reading actually gets.
+   */
+  for (let y = 0; y < 12; y += 1) {
+    await page.evaluate(() => window.scrollBy(0, window.innerHeight * 0.9));
+    await page.waitForTimeout(400);
+  }
+  await page.waitForTimeout(1500);
+
+  const { cls, lcp, worst } = await page.evaluate(() => ({
     cls: window.__cls, lcp: Math.round(window.__lcp), worst: window.__worst,
-    scroll: window.scrollY,
   }));
+  const scroll = opensAt;
   await ctx.close();
 
   const ok = cls <= BUDGET;

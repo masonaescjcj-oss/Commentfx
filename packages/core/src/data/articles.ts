@@ -14,11 +14,34 @@
  * is "your money or your life", where Google's guidance is explicit that trust
  * is the ranking factor that matters most.
  */
+/**
+ * A diagram, with the size it was exported at.
+ *
+ * `w` and `h` are here rather than measured because the browser cannot know
+ * them until the file has arrived, and a picture whose height is unknown pushes
+ * the whole article down the moment it loads. That is the one layout shift a
+ * reader actually notices, and it is invisible to every test that does not load
+ * the image over a slow connection.
+ *
+ * `alt` carries what the drawing says, not what it looks like. These diagrams
+ * make an argument the prose is also making, so a reader who cannot see them
+ * should get the argument, not a description of some rectangles.
+ */
+export interface ArticleFigure {
+  src: string;
+  alt: string;
+  w: number;
+  h: number;
+  caption?: string;
+}
+
 export interface ArticleBlock {
   heading?: string;
   /** Paragraphs. A `[label](/path)` link is the only markup allowed. */
   paragraphs: string[];
   list?: { ordered?: boolean; items: string[] };
+  /** A diagram of what the block just argued. */
+  figure?: ArticleFigure;
   /** A worked example, set apart. */
   example?: { title: string; rows: Array<[string, string]>; note?: string };
 }
@@ -532,25 +555,76 @@ export const ARTICLES: Article[] = [
           + 'word of that can be true at an exchange which is insolvent, and the reason is that it '
           + 'is one side of a balance sheet published without the other.',
         ],
+        figure: {
+          src: '/learn/what-proof-of-reserves-proves/one-side-of-the-balance.webp',
+          alt: 'A balance scale. The left pan is visible and loaded; the right pan is hidden behind '
+            + 'a panel, so the beam can be seen but nothing on that side can be weighed.',
+          w: 1600,
+          h: 900,
+          caption: 'A proof of reserves weighs one pan and publishes the result.',
+        },
       },
       {
         heading: 'The three questions it does not answer',
         paragraphs: [
-          'Each of these is the difference between an exchange that can pay everybody and one that '
-          + 'cannot, and a reserves page addresses none of them.',
+          'Each of the three below is the difference between an exchange that can pay everybody and '
+          + 'one that cannot, and a reserves page addresses none of them.',
         ],
-        list: {
-          items: [
-            'What is owed. Assets without liabilities is not a solvency statement. An exchange '
-            + 'holding a billion dollars of bitcoin and owing its customers two billion passes a '
-            + 'proof of reserves with room to spare.',
-            'Whether the coins stayed. The snapshot is taken on a chosen date. An exchange that '
-            + 'borrows assets to be holding them on the day of the snapshot publishes a true page '
-            + 'about a false position, and nothing in the format would show it.',
-            'Who owns them if the company fails. Whether customer coins are your property or part '
-            + 'of the estate is decided by the terms you accepted and the law where the company is '
-            + 'registered, and a wallet snapshot has nothing to say about either.',
-          ],
+      },
+      {
+        heading: 'Does a proof of reserves show what an exchange owes?',
+        paragraphs: [
+          'No, and this is the whole of it. Assets without liabilities is not a solvency statement. '
+          + 'An exchange holding a billion dollars of bitcoin and owing its customers two billion '
+          + 'passes a proof of reserves with room to spare, and the page it publishes is entirely '
+          + 'true. Solvency is the comparison of the two columns; the format only ever contains one '
+          + 'of them.',
+        ],
+        figure: {
+          src: '/learn/what-proof-of-reserves-proves/assets-without-liabilities.webp',
+          alt: 'Two columns side by side. The left one is filled in solid; the right one is an '
+            + 'empty dashed outline that was never filled. A rule crosses both, inviting a '
+            + 'comparison that cannot be made.',
+          w: 1600,
+          h: 900,
+          caption: 'The column on the right is the one that decides whether you get paid.',
+        },
+      },
+      {
+        heading: 'Can an exchange borrow the coins for the day of the snapshot?',
+        paragraphs: [
+          'Yes, and nothing in the format would show it. The snapshot is taken on a date the '
+          + 'exchange chooses and announces. An exchange that borrows assets so as to be holding '
+          + 'them on that day publishes a page which is true about a false position, and a reader '
+          + 'checking their own balance in the Merkle tree would find it exactly where it should '
+          + 'be. This is not hypothetical bookkeeping — it is the ordinary reason a single-date '
+          + 'attestation is worth less than a continuous obligation.',
+        ],
+        figure: {
+          src: '/learn/what-proof-of-reserves-proves/a-snapshot-on-a-chosen-date.webp',
+          alt: 'A timeline with a camera shutter above one tick. Under that tick the holdings are '
+            + 'piled high; on every other date along the line they are sparse.',
+          w: 1600,
+          h: 900,
+          caption: 'Every date on this line is true. Only one of them was photographed.',
+        },
+      },
+      {
+        heading: 'If the exchange fails, are the coins yours?',
+        paragraphs: [
+          'That is decided by the terms you accepted and the law where the company is registered, '
+          + 'and a wallet snapshot has nothing to say about either. Customer assets can be your '
+          + 'property held on trust, or they can be part of the estate you queue up as a creditor '
+          + 'against — the wallets look identical from outside either way.',
+        ],
+        figure: {
+          src: '/learn/what-proof-of-reserves-proves/whose-coins-if-it-fails.webp',
+          alt: 'A vault building holding a grid of identical boxes, with a dotted line drawn '
+            + 'through the middle of the grid. The boxes on either side of the line look the same '
+            + 'and belong to different people.',
+          w: 1600,
+          h: 900,
+          caption: 'Nothing on the outside of a wallet says which side of that line it is on.',
         },
       },
       {
@@ -590,6 +664,15 @@ export const ARTICLES: Article[] = [
           + 'weigh those differently, which is the reason the weights are printed rather than '
           + 'described.',
         ],
+        figure: {
+          src: '/learn/what-proof-of-reserves-proves/three-kinds-of-evidence.webp',
+          alt: 'Three bars of increasing length. The shortest is an empty outline, the middle one '
+            + 'is half filled, and the longest is filled solid and carries an official seal.',
+          w: 1600,
+          h: 900,
+          caption: 'A page you publish about yourself, a name that signed it, a filing somebody '
+            + 'else enforces. Only the last one has a deadline.',
+        },
       },
       {
         heading: 'How to use it, then',
@@ -647,6 +730,30 @@ export const articleBySlug = (slug: string) => ARTICLES.find((a) => a.slug === s
 /* ───────────────────────── reading an article ───────────────────────── */
 
 /** `[label](/path)` — the only markup, so this is the only pattern. */
+/**
+ * What is being written next, each under the slug it will be published at.
+ *
+ * This list used to be four strings typed into the guides page, and it went
+ * stale the first time an article shipped: the page went on promising a guide
+ * that was already published and linked two cards above it. A promise nobody
+ * can forget to withdraw is one the test suite checks, so these carry the slug
+ * they will become and `articles.test.ts` fails the moment one of them exists.
+ */
+export const PLANNED: ReadonlyArray<{ slug: string; title: string }> = [
+  {
+    slug: 'static-and-trailing-drawdown',
+    title: 'Static drawdown and trailing drawdown, and which one ends more accounts',
+  },
+  {
+    slug: 'how-a-compensation-scheme-pays-out',
+    title: 'How a compensation scheme actually pays out when a broker fails',
+  },
+  {
+    slug: 'reading-a-calendar-release',
+    title: 'Reading an economic calendar release without being caught by the revision',
+  },
+];
+
 const LINK = /\[([^\]]+)\]\(([^)]+)\)/g;
 
 const textOf = (b: ArticleBlock): string[] => [

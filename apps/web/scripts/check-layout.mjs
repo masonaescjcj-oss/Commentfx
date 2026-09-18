@@ -102,6 +102,42 @@ for (const path of PAGES) {
 check(`no empty column takes width at ${WIDE}px`, reserved.length === 0, reserved.slice(0, 3).join(' · '));
 await ctx.close();
 
+/* ── every picture says how big it is ──────────────────────────────── */
+
+/**
+ * An `<img>` with no width and height is zero pixels tall until the file lands,
+ * and everything below it jumps down the moment it does. That is the shift a
+ * reader is most likely to feel, because it happens under the thumb of somebody
+ * already scrolling — and check-vitals cannot see it: the diagrams in an
+ * article sit below the fold, finish arriving before the scroll gets there, and
+ * CLS only counts what moves inside the viewport. Taking the attributes off
+ * every figure in an article left that run at 0.0000.
+ *
+ * So this is checked statically instead, which is also the honest shape of the
+ * rule: a picture on this site declares its size. A CSS `aspect-ratio` would
+ * hold the space too, but only for the one shape it was written for, and it
+ * lies about the next image that is not that shape.
+ */
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const page = await ctx.newPage();
+  const unsized = [];
+  let seen = 0;
+  for (const path of [...PAGES, '/learn/what-proof-of-reserves-proves']) {
+    const res = await page.goto(BASE + path, { waitUntil: 'load' });
+    if (!res || res.status() >= 400) continue;
+    const bad = await page.evaluate(() =>
+      [...document.querySelectorAll('img')]
+        .filter((i) => !i.getAttribute('width') || !i.getAttribute('height'))
+        .map((i) => i.getAttribute('src') ?? '(no src)'));
+    seen += await page.evaluate(() => document.querySelectorAll('img').length);
+    for (const src of bad) unsized.push(`${src} on ${path}`);
+  }
+  await ctx.close();
+  check('every picture declares its own size', unsized.length === 0,
+    unsized.length ? unsized.slice(0, 5).join(' · ') : `${seen} checked`);
+}
+
 /* ── the header is the colour of what it is standing on ────────────── */
 
 /**
@@ -145,4 +181,4 @@ if (failures.length) {
   console.log(`${failures.length} broken: ${failures.join(', ')}`);
   process.exit(1);
 }
-console.log('Every page fits its screen, no column is reserved for nothing, and the header\nknows what it is standing on.');
+console.log('Every page fits its screen, no column is reserved for nothing, every picture\nholds its own space, and the header knows what it is standing on.');

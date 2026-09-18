@@ -80,6 +80,30 @@ function Block({ block }: { block: ArticleBlock }) {
         )
       ) : null}
 
+      {block.figure ? (
+        /* The diagrams are drawn on the same navy as the hero band, so the frame
+           is the picture's own edge rather than a card around it. width/height
+           are the file's real pixels: without them the article jumps down the
+           screen the moment the image lands, which is the one layout shift a
+           reader notices and the one CLS never catches on a fast connection. */
+        <figure className="mt-5">
+          <img
+            src={block.figure.src}
+            alt={block.figure.alt}
+            width={block.figure.w}
+            height={block.figure.h}
+            loading="lazy"
+            decoding="async"
+            className="w-full h-auto rounded-[14px] border border-line bg-[#081228] max-w-[68ch]"
+          />
+          {block.figure.caption ? (
+            <figcaption className="text-[12px] text-ink-3 leading-[1.75] mt-[10px] max-w-[68ch]">
+              <Inline text={block.figure.caption} />
+            </figcaption>
+          ) : null}
+        </figure>
+      ) : null}
+
       {block.example ? (
         <figure className="bg-card-2 border border-line rounded-[14px] p-4 mt-5">
           <figcaption className="text-[12px] font-bold uppercase tracking-[0.07em] text-ink-3 mb-3">

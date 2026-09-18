@@ -410,6 +410,27 @@ export function validateArticle(a: Partial<Article>, knownSlugs: readonly string
     }
   }
 
+  // A diagram on a page like this is an argument, so it is held to the same
+  // standard as a sentence: it has to say something, and a reader who cannot
+  // see it has to get the same thing out of it. An `alt` of "diagram" is worse
+  // than no picture, because it costs the screen-reader user a turn and gives
+  // them nothing.
+  for (const f of blocks.flatMap((b) => (b.figure ? [b.figure] : []))) {
+    if (!f.src.startsWith('/') || f.src.includes('//')) {
+      out.push({ field: 'blocks', message: `"${f.src}" is not a path this site serves.` });
+    }
+    if (!Number.isInteger(f.w) || !Number.isInteger(f.h) || f.w < 1 || f.h < 1) {
+      out.push({ field: 'blocks', message: `"${f.src}" has no usable size, so it would move the page as it loads.` });
+    }
+    const altWords = f.alt.trim().split(/\s+/).filter(Boolean).length;
+    if (altWords < 5) {
+      out.push({
+        field: 'blocks',
+        message: `"${f.src}" has ${altWords === 0 ? 'no' : `a ${altWords}-word`} description. Say what the diagram shows, not that it is one.`,
+      });
+    }
+  }
+
   const examples = blocks.flatMap((b) => (b.example ? [b.example] : []));
   if (examples.length === 0) {
     out.push({ field: 'blocks', message: 'No worked example. One, with real numbers in it.' });
@@ -439,10 +460,18 @@ export function validateArticle(a: Partial<Article>, knownSlugs: readonly string
       ...(b.heading ? [b.heading] : []),
       ...b.paragraphs,
       ...(b.list?.items ?? []),
+      ...(b.figure ? [b.figure.alt, b.figure.caption ?? ''] : []),
       ...(b.example ? [b.example.title, ...b.example.rows.flat(), b.example.note ?? ''] : []),
     ]),
     ...faq.flatMap((f) => [f.q, f.a]),
   ];
+  // A figure line the format could not read stays a paragraph and prints its own
+  // source on the page. Balanced brackets, so the guard below never sees it.
+  for (const p of blocks.flatMap((b) => b.paragraphs)) {
+    if (p.trimStart().startsWith('![')) {
+      out.push({ field: 'blocks', message: `"${p.slice(0, 50)}" looks like a diagram but is missing its size, as ![…](/path.webp 1600x900).` });
+    }
+  }
   for (const line of lines) {
     if (/undefined|NaN|\[object/.test(line)) {
       out.push({ field: 'blocks', message: `Something went wrong in "${line.slice(0, 50)}".` });

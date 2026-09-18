@@ -21,6 +21,9 @@ import type { Article, ArticleBlock } from './data/articles.ts';
  *     - an item                    an unordered list
  *     1. an item                   an ordered one
  *
+ *     ![what it shows](/a.webp 1600x900)   a diagram
+ *     ~ An optional caption under it.
+ *
  *     ::: A worked example         an example, set apart
  *     What you pay :: 0.7 pips
  *     ~ A note under the table.
@@ -35,6 +38,12 @@ import type { Article, ArticleBlock } from './data/articles.ts';
 
 const EXAMPLE_OPEN = ':::';
 const RULE = '---';
+/**
+ * `![alt](/path.webp 1600x900)`. The dimensions ride along with the path
+ * because they are not optional — see `ArticleFigure` — and a separate line for
+ * them is a line a writer would forget.
+ */
+const FIGURE = /^!\[([^\]]*)\]\(\s*(\S+?)\s+(\d+)x(\d+)\s*\)\s*$/;
 
 export function formatArticleBody(blocks: ArticleBlock[]): string {
   const out: string[] = [];
@@ -54,6 +63,13 @@ export function formatArticleBody(blocks: ArticleBlock[]): string {
           .map((item, i) => (block.list!.ordered ? `${i + 1}. ${item}` : `- ${item}`))
           .join('\n'),
       );
+    }
+
+    if (block.figure) {
+      const f = block.figure;
+      const lines = [`![${f.alt}](${f.src} ${f.w}x${f.h})`];
+      if (f.caption) lines.push(`~ ${f.caption}`);
+      chunks.push(lines.join('\n'));
     }
 
     if (block.example) {
@@ -133,6 +149,19 @@ export function parseArticleBody(text: string): ArticleBlock[] {
       continue;
     }
 
+    const fig = FIGURE.exec(line);
+    if (fig) {
+      const [, alt = '', src = '', w = '0', h = '0'] = fig;
+      // A `~ ` line belongs to the figure above it. Inside an example it is the
+      // table's note; there is no ambiguity because that one is read by the
+      // example's own loop before it ever reaches here.
+      const next = lines[i + 1];
+      const caption = next?.startsWith('~ ') ? next.slice(2).trim() : undefined;
+      block.figure = { src, alt, w: Number(w), h: Number(h), ...(caption ? { caption } : {}) };
+      i += caption ? 2 : 1;
+      continue;
+    }
+
     if (/^([-*]\s|\d+\.\s)/.test(line)) {
       const ordered = /^\d+\.\s/.test(line);
       const items: string[] = [];
@@ -149,7 +178,8 @@ export function parseArticleBody(text: string): ArticleBlock[] {
     const para: string[] = [];
     while (i < lines.length && lines[i]!.trim() && !lines[i]!.startsWith('## ')
            && lines[i]!.trim() !== RULE
-           && !lines[i]!.startsWith(EXAMPLE_OPEN) && !/^([-*]\s|\d+\.\s)/.test(lines[i]!)) {
+           && !lines[i]!.startsWith(EXAMPLE_OPEN) && !FIGURE.test(lines[i]!)
+           && !/^([-*]\s|\d+\.\s)/.test(lines[i]!)) {
       para.push(lines[i]!.trim());
       i += 1;
     }
