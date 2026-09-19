@@ -45,6 +45,27 @@ export const metadata: Metadata = {
     // where every one of them looks and the only place they look.
     types: { 'application/rss+xml': [{ url: '/learn/feed.xml', title: `${SITE.name} — Guides` }] },
   },
+  /**
+   * The icons, declared rather than left to the file convention.
+   *
+   * The site shipped with only `app/icon.svg`, so the head advertised an SVG
+   * and nothing else, and /favicon.ico — the address every crawler tries when
+   * it wants a site's mark — returned 404. Google's result for the homepage
+   * showed the grey globe it uses when it could not find one.
+   *
+   * The convention alone could not fix it: adding an `icon.png` beside the
+   * `icon.svg` makes Next emit one of them and silently drop the other, and it
+   * labels favicon.ico `sizes="16x16"` from the first frame in the file, which
+   * understates a file that carries 16 through 96 and is below the 48px
+   * multiple Google asks for. Written out, each one says what it is.
+   */
+  icons: {
+    icon: [
+      { url: '/favicon.ico', type: 'image/x-icon', sizes: '16x16 32x32 48x48 64x64 96x96' },
+      { url: '/icon.svg', type: 'image/svg+xml', sizes: 'any' },
+    ],
+    apple: { url: '/apple-icon.png', type: 'image/png', sizes: '180x180' },
+  },
   openGraph: { type: 'website', siteName: SITE.name, locale: SITE.locale, url: SITE.url },
   twitter: { card: 'summary_large_image', site: SITE.twitter },
   /**

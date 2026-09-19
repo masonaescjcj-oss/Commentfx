@@ -291,5 +291,40 @@ for (const path of ['/', '/brokers/exness', '/props/ftmo', '/exchanges/binance']
 }
 listProblems('every shared link has a picture that renders', cards);
 
+/**
+ * And the little square beside the result.
+ *
+ * Google's result for the homepage showed its grey globe. The site declared
+ * only `app/icon.svg` and /favicon.ico answered 404 — which is the address
+ * every crawler tries, and the one Google's favicon fetcher had asked for and
+ * been refused. Nothing here noticed, because a missing favicon breaks no page
+ * and fails no build; it is only ever visible in somebody else's search result.
+ *
+ * Three things have to hold: the head names a mark, the mark is fetchable, and
+ * /favicon.ico is there for everything that never reads the head.
+ */
+{
+  const home = await (await fetch(BASE + '/')).text();
+  const declared = [...home.matchAll(/<link rel="(?:shortcut )?icon"[^>]*href="([^"]+)"/g)].map((m) => m[1]);
+  const icons = [];
+
+  if (declared.length === 0) icons.push('the head names no icon at all');
+  for (const href of declared) {
+    const res = await fetch(href.startsWith('http') ? href.replace(SITE, BASE) : BASE + href);
+    const type = res.headers.get('content-type') ?? '';
+    if (!res.ok) icons.push(`${href} answered ${res.status}`);
+    else if (!type.startsWith('image/')) icons.push(`${href} served ${type}`);
+  }
+
+  // Separately, because a crawler that never parsed the page still asks for it.
+  const ico = await fetch(`${BASE}/favicon.ico`);
+  if (!ico.ok) icons.push(`/favicon.ico answered ${ico.status} — the address every crawler tries`);
+  else if (!(ico.headers.get('content-type') ?? '').startsWith('image/')) {
+    icons.push(`/favicon.ico served ${ico.headers.get('content-type')}`);
+  }
+
+  listProblems(`the site has a mark a search result can show — ${declared.length} declared`, icons);
+}
+
 console.log(failures.length ? `\n${failures.length} failed` : '\nall clear');
 process.exit(failures.length ? 1 : 0);
