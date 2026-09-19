@@ -326,5 +326,30 @@ listProblems('every shared link has a picture that renders', cards);
   listProblems(`the site has a mark a search result can show — ${declared.length} declared`, icons);
 }
 
+/**
+ * And the key that lets the site push changes to Bing.
+ *
+ * IndexNow proves ownership by fetching a file named after the key and
+ * checking it repeats it. If that file stops serving, submissions are refused
+ * with a 403 and the only symptom is that Bing — and behind it Yahoo, and the
+ * browsing path ChatGPT uses — goes back to finding out on its own schedule.
+ * The key is read from the script so the two cannot drift apart.
+ */
+{
+  const script = await readFile(new URL('./indexnow.mjs', import.meta.url), 'utf8');
+  const key = /^const KEY = '([0-9a-f]+)';$/m.exec(script)?.[1];
+  const problems = [];
+  if (!key) problems.push('the submit script has no key in it');
+  else {
+    const res = await fetch(`${BASE}/${key}.txt`);
+    if (!res.ok) problems.push(`/${key}.txt answered ${res.status}`);
+    else {
+      const body = (await res.text()).trim();
+      if (body !== key) problems.push(`/${key}.txt says "${body.slice(0, 40)}" instead of the key`);
+    }
+  }
+  listProblems('the key that pushes changes to Bing is where it says it is', problems);
+}
+
 console.log(failures.length ? `\n${failures.length} failed` : '\nall clear');
 process.exit(failures.length ? 1 : 0);

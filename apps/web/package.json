@@ -21,7 +21,8 @@
     "smoke:articles": "node scripts/smoke-articles.mjs",
     "smoke:accounts": "node scripts/smoke-accounts.mjs",
     "check:trace": "node scripts/check-trace.mjs",
-    "check:layout": "node scripts/check-layout.mjs"
+    "check:layout": "node scripts/check-layout.mjs",
+    "indexnow": "node scripts/indexnow.mjs"
   },
   "dependencies": {
     "@commentfx/core": "workspace:*",
