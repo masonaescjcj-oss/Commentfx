@@ -723,6 +723,181 @@ export const ARTICLES: Article[] = [
       },
     ],
   },
+  {
+    slug: 'static-and-trailing-drawdown',
+    title: 'Static vs trailing drawdown: which one ends more prop accounts',
+    heading: 'Static vs trailing drawdown, on the same three days of trades',
+    description:
+      'Same trades, same limits, three drawdown rules. The static account survives with $2,000 to '
+      + 'spare; the intraday trailing one is ended half a day in. Here is the arithmetic.',
+    published: '2026-09-23',
+    updated: '2026-09-23',
+    author: 'CommentFX',
+    question: 'Is a static or a trailing drawdown easier to pass?',
+    answer:
+      'Static, for the same trades — its floor never moves, while a trailing floor rises behind '
+      + 'every profit and never comes back down. Intraday trailing is the strictest form of all, '
+      + 'because it rises on profit you only saw and never banked.',
+    blocks: [
+      {
+        heading: 'What the floor is measured from',
+        paragraphs: [
+          'Every prop firm account has a maximum loss: an amount below which the account is closed '
+          + 'and the fee is gone. The number is the part everybody compares. The part that decides '
+          + 'whether you pass is what that number is measured from, and there are three answers.',
+        ],
+        list: {
+          items: [
+            '**Static.** The floor is the starting balance minus the allowance, and it stays there. '
+            + 'On a $100,000 account with $8,000 of room, the floor is $92,000 on the first day and '
+            + 'on the last.',
+            '**End-of-day trailing.** The floor follows your highest closing balance upward and '
+            + 'never down. A day that closes at a new high lifts the floor by the same amount; what '
+            + 'happened inside the day does not count.',
+            '**Intraday trailing.** The floor follows your highest equity, including profit on '
+            + 'trades that are still open. A position that runs up and comes back lifts the floor '
+            + 'permanently, even though you never kept a cent of it.',
+          ],
+        },
+      },
+      {
+        heading: 'The same trades under all three',
+        paragraphs: [
+          'Hold everything else still — the account, the allowance, the daily limit, the trades — '
+          + 'and change only what the floor follows. No single day below breaks the daily limit, '
+          + 'so the only thing that can end the account is the maximum loss.',
+        ],
+        figure: {
+          src: '/learn/static-and-trailing-drawdown/three-floors-one-account.svg',
+          alt: 'A balance line rises to $105,000 on day one and falls to $94,000 by day three. '
+            + 'The static floor stays at $92,000 and the end-of-day floor steps up to $93,000 at the '
+            + 'first close; the intraday floor follows the unrealised peak up to $97,000, and the '
+            + 'balance meets it early on day three.',
+          w: 660,
+          h: 510,
+          caption: 'The balance line is the same in all three. Only the floor under it changes.',
+        },
+        example: {
+          title: 'One account, three drawdown rules',
+          rows: [
+            ['The account', '$100,000 · maximum loss $8,000 · daily limit $4,000'],
+            ['Day one', 'Up $5,000 at its best, closes up $1,000'],
+            ['Days two and three', 'Lose $3,500 each, inside the daily limit'],
+            ['Static floor', '$92,000 — survives with $2,000 to spare'],
+            ['End-of-day trailing floor', '$93,000 — survives with $1,000 to spare'],
+            ['Intraday trailing floor', '$97,000 — ended $500 into day three'],
+          ],
+          note: 'End-of-day trailing charged this account for the $1,000 it banked. Intraday '
+            + 'trailing charged it for the $5,000 it only saw.',
+        },
+      },
+      {
+        heading: 'Why a bigger allowance can be the smaller one',
+        paragraphs: [
+          'This is the part a comparison table hides. A 12% intraday trailing limit looks more '
+          + 'generous than an 8% static one, and on the first morning it is: $12,000 of room '
+          + 'against $8,000.',
+          'Then the account makes money. After any run-up of more than $4,000 — realised or not — '
+          + 'the 12% trailing floor sits above the 8% static one, and it stays there. A $5,000 '
+          + 'spike puts it at $93,000 against the static account’s $92,000. The larger number bought '
+          + 'less room from the moment it was used.',
+        ],
+        figure: {
+          src: '/learn/static-and-trailing-drawdown/bigger-allowance-less-room.svg',
+          alt: 'An 8% static floor stays flat at $92,000. A 12% trailing floor starts lower, at '
+            + '$88,000, and rises with every dollar the account runs up, crossing the static floor '
+            + 'at a $4,000 run-up and staying above it.',
+          w: 660,
+          h: 460,
+          caption: 'Past a $4,000 run-up, the larger allowance is the smaller room.',
+        },
+      },
+      {
+        heading: 'Which firms here use which',
+        paragraphs: [
+          'Most of the eight firms in [the prop firm rankings](/props) measure from the starting '
+          + 'balance. Half of them were read at their own published terms; the other half were not, '
+          + 'and a rule nobody has read where it is published is a rule to check before you pay.',
+        ],
+        example: {
+          title: 'Drawdown design across the eight prop firms ranked here',
+          rows: [
+            ['Static', '5 of 8 — FTMO, FundedNext, The5ers, FundingPips, Alpha Capital Group'],
+            ['End-of-day trailing', '2 of 8 — Topstep, E8 Markets'],
+            ['Intraday trailing', '1 of 8 — Breakout'],
+            ['Read at the firm’s own pages', '4 of 8 — FTMO, FundedNext, The5ers, Topstep'],
+          ],
+          note: 'The other four are as other sources report them. Breakout’s figure also predates '
+            + 'Kraken’s acquisition of the firm and has not been re-read from the current programme.',
+        },
+      },
+      {
+        heading: 'The same firm can sell you both',
+        paragraphs: [
+          'FTMO sells two programmes, and they are not variations of each other. The 2-step carries '
+          + 'a static maximum loss. The 1-step carries an end-of-day trailing limit that, in the '
+          + 'firm’s own words, “can only increase, but never decrease”. [The FTMO record](/props/ftmo) '
+          + 'scores the 2-step and says so — which drawdown you are held to depends on which button '
+          + 'you press, not on the firm’s name.',
+          'Topstep, which is futures only, trails its maximum loss on the end-of-day closing '
+          + 'balance, so an unrealised spike inside a session does not raise the floor. Its daily '
+          + 'loss limit is fixed until a profitable trade closes, then trails upward and never down. '
+          + 'It is also one of the few firms here that gives room back: a funded account’s daily '
+          + 'limit and position size rise in tiers as its profits grow. You can set the two side by '
+          + 'side in [FTMO against Topstep](/props/compare/ftmo-vs-topstep).',
+        ],
+      },
+      {
+        heading: 'What to check before you pay',
+        paragraphs: [
+          'Four questions, all answered in the firm’s own terms or nowhere.',
+        ],
+        list: {
+          ordered: true,
+          items: [
+            'Which programme is this? The drawdown can differ between products at one firm.',
+            'Does the floor follow balance or equity, and at the close or during the day?',
+            'Does it ever stop trailing? If the terms do not say it stops, assume it does not.',
+            'What is the daily limit, separately? It is a second floor, and it resets every day.',
+          ],
+        },
+      },
+      {
+        paragraphs: [
+          'Drawdown design is the largest single input to how [rule fairness is scored](/methodology) '
+          + 'here, for the reason above. The other question worth asking before a fee changes hands '
+          + 'is [which company you are actually paying](/learn/who-is-behind-your-prop-firm), because '
+          + 'a rule is only as good as the company that has to honour it.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: 'Does a trailing drawdown ever stop trailing?',
+        a: 'Some firms stop the trail at a fixed level and some never do. It is a rule you will find '
+          + 'in the firm’s own terms or not at all — if the terms do not say the floor stops rising, '
+          + 'assume it does not.',
+      },
+      {
+        q: 'Is the daily loss limit the same thing as the maximum drawdown?',
+        a: 'No. The daily limit is a second floor, reset each trading day, that one bad session can '
+          + 'breach while the overall maximum still has room. Every firm ranked here has both, and '
+          + 'either one ends the account.',
+      },
+      {
+        q: 'Why does FTMO appear as static when it also sells a trailing programme?',
+        a: 'Because the record scores its 2-step, which carries a static maximum loss. Its 1-step '
+          + 'carries an end-of-day trailing limit instead, so the drawdown you are held to depends on '
+          + 'the product you buy.',
+      },
+      {
+        q: 'How much does the drawdown type count in the score here?',
+        a: 'It is the largest single input to rule fairness — 35% of that component, with static '
+          + 'scoring 10, end-of-day trailing 6 and intraday trailing 2.5. Rule fairness is itself 27% '
+          + 'of a prop firm’s overall score.',
+      },
+    ],
+  },
 ];
 
 export const articleBySlug = (slug: string) => ARTICLES.find((a) => a.slug === slug);
@@ -740,10 +915,6 @@ export const articleBySlug = (slug: string) => ARTICLES.find((a) => a.slug === s
  * they will become and `articles.test.ts` fails the moment one of them exists.
  */
 export const PLANNED: ReadonlyArray<{ slug: string; title: string }> = [
-  {
-    slug: 'static-and-trailing-drawdown',
-    title: 'Static drawdown and trailing drawdown, and which one ends more accounts',
-  },
   {
     slug: 'how-a-compensation-scheme-pays-out',
     title: 'How a compensation scheme actually pays out when a broker fails',

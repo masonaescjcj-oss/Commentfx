@@ -122,8 +122,9 @@ await ctx.close();
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await ctx.newPage();
   const unsized = [];
+  const misdeclared = [];
   let seen = 0;
-  for (const path of [...PAGES, '/learn/what-proof-of-reserves-proves']) {
+  for (const path of [...PAGES, '/learn/what-proof-of-reserves-proves', '/learn/static-and-trailing-drawdown']) {
     const res = await page.goto(BASE + path, { waitUntil: 'load' });
     if (!res || res.status() >= 400) continue;
     const bad = await page.evaluate(() =>
@@ -132,10 +133,35 @@ await ctx.close();
         .map((i) => i.getAttribute('src') ?? '(no src)'));
     seen += await page.evaluate(() => document.querySelectorAll('img').length);
     for (const src of bad) unsized.push(`${src} on ${path}`);
+
+    // Declared is not the same as right. An article figure's width and height
+    // are typed into the data by hand, and a pair that disagrees with the file
+    // reserves the wrong space: the box is laid out at one shape and snaps to
+    // another when the picture lands. Lazy images are loaded first so their
+    // real size is known.
+    await page.evaluate(() => document.querySelectorAll('img[loading="lazy"]').forEach((i) => { i.loading = 'eager'; }));
+    await page.waitForFunction(() => [...document.images].every((i) => i.complete), null, { timeout: 15000 }).catch(() => {});
+    const wrong = await page.evaluate(() =>
+      [...document.querySelectorAll('img[width][height]')]
+        .filter((i) => i.naturalWidth > 0)
+        // A picture cropped into a box its CSS sets — the news thumbnails are
+        // 64×64 squares cut from landscape files — reserves the box's shape on
+        // purpose, and the file's shape cannot move it. Only a picture whose box
+        // takes its shape from the declared size can be declared wrong.
+        .filter((i) => !['cover', 'contain'].includes(getComputedStyle(i).objectFit))
+        .filter((i) => {
+          const declared = Number(i.getAttribute('width')) / Number(i.getAttribute('height'));
+          const actual = i.naturalWidth / i.naturalHeight;
+          return Math.abs(declared - actual) / actual > 0.01;
+        })
+        .map((i) => `${i.getAttribute('src')} says ${i.getAttribute('width')}×${i.getAttribute('height')}, is ${i.naturalWidth}×${i.naturalHeight}`));
+    for (const w of wrong) misdeclared.push(`${w} on ${path}`);
   }
   await ctx.close();
   check('every picture declares its own size', unsized.length === 0,
     unsized.length ? unsized.slice(0, 5).join(' · ') : `${seen} checked`);
+  check('and the size it declares is the shape it is', misdeclared.length === 0,
+    misdeclared.slice(0, 5).join(' · '));
 }
 
 /* ── the header is the colour of what it is standing on ────────────── */
