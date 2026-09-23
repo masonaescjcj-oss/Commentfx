@@ -1,10 +1,11 @@
 import type { MetadataRoute } from 'next';
 import { absoluteUrl } from '@/lib/site';
-import { rankedBrokers, rankedProps, rankedExchanges, BEST_CRITERIA, comparePairs, propComparePairs, canonicalPairSlug } from '@/lib/repo';
+import { rankedBrokers, rankedProps, rankedExchanges, BEST_CRITERIA, comparePairs, propComparePairs, canonicalPairSlug, patchKey } from '@/lib/repo';
 import { brokerBySlug, propBySlug } from '@commentfx/core';
 import { livePatchMap, liveArticles } from '@/lib/records';
 import {
   RELEASES, brokerIndexable, propIndexable, exchangeIndexable, compareIndexable, propCompareIndexable, pathIndexable,
+  recordRevised, latestDay,
 } from '@commentfx/core';
 
 /**
@@ -41,25 +42,53 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const props = rankedProps(patches);
   const exchanges = rankedExchanges(patches);
 
+  /**
+   * lastmod, from the day a page last actually changed.
+   *
+   * Every entry used to say `now`, and this map regenerates hourly — so every
+   * page on the site claimed to have changed within the hour, every hour.
+   * Google uses lastmod only while it is consistently accurate, and a sitemap
+   * where everything is always new is one it stops believing (docs/SEO.md
+   * §4.3). A record's page changes when its research or its correction does;
+   * a comparison or a hub when any record in it does; the front page when
+   * anything under it does.
+   *
+   * Three kinds of page get something else. The price and calendar pages are
+   * rebuilt from live feeds, so `now` is the truth there. Pages driven by
+   * reader reports, and the methodology, about and privacy pages, have no date
+   * anything here records — they get no lastmod, which Google treats as
+   * "decide for yourself". Absent is never wrong; a guessed date is.
+   */
+  const at = (d: string | null) => (d ? { lastModified: new Date(`${d}T00:00:00Z`) } : {});
+  // A record edited through the admin changed on the day the edit went live,
+  // whatever its research date says.
+  const edited = (kind: 'broker' | 'prop' | 'exchange', slug: string) => patches.get(patchKey(kind, slug))?.at;
+  const brokerDay = (slug: string) => latestDay([recordRevised('broker', slug), edited('broker', slug)]);
+  const propDay = (slug: string) => latestDay([recordRevised('prop', slug), edited('prop', slug)]);
+  const exchangeDay = (slug: string) => latestDay([recordRevised('exchange', slug), edited('exchange', slug)]);
+
+  const brokersDay = latestDay(brokers.map((r) => brokerDay(r.broker.slug)));
+  const propsDay = latestDay(props.map((r) => propDay(r.firm.slug)));
+  const exchangesDay = latestDay(exchanges.map((r) => exchangeDay(r.exchange.slug)));
+  const articlesDay = latestDay(articles.map((a) => a.updated));
+  const siteDay = latestDay([brokersDay, propsDay, exchangesDay, articlesDay]);
+
   return [
-    { url: absoluteUrl('/'), lastModified: now, changeFrequency: 'daily', priority: 1 },
-    { url: absoluteUrl('/brokers'), lastModified: now, changeFrequency: 'daily', priority: 0.9 },
-    { url: absoluteUrl('/props'), lastModified: now, changeFrequency: 'daily', priority: 0.9 },
-    { url: absoluteUrl('/exchanges'), lastModified: now, changeFrequency: 'daily', priority: 0.9 },
+    { url: absoluteUrl('/'), ...at(siteDay), changeFrequency: 'daily', priority: 1 },
+    { url: absoluteUrl('/brokers'), ...at(brokersDay), changeFrequency: 'daily', priority: 0.9 },
+    { url: absoluteUrl('/props'), ...at(propsDay), changeFrequency: 'daily', priority: 0.9 },
+    { url: absoluteUrl('/exchanges'), ...at(exchangesDay), changeFrequency: 'daily', priority: 0.9 },
     { url: absoluteUrl('/coins'), lastModified: now, changeFrequency: 'hourly', priority: 0.9 },
     { url: absoluteUrl('/memecoins'), lastModified: now, changeFrequency: 'hourly', priority: 0.7 },
-    { url: absoluteUrl('/status'), lastModified: now, changeFrequency: 'hourly', priority: 0.8 },
+    { url: absoluteUrl('/status'), changeFrequency: 'hourly', priority: 0.8 },
     { url: absoluteUrl('/calendar'), lastModified: now, changeFrequency: 'daily', priority: 0.8 },
-    { url: absoluteUrl('/methodology'), lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
-    { url: absoluteUrl('/about'), lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
-    { url: absoluteUrl('/privacy'), lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
-    { url: absoluteUrl('/reviews'), lastModified: now, changeFrequency: 'daily', priority: 0.8 },
-    { url: absoluteUrl('/learn'), lastModified: now, changeFrequency: 'weekly', priority: 0.7 },
+    { url: absoluteUrl('/methodology'), changeFrequency: 'monthly', priority: 0.6 },
+    { url: absoluteUrl('/about'), changeFrequency: 'monthly', priority: 0.7 },
+    { url: absoluteUrl('/privacy'), changeFrequency: 'yearly', priority: 0.3 },
+    { url: absoluteUrl('/reviews'), changeFrequency: 'daily', priority: 0.8 },
+    { url: absoluteUrl('/learn'), ...at(articlesDay), changeFrequency: 'weekly', priority: 0.7 },
 
-    // The one place on this site where lastModified is a real date rather than
-    // "now". An article changes when someone edits it, and the date is in the
-    // file; everything above is generated from data that moves on its own, so
-    // there is nothing truer than the build to point at yet. See docs/SEO.md §4.
+    // An article changes when someone edits it, and the date is in the file.
     ...articles.map((a) => ({
       url: absoluteUrl(`/learn/${a.slug}`),
       lastModified: new Date(`${a.updated}T00:00:00Z`),
@@ -69,21 +98,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     ...brokers.filter((r) => brokerIndexable(r.broker).indexable).map((r) => ({
       url: absoluteUrl(`/brokers/${r.broker.slug}`),
-      lastModified: now,
+      ...at(brokerDay(r.broker.slug)),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     })),
 
     ...props.filter((r) => propIndexable(r.firm).indexable).map((r) => ({
       url: absoluteUrl(`/props/${r.firm.slug}`),
-      lastModified: now,
+      ...at(propDay(r.firm.slug)),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     })),
 
     ...exchanges.filter((r) => exchangeIndexable(r.exchange).indexable).map((r) => ({
       url: absoluteUrl(`/exchanges/${r.exchange.slug}`),
-      lastModified: now,
+      ...at(exchangeDay(r.exchange.slug)),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     })),
@@ -97,44 +126,46 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     ...BEST_CRITERIA.map((c) => ({
       url: absoluteUrl(`/best/${c.slug}`),
-      lastModified: now,
+      ...at(brokersDay),
       changeFrequency: 'weekly' as const,
       priority: 0.7,
     })),
 
-    // Both directions of a comparison are linked and both answer, but they are
-    // one page and the canonical says so — so the map lists each once. Without
-    // the Set every pair appeared twice under the same URL, which is the sort
-    // of thing a sitemap is supposed to be the fix for rather than the source.
-    ...uniqueUrls(
+    ...uniquePairs(
       comparePairs()
         .filter(([a, b]) => {
           const left = brokerBySlug(a);
           const right = brokerBySlug(b);
           return Boolean(left && right && compareIndexable(left, right).indexable);
         })
-        .map(([a, b]) => absoluteUrl(`/compare/${canonicalPairSlug(a, b)}`)),
-      now,
-    ),
+        .map(([a, b]) => ({
+          url: absoluteUrl(`/compare/${canonicalPairSlug(a, b)}`),
+          day: latestDay([brokerDay(a), brokerDay(b)]),
+        })),
+    ).map(({ url, day }) => ({ url, ...at(day), changeFrequency: 'weekly' as const, priority: 0.6 })),
 
-    ...uniqueUrls(
+    ...uniquePairs(
       propComparePairs()
         .filter(([a, b]) => {
           const left = propBySlug(a);
           const right = propBySlug(b);
           return Boolean(left && right && propCompareIndexable(left, right).indexable);
         })
-        .map(([a, b]) => absoluteUrl(`/props/compare/${canonicalPairSlug(a, b)}`)),
-      now,
-    ),
+        .map(([a, b]) => ({
+          url: absoluteUrl(`/props/compare/${canonicalPairSlug(a, b)}`),
+          day: latestDay([propDay(a), propDay(b)]),
+        })),
+    ).map(({ url, day }) => ({ url, ...at(day), changeFrequency: 'weekly' as const, priority: 0.6 })),
   ];
 }
 
-function uniqueUrls(urls: string[], now: Date) {
-  return [...new Set(urls)].map((url) => ({
-    url,
-    lastModified: now,
-    changeFrequency: 'weekly' as const,
-    priority: 0.6,
-  }));
+/**
+ * Both directions of a comparison are linked and both answer, but they are one
+ * page and the canonical says so — so the map lists each once. Without this
+ * every pair appeared twice under the same URL, which is the sort of thing a
+ * sitemap is supposed to be the fix for rather than the source.
+ */
+function uniquePairs<T extends { url: string }>(pairs: T[]): T[] {
+  const seen = new Set<string>();
+  return pairs.filter((p) => (seen.has(p.url) ? false : (seen.add(p.url), true)));
 }

@@ -30,3 +30,4 @@ export * from './calendar.ts';
 export * from './releases.ts';
 export * from './reviews.ts';
 export * from './contrast.ts';
+export * from './revised.ts';

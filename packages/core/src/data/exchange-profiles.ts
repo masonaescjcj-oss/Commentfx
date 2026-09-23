@@ -46,6 +46,7 @@ export type ExchangeProfile = ResearchProfile;
 const COINBASE: ExchangeProfile = {
   slug: 'coinbase',
   checked: '2026-09-17',
+  revised: '2026-09-18',
   originReadable: false,
   verdict:
     'The only exchange here whose numbers are audited and filed with a securities regulator, because '

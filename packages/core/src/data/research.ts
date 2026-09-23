@@ -32,6 +32,12 @@ export interface ResearchProfile {
   /** The day a person did this research. */
   checked: string;
   /**
+   * The day the published text last changed, when that is later than the
+   * research — a correction, not a re-check. Kept apart from `checked` because
+   * moving that date to announce an edit would claim research nobody did.
+   */
+  revised?: string;
+  /**
    * Whether the company's own pages answered us at all.
    *
    * Set true only when a person here opened the company's own pages and read

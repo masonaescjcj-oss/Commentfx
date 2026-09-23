@@ -56,6 +56,38 @@ check('the sitemap parses and is not empty', urls.length > 0, `${urls.length} ur
 check('every url is absolute and on this site', urls.every((u) => u === SITE || u.startsWith(`${SITE}/`)));
 check('no url is listed twice', sitemap.size === paths.length, `${paths.length - sitemap.size} duplicates`);
 
+/**
+ * lastmod has to be a day something actually changed.
+ *
+ * Every entry used to carry the moment the map was generated, and the map
+ * regenerates hourly: every page on the site claimed to have changed within
+ * the hour, every hour. Google uses lastmod only while it is consistently
+ * accurate, so a map like that teaches it to ignore the field for the whole
+ * site. The pages rebuilt from live feeds — prices and the calendar — are the
+ * honest exception; everything else changes on a day a person can name, which
+ * is a date at midnight, or it says nothing.
+ */
+{
+  const LIVE = /^\/(coins|memecoins|calendar)(\/|$)/;
+  const entries = [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((m) => ({
+    path: (/<loc>([^<]+)<\/loc>/.exec(m[1])?.[1] ?? '').replace(SITE, '') || '/',
+    lastmod: /<lastmod>([^<]+)<\/lastmod>/.exec(m[1])?.[1] ?? null,
+  }));
+  const stamped = [];
+  const future = [];
+  const tomorrow = Date.now() + 86_400_000;
+  for (const { path, lastmod } of entries) {
+    if (!lastmod || LIVE.test(path)) continue;
+    if (!/T00:00:00(\.000)?Z$/.test(lastmod) && !/^\d{4}-\d{2}-\d{2}$/.test(lastmod)) stamped.push(`${path} → ${lastmod}`);
+    if (Date.parse(lastmod) > tomorrow) future.push(`${path} → ${lastmod}`);
+  }
+  const dated = entries.filter((e) => e.lastmod && !LIVE.test(e.path)).length;
+  if (stamped.length) listed('every lastmod outside the live pages is a day, not the moment the map was built', stamped);
+  else check('every lastmod outside the live pages is a day, not the moment the map was built', true, `${dated} dated, ${entries.length - dated} live or undated`);
+  if (future.length) listed('no page claims to have changed in the future', future);
+  else check('no page claims to have changed in the future', true);
+}
+
 // ── What the build emits ─────────────────────────────────────────────────────
 const manifest = JSON.parse(await readFile(new URL('../.next/prerender-manifest.json', import.meta.url), 'utf8'));
 

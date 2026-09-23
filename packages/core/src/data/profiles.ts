@@ -81,6 +81,12 @@ export interface BrokerProfile {
   slug: string;
   /** The day a person did this research. */
   checked: string;
+  /**
+   * The day the published text last changed, when that is later than the
+   * research — a correction, not a re-check. Kept apart from `checked` because
+   * moving that date to announce an edit would claim research nobody did.
+   */
+  revised?: string;
   /** What a reader should take away, in one or two sentences. */
   verdict: string;
   sections: ProfileSection[];

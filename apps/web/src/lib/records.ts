@@ -23,7 +23,10 @@ export async function livePatchMap(): Promise<Patches> {
     const { db } = await getDb();
     const rows = await livePatches(db);
     return new Map(
-      [...rows.values()].map((r) => [patchKey(r.kind, r.slug), { patch: r.patch, isNew: r.isNew }]),
+      [...rows.values()].map((r) => [
+        patchKey(r.kind, r.slug),
+        { patch: r.patch, isNew: r.isNew, at: r.updatedAt.toISOString().slice(0, 10) },
+      ]),
     );
   } catch (err) {
     console.error('[records] override lookup failed:', err);

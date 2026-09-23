@@ -15,7 +15,11 @@ import {
  * knows about overrides, and everything downstream stays a pure function of
  * its arguments.
  */
-export type Patches = Map<string, { patch: Record<string, unknown>; isNew: boolean }>;
+/**
+ * `at` is the day the edit went live, so the sitemap can say a record changed
+ * when an editor changed it rather than when its research was done.
+ */
+export type Patches = Map<string, { patch: Record<string, unknown>; isNew: boolean; at?: string }>;
 
 export const patchKey = (kind: 'broker' | 'prop' | 'exchange', slug: string) => `${kind}:${slug}`;
 
