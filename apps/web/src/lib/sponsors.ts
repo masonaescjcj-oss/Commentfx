@@ -27,6 +27,9 @@ export interface Sponsor {
   pitch: string;
   /** The short version, for a tile. */
   from: { price: string; account: string };
+  /** What the firm is and what it costs, for the page and its meta description. */
+  description: string;
+  about: string;
   /** Where it appears. */
   placement: { list: 'props'; slot: 'under-top-eight' };
   /** The day the facts were read from the sponsor's own pages. */
@@ -52,6 +55,16 @@ export const SPONSORS: Sponsor[] = [
       'Crypto perpetual futures priced from live Binance market data. One evaluation stage, a published '
       + 'rulebook, and your fee back with your first payout.',
     from: { price: '$18', account: '$2K' },
+    description:
+      'Propology: one-stage crypto prop challenges on live Binance data. $2K from $18, $100K for $329, up '
+      + 'to 90% profit split, payouts every 14 days, fee refunded with the first payout.',
+    about:
+      'Propology runs single-stage evaluations on crypto perpetual futures — BTC, ETH, SOL, BNB and XRP on '
+      + 'every plan — priced from live Binance market data, on its own trading terminal with API access. '
+      + 'Challenges run from $18 for a $2,000 account to $549 for $200,000, with $329 for $100,000. Every size '
+      + 'has the same 8% profit target, 3% daily and 10% total loss limits, and pays out every 14 days at 80% '
+      + 'to 90% depending on the account. The evaluation fee is refunded with the first payout, and a trader '
+      + 'who misses the target without breaching a limit gets a free retry.',
     placement: { list: 'props', slot: 'under-top-eight' },
     checked: '2026-09-24',
     sources: [

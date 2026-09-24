@@ -1,7 +1,7 @@
-import Link from 'next/link';
 import type { Sponsor } from '@/lib/sponsors';
 import { Header, PageHero, Footer } from '@/components/chrome';
-import { Card, CardHead, Logo } from '@/components/primitives';
+import { Card, CardHead, Tag } from '@/components/primitives';
+import { SponsorHero } from '@/components/RecordHero';
 import { FactList } from '@/components/ranking';
 import { JsonLd, breadcrumbLd } from '@/lib/seo';
 
@@ -40,37 +40,40 @@ export function SponsorListing({ sponsor: s }: { sponsor: Sponsor }) {
     <>
       <Header active="/props" />
       <main id="main" className="pb-6 lg:pb-10">
-        <PageHero title={`${s.name} — sponsored listing`} trail={trail} />
+        <PageHero trail={trail}>
+          <SponsorHero
+            logo={s.logo}
+            name={s.name}
+            pitch={s.pitch}
+            visit={{ href: s.url, label: `Visit ${s.name}` }}
+            facts={[
+              { label: 'Cheapest challenge', value: `${s.from.account} for ${s.from.price}` },
+              { label: 'Fee per $100k', value: '$329' },
+              { label: 'Profit split', value: 'Up to 90%' },
+              { label: 'Payouts', value: 'Every 14 days' },
+            ]}
+            terms={[
+              { label: 'Stages', value: '1' },
+              { label: 'Profit target', value: '8%' },
+              { label: 'Daily loss limit', value: '3%' },
+              { label: 'Total loss limit', value: '10%' },
+            ]}
+          >
+            <div className="flex gap-[5px] flex-wrap mt-4">
+              <Tag tone="accent">One stage</Tag>
+              <Tag tone="accent">News trading</Tag>
+              <Tag tone="accent">Weekends open</Tag>
+              <Tag tone="accent">Fee refunded</Tag>
+            </div>
+          </SponsorHero>
+        </PageHero>
         <div className="shell pt-3 sm:pt-[13px] lg:pt-4 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
 
           <Card className="p-4 lg:p-6" as="section">
-            <p className="text-[10.5px] font-bold uppercase tracking-[0.09em] text-ink-3 mb-3">Sponsored</p>
-            <div className="flex items-start gap-3">
-              <Logo {...s.logo} size={48} />
-              <div className="flex-1 min-w-0">
-                <h2 className="font-[family-name:var(--font-display)] text-[18px] lg:text-[20px] font-bold tracking-[-0.02em]">
-                  {s.name}
-                </h2>
-                <p className="text-[14px] leading-[1.75] text-ink-2 mt-1 max-w-[62ch]">{s.pitch}</p>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4">
-                  <Out
-                    href={s.url}
-                    className="inline-flex items-center gap-1 rounded-[10px] bg-accent text-white text-[13.5px] font-semibold px-4 py-[9px] hover:bg-accent-2"
-                  >
-                    Visit {s.name} <span aria-hidden>›</span>
-                  </Out>
-                  <span className="text-[13px] text-ink-2">
-                    {s.from.account} challenge from <b className="tnum">{s.from.price}</b>
-                  </span>
-                </div>
-              </div>
-            </div>
-            <p className="text-[12px] leading-[1.75] text-ink-3 mt-5 pt-4 border-t border-line-2 max-w-[68ch]">
-              This is a sponsored listing, not a CommentFX evaluation. Everything below is taken from{' '}
-              {s.name}’s own published terms, read on {asDate(s.checked)}. It has no score and no rank; the
-              firms in <Link href="/props" className="text-accent">the prop firm rankings</Link> are scored on{' '}
-              <Link href="/methodology" className="text-accent">published weights</Link>, and a sponsor cannot
-              buy a place among them.
+            <CardHead title={`About ${s.name}`} />
+            <p className="text-[14px] leading-[1.8] text-ink-2 max-w-[68ch]">{s.about}</p>
+            <p className="text-[12px] leading-[1.75] text-ink-3 mt-3">
+              From {s.name}’s published terms, {asDate(s.checked)}.
             </p>
           </Card>
 

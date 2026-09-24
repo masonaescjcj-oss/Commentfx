@@ -148,6 +148,81 @@ export function RecordHero({
 }
 
 /**
+ * The same header, for a sponsor.
+ *
+ * It looks like a record's header on purpose — the white tile, the name, the
+ * four figures, the panels, the white button — because a sponsor's page should
+ * read as part of this site. It differs where a record's header makes a claim
+ * this site has not made about a sponsor: "Sponsored" stands where the rank
+ * does, there are no stars and no score, and the four panels carry the
+ * sponsor's terms as plain figures, without the bars that mean a score. The
+ * visit button's link is rel="sponsored", like every link to a sponsor.
+ */
+export function SponsorHero({ logo, name, pitch, facts, terms, visit, children }: {
+  logo: LogoMark;
+  name: string;
+  pitch: string;
+  facts: HeroFact[];
+  terms: Array<{ label: string; value: string }>;
+  visit: { href: string; label: string };
+  children?: ReactNode;
+}) {
+  return (
+    <div className="mt-4">
+      <div className="flex gap-[14px] items-start">
+        <span className="relative shrink-0">
+          <span className="block p-[5px] bg-white rounded-[15px]">
+            <Logo {...logo} size={62} />
+          </span>
+        </span>
+        <div className="min-w-0 flex-1">
+          <p data-sponsored-label="" className="text-[10.5px] font-extrabold uppercase tracking-[0.1em] text-[color:var(--hero-accent)]">
+            Sponsored
+          </p>
+          <h1 className="font-[family-name:var(--font-display)] text-[26px] sm:text-[30px] lg:text-[34px] font-bold leading-[1.1] tracking-[-0.032em] text-white mt-[3px]">
+            {name}
+          </h1>
+          <p className="text-[13px] leading-[1.6] text-[color:var(--hero-ink-2)] mt-[7px] max-w-[60ch]">{pitch}</p>
+        </div>
+      </div>
+
+      <dl className="grid grid-cols-2 sm:grid-cols-4 gap-x-5 gap-y-[10px] mt-5 pt-4 border-t border-[color:var(--hero-line)]">
+        {facts.map((f) => (
+          <div key={f.label}>
+            <dt className="text-[11px] text-[color:var(--hero-ink-3)]">{f.label}</dt>
+            <dd className="text-[14.5px] font-bold tnum text-white mt-[1px] truncate">{f.value}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <ul className="grid grid-cols-2 lg:grid-cols-4 gap-[9px] mt-4">
+        {terms.map((t) => (
+          <li key={t.label} className="rounded-[13px] bg-[rgb(255_255_255_/_0.06)] border border-[color:var(--hero-line)] px-[13px] py-[11px]">
+            <div className="flex items-end justify-between gap-2">
+              <span className="text-[11.5px] leading-[1.3] text-[color:var(--hero-ink-2)]">{t.label}</span>
+              <span className="text-[15px] font-bold tnum text-white leading-none">{t.value}</span>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <div className="flex gap-[9px] mt-4 max-w-[520px]">
+        <a
+          href={visit.href}
+          rel="sponsored noopener noreferrer"
+          target="_blank"
+          className="hero-cta flex-1 inline-flex items-center justify-center gap-[6px] h-11 rounded-[12px] bg-white text-ink text-[13.5px] font-bold"
+        >
+          {visit.label} <span aria-hidden>↗</span>
+        </a>
+      </div>
+
+      {children}
+    </div>
+  );
+}
+
+/**
  * The page's own sections, as a grid of doors.
  *
  * A record page is long — licences, costs, entity map, outages, reviews, the

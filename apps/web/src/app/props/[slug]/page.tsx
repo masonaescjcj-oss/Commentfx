@@ -57,10 +57,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const sponsor = sponsorBySlug(slug);
   if (sponsor) {
     return pageMetadata({
-      title: `${sponsor.name} — sponsored listing: prices, rules and payouts`,
-      description:
-        `Sponsored listing. ${sponsor.name}’s own published terms: one-stage crypto challenges from `
-        + `${sponsor.from.price}, an 8% target, 3% daily and 10% total loss limits, payouts every 14 days.`,
+      title: `${sponsor.name} — prices, rules and payouts (sponsored)`,
+      description: sponsor.description,
       path: `/props/${sponsor.slug}`,
       noindex: true,
     });

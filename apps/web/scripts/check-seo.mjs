@@ -416,7 +416,8 @@ listProblems('every shared link has a picture that renders', cards);
   for (const path of sponsorPages) {
     const page = await (await fetch(BASE + path)).text();
     const main = /<main[\s\S]*<\/main>/.exec(page)?.[0] ?? page;
-    if (!/<h1[^>]*>[^<]*sponsored listing/i.test(page)) problems.push(`${path}: the h1 does not say it is a sponsored listing`);
+    if (!/data-sponsored-label[^>]*>\s*Sponsored\s*</.test(page)) problems.push(`${path}: the header does not say Sponsored where a rank would be`);
+    if (!/<title>[^<]*sponsored/i.test(page)) problems.push(`${path}: the title does not say it is sponsored`);
     if (!/<meta name="robots" content="[^"]*noindex/.test(page)) problems.push(`${path}: a sponsor's page asks to be indexed`);
     if (/data-score/.test(main)) problems.push(`${path}: a sponsor's page carries a score`);
     if (/"@type":"(Review|Rating|AggregateRating|FinancialService)"/.test(page)) problems.push(`${path}: carries review or rating markup`);
