@@ -48,6 +48,59 @@ export function RankRow({ rank, href, logo, name, score, why, facts, headingLeve
   );
 }
 
+/**
+ * A sponsored placement inside a ranked list.
+ *
+ * It sits in the list's rhythm so it reads as part of the page, and differs
+ * from a ranked row in every way that matters: "Sponsored" in the slot where a
+ * rank would be, no score, a tinted panel instead of a plain row, and a name
+ * that is not a heading — an advert is not a section of the page, and a screen
+ * reader's list of headings should not offer it as one. The link goes to the
+ * sponsor, not to a review here, because there is no review here, and it
+ * carries rel="sponsored" so neither Google nor a reader mistakes it for one.
+ */
+export function SponsoredRow({ name, url, logo, pitch, facts }: {
+  name: string;
+  url: string;
+  logo: LogoMark;
+  pitch: string;
+  facts: Array<{ label: string; value: string }>;
+}) {
+  return (
+    <aside
+      aria-label={`Sponsored: ${name}`}
+      data-sponsored=""
+      className="my-[10px] rounded-[14px] border border-line bg-card-2 px-[12px] py-[12px] lg:px-4 lg:py-[14px]"
+    >
+      <p className="text-[10.5px] font-bold uppercase tracking-[0.09em] text-ink-3 mb-[8px]">Sponsored</p>
+      <div className="flex items-start gap-[10px] lg:gap-3">
+        <Logo {...logo} />
+        <div className="flex-1 min-w-0">
+          <p className="font-[family-name:var(--font-display)] text-[15.5px] lg:text-[17px] font-bold tracking-[-0.018em]">
+            <a href={url} rel="sponsored noopener noreferrer" target="_blank" className="hover:text-accent">{name}</a>
+          </p>
+          <p className="text-[11.5px] lg:text-[12.5px] text-ink-2 leading-[1.5] my-[6px] lg:my-[8px]">{pitch}</p>
+          <div className="flex gap-[5px] flex-wrap">
+            {facts.map((f) => (
+              <Tag key={f.label}>
+                {f.label} <b className="tnum">{f.value}</b>
+              </Tag>
+            ))}
+          </div>
+          <a
+            href={url}
+            rel="sponsored noopener noreferrer"
+            target="_blank"
+            className="inline-flex items-center gap-1 mt-[10px] text-[12.5px] font-semibold text-accent hover:text-accent-2"
+          >
+            Visit {name} <span aria-hidden>›</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
 /** The score breakdown block, identical across brokers, props and exchanges. */
 export function ScoreBreakdownCard<K extends string>({ components, skipped }: {
   components: Component<K>[]; skipped: K[];

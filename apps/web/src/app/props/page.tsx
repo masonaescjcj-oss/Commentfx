@@ -5,7 +5,9 @@ import { rankedProps } from '@/lib/repo';
 import { livePatchMap } from '@/lib/records';
 import { Header, PageHero, Footer } from '@/components/chrome';
 import { Card, CardHead, Meter } from '@/components/primitives';
-import { RankRow } from '@/components/ranking';
+import { RankRow, SponsoredRow } from '@/components/ranking';
+import { sponsorsAfter } from '@/lib/sponsors';
+import { Fragment } from 'react';
 import { TopTiles, Tabset, StrengthList, CompareTable } from '@/components/rankings';
 import Link from 'next/link';
 
@@ -108,9 +110,9 @@ export default async function PropsPage() {
 
             <Card className="px-4 lg:px-6" id="all">
               {list.map((r) => (
+                <Fragment key={r.firm.slug}>
                 <RankRow
                   headingLevel={2}
-                  key={r.firm.slug}
                   rank={r.rank}
                   href={`/props/${r.firm.slug}`}
                   logo={r.firm.logo}
@@ -127,6 +129,11 @@ export default async function PropsPage() {
                     { label: 'Split', value: `${r.firm.payout.splitPct}%` },
                   ]}
                 />
+                {/* Never ranked and never scored — see lib/sponsors.ts. */}
+                {sponsorsAfter('props', r.firm.slug).map((s) => (
+                  <SponsoredRow key={s.slug} name={s.name} url={s.url} logo={s.logo} pitch={s.pitch} facts={s.facts} />
+                ))}
+                </Fragment>
               ))}
             </Card>
 

@@ -114,17 +114,20 @@ export default function AboutPage() {
           <Card className="p-4 lg:p-6 border-[1.5px] border-accent shadow-none" as="section">
             <h2 className="text-[14px] font-bold text-accent-2 mb-2">How this is paid for</h2>
             <p className="text-[13.5px] text-ink-2 leading-[1.85]">
-              It is not. There are no affiliate links on this site, no paid placement, no
-              advertising and no commercial relationship with anybody ranked. Every link to a
-              company goes to that company’s own address, carries <code className="text-[12px]">rel=&quot;nofollow&quot;</code>,
-              and earns nothing.
+              It carries advertising, and nothing else commercial. There are no affiliate links on
+              this site and no commercial relationship with anybody ranked. Sponsored placements are
+              marked “Sponsored” where they appear; they have no rank and no score, they never enter
+              a ranked list, and a sponsor’s link carries{' '}
+              <code className="text-[12px]">rel=&quot;sponsored&quot;</code>. Every link to a ranked
+              company goes to that company’s own address, carries{' '}
+              <code className="text-[12px]">rel=&quot;nofollow&quot;</code>, and earns nothing.
             </p>
             <p className="text-[13.5px] text-ink-2 leading-[1.85] mt-3">
-              That is a statement about today and not a promise about next year. If it ever changes,
-              it changes here and on{' '}
-              <Link href="/methodology" className="text-accent">the methodology page</Link> first,
-              before a single link does — and commission will never be an input to a score, because
-              the moment it is, none of the rest of this is worth reading.
+              Until 24 September 2026 this said there was no advertising at all. It changed when the
+              first sponsored placement went up, and it changed here and on{' '}
+              <Link href="/methodology" className="text-accent">the methodology page</Link> first, as
+              this page said it would. Neither a sponsor’s money nor commission will ever be an input
+              to a score, because the moment it is, none of the rest of this is worth reading.
             </p>
           </Card>
 

@@ -325,21 +325,29 @@ export default function MethodologyPage() {
           <Card className="p-4 lg:p-6 border-[1.5px] border-accent shadow-none" as="section">
             <h2 className="text-[14px] font-bold text-accent-2 mb-2">Money, and what it does not buy</h2>
             <p className="text-[12.5px] text-ink-2 leading-[1.85]">
-              Nothing, today. There is no affiliate link on this site, no paid placement, no
-              advertising and no commercial relationship with any company ranked here. Every link
-              to a company goes to that company’s own address, carries{' '}
-              <code className="text-[12px]">rel=&quot;nofollow&quot;</code>, and earns nothing.
+              Space, and nothing else. There is no affiliate link on this site and no commercial
+              relationship with any company ranked here. There is advertising: sponsored placements,
+              marked “Sponsored” where they appear. Every link to a ranked company goes to that
+              company’s own address, carries{' '}
+              <code className="text-[12px]">rel=&quot;nofollow&quot;</code>, and earns nothing; a
+              sponsor’s link carries <code className="text-[12px]">rel=&quot;sponsored&quot;</code>.
             </p>
             <p className="text-[12.5px] text-ink-2 leading-[1.85] mt-3">
-              This paragraph used to say the opposite — that commission was earned and disclosed on
-              the links carrying it — which was written for a state the site has never been in. It
-              is corrected here rather than quietly deleted, because a page about how a score is
-              made is the last place to be loose about money.
+              What a sponsor gets is room on a page. What it cannot get is anything this page
+              describes: a sponsored placement has no rank and no score, it is kept out of every
+              ranked list and every top-eight tile, and it is not an input to any component above.
+              A firm that sponsors and is also ranked is scored exactly as it would be if it did not.
             </p>
             <p className="text-[12.5px] text-ink-2 leading-[1.85] mt-3">
-              If it ever changes, this page changes first, before a single link does, and every
-              link carrying commission says so where it is clicked. Commission will not be an input
-              to any component above — the moment it is, none of the rest of this is worth reading.
+              This section has been wrong about money twice, and both are recorded rather than
+              deleted. It once said commission was earned and disclosed, written for a state the
+              site has never been in. Until 24 September 2026 it said there was no paid placement
+              and no advertising, which was true until the first sponsored placement went up — and
+              it changed here first, as it said it would.
+            </p>
+            <p className="text-[12.5px] text-ink-2 leading-[1.85] mt-3">
+              Neither a sponsor’s money nor commission will be an input to any component above —
+              the moment either is, none of the rest of this is worth reading.
             </p>
           </Card>
         </div>

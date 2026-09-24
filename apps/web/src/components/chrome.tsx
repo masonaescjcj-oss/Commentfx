@@ -332,7 +332,7 @@ export function Footer() {
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-9 pt-5 border-t border-line-2 text-[11.5px] text-ink-3">
           <span>© {new Date().getFullYear()} {SITE.name}</span>
           <span aria-hidden className="text-line">·</span>
-          <Link href="/about" className="hover:text-accent">No affiliate links, no paid placement</Link>
+          <Link href="/about" className="hover:text-accent">No affiliate links · ads are labelled and never ranked</Link>
           <span aria-hidden className="text-line">·</span>
           <span>Not investment advice</span>
         </div>

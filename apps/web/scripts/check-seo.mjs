@@ -383,5 +383,38 @@ listProblems('every shared link has a picture that renders', cards);
   listProblems('the key that pushes changes to Bing is where it says it is', problems);
 }
 
+/**
+ * An advert stays an advert.
+ *
+ * The site says a rank is not for sale, and a sponsored placement is only
+ * compatible with that sentence while it cannot be mistaken for a ranking:
+ * labelled "Sponsored", carrying no score, linked with rel="sponsored" — what
+ * Google requires of a paid link — and kept out of the ItemList that tells
+ * search engines what the ranking is. Each of those is one careless edit away
+ * from going, and none of them breaks a page when it does.
+ */
+{
+  const problems = [];
+  let seen = 0;
+  for (const path of ['/props']) {
+    const html = await (await fetch(BASE + path)).text();
+    const blocks = [...html.matchAll(/<aside[^>]*data-sponsored[^>]*>([\s\S]*?)<\/aside>/g)].map((m) => m[0]);
+    seen += blocks.length;
+    const ld = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => m[1]).join(' ');
+    for (const b of blocks) {
+      const name = /aria-label="Sponsored: ([^"]+)"/.exec(b)?.[1] ?? '(unnamed)';
+      if (!/>Sponsored</.test(b)) problems.push(`${path}: ${name} is not visibly labelled Sponsored`);
+      if (/data-score|out of 10|class="[^"]*score/i.test(b)) problems.push(`${path}: ${name} carries a score`);
+      for (const a of b.matchAll(/<a\b[^>]*>/g)) {
+        if (!/rel="[^"]*\bsponsored\b/.test(a[0])) problems.push(`${path}: a link in ${name} is not rel="sponsored"`);
+      }
+      const host = /href="https?:\/\/([^/"]+)/.exec(b)?.[1];
+      if (host && ld.includes(host)) problems.push(`${path}: ${name} is in the ranked structured data`);
+      if (ld.includes(`"name":"${name}"`)) problems.push(`${path}: ${name} is named in the ranked structured data`);
+    }
+  }
+  listProblems(`a sponsored placement cannot pass for a ranking — ${seen ? `${seen} checked` : 'none on the page'}`, problems);
+}
+
 console.log(failures.length ? `\n${failures.length} failed` : '\nall clear');
 process.exit(failures.length ? 1 : 0);
