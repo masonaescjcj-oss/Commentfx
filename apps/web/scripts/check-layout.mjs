@@ -124,7 +124,7 @@ await ctx.close();
   const unsized = [];
   const misdeclared = [];
   let seen = 0;
-  for (const path of [...PAGES, '/learn/what-proof-of-reserves-proves', '/learn/static-and-trailing-drawdown']) {
+  for (const path of [...PAGES, '/learn/what-proof-of-reserves-proves', '/learn/static-and-trailing-drawdown', '/props/propology']) {
     const res = await page.goto(BASE + path, { waitUntil: 'load' });
     if (!res || res.status() >= 400) continue;
     const bad = await page.evaluate(() =>

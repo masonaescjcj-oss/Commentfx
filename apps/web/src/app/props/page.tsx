@@ -5,10 +5,9 @@ import { rankedProps } from '@/lib/repo';
 import { livePatchMap } from '@/lib/records';
 import { Header, PageHero, Footer } from '@/components/chrome';
 import { Card, CardHead, Meter } from '@/components/primitives';
-import { RankRow, SponsoredRow } from '@/components/ranking';
-import { sponsorsAfter } from '@/lib/sponsors';
-import { Fragment } from 'react';
-import { TopTiles, Tabset, StrengthList, CompareTable } from '@/components/rankings';
+import { RankRow } from '@/components/ranking';
+import { sponsorsIn } from '@/lib/sponsors';
+import { TopTiles, SponsoredTile, Tabset, StrengthList, CompareTable } from '@/components/rankings';
 import Link from 'next/link';
 
 const TITLE = 'Prop firm rankings';
@@ -78,6 +77,10 @@ export default async function PropsPage() {
             <Card className="p-4 lg:p-6" as="section">
               <CardHead title="The top eight" href="#all" hrefLabel="Every firm" />
               <TopTiles base="/props" items={list.slice(0, 8).map((r) => ({ ...r.firm, score: r.score.total }))} />
+              {/* Never ranked and never scored — see lib/sponsors.ts. */}
+              {sponsorsIn('props').map((s) => (
+                <SponsoredTile key={s.slug} href={`/props/${s.slug}`} name={s.name} logo={s.logo} from={s.from} />
+              ))}
             </Card>
 
             <Card className="p-4 lg:p-6" as="section">
@@ -110,9 +113,9 @@ export default async function PropsPage() {
 
             <Card className="px-4 lg:px-6" id="all">
               {list.map((r) => (
-                <Fragment key={r.firm.slug}>
                 <RankRow
                   headingLevel={2}
+                  key={r.firm.slug}
                   rank={r.rank}
                   href={`/props/${r.firm.slug}`}
                   logo={r.firm.logo}
@@ -129,11 +132,6 @@ export default async function PropsPage() {
                     { label: 'Split', value: `${r.firm.payout.splitPct}%` },
                   ]}
                 />
-                {/* Never ranked and never scored — see lib/sponsors.ts. */}
-                {sponsorsAfter('props', r.firm.slug).map((s) => (
-                  <SponsoredRow key={s.slug} name={s.name} url={s.url} logo={s.logo} pitch={s.pitch} facts={s.facts} />
-                ))}
-                </Fragment>
               ))}
             </Card>
 

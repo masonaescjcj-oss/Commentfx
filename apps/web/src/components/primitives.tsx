@@ -95,8 +95,11 @@ export function Score({ value, size = 'md' }: { value: number; size?: 'md' | 'lg
     size === 'xl' ? 'text-[38px] lg:text-[46px] leading-[0.95]'
     : size === 'lg' ? 'text-[20px] lg:text-[22px]'
     : 'text-[17px] lg:text-[19px]';
+  // data-score marks every score on the site, so check-seo can hold that a
+  // sponsored placement never carries one — a number styled like this is read
+  // as a verdict whatever surrounds it.
   return (
-    <span className={`font-[family-name:var(--font-display)] font-bold tracking-[-0.035em] tnum ${cls}`}>
+    <span data-score="" className={`font-[family-name:var(--font-display)] font-bold tracking-[-0.035em] tnum ${cls}`}>
       {value.toFixed(1)}
     </span>
   );

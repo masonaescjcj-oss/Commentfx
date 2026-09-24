@@ -333,10 +333,11 @@ export default function MethodologyPage() {
               sponsor’s link carries <code className="text-[12px]">rel=&quot;sponsored&quot;</code>.
             </p>
             <p className="text-[12.5px] text-ink-2 leading-[1.85] mt-3">
-              What a sponsor gets is room on a page. What it cannot get is anything this page
-              describes: a sponsored placement has no rank and no score, it is kept out of every
-              ranked list and every top-eight tile, and it is not an input to any component above.
-              A firm that sponsors and is also ranked is scored exactly as it would be if it did not.
+              What a sponsor gets is room on a page: a tile beneath the ranked ones, and a listing
+              page of its own published terms — prices, rules, payouts — both marked “Sponsored”.
+              What it cannot get is anything this page describes: no rank, no score, no verdict, no
+              place in a ranked list, and no part in any component above. A firm that sponsors and
+              is also ranked is scored exactly as it would be if it did not.
             </p>
             <p className="text-[12.5px] text-ink-2 leading-[1.85] mt-3">
               This section has been wrong about money twice, and both are recorded rather than

@@ -29,12 +29,18 @@ export interface RecordCard {
   kind?: string;
   /** Up to three [value, label] pairs along the bottom. */
   facts?: Array<[string, string]>;
+  /**
+   * The line in the bottom corner. It says the record was scored, which is
+   * true of every ranked record and false of a sponsor — so a card that is not
+   * a score says what it is instead.
+   */
+  footnote?: string;
 }
 
 /** Above 7.5 reads as good, below 6 as a warning — the same bands the site uses. */
 const tone = (score: number) => (score >= 7.5 ? '#4ADE80' : score >= 6 ? '#FBBF24' : '#F87171');
 
-export function recordCard({ name, score, rank, of, kind, facts = [] }: RecordCard): ReactElement {
+export function recordCard({ name, score, rank, of, kind, facts = [], footnote = 'Scored on published weights' }: RecordCard): ReactElement {
   return (
     <div
       style={{
@@ -89,7 +95,7 @@ export function recordCard({ name, score, rank, of, kind, facts = [] }: RecordCa
         ))}
         <div style={{ flex: 1 }} />
         <div style={{ fontSize: 20, color: '#93A0B6', alignSelf: 'flex-end' }}>
-          Scored on published weights
+          {footnote}
         </div>
       </div>
     </div>

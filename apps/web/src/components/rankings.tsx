@@ -51,6 +51,44 @@ export function TopTiles({ items, base }: { items: TileItem[]; base: string }) {
   );
 }
 
+/**
+ * A sponsor, under the ranked tiles and visibly apart from them.
+ *
+ * Below the grid rather than in it, full width rather than a ninth square,
+ * "Sponsored" where a score would be, and a starting price rather than a star
+ * — nothing about it can be read as the next place in the ranking. It links to
+ * the sponsor's listing here, which is labelled the same way; the links out to
+ * the sponsor itself are on that page, with rel="sponsored".
+ */
+export function SponsoredTile({ href, name, logo, from }: {
+  href: string;
+  name: string;
+  logo: LogoMark;
+  from: { price: string; account: string };
+}) {
+  return (
+    <aside aria-label={`Sponsored: ${name}`} data-sponsored="" className="mt-3 pt-3 border-t border-line-2">
+      <Link
+        href={href}
+        className="flex items-center gap-[10px] lg:gap-3 rounded-[12px] bg-card-2 border border-line px-3 py-[10px] group"
+      >
+        <Logo {...logo} size={42} />
+        <span className="flex-1 min-w-0">
+          <span className="block text-[10.5px] font-bold uppercase tracking-[0.09em] text-ink-3">Sponsored</span>
+          <span className="block font-[family-name:var(--font-display)] text-[14px] lg:text-[15px] font-bold leading-[1.25] tracking-[-0.015em] truncate group-hover:text-accent">
+            {name}
+          </span>
+        </span>
+        <span className="text-right shrink-0">
+          <span className="block text-[11px] text-ink-3">{from.account} challenge from</span>
+          <span className="block text-[15px] font-bold tnum">{from.price}</span>
+        </span>
+        <span aria-hidden className="text-ink-3">›</span>
+      </Link>
+    </aside>
+  );
+}
+
 export interface StrengthRow {
   slug: string;
   name: string;

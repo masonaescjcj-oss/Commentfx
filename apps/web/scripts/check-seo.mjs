@@ -387,33 +387,46 @@ listProblems('every shared link has a picture that renders', cards);
  * An advert stays an advert.
  *
  * The site says a rank is not for sale, and a sponsored placement is only
- * compatible with that sentence while it cannot be mistaken for a ranking:
- * labelled "Sponsored", carrying no score, linked with rel="sponsored" — what
- * Google requires of a paid link — and kept out of the ItemList that tells
- * search engines what the ranking is. Each of those is one careless edit away
- * from going, and none of them breaks a page when it does.
+ * compatible with that sentence while it cannot be mistaken for a ranking. On
+ * the list: labelled "Sponsored", no score, every link out rel="sponsored" —
+ * what Google requires of a paid link — and absent from the ItemList that tells
+ * search engines what the ranking is. On the sponsor's own page: the same, plus
+ * no Review or Rating markup, and a noindex so an advert never ranks as a page
+ * of this directory. Each of those is one careless edit away from going, and
+ * none of them breaks a page when it does.
  */
 {
   const problems = [];
+  const outLinks = (html) => [...html.matchAll(/<a\b[^>]*href="https?:\/\/(?!commentfx\.com)[^"]*"[^>]*>/g)].map((m) => m[0]);
+  const sponsorPages = new Set();
   let seen = 0;
-  for (const path of ['/props']) {
-    const html = await (await fetch(BASE + path)).text();
-    const blocks = [...html.matchAll(/<aside[^>]*data-sponsored[^>]*>([\s\S]*?)<\/aside>/g)].map((m) => m[0]);
-    seen += blocks.length;
-    const ld = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => m[1]).join(' ');
-    for (const b of blocks) {
-      const name = /aria-label="Sponsored: ([^"]+)"/.exec(b)?.[1] ?? '(unnamed)';
-      if (!/>Sponsored</.test(b)) problems.push(`${path}: ${name} is not visibly labelled Sponsored`);
-      if (/data-score|out of 10|class="[^"]*score/i.test(b)) problems.push(`${path}: ${name} carries a score`);
-      for (const a of b.matchAll(/<a\b[^>]*>/g)) {
-        if (!/rel="[^"]*\bsponsored\b/.test(a[0])) problems.push(`${path}: a link in ${name} is not rel="sponsored"`);
-      }
-      const host = /href="https?:\/\/([^/"]+)/.exec(b)?.[1];
-      if (host && ld.includes(host)) problems.push(`${path}: ${name} is in the ranked structured data`);
-      if (ld.includes(`"name":"${name}"`)) problems.push(`${path}: ${name} is named in the ranked structured data`);
-    }
+
+  const html = await (await fetch(`${BASE}/props`)).text();
+  const ld = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => m[1]).join(' ');
+  for (const b of [...html.matchAll(/<aside[^>]*data-sponsored[^>]*>[\s\S]*?<\/aside>/g)].map((m) => m[0])) {
+    seen += 1;
+    const name = /aria-label="Sponsored: ([^"]+)"/.exec(b)?.[1] ?? '(unnamed)';
+    if (!/>Sponsored</.test(b)) problems.push(`/props: ${name} is not visibly labelled Sponsored`);
+    if (/data-score/.test(b)) problems.push(`/props: ${name} carries a score`);
+    for (const a of outLinks(b)) if (!/rel="[^"]*\bsponsored\b/.test(a)) problems.push(`/props: a link out of ${name} is not rel="sponsored"`);
+    if (ld.includes(`"name":"${name}"`)) problems.push(`/props: ${name} is named in the ranked structured data`);
+    for (const m of b.matchAll(/href="(\/props\/[a-z0-9-]+)"/g)) sponsorPages.add(m[1]);
   }
-  listProblems(`a sponsored placement cannot pass for a ranking — ${seen ? `${seen} checked` : 'none on the page'}`, problems);
+
+  for (const path of sponsorPages) {
+    const page = await (await fetch(BASE + path)).text();
+    const main = /<main[\s\S]*<\/main>/.exec(page)?.[0] ?? page;
+    if (!/<h1[^>]*>[^<]*sponsored listing/i.test(page)) problems.push(`${path}: the h1 does not say it is a sponsored listing`);
+    if (!/<meta name="robots" content="[^"]*noindex/.test(page)) problems.push(`${path}: a sponsor's page asks to be indexed`);
+    if (/data-score/.test(main)) problems.push(`${path}: a sponsor's page carries a score`);
+    if (/"@type":"(Review|Rating|AggregateRating|FinancialService)"/.test(page)) problems.push(`${path}: carries review or rating markup`);
+    for (const a of outLinks(main)) if (!/rel="[^"]*\bsponsored\b/.test(a)) problems.push(`${path}: a link to the sponsor is not rel="sponsored"`);
+  }
+
+  listProblems(
+    `a sponsored placement cannot pass for a ranking — ${seen ? `${seen} placement${seen === 1 ? '' : 's'}, ${sponsorPages.size} page${sponsorPages.size === 1 ? '' : 's'}` : 'none on the page'}`,
+    problems,
+  );
 }
 
 console.log(failures.length ? `\n${failures.length} failed` : '\nall clear');

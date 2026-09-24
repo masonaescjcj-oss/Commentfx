@@ -117,7 +117,8 @@ export default function AboutPage() {
               It carries advertising, and nothing else commercial. There are no affiliate links on
               this site and no commercial relationship with anybody ranked. Sponsored placements are
               marked “Sponsored” where they appear; they have no rank and no score, they never enter
-              a ranked list, and a sponsor’s link carries{' '}
+              a ranked list, a sponsor’s listing page carries its own published terms and no verdict
+              of ours, and a sponsor’s link carries{' '}
               <code className="text-[12px]">rel=&quot;sponsored&quot;</code>. Every link to a ranked
               company goes to that company’s own address, carries{' '}
               <code className="text-[12px]">rel=&quot;nofollow&quot;</code>, and earns nothing.

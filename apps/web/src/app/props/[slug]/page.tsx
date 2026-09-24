@@ -19,11 +19,16 @@ import { VerificationPanel } from '@/components/VerificationPanel';
 import { ScoreBreakdownCard, FactList } from '@/components/ranking';
 import { PropEntities } from '@/components/PropEntities';
 import { Profile } from '@/components/Profile';
+import { SPONSORS, sponsorBySlug } from '@/lib/sponsors';
+import { SponsorListing } from '@/components/SponsorListing';
 
 type Params = { slug: string };
 
 export function generateStaticParams(): Params[] {
-  return rankedProps().map((r) => ({ slug: r.firm.slug }));
+  return [
+    ...rankedProps().map((r) => ({ slug: r.firm.slug })),
+    ...SPONSORS.filter((s) => s.placement.list === 'props').map((s) => ({ slug: s.slug })),
+  ];
 }
 export const revalidate = 3600;
 /**
@@ -41,6 +46,25 @@ export const revalidate = 3600;
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params;
+  /**
+   * A sponsor's listing says what it is in the title a search result would
+   * show, and asks not to be indexed. Its own site already answers a search for
+   * its name, so an indexed copy here would add little for the sponsor — and an
+   * advert ranking as a page of a finance directory is the thing Google's site
+   * reputation policy exists to catch, and the thing a searcher would mistake
+   * for a review. `follow`, so its links still count as links.
+   */
+  const sponsor = sponsorBySlug(slug);
+  if (sponsor) {
+    return pageMetadata({
+      title: `${sponsor.name} — sponsored listing: prices, rules and payouts`,
+      description:
+        `Sponsored listing. ${sponsor.name}’s own published terms: one-stage crypto challenges from `
+        + `${sponsor.from.price}, an 8% target, 3% daily and 10% total loss limits, payouts every 14 days.`,
+      path: `/props/${sponsor.slug}`,
+      noindex: true,
+    });
+  }
   const patches = await livePatchMap();
   const r = getRankedProp(slug, patches);
   if (!r) return {};
@@ -57,6 +81,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 
 export default async function PropPage({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
+  const sponsor = sponsorBySlug(slug);
+  if (sponsor) return <SponsorListing sponsor={sponsor} />;
   const patches = await livePatchMap();
   const r = getRankedProp(slug, patches);
   if (!r) notFound();

@@ -4,17 +4,19 @@ import type { LogoMark } from '@commentfx/core';
  * Sponsored placements.
  *
  * An advertisement on this site is allowed exactly what an advertisement is:
- * space, a logo and the sponsor's own case for itself, marked "Sponsored" where
- * a reader cannot miss it. It is not allowed the things that make the rankings
- * worth reading. A sponsor has no rank and no score, it is kept out of every
- * ranked list, top-eight tile and structured-data list, and its link carries
- * rel="sponsored", which is what Google asks of a paid link and what stops the
- * placement being read as an editorial vote.
+ * space, a logo, a page of the sponsor's own published terms, and the sponsor's
+ * own case for itself — all marked "Sponsored" where a reader cannot miss it.
+ * It is not allowed the things that make the rankings worth reading. A sponsor
+ * has no rank, no score and no verdict; it is kept out of every ranked list,
+ * every top-eight tile and every structured-data list; and every link from it
+ * to the sponsor carries rel="sponsored", which is what Google asks of a paid
+ * link and what stops the placement being read as an editorial vote.
  *
  * The facts in a placement are still facts. They are read from the sponsor's
- * own published terms, on the day in `checked`, and they say only what those
- * terms say — an advert that misstated a fee would be a false statement on this
- * site whatever label sat above it.
+ * own published terms, on the day in `checked`, and say only what those terms
+ * say — an advert that misstated a fee would be a false statement on this site
+ * whatever label sat above it. Where the sponsor's own pages disagree with each
+ * other, the listing follows the document that governs an account.
  */
 export interface Sponsor {
   slug: string;
@@ -23,13 +25,21 @@ export interface Sponsor {
   logo: LogoMark;
   /** The sponsor's case, in its own terms. */
   pitch: string;
-  facts: Array<{ label: string; value: string }>;
-  /** The ranked list it appears in, and the record it sits after. */
-  placement: { list: 'props'; after: string };
+  /** The short version, for a tile. */
+  from: { price: string; account: string };
+  /** Where it appears. */
+  placement: { list: 'props'; slot: 'under-top-eight' };
   /** The day the facts were read from the sponsor's own pages. */
   checked: string;
   /** Where each fact was read. */
-  sources: string[];
+  sources: Array<{ label: string; url: string }>;
+  listing: {
+    plans: Array<{ account: string; fee: string; listFee: string; leverage: string; split: string }>;
+    plansNote: string;
+    rules: Array<[string, string]>;
+    payouts: Array<[string, string]>;
+    trading: Array<[string, string]>;
+  };
 }
 
 export const SPONSORS: Sponsor[] = [
@@ -41,17 +51,57 @@ export const SPONSORS: Sponsor[] = [
     pitch:
       'Crypto perpetual futures priced from live Binance market data. One evaluation stage, a published '
       + 'rulebook, and your fee back with your first payout.',
-    facts: [
-      { label: '$100K challenge', value: '$329' },
-      { label: 'Profit split', value: 'up to 90%' },
-      { label: 'Payouts', value: 'every 14 days' },
-      { label: 'Stages', value: 'one' },
-    ],
-    placement: { list: 'props', after: 'fundingpips' },
+    from: { price: '$18', account: '$2K' },
+    placement: { list: 'props', slot: 'under-top-eight' },
     checked: '2026-09-24',
-    sources: ['https://propology.trade/rules/', 'https://propology.trade/pricing/'],
+    sources: [
+      { label: 'Trading rules, v3.2 (13 September 2026)', url: 'https://propology.trade/rules/' },
+      { label: 'Pricing', url: 'https://propology.trade/pricing/' },
+    ],
+    listing: {
+      plans: [
+        { account: '$2K', fee: '$18', listFee: '$26', leverage: '250x', split: '80%' },
+        { account: '$10K', fee: '$79', listFee: '$119', leverage: '250x', split: '80%' },
+        { account: '$25K', fee: '$149', listFee: '$249', leverage: '128x', split: '80%' },
+        { account: '$50K', fee: '$209', listFee: '$389', leverage: '64x', split: '80%' },
+        { account: '$100K', fee: '$329', listFee: '$679', leverage: '40x', split: '85%' },
+        { account: '$200K', fee: '$549', listFee: '$1,299', leverage: '20x', split: '90%' },
+      ],
+      plansNote:
+        'One-time fees as Propology’s pricing page showed them on 24 September 2026, against the list price '
+        + 'it strikes through; its page says figures are confirmed at checkout. Targets and loss limits are '
+        + 'the same on every size.',
+      rules: [
+        ['Stages', 'One — no verification phase'],
+        ['Profit target', '8%, realised with no position open'],
+        ['Daily loss limit', '3% below equity at 00:00 UTC'],
+        ['Total loss limit', '10% of starting balance, a fixed amount'],
+        ['How the total limit moves', 'Its floor trails the end-of-day balance, never down'],
+        ['Minimum trading days', '5'],
+        ['Time limit', '30 days from the first trade'],
+        ['Consistency rule', 'Checked at payout, not at the pass'],
+      ],
+      payouts: [
+        ['First payout', 'After 14 days funded'],
+        ['Then', 'Every 14 days'],
+        ['Profit split', '80% to $50K, 85% on $100K, 90% on $200K'],
+        ['Paid in', 'USDT on Ethereum, Arbitrum or Tron, within 72 hours of approval'],
+        ['Evaluation fee', 'Refunded with the first payout'],
+        ['Scaling', '+50% of the account after two profitable payout periods, to $1M'],
+      ],
+      trading: [
+        ['Instruments', 'USDⓈ-M perpetual futures — BTC, ETH, SOL, BNB and XRP on every plan'],
+        ['Prices', 'Live Binance market data'],
+        ['Platform', 'Propology’s own terminal, plus an API with your own keys'],
+        ['Hours', 'Continuous, weekends included'],
+        ['News and weekends', 'Trading through both is allowed'],
+        ['Shortest allowed hold', '120 seconds'],
+        ['Missed the target without a breach', 'A free retry'],
+      ],
+    },
   },
 ];
 
-export const sponsorsAfter = (list: Sponsor['placement']['list'], slug: string) =>
-  SPONSORS.filter((s) => s.placement.list === list && s.placement.after === slug);
+export const sponsorBySlug = (slug: string) => SPONSORS.find((s) => s.slug === slug);
+
+export const sponsorsIn = (list: Sponsor['placement']['list']) => SPONSORS.filter((s) => s.placement.list === list);
