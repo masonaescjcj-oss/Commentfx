@@ -47,20 +47,22 @@ export const revalidate = 3600;
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params;
   /**
-   * A sponsor's listing says what it is in the title a search result would
-   * show, and asks not to be indexed. Its own site already answers a search for
-   * its name, so an indexed copy here would add little for the sponsor — and an
-   * advert ranking as a page of a finance directory is the thing Google's site
-   * reputation policy exists to catch, and the thing a searcher would mistake
-   * for a review. `follow`, so its links still count as links.
+   * A sponsor's listing is indexed, so a search for its name can find it.
+   *
+   * What it may not do in a search result is claim to be something it is not.
+   * The title names the firm and what the page holds — prices, rules,
+   * drawdown, payouts — and never "review" or a rating: this site controls the
+   * page and has not assessed the firm, and a review site's result that said
+   * "review" over its own advertiser's terms is the one thing a searcher could
+   * not see through before clicking. On the page, "Sponsored" stands where a
+   * rank would be.
    */
   const sponsor = sponsorBySlug(slug);
   if (sponsor) {
     return pageMetadata({
-      title: `${sponsor.name} — prices, rules and payouts (sponsored)`,
+      title: `${sponsor.name}: prices, rules, drawdown and payouts`,
       description: sponsor.description,
       path: `/props/${sponsor.slug}`,
-      noindex: true,
     });
   }
   const patches = await livePatchMap();

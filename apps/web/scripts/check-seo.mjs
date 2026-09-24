@@ -391,9 +391,10 @@ listProblems('every shared link has a picture that renders', cards);
  * the list: labelled "Sponsored", no score, every link out rel="sponsored" —
  * what Google requires of a paid link — and absent from the ItemList that tells
  * search engines what the ranking is. On the sponsor's own page: the same, plus
- * no Review or Rating markup, and a noindex so an advert never ranks as a page
- * of this directory. Each of those is one careless edit away from going, and
- * none of them breaks a page when it does.
+ * no Review or Rating markup, and a title, h1 and description that never call
+ * it a review or a rating — the page is indexed, and a search result is where
+ * a reader decides before they can see any label. Each of those is one
+ * careless edit away from going, and none of them breaks a page when it does.
  */
 {
   const problems = [];
@@ -417,8 +418,14 @@ listProblems('every shared link has a picture that renders', cards);
     const page = await (await fetch(BASE + path)).text();
     const main = /<main[\s\S]*<\/main>/.exec(page)?.[0] ?? page;
     if (!/data-sponsored-label[^>]*>\s*Sponsored\s*</.test(page)) problems.push(`${path}: the header does not say Sponsored where a rank would be`);
-    if (!/<title>[^<]*sponsored/i.test(page)) problems.push(`${path}: the title does not say it is sponsored`);
-    if (!/<meta name="robots" content="[^"]*noindex/.test(page)) problems.push(`${path}: a sponsor's page asks to be indexed`);
+    const title = /<title>([^<]*)<\/title>/.exec(page)?.[1] ?? '';
+    const h1 = /<h1[^>]*>([^<]*)</.exec(page)?.[1] ?? '';
+    const desc = /<meta name="description" content="([^"]*)"/.exec(page)?.[1] ?? '';
+    for (const [where, text] of [['title', title], ['h1', h1], ['description', desc]]) {
+      if (/\b(review|reviewed|rating|rated|ranked|score)\b/i.test(text)) {
+        problems.push(`${path}: the ${where} presents a sponsor as assessed — "${text.slice(0, 60)}"`);
+      }
+    }
     if (/data-score/.test(main)) problems.push(`${path}: a sponsor's page carries a score`);
     if (/"@type":"(Review|Rating|AggregateRating|FinancialService)"/.test(page)) problems.push(`${path}: carries review or rating markup`);
     for (const a of outLinks(main)) if (!/rel="[^"]*\bsponsored\b/.test(a)) problems.push(`${path}: a link to the sponsor is not rel="sponsored"`);

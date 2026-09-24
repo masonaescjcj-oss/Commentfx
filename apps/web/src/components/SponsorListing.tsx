@@ -3,7 +3,8 @@ import { Header, PageHero, Footer } from '@/components/chrome';
 import { Card, CardHead, Tag } from '@/components/primitives';
 import { SponsorHero } from '@/components/RecordHero';
 import { FactList } from '@/components/ranking';
-import { JsonLd, breadcrumbLd } from '@/lib/seo';
+import { JsonLd, breadcrumbLd, faqLd } from '@/lib/seo';
+import { Faq } from '@/components/Faq';
 
 const asDate = (iso: string) =>
   new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
@@ -123,6 +124,11 @@ export function SponsorListing({ sponsor: s }: { sponsor: Sponsor }) {
           </Card>
 
           <Card className="p-4 lg:p-6" as="section">
+            <CardHead title="Common questions" />
+            <Faq items={s.faq} />
+          </Card>
+
+          <Card className="p-4 lg:p-6" as="section">
             <CardHead title="Where these figures come from" />
             <ul className="flex flex-col">
               {s.sources.map((src) => (
@@ -136,7 +142,7 @@ export function SponsorListing({ sponsor: s }: { sponsor: Sponsor }) {
         </div>
       </main>
       <Footer />
-      <JsonLd graph={[breadcrumbLd(trail)]} />
+      <JsonLd graph={[breadcrumbLd(trail), faqLd(s.faq)]} />
     </>
   );
 }

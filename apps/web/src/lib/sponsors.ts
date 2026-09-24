@@ -36,6 +36,8 @@ export interface Sponsor {
   checked: string;
   /** Where each fact was read. */
   sources: Array<{ label: string; url: string }>;
+  /** The questions a search for the sponsor's name is asking, answered from its own terms. */
+  faq: Array<{ q: string; a: string }>;
   listing: {
     plans: Array<{ account: string; fee: string; listFee: string; leverage: string; split: string }>;
     plansNote: string;
@@ -70,6 +72,41 @@ export const SPONSORS: Sponsor[] = [
     sources: [
       { label: 'Trading rules, v3.2 (13 September 2026)', url: 'https://propology.trade/rules/' },
       { label: 'Pricing', url: 'https://propology.trade/pricing/' },
+    ],
+    faq: [
+      {
+        q: 'How much does a Propology challenge cost?',
+        a: 'From $18 for a $2,000 account to $549 for $200,000, paid once; $329 for $100,000. The fee is '
+          + 'refunded with the first payout. Prices as shown on its pricing page on 24 September 2026, '
+          + 'confirmed at checkout.',
+      },
+      {
+        q: 'What is the Propology profit target?',
+        a: '8% on every account size, in a single stage with no verification phase. It counts only once '
+          + 'realised, with no position open, and at least five trading days are needed to pass.',
+      },
+      {
+        q: 'How does the Propology drawdown work?',
+        a: 'Two limits, both measured on equity including open positions. A daily limit of 3% below '
+          + 'equity at 00:00 UTC, and a total limit of 10% of the starting balance as a fixed amount, whose '
+          + 'floor follows the end-of-day balance upward and never moves back down.',
+      },
+      {
+        q: 'How and when does Propology pay out?',
+        a: 'The first payout can be requested after 14 days on a funded account, then every 14 days, paid in '
+          + 'USDT on Ethereum, Arbitrum or Tron within 72 hours of approval. The split is 80% up to $50,000, '
+          + '85% on $100,000 and 90% on $200,000.',
+      },
+      {
+        q: 'What can you trade on Propology?',
+        a: 'USDⓈ-M perpetual futures priced from live Binance market data — BTC, ETH, SOL, BNB and XRP on '
+          + 'every plan — on its own terminal or through its API, around the clock including weekends.',
+      },
+      {
+        q: 'Does Propology have a time limit?',
+        a: 'Yes: the evaluation has to be passed within 30 days of the first trade. A trader who runs out of '
+          + 'time without breaching a limit gets a free retry.',
+      },
     ],
     listing: {
       plans: [

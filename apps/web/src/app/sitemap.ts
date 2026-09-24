@@ -3,6 +3,7 @@ import { absoluteUrl } from '@/lib/site';
 import { rankedBrokers, rankedProps, rankedExchanges, BEST_CRITERIA, comparePairs, propComparePairs, canonicalPairSlug, patchKey } from '@/lib/repo';
 import { brokerBySlug, propBySlug } from '@commentfx/core';
 import { livePatchMap, liveArticles } from '@/lib/records';
+import { SPONSORS } from '@/lib/sponsors';
 import {
   RELEASES, brokerIndexable, propIndexable, exchangeIndexable, compareIndexable, propCompareIndexable, pathIndexable,
   recordRevised, latestDay,
@@ -115,6 +116,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...at(exchangeDay(r.exchange.slug)),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
+    })),
+
+    // A sponsor's listing, dated the day its terms were read.
+    ...SPONSORS.filter((sp) => sp.placement.list === 'props').map((sp) => ({
+      url: absoluteUrl(`/props/${sp.slug}`),
+      ...at(sp.checked),
+      changeFrequency: 'weekly' as const,
+      priority: 0.5,
     })),
 
     ...RELEASES.map((r) => ({
