@@ -32,3 +32,4 @@ export * from './reviews.ts';
 export * from './contrast.ts';
 export * from './revised.ts';
 export * from './challenge-sim.ts';
+export * from './rank-neighbours.ts';

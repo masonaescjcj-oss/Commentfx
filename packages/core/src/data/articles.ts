@@ -46,6 +46,8 @@ export interface ArticleBlock {
   example?: { title: string; rows: Array<[string, string]>; note?: string };
 }
 
+export type ArticleTopic = 'brokers' | 'props' | 'exchanges';
+
 export interface Article {
   slug: string;
   title: string;
@@ -55,6 +57,12 @@ export interface Article {
   published: string;
   updated: string;
   author: string;
+  /**
+   * Which of the three lists this guide is about. It picks the cover a guide
+   * gets on the index and the ranking its sidebar points to, so it is a fact
+   * about the subject rather than a tag: one value, never a set.
+   */
+  topic: ArticleTopic;
   /** The question this answers, in the reader's words. */
   question: string;
   /** Answered in the first two sentences, before anything else. */
@@ -74,6 +82,7 @@ export const ARTICLES: Article[] = [
     published: '2026-09-16',
     updated: '2026-09-16',
     author: 'CommentFX',
+    topic: 'brokers',
     question: 'How do I know a broker’s licence is real?',
     answer:
       'Search the regulator’s own register for the licence number the broker publishes, and check that the ' +
@@ -196,6 +205,7 @@ export const ARTICLES: Article[] = [
     published: '2026-09-16',
     updated: '2026-09-16',
     author: 'CommentFX',
+    topic: 'brokers',
     question: 'Is a 0.0 pip spread with commission cheaper than a 1.0 pip spread with none?',
     answer:
       'Usually yes, and you cannot tell without converting both to the same unit. A round-turn commission of ' +
@@ -305,6 +315,7 @@ export const ARTICLES: Article[] = [
     published: '2026-09-16',
     updated: '2026-09-16',
     author: 'CommentFX',
+    topic: 'brokers',
     question: 'Why does the same broker show a different licence depending on my country?',
     answer:
       'Because it is not one company. A broker brand is a group, and each company in it holds its own licence ' +
@@ -409,6 +420,7 @@ export const ARTICLES: Article[] = [
     published: '2026-09-17',
     updated: '2026-09-17',
     author: 'CommentFX',
+    topic: 'props',
     question: 'Who am I actually contracting with when I buy a prop firm challenge?',
     answer:
       'Usually not the company in the marketing. A prop firm holds no financial licence anywhere, so there ' +
@@ -537,6 +549,7 @@ export const ARTICLES: Article[] = [
     published: '2026-09-18',
     updated: '2026-09-18',
     author: 'CommentFX',
+    topic: 'exchanges',
     question: 'Does a proof of reserves mean my money is safe on an exchange?',
     answer:
       'No — it shows what an exchange holds, not what it owes, on a date the exchange picks itself. '
@@ -733,6 +746,7 @@ export const ARTICLES: Article[] = [
     published: '2026-09-23',
     updated: '2026-09-25',
     author: 'CommentFX',
+    topic: 'props',
     question: 'Is a static or a trailing drawdown easier to pass?',
     answer:
       'Static, for the same trades — its floor never moves, while a trailing floor rises behind '

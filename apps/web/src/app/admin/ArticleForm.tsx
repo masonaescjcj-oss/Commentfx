@@ -48,7 +48,7 @@ export function ArticleForm({ slug, article, isNew, status }: {
   slug: string;
   article: {
     title: string; heading: string; description: string; question: string; answer: string;
-    author: string; published: string; updated: string; body: string; faq: string;
+    author: string; topic: string; published: string; updated: string; body: string; faq: string;
   };
   isNew: boolean;
   status: 'draft' | 'live' | null;
@@ -131,6 +131,18 @@ What you pay :: 0.7 pips
         <h2 className="text-[13.5px] font-bold">Who and when</h2>
         <Field name="author" label="Author" value={draft.author} onChange={set('author')} problem={p.author}
           help="A name. An unsigned article about somebody’s money is worth nothing." />
+        <label className="block">
+          <span className="block text-[11.5px] text-ink-2 font-semibold mb-1">About</span>
+          <select name="topic" value={draft.topic} onChange={(e) => set('topic')(e.target.value)}
+            className={box + (p.topic ? ' border-down' : '')}>
+            <option value="brokers">Forex brokers</option>
+            <option value="props">Prop firms</option>
+            <option value="exchanges">Crypto exchanges</option>
+          </select>
+          {p.topic
+            ? <span className="block text-[11px] text-down mt-1">{p.topic}</span>
+            : <span className="block text-[11px] text-ink-3 mt-1 leading-[1.65]">Picks the guide’s cover and the ranking its sidebar points to.</span>}
+        </label>
         <div className="flex gap-2">
           <div className="flex-1"><Field name="published" label="Published" value={draft.published} onChange={set('published')} problem={p.published} /></div>
           <div className="flex-1"><Field name="updated" label="Last checked" value={draft.updated} onChange={set('updated')} problem={p.updated} /></div>

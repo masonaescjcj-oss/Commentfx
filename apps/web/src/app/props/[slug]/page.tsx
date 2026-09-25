@@ -7,6 +7,7 @@ import { rankedProps, getRankedProp, propAlternativesFor, canonicalPairSlug } fr
 import { Header, PageHero, Footer } from '@/components/chrome';
 import { Faq } from '@/components/Faq';
 import { RecordHero, QuickJump, StickyActions } from '@/components/RecordHero';
+import { DecisionCard, nearestInRank } from '@/components/RecordRail';
 import { IconScore, IconCost, IconLicence, IconReviews, IconCompare, IconFaq } from '@/components/icons';
 import { ReviewForm } from '@/components/ReviewForm';
 import { ReviewList, ReviewSummary } from '@/components/ReviewList';
@@ -220,10 +221,28 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
           {/* Two columns above 1024px, the narrow one first: who this is and
               what is known about them, then the detail, which is most of the
               page and wants the width. */}
-          <div className="split rail-left">
+          <div className="split rail-right">
             <div>
 
               <VerificationPanel coverage={cov} />
+
+              <DecisionCard
+                logo={f.logo}
+                name={f.name}
+                rankLine={`#${r.rank} of ${all.length} prop firms`}
+                score={r.score.total}
+                why={f.why}
+                visit={{ href: f.website, label: `Visit ${f.name}` }}
+                writeHref="#write"
+                neighboursTitle="Close to it"
+                neighbours={nearestInRank(all.filter((x) => x.firm.slug !== f.slug).map((x) => ({ rank: x.rank, item: x })), r.rank).map(({ item: x }) => ({
+                  href: `/props/${x.firm.slug}`,
+                  name: x.firm.name,
+                  logo: x.firm.logo,
+                  score: x.score.total,
+                  note: `${describeDrawdown(x.firm.rules.drawdownType)} · $${x.firm.feeUsdPer100k}`,
+                }))}
+              />
             </div>
 
             <div>

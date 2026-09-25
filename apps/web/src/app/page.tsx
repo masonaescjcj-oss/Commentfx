@@ -7,10 +7,12 @@ import { Header, Footer } from '@/components/chrome';
 import { Card, CardHead } from '@/components/primitives';
 import { BrokerRow } from '@/components/BrokerRow';
 import { RankRow } from '@/components/ranking';
-import { describeDrawdown, volumeBand, utcDay, releaseForTitle } from '@commentfx/core';
+import { Tabset } from '@/components/rankings';
+import { CategoryCards, SimulatorPromo, GuideCards, Pillars } from '@/components/HomeSections';
+import { describeDrawdown, volumeBand, utcDay, releaseForTitle, simulate, type DrawdownType } from '@commentfx/core';
+import { liveArticles, livePatchMap } from '@/lib/records';
 import { calendarData, upcomingHigh } from '@/lib/calendar';
 import { reviewStats } from '@/lib/reviews';
-import { livePatchMap } from '@/lib/records';
 import { coins } from '@/lib/market';
 import { news } from '@/lib/news';
 import { CoinRow, MoverChip, movers } from '@/components/CoinRow';
@@ -27,10 +29,36 @@ export const metadata: Metadata = pageMetadata({
 export const revalidate = 900;
 
 export default async function HomePage() {
-  const [stats, patches] = await Promise.all([reviewStats(), livePatchMap()]);
-  const top = rankedBrokers(stats, patches).slice(0, 5);
-  const topProps = rankedProps(patches).slice(0, 3);
-  const topExchanges = rankedExchanges(patches).slice(0, 3);
+  const [stats, patches, articles] = await Promise.all([reviewStats(), livePatchMap(), liveArticles()]);
+  const brokers = rankedBrokers(stats, patches);
+  const props = rankedProps(patches);
+  const exchanges = rankedExchanges(patches);
+  const top = brokers.slice(0, 5);
+  const topProps = props.slice(0, 3);
+  const topExchanges = exchanges.slice(0, 3);
+  const newestGuides = [...articles].sort((a, b) => b.published.localeCompare(a.published)).slice(0, 3);
+
+  // The simulator's own default trader against the leading firm's own rules,
+  // with the simulator's seed — so the numbers here are the ones the simulator
+  // page shows for the same firm, not a second estimate that could disagree.
+  const lead = props[0]!.firm;
+  const DESIGNS: Array<{ key: DrawdownType; label: string }> = [
+    { key: 'static', label: 'Static' },
+    { key: 'eod-trailing', label: 'End-of-day' },
+    { key: 'intraday-trailing', label: 'Intraday' },
+  ];
+  const trader = { riskPct: 1, winRate: 0.4, rewardRisk: 1.5, tradesPerDay: 2 };
+  const passRates = DESIGNS.map((d) => {
+    const s = simulate({
+      targetPct: lead.rules.profitTargetPct,
+      dailyPct: lead.rules.dailyDrawdownPct,
+      maxPct: lead.rules.maxDrawdownPct,
+      drawdown: d.key,
+      minDays: lead.rules.minTradingDays,
+      timeLimitDays: lead.rules.timeLimitDays,
+    }, trader, 1000, 1);
+    return { label: d.label, pct: Math.round((s.counts.passed / s.runs) * 100), own: d.key === lead.rules.drawdownType };
+  });
 
   // Three live upstreams, asked at once rather than one after another: they do
   // not depend on each other, and in series their latencies add up on every
@@ -60,9 +88,34 @@ export default async function HomePage() {
           can be the width of the window while everything under it keeps the
           measure. */}
       <main id="main">
-        <Hero licences={{ checked: coverage.licencesChecked, total: coverage.licencesTotal }} />
+        <Hero
+          licences={{ checked: coverage.licencesChecked, total: coverage.licencesTotal }}
+          counts={{ companies: brokers.length + props.length + exchanges.length, guides: articles.length }}
+          leaders={[
+            { href: `/brokers/${top[0]!.broker.slug}`, name: top[0]!.broker.name, logo: top[0]!.broker.logo, place: `#1 of ${brokers.length} forex brokers`, score: top[0]!.score.total },
+            { href: `/props/${lead.slug}`, name: lead.name, logo: lead.logo, place: `#1 of ${props.length} prop firms`, score: props[0]!.score.total },
+            { href: `/exchanges/${exchanges[0]!.exchange.slug}`, name: exchanges[0]!.exchange.name, logo: exchanges[0]!.exchange.logo, place: `#1 of ${exchanges.length} crypto exchanges`, score: exchanges[0]!.score.total },
+          ]}
+        />
 
-        <div className="shell pt-0 pb-6 sm:pt-5 lg:pt-7 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
+        <div className="shell pt-0 pb-6 sm:pt-5 lg:pt-0 lg:pb-10 flex flex-col gap-0 sm:gap-[13px] lg:gap-4">
+        <CategoryCards items={[
+          {
+            href: '/brokers', title: 'Forex brokers', note: `${brokers.length} ranked · regulation first`,
+            icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"><path d="M6 20V10M12 20V4M18 20v-7" /></svg>,
+            logos: brokers.slice(0, 3).map((r) => r.broker.logo), leader: { name: brokers[0]!.broker.name, score: brokers[0]!.score.total },
+          },
+          {
+            href: '/props', title: 'Prop firms', note: `${props.length} ranked · the rules you must survive`,
+            icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"><circle cx="12" cy="12" r="8.5" /><circle cx="12" cy="12" r="4.5" /><circle cx="12" cy="12" r="1" /></svg>,
+            logos: props.slice(0, 3).map((r) => r.firm.logo), leader: { name: lead.name, score: props[0]!.score.total },
+          },
+          {
+            href: '/exchanges', title: 'Crypto exchanges', note: `${exchanges.length} ranked · reserves and breaches`,
+            icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M4 8h13l-3-3M20 16H7l3 3" /></svg>,
+            logos: exchanges.slice(0, 3).map((r) => r.exchange.logo), leader: { name: exchanges[0]!.exchange.name, score: exchanges[0]!.score.total },
+          },
+        ]} />
 
         {/* Two columns above 1024px: the rankings, which are what this site is
             for, and beside them the market data that changes during the day.
@@ -71,41 +124,79 @@ export default async function HomePage() {
         <div className="split">
           <div>
 
+          {/* The three rankings in one card, one at a time. They were three
+              cards in a row, which on a phone put the prop firms two screens
+              down and the exchanges three. The panels are radios (Tabset), so
+              every row is in the markup for a crawler and for a reader without
+              scripts, and no JavaScript ships to switch them. */}
           <Card className="p-4 lg:p-6">
-            <CardHead title="Top brokers" href="/brokers" hrefLabel="Full ranking" />
-            {top.map((r) => <BrokerRow key={r.broker.slug} r={r} />)}
-            <p className="mt-3 pt-[11px] border-t border-line-2">
-              <Link href="/methodology" className="text-[11.5px] text-accent font-semibold">How we score</Link>
-            </p>
+            <CardHead title="Top of the rankings" />
+            <Tabset
+              id="home-rankings"
+              label="Show the ranking for"
+              tabs={[
+                {
+                  label: 'Brokers',
+                  panel: (
+                    <>
+                      {top.map((r) => <BrokerRow key={r.broker.slug} r={r} />)}
+                      <p className="flex items-center justify-between gap-3 mt-3 pt-[11px] border-t border-line-2 text-[12px]">
+                        <Link href="/methodology" className="text-accent font-semibold">How we score</Link>
+                        <Link href="/brokers" className="text-accent font-semibold">All {brokers.length} brokers ›</Link>
+                      </p>
+                    </>
+                  ),
+                },
+                {
+                  label: 'Prop firms',
+                  panel: (
+                    <>
+                      {topProps.map((r) => (
+                        <RankRow key={r.firm.slug} rank={r.rank} href={`/props/${r.firm.slug}`}
+                          logo={r.firm.logo} name={r.firm.name} score={r.score.total} why={r.firm.why}
+                          facts={[
+                            { label: 'Drawdown', value: describeDrawdown(r.firm.rules.drawdownType),
+                              tone: r.firm.rules.drawdownType === 'static' ? 'good' : r.firm.rules.drawdownType === 'intraday-trailing' ? 'bad' : 'warn' },
+                            { label: 'Fee', value: `$${r.firm.feeUsdPer100k}` },
+                            { label: 'Split', value: `${r.firm.payout.splitPct}%` },
+                          ]} />
+                      ))}
+                      <p className="flex justify-end mt-3 pt-[11px] border-t border-line-2 text-[12px]">
+                        <Link href="/props" className="text-accent font-semibold">All {props.length} prop firms ›</Link>
+                      </p>
+                    </>
+                  ),
+                },
+                {
+                  label: 'Exchanges',
+                  panel: (
+                    <>
+                      {topExchanges.map((r) => (
+                        <RankRow key={r.exchange.slug} rank={r.rank} href={`/exchanges/${r.exchange.slug}`}
+                          logo={r.exchange.logo} name={r.exchange.name} score={r.score.total} why={r.exchange.why}
+                          facts={[
+                            { label: 'Taker', value: `${r.exchange.takerFeePct}%` },
+                            { label: 'Volume', value: volumeBand(r.exchange.spotVolumeUsd) },
+                            { label: 'Breach', value: r.exchange.security.lastBreachYear === null ? 'None' : String(r.exchange.security.lastBreachYear),
+                              tone: r.exchange.security.lastBreachYear === null ? 'good' : r.exchange.security.madeUsersWhole ? 'warn' : 'bad' },
+                          ]} />
+                      ))}
+                      <p className="flex justify-end mt-3 pt-[11px] border-t border-line-2 text-[12px]">
+                        <Link href="/exchanges" className="text-accent font-semibold">All {exchanges.length} exchanges ›</Link>
+                      </p>
+                    </>
+                  ),
+                },
+              ]}
+            />
           </Card>
 
-          <Card className="p-4 lg:p-6">
-            <CardHead title="Top prop firms" href="/props" hrefLabel="Full ranking" />
-            {topProps.map((r) => (
-              <RankRow key={r.firm.slug} rank={r.rank} href={`/props/${r.firm.slug}`}
-                logo={r.firm.logo} name={r.firm.name} score={r.score.total} why={r.firm.why}
-                facts={[
-                  { label: 'Drawdown', value: describeDrawdown(r.firm.rules.drawdownType),
-                    tone: r.firm.rules.drawdownType === 'static' ? 'good' : r.firm.rules.drawdownType === 'intraday-trailing' ? 'bad' : 'warn' },
-                  { label: 'Fee', value: `$${r.firm.feeUsdPer100k}` },
-                  { label: 'Split', value: `${r.firm.payout.splitPct}%` },
-                ]} />
-            ))}
-          </Card>
-
-          <Card className="p-4 lg:p-6">
-            <CardHead title="Top exchanges" href="/exchanges" hrefLabel="Full ranking" />
-            {topExchanges.map((r) => (
-              <RankRow key={r.exchange.slug} rank={r.rank} href={`/exchanges/${r.exchange.slug}`}
-                logo={r.exchange.logo} name={r.exchange.name} score={r.score.total} why={r.exchange.why}
-                facts={[
-                  { label: 'Taker', value: `${r.exchange.takerFeePct}%` },
-                  { label: 'Volume', value: volumeBand(r.exchange.spotVolumeUsd) },
-                  { label: 'Breach', value: r.exchange.security.lastBreachYear === null ? 'None' : String(r.exchange.security.lastBreachYear),
-                    tone: r.exchange.security.lastBreachYear === null ? 'good' : r.exchange.security.madeUsersWhole ? 'warn' : 'bad' },
-                ]} />
-            ))}
-          </Card>
+          <SimulatorPromo
+            firm={lead.name}
+            href={`/props/challenge-simulator?firm=${lead.slug}`}
+            results={passRates}
+            featured={passRates.find((p) => p.own)?.pct ?? passRates[0]!.pct}
+          />
 
           <Card className="p-4 lg:p-6">
             <CardHead title="Ranked by what you care about" />
@@ -192,6 +283,9 @@ export default async function HomePage() {
           )}
           </div>
         </div>
+
+        <GuideCards articles={newestGuides} />
+        <Pillars />
         </div>
       </main>
       <Footer />

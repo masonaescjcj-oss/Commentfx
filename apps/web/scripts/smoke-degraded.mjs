@@ -140,7 +140,7 @@ check('it keeps what it can explain without the feed', release.body.includes('Wh
 // could not fetch. The rankings below them are checked-in data and stay.
 const home = await get('/');
 check('the front page serves', home.status === 200, `HTTP ${home.status}`);
-check('it keeps the rankings, which need no feed', home.main.includes('Top brokers'));
+check('it keeps the rankings, which need no feed', home.main.includes('Top of the rankings') && home.main.includes('href="/brokers/'));
 check('it drops the price card rather than emptying it', !home.main.includes('Coin prices'));
 check('it drops the movers card', !home.main.includes('Biggest moves today'));
 check('it drops the news card', !home.main.includes('Crypto news'));

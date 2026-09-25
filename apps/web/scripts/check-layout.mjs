@@ -1,6 +1,6 @@
 /**
- * Two ways a page can be the wrong shape, both reported by a reader before
- * anything here noticed.
+ * Ways a page can be the wrong shape, each reported by a reader — or found
+ * by a redesign — before anything here noticed.
  *
  *   pnpm --filter @commentfx/web build && pnpm --filter @commentfx/web check:layout
  *
@@ -15,6 +15,12 @@
  * no database the verification panel renders nothing, so 344px of emptiness sat
  * to the left of every prop and exchange page and the content read as though it
  * had slipped off its own centre.
+ *
+ * **A box too small for what is in it.** The page fits the window, and one of
+ * the cards on it does not fit its own contents: the record pages' section
+ * tabs ran past the right edge of their bar at 1024px. Nothing is wider than
+ * the screen, so the first check is silent; this one measures each piece of
+ * text, each picture and each drawing against the bordered box around it.
  *
  * **A header stuck on the wrong colour.** The bar is blue while it stands on
  * the blue band at the top of a page and white once that band has gone past.
@@ -39,7 +45,8 @@ const WIDE = 1440;
 
 const PAGES = ['/', '/brokers', '/props', '/exchanges', '/coins', '/status', '/reviews',
   '/learn', '/learn/check-a-broker-licence', '/brokers/exness', '/props/ftmo',
-  '/exchanges/binance', '/exchanges/kraken', '/compare/exness-vs-ic-markets', '/props/challenge-simulator'];
+  '/exchanges/binance', '/exchanges/kraken', '/compare/exness-vs-ic-markets', '/props/challenge-simulator',
+  '/learn/static-and-trailing-drawdown', '/brokers/pepperstone', '/props/propology'];
 
 const failures = [];
 const check = (label, ok, detail = '') => {
@@ -101,6 +108,73 @@ for (const path of PAGES) {
 }
 check(`no empty column takes width at ${WIDE}px`, reserved.length === 0, reserved.slice(0, 3).join(' · '));
 await ctx.close();
+
+/* ── nothing spills out of the box it is drawn in ──────────────────── */
+
+/**
+ * The page can fit the screen and one of its boxes still not fit its contents.
+ * The record pages' section tabs did exactly that at 1024px: twelve labels with
+ * an icon each ran forty pixels past the right edge of the bar they sit in,
+ * while the document itself was no wider than the window, so the check above
+ * had nothing to say. This measures every leaf against the nearest bordered
+ * box around it, and leaves alone anything inside a box that clips or scrolls
+ * on purpose.
+ */
+for (const width of [1024, WIDE]) {
+  const bctx = await browser.newContext({ viewport: { width, height: 900 } });
+  const bpage = await bctx.newPage();
+  const spills = [];
+  for (const path of PAGES) {
+    const res = await bpage.goto(BASE + path, { waitUntil: 'load' });
+    if (!res || res.status() >= 400) continue;
+    await bpage.waitForTimeout(300);
+    const r = await bpage.evaluate(() => {
+      const bordered = (el) => {
+        const cs = getComputedStyle(el);
+        return parseFloat(cs.borderRightWidth) > 0 && parseFloat(cs.borderLeftWidth) > 0;
+      };
+      const clips = (el) => getComputedStyle(el).overflowX !== 'visible';
+      // What gets measured: every element with nothing inside it, every <svg>
+      // as one piece (its own overflow is hidden by default, so walking up from
+      // inside one would always stop at "clipped"), and every run of text —
+      // a label beside an icon lives in a text node, not in a leaf element,
+      // and that is exactly the case that got through the first version.
+      const pieces = [];
+      for (const el of document.querySelectorAll('main *, header *')) {
+        if (el.closest('svg') && el.tagName.toLowerCase() !== 'svg') continue;
+        if (el.tagName.toLowerCase() === 'svg' || el.children.length === 0) {
+          pieces.push({ rect: el.getBoundingClientRect(), from: el.parentElement, label: el.textContent || el.tagName });
+        }
+        if (el.children.length) {
+          for (const n of el.childNodes) {
+            if (n.nodeType !== 3 || !n.textContent.trim()) continue;
+            const range = document.createRange();
+            range.selectNodeContents(n);
+            pieces.push({ rect: range.getBoundingClientRect(), from: el, label: n.textContent });
+          }
+        }
+      }
+      for (const { rect: lb, from, label } of pieces) {
+        if (lb.width === 0 || lb.height === 0) continue;
+        let box = null;
+        let clipped = false;
+        for (let el = from; el && el !== document.body; el = el.parentElement) {
+          if (clips(el)) { clipped = true; break; }
+          if (bordered(el)) { box = el; break; }
+        }
+        if (clipped || !box) continue;
+        const bb = box.getBoundingClientRect();
+        if (lb.right > bb.right + 1 || lb.left < bb.left - 1) {
+          return `"${label.trim().slice(0, 30)}" ${Math.round(Math.max(lb.right - bb.right, bb.left - lb.left))}px outside [${String(box.className).slice(0, 40)}]`;
+        }
+      }
+      return null;
+    });
+    if (r) spills.push(`${path} ${r}`);
+  }
+  check(`nothing spills out of its box at ${width}px`, spills.length === 0, spills.slice(0, 3).join(' · '));
+  await bctx.close();
+}
 
 /* ── every picture says how big it is ──────────────────────────────── */
 

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { Logo, Meter, Stars } from './primitives';
 import { Flag } from './Flag';
+import { ScoreRing } from './ScoreRing';
 import type { LogoMark } from '@commentfx/core';
 
 /**
@@ -18,6 +19,13 @@ import type { LogoMark } from '@commentfx/core';
  * four facts and the two buttons are all things the page said further down; the
  * change is that they are said once, at the top, in the order a reader asks
  * them: who, how good, on what, and then what can I do.
+ *
+ * From 1024px the same pieces are rearranged rather than redrawn: the score as
+ * a ring and the two buttons move up beside the name, where a wide screen has
+ * room going spare, and the regulators move under it. The markup is in the
+ * phone's order and the placement is a grid in globals.css (.record-hero), so a
+ * phone gets exactly the page it had — the ring is the one piece it never
+ * shows, because on a phone the stars and the figure already say it.
  */
 export interface HeroFact { label: string; value: string; flag?: string }
 export interface HeroPart { label: string; value: number | null; weight: number }
@@ -38,8 +46,8 @@ export function RecordHero({
   children?: ReactNode;
 }) {
   return (
-    <div className="mt-4">
-      <div className="flex gap-[14px] items-start">
+    <div className="record-hero mt-4">
+      <div className="rh-id flex gap-[14px] items-start">
         {/* The mark on its own white tile, which is the only white above the
             fold and is therefore where the eye lands. The badge sits on its
             corner rather than beside the name, because it is a fact about the
@@ -69,10 +77,10 @@ export function RecordHero({
           <p className="text-[10.5px] font-extrabold uppercase tracking-[0.1em] text-[color:var(--hero-accent)] tnum">
             Rank #{rank} of {of}
           </p>
-          <h1 className="font-[family-name:var(--font-display)] text-[26px] sm:text-[30px] lg:text-[34px] font-bold leading-[1.1] tracking-[-0.032em] text-white mt-[3px]">
+          <h1 className="font-[family-name:var(--font-display)] text-[26px] sm:text-[30px] lg:text-[42px] font-bold leading-[1.1] lg:leading-[1.02] tracking-[-0.032em] lg:tracking-[-0.038em] text-white mt-[3px] lg:mt-[6px]">
             {name}
           </h1>
-          <div className="flex items-center gap-[9px] mt-[7px]">
+          <div className="flex items-center gap-[9px] mt-[7px] lg:mt-[10px]">
             <Stars value={score} />
             <span className="font-[family-name:var(--font-display)] text-[19px] font-bold tracking-[-0.03em] tnum text-white">
               {score.toFixed(1)}
@@ -89,11 +97,15 @@ export function RecordHero({
         </div>
       </div>
 
-      <dl className="grid grid-cols-2 sm:grid-cols-4 gap-x-5 gap-y-[10px] mt-5 pt-4 border-t border-[color:var(--hero-line)]">
+      <div className="rh-ring">
+        <ScoreRing value={score} size={128} stroke={9} caption="out of 10" />
+      </div>
+
+      <dl className="rh-facts grid grid-cols-2 sm:grid-cols-4 gap-x-5 gap-y-[10px] mt-5 lg:mt-7 pt-4 lg:pt-5 border-t border-[color:var(--hero-line)]">
         {facts.map((f) => (
           <div key={f.label}>
-            <dt className="text-[11px] text-[color:var(--hero-ink-3)]">{f.label}</dt>
-            <dd className="flex items-center gap-[6px] text-[14.5px] font-bold tnum text-white mt-[1px]">
+            <dt className="text-[11px] lg:text-[12px] text-[color:var(--hero-ink-3)]">{f.label}</dt>
+            <dd className="flex items-center gap-[6px] text-[14.5px] lg:text-[16px] font-bold tnum text-white mt-[1px] lg:mt-[3px]">
               {f.flag ? <Flag code={f.flag} w={17} title={f.value} /> : null}
               <span className="min-w-0 truncate">{f.value}</span>
             </dd>
@@ -105,9 +117,9 @@ export function RecordHero({
           four independent readings and a list implies an order they do not
           have. A component with no data shows a dash and no bar: an empty bar
           and a zero look the same from a distance and mean opposite things. */}
-      <ul className="grid grid-cols-2 lg:grid-cols-4 gap-[9px] mt-4">
+      <ul className="rh-parts grid grid-cols-2 lg:grid-cols-4 gap-[9px] lg:gap-3 mt-4">
         {parts.map((p) => (
-          <li key={p.label} className="rounded-[13px] bg-[rgb(255_255_255_/_0.06)] border border-[color:var(--hero-line)] px-[13px] py-[11px]">
+          <li key={p.label} className="rounded-[13px] lg:rounded-[14px] bg-[rgb(255_255_255_/_0.06)] border border-[color:var(--hero-line)] px-[13px] py-[11px] lg:px-4 lg:py-[14px]">
             {p.value === null ? (
               <div className="h-[3px] rounded-full bg-[rgb(255_255_255_/_0.12)]" />
             ) : (
@@ -123,10 +135,13 @@ export function RecordHero({
         ))}
       </ul>
 
-      <div className="flex gap-[9px] mt-4 max-w-[520px]">
+      {/* On a wide screen the visit button goes on top: column-reverse, so the
+          source order — and therefore the order a keyboard or a screen reader
+          meets them in on a phone — is unchanged. */}
+      <div className="rh-act flex gap-[9px] mt-4 max-w-[520px] lg:mt-0 lg:flex-col-reverse lg:gap-[10px]">
         <a
           href="#write"
-          className="hero-ghost flex-1 inline-flex items-center justify-center h-11 rounded-[12px] text-[13.5px] font-semibold"
+          className="hero-ghost flex-1 lg:flex-none inline-flex items-center justify-center h-11 rounded-[12px] text-[13.5px] font-semibold"
         >
           Write a review
         </a>
@@ -135,14 +150,14 @@ export function RecordHero({
             href={visit.href}
             rel="nofollow noopener sponsored external"
             target="_blank"
-            className="hero-cta flex-1 inline-flex items-center justify-center gap-[6px] h-11 rounded-[12px] bg-white text-ink text-[13.5px] font-bold"
+            className="hero-cta flex-1 lg:flex-none inline-flex items-center justify-center gap-[6px] h-11 lg:h-12 rounded-[12px] bg-white text-ink text-[13.5px] lg:text-[14px] font-bold"
           >
             {visit.label} <span aria-hidden>↗</span>
           </a>
         ) : null}
       </div>
 
-      {children}
+      <div className="rh-extra">{children}</div>
     </div>
   );
 }
@@ -233,13 +248,19 @@ export function SponsorHero({ logo, name, pitch, facts, terms, visit, children }
  * A section with nothing in it is drawn dimmed and is not a link, rather than
  * being left out: a grid that changes shape from company to company is a grid a
  * reader has to read every time.
+ *
+ * From 1024px the same links are one line of tabs that stays under the header
+ * while the page scrolls (.jump-bar in globals.css). A grid of big doors is the
+ * right shape for a thumb and the wrong one for a pointer, where it was two
+ * rows of icons taking a screen's worth of height to say eight words. Both
+ * lists are in the markup and CSS shows one, so neither width loses a link.
  */
 export function QuickJump({ items }: {
   items: Array<{ href: string; label: string; icon: ReactNode; ready?: boolean }>;
 }) {
   return (
-    <nav aria-label="On this page" className="bg-card border-b border-line sm:border sm:rounded-[16px] lg:rounded-[20px] px-2 py-3 lg:px-4">
-      <ul className="grid grid-cols-4 lg:grid-cols-8 gap-y-1">
+    <nav aria-label="On this page" className="jump-bar bg-card border-b border-line sm:border sm:rounded-[16px] px-2 py-3 lg:px-2 lg:py-0">
+      <ul className="grid grid-cols-4 gap-y-1 lg:hidden">
         {items.map(({ href, label, icon, ready = true }) => {
           const inner = (
             <>
@@ -267,6 +288,25 @@ export function QuickJump({ items }: {
             </li>
           );
         })}
+      </ul>
+
+      {/* Words only. With the icons, a broker's twelve sections ran past the
+          right edge of the bar at 1024px — measured, not guessed — and on a
+          line of tabs the label is the thing a pointer is aimed at anyway. */}
+      <ul className="hidden lg:flex items-center gap-[2px] h-[56px]">
+        {items.map(({ href, label, ready = true }) => (
+          <li key={label}>
+            {ready ? (
+              <a href={href} className="jump-tab inline-flex items-center h-10 px-3 rounded-[10px] text-[13px] font-semibold text-ink-2 whitespace-nowrap">
+                {label}
+              </a>
+            ) : (
+              <span className="inline-flex items-center h-10 px-3 text-[13px] text-ink-3 whitespace-nowrap">
+                {label}
+              </span>
+            )}
+          </li>
+        ))}
       </ul>
     </nav>
   );

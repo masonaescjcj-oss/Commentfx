@@ -38,7 +38,7 @@ function revalidateArticle(slug: string) {
   revalidatePath(`/admin/articles/${slug}`);
 }
 
-const SCALARS = ['title', 'heading', 'description', 'question', 'answer', 'author', 'published', 'updated'] as const;
+const SCALARS = ['title', 'heading', 'description', 'question', 'answer', 'author', 'topic', 'published', 'updated'] as const;
 
 export async function saveArticle(_prev: EditResult | null, form: FormData): Promise<EditResult> {
   if (!DB_ENABLED) return { ok: false, message: NO_DB_MESSAGE };

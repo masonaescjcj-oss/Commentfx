@@ -362,6 +362,9 @@ export function validateArticle(a: Partial<Article>, knownSlugs: readonly string
   if (!a.author?.trim()) {
     out.push({ field: 'author', message: 'A named author. An unsigned article in this category is worth nothing.' });
   }
+  if (a.topic !== 'brokers' && a.topic !== 'props' && a.topic !== 'exchanges') {
+    out.push({ field: 'topic', message: 'Which list this is about: brokers, prop firms or exchanges.' });
+  }
   for (const key of ['published', 'updated'] as const) {
     const v = a[key];
     if (!v || !ISO_DATE.test(v) || !Number.isFinite(Date.parse(`${v}T00:00:00Z`))) {

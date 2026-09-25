@@ -29,7 +29,7 @@ export default function NewArticlePage() {
         status={null}
         article={{
           title: '', heading: '', description: '', question: '', answer: '',
-          author: 'CommentFX', published: today(), updated: today(),
+          author: 'CommentFX', topic: 'brokers', published: today(), updated: today(),
           body: '', faq: '',
         }}
       />

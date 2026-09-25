@@ -72,6 +72,7 @@ export default async function EditArticlePage({ params }: { params: Promise<{ sl
           question: a.question ?? '',
           answer: a.answer ?? '',
           author: a.author ?? '',
+          topic: a.topic ?? 'brokers',
           published: a.published ?? '',
           updated: a.updated ?? '',
           body: formatArticleBody(a.blocks ?? []),

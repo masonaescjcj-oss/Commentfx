@@ -234,6 +234,16 @@ test('a headline that is not a question is rejected', () => {
   assert.ok(fields(validateArticle(a, SLUGS)).includes('question'));
 });
 
+test('an article must say which of the three lists it is about', () => {
+  const missing = article() as Partial<typeof ARTICLES[number]>;
+  delete missing.topic;
+  assert.ok(fields(validateArticle(missing, SLUGS)).includes('topic'));
+
+  const other = article();
+  (other as { topic: string }).topic = 'coins';
+  assert.ok(fields(validateArticle(other, SLUGS)).includes('topic'));
+});
+
 /**
  * The link rules, which are the ones a writer is most likely to meet halfway:
  * three links to the same page is three links, and "click here" is an anchor.

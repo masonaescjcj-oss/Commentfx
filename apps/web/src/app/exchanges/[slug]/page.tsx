@@ -7,6 +7,7 @@ import { rankedExchanges, getRankedExchange } from '@/lib/repo';
 import { Header, PageHero, Footer } from '@/components/chrome';
 import { Faq } from '@/components/Faq';
 import { RecordHero, QuickJump, StickyActions } from '@/components/RecordHero';
+import { DecisionCard, nearestInRank } from '@/components/RecordRail';
 import { ActionList } from '@/components/Actions';
 import { Profile } from '@/components/Profile';
 import { IconScore, IconCost, IconLicence, IconReviews, IconCompare, IconFaq } from '@/components/icons';
@@ -142,10 +143,28 @@ export default async function ExchangePage({ params }: { params: Promise<Params>
           {/* Two columns above 1024px, the narrow one first: who this is and
               what is known about them, then the detail, which is most of the
               page and wants the width. */}
-          <div className="split rail-left">
+          <div className="split rail-right">
             <div>
 
               <VerificationPanel coverage={cov} />
+
+              <DecisionCard
+                logo={e.logo}
+                name={e.name}
+                rankLine={`#${r.rank} of ${all.length} crypto exchanges`}
+                score={r.score.total}
+                why={e.why}
+                visit={{ href: e.website, label: `Visit ${e.name}` }}
+                writeHref="#write"
+                neighboursTitle="Close to it"
+                neighbours={nearestInRank(all.filter((x) => x.exchange.slug !== e.slug).map((x) => ({ rank: x.rank, item: x })), r.rank).map(({ item: x }) => ({
+                  href: `/exchanges/${x.exchange.slug}`,
+                  name: x.exchange.name,
+                  logo: x.exchange.logo,
+                  score: x.score.total,
+                  note: `${x.exchange.takerFeePct}% taker · ${volumeBand(x.exchange.spotVolumeUsd)}`,
+                }))}
+              />
             </div>
 
             <div>

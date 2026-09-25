@@ -19,6 +19,7 @@ import { Faq } from '@/components/Faq';
 import { OfficialSite } from '@/components/OfficialSite';
 import { Card, CardHead, Logo, Score, Tag, Meter } from '@/components/primitives';
 import { RecordHero, QuickJump, StickyActions } from '@/components/RecordHero';
+import { DecisionCard } from '@/components/RecordRail';
 import { IconScore, IconEntity, IconLicence, IconCost, IconStatus, IconReview, IconReviews, IconCompare, IconFaq, IconResearch, IconVerdict, IconGavel } from '@/components/icons';
 import { EntityMap } from '@/components/EntityMap';
 import { Profile } from '@/components/Profile';
@@ -218,7 +219,7 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
           {/* Two columns above 1024px, the narrow one first: who this is and
               what is known about them, then the detail, which is most of the
               page and wants the width. */}
-          <div className="split rail-left">
+          <div className="split rail-right">
             <div>
 
             <div id="status" className="contents">
@@ -226,6 +227,24 @@ export default async function BrokerPage({ params }: { params: Promise<Params> }
             </div>
 
             <VerificationPanel coverage={cov} />
+
+            <DecisionCard
+              logo={b.logo}
+              name={b.name}
+              rankLine={`#${r.rank} of ${all.length} forex brokers`}
+              score={r.score.total}
+              why={b.why}
+              visit={{ href: b.website, label: `Visit ${b.name}` }}
+              writeHref="#write"
+              neighboursTitle="Close to it"
+              neighbours={alternatives.slice(0, 3).map((a) => ({
+                href: `/brokers/${a.broker.slug}`,
+                name: a.broker.name,
+                logo: a.broker.logo,
+                score: a.score.total,
+                note: `${effectiveCostPips(a.broker).toFixed(2)} pips · ${a.broker.payments.minDepositUsd === 0 ? 'no minimum' : `$${a.broker.payments.minDepositUsd} min`}`,
+              }))}
+            />
             </div>
 
             <div>
