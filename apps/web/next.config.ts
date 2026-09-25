@@ -101,6 +101,27 @@ const config: NextConfig = {
   poweredByHeader: false,
   transpilePackages: ['@commentfx/core', '@commentfx/ingest', '@commentfx/db'],
   experimental: { optimizePackageImports: ['@commentfx/core', '@commentfx/ingest'] },
+
+  /**
+   * One host. www.commentfx.com was attached to the project and served every
+   * page with a 200, so each page existed twice and a search engine had to be
+   * told by the canonical tag, page by page, which copy was the real one —
+   * and Search Console reported the leftovers. A permanent redirect says it
+   * once, for every path, before any page renders: the path and the query
+   * string carry over, and the canonical, the sitemap and every internal link
+   * already name the bare domain, so nothing on the site points at www.
+   */
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.commentfx.com' }],
+        destination: 'https://commentfx.com/:path*',
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [
       {

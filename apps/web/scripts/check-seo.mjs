@@ -27,6 +27,7 @@
  * nothing and tells a search engine the site does not know its own shape.
  */
 import { readFile } from 'node:fs/promises';
+import { request as httpRequest } from 'node:http';
 
 const BASE = process.env.CHECK_BASE ?? 'http://127.0.0.1:3000';
 const SITE = 'https://commentfx.com';
@@ -190,6 +191,41 @@ for (const [to, from] of linkedFrom) {
 }
 if (dangling.length) listed('every internal link goes somewhere', dangling);
 else check('every internal link goes somewhere', true, `${linkedFrom.size} distinct targets`);
+
+// ── One host ─────────────────────────────────────────────────────────────────
+// www.commentfx.com served the whole site with a 200 — every page twice, on two
+// hosts — until Search Console said so. It must answer with one permanent
+// redirect to the same path and query on the bare domain, and never a page.
+{
+  // node:http, not fetch: fetch replaces a Host header with the URL's own host
+  // without a word, so a probe through it asks the right question of the wrong
+  // host and passes or fails for reasons that have nothing to do with www. The
+  // first version of this check did exactly that.
+  const asHost = (host, path) => new Promise((resolve, reject) => {
+    const u = new URL(BASE);
+    const req = httpRequest({ hostname: u.hostname, port: u.port || 80, path, method: 'GET', headers: { host } }, (res) => {
+      res.resume();
+      resolve({ status: res.statusCode, location: res.headers.location ?? null });
+    });
+    req.on('error', reject);
+    req.end();
+  });
+  const probes = ['/', '/brokers/pepperstone', '/props/challenge-simulator?firm=ftmo'];
+  const wrong = [];
+  for (const p of probes) {
+    const res = await asHost('www.commentfx.com', p);
+    // The front page may come back with or without its slash: an origin with
+    // no path and an origin with "/" are the same URL.
+    const want = SITE + (p === '/' ? '/' : p);
+    const same = res.location === want || (p === '/' && res.location === SITE);
+    if (res.status !== 308 || !same) wrong.push(`www${p} → HTTP ${res.status}${res.location ? ` ${res.location}` : ''}, want 308 ${want}`);
+  }
+  if (wrong.length) listed('www redirects to the bare domain, path and query intact', wrong);
+  else check('www redirects to the bare domain, path and query intact', true, `${probes.length} probed`);
+  // And the bare domain itself is never sent anywhere.
+  const bare = await asHost('commentfx.com', '/brokers/pepperstone');
+  check('and the bare domain answers for itself', bare.status === 200, `HTTP ${bare.status}`);
+}
 
 // ── And the page for everything else ─────────────────────────────────────────
 // A URL we do not have must answer 404 and still be a page. Answering 200 with
