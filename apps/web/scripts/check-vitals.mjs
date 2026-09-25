@@ -41,7 +41,10 @@ const PAGES = ['/', '/brokers', '/brokers/exness', '/props', '/exchanges', '/coi
   '/learn', '/learn/what-a-spread-really-costs', '/learn/who-is-behind-your-prop-firm',
   // The one article carrying diagrams. Pictures are how a page starts
   // shifting, and on Slow 4G they arrive long after the text has been read.
-  '/learn/what-proof-of-reserves-proves', '/learn/static-and-trailing-drawdown'];
+  '/learn/what-proof-of-reserves-proves', '/learn/static-and-trailing-drawdown',
+  // Computed in the browser on arrival — it must render the same numbers the
+  // prerender did, or the result card jumps when the script runs.
+  '/props/challenge-simulator'];
 
 const failures = [];
 // CHECK_PROXY exists for sandboxes whose outbound traffic goes through one.

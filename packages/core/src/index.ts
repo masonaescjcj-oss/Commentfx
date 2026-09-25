@@ -31,3 +31,4 @@ export * from './releases.ts';
 export * from './reviews.ts';
 export * from './contrast.ts';
 export * from './revised.ts';
+export * from './challenge-sim.ts';

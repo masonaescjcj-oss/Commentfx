@@ -731,7 +731,7 @@ export const ARTICLES: Article[] = [
       'Same trades, same limits, three drawdown rules. The static account survives with $2,000 to '
       + 'spare; the intraday trailing one is ended half a day in. Here is the arithmetic.',
     published: '2026-09-23',
-    updated: '2026-09-23',
+    updated: '2026-09-25',
     author: 'CommentFX',
     question: 'Is a static or a trailing drawdown easier to pass?',
     answer:
@@ -861,6 +861,14 @@ export const ARTICLES: Article[] = [
             'What is the daily limit, separately? It is a second floor, and it resets every day.',
           ],
         },
+      },
+      {
+        heading: 'Try it with your own numbers',
+        paragraphs: [
+          'The example above is one path. [The challenge simulator](/props/challenge-simulator) plays any '
+          + 'firm here against a thousand of them, with your risk, win rate and reward, and shows how the same '
+          + 'trades fare under each of the three rules.',
+        ],
       },
       {
         paragraphs: [

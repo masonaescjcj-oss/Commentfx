@@ -84,6 +84,20 @@ export default async function PropsPage() {
             </Card>
 
             <Card className="p-4 lg:p-6" as="section">
+              <Link href="/props/challenge-simulator" className="flex items-center gap-3 group">
+                <span className="flex-1 min-w-0">
+                  <span className="block font-[family-name:var(--font-display)] text-[15px] lg:text-[16px] font-bold tracking-[-0.015em] group-hover:text-accent">
+                    Would you pass? Try the challenge simulator
+                  </span>
+                  <span className="block text-[12.5px] text-ink-3 leading-[1.6] mt-[2px]">
+                    Pick a firm, set how you trade, and play its rules forward a thousand times.
+                  </span>
+                </span>
+                <span aria-hidden className="text-ink-3">›</span>
+              </Link>
+            </Card>
+
+            <Card className="p-4 lg:p-6" as="section">
               <CardHead title="Strongest on each thing" href="/methodology" hrefLabel="How each is scored" />
               <Tabset
                 id="prop-strength"

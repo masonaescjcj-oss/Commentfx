@@ -278,6 +278,7 @@ const FOOTER: Array<{ title: string; links: Array<{ href: string; label: string 
   {
     title: 'Tools',
     links: [
+      { href: '/props/challenge-simulator', label: 'Challenge simulator' },
       { href: '/calendar', label: 'Economic calendar' },
       { href: '/memecoins', label: 'Memecoin radar' },
       { href: '/status', label: 'Broker status' },

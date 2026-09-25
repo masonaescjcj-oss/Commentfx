@@ -78,6 +78,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: absoluteUrl('/'), ...at(siteDay), changeFrequency: 'daily', priority: 1 },
     { url: absoluteUrl('/brokers'), ...at(brokersDay), changeFrequency: 'daily', priority: 0.9 },
     { url: absoluteUrl('/props'), ...at(propsDay), changeFrequency: 'daily', priority: 0.9 },
+    { url: absoluteUrl('/props/challenge-simulator'), ...at(propsDay), changeFrequency: 'weekly', priority: 0.8 },
     { url: absoluteUrl('/exchanges'), ...at(exchangesDay), changeFrequency: 'daily', priority: 0.9 },
     { url: absoluteUrl('/coins'), lastModified: now, changeFrequency: 'hourly', priority: 0.9 },
     { url: absoluteUrl('/memecoins'), lastModified: now, changeFrequency: 'hourly', priority: 0.7 },

@@ -39,7 +39,7 @@ const WIDE = 1440;
 
 const PAGES = ['/', '/brokers', '/props', '/exchanges', '/coins', '/status', '/reviews',
   '/learn', '/learn/check-a-broker-licence', '/brokers/exness', '/props/ftmo',
-  '/exchanges/binance', '/exchanges/kraken', '/compare/exness-vs-ic-markets'];
+  '/exchanges/binance', '/exchanges/kraken', '/compare/exness-vs-ic-markets', '/props/challenge-simulator'];
 
 const failures = [];
 const check = (label, ok, detail = '') => {

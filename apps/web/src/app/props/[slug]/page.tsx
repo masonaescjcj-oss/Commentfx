@@ -234,7 +234,11 @@ export default async function PropPage({ params }: { params: Promise<Params> }) 
             <PropEntities firm={f} />
 
             <Card className="p-4 lg:p-6" as="section" id="rules">
-              <CardHead title="Challenge rules" />
+              <CardHead
+                title="Challenge rules"
+                href={`/props/challenge-simulator?firm=${f.slug}`}
+                hrefLabel="Would you pass?"
+              />
               <FactList rows={[
                 ['Steps', f.rules.steps === 'instant' ? 'Instant funding' : `${f.rules.steps}-step`],
                 ['Profit target (phase 1)', `${f.rules.profitTargetPct}%`],
